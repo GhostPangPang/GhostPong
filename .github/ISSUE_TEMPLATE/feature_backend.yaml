@@ -1,0 +1,23 @@
+name: "✨ Feature (backend)"
+description: "Feature 작업 사항을 입력해주세요. (backend)"
+title: "[Feature] "
+labels: ["enhancement", "backend"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: 이슈에 대한 설명을 입력해주세요.
+    validations:
+      required: true
+  - type: textarea
+    id: todo
+    attributes:
+      label: Todo
+      description: Todo list 를 추가해주세요.
+      value: "- [ ] todo1"
+  - type: textarea
+    id: etc
+    attributes:
+      label: ETC
+      description: 기타 이슈사항을 입력해주세요.
