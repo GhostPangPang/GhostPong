@@ -18,13 +18,15 @@
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
-      "@lib/*": ["src/lib/*"],
-      "@hooks/*": ["src/hooks/*"],
+      "@assets/*": ["src/assets/*"],
       "@styles/*": ["src/assets/styles/*"],
+      "@imgs/*": ["src/assets/imgs/*"],
       "@components/*": ["src/components/*"],
-      "@containers/*": ["src/containers/*"]
+      "@pages/*": ["src/pages/*"],
+      "@hooks/*": ["src/hooks/*"],
+      "@utils/*": ["src/utils/*"]
     }
   },
-  "include": ["src", "vite-env.d.ts"],
+  "include": ["src", "src/vite-env.d.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
