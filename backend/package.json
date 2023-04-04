@@ -28,6 +28,7 @@
     "@nestjs/serve-static": "^3.0.1",
     "@nestjs/typeorm": "^9.0.1",
     "class-validator": "^0.14.0",
+    "pg": "^8.10.0",
     "postgresql": "^0.0.1",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0",

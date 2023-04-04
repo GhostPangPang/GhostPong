@@ -1,27 +1,24 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
+import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 @Injectable()
-export class DatabaseConfigService {
+export class DatabaseConfigService implements TypeOrmOptionsFactory {
   constructor(private configService: ConfigService) {}
 
-  get host() {
-    return this.configService.get<string>('database.host');
-  }
-
-  get port() {
-    return this.configService.get<number>('database.port');
-  }
-
-  get name() {
-    return this.configService.get<string>('database.name');
-  }
-
-  get user() {
-    return this.configService.get<string>('database.user');
-  }
-
-  get password() {
-    return this.configService.get<string>('database.password');
+  createTypeOrmOptions(): TypeOrmModuleOptions {
+    return {
+      type: 'postgres',
+      host: this.configService.get<string>('database.host'),
+      port: this.configService.get<number>('database.port'),
+      username: this.configService.get<string>('database.user'),
+      password: this.configService.get<string>('database.password'),
+      database: this.configService.get<string>('database.name'),
+      autoLoadEntities: true,
+      synchronize: true,
+      logging: true,
+      namingStrategy: new SnakeNamingStrategy(),
+    };
   }
 }

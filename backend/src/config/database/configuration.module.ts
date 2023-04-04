@@ -1,4 +1,4 @@
-import Joi from '@hapi/joi';
+import * as Joi from '@hapi/joi';
 import { Module } from '@nestjs/common';
 import configuration from './configuration';
 import { DatabaseConfigService } from './configuration.service';
@@ -20,4 +20,4 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
   providers: [ConfigService, DatabaseConfigService],
   exports: [ConfigService, DatabaseConfigService],
 })
-export class AppConfigModule {}
+export class DatabaseConfigModule {}
