@@ -24,7 +24,7 @@ export const GlobalStyle = createGlobalStyle<{ theme: typeof theme }>`
   body {
     height: 100%;
 
-    background-color: ${({ theme }) => theme.color.background};
+    background-color: ${(props) => props.theme.color.background};
     overflow: hidden;
   }
 
