@@ -28,6 +28,7 @@ jobs:
         with:
           # 👇 Chromatic projectToken, refer to the manage page to obtain it.
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          workingDir: frontend/
           # Option to prevent the workflow from failing
           # exitZeroOnChanges: true
       - name: Publish Summary
