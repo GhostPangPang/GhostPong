@@ -22,8 +22,16 @@ jobs:
         run: cd frontend && yarn
         # 👇 Adds Chromatic as a step in the workflow
       - name: Publish to Chromatic
+        id: chromatic
         uses: chromaui/action@v1
         # Chromatic GitHub Action options
         with:
           # 👇 Chromatic projectToken, refer to the manage page to obtain it.
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          # Option to prevent the workflow from failing
+          # exitZeroOnChanges: true
+      - name: Publish Summary
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          message: |
+            | Results |  |\n| --- | --- |\n| Build Results | ${{steps.chromatic.outputs.buildUrl}} |\n| Storybook Preview | ${{steps.chromatic.outputs.storybookUrl}} |\n| Component Count | ${{steps.chromatic.outputs.componentCount}} |
