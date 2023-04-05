@@ -9,7 +9,7 @@ const StyledHeader = styled.header`
   height: 9.6rem;
 `;
 
-export const Header: React.FC = () => {
+export const Header = () => {
   return (
     <StyledHeader>
       <Logo />
