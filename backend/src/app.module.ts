@@ -10,9 +10,8 @@ import { DatabaseConfigService } from './config/database/configuration.service';
   imports: [
     AppConfigModule,
     TypeOrmModule.forRootAsync({
-      imports: [DatabaseConfigModule, AppConfigModule],
+      imports: [DatabaseConfigModule],
       useClass: DatabaseConfigService,
-      inject: [DatabaseConfigService],
     }),
   ],
   controllers: [AppController],
