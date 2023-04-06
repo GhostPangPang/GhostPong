@@ -1,6 +1,6 @@
 name: "🔨 Refactoring (backend)"
 description: "Refactoring 작업 사항을 입력해주세요. (backend)"
-title: "[Refactoring] "
+title: "🔨 [Refactoring] "
 labels: ["refactoring", "backend"]
 body:
   - type: textarea

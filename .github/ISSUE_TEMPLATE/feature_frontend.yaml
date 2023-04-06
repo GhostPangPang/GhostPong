@@ -1,6 +1,6 @@
 name: "✨ Feature (frontend)"
 description: "Feature 작업 사항을 입력해주세요. (frontend)"
-title: "[Feature] "
+title: "✨ [Feature] "
 labels: ["enhancement", "frontend"]
 body:
   - type: textarea
