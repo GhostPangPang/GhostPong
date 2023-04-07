@@ -12843,6 +12843,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react-is", "npm:18.1.0"]\
           ],\
           "linkType": "HARD"\
+        }],\
+        ["npm:18.2.0", {\
+          "packageLocation": "./.yarn/cache/react-is-npm-18.2.0-0cc5edb910-e72d0ba81b.zip/node_modules/react-is/",\
+          "packageDependencies": [\
+            ["react-is", "npm:18.2.0"]\
+          ],\
+          "linkType": "HARD"\
         }]\
       ]],\
       ["react-refresh", [\
@@ -13942,7 +13949,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["hoist-non-react-statics", "npm:3.3.2"],\
             ["react", "npm:18.2.0"],\
             ["react-dom", "virtual:cc38defef59748d3ec79a388cfcde85b4d057fb9455e5e4bd72ab8fd3f3043f27f94cf2740f0669e3145517dcdf50bac7d684be6bedfd5353b3e00e9ee55b388#npm:18.2.0"],\
-            ["react-is", null],\
+            ["react-is", "npm:18.2.0"],\
             ["shallowequal", "npm:1.1.0"],\
             ["supports-color", "npm:5.5.0"]\
           ],\
@@ -13951,7 +13958,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             "@types/react-is",\
             "@types/react",\
             "react-dom",\
-            "react-is",\
             "react"\
           ],\
           "linkType": "HARD"\

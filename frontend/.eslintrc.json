@@ -12,6 +12,7 @@
     "react": {
       "version": "detect"
     },
+    "import/external-module-folders": [".yarn"],
     "import/resolver": {
       "typescript": {},
       "node": {
