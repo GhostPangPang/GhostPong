@@ -1,12 +1,13 @@
 services:
   db:
-    container_name: postgres
+    container_name: ghostgres
     image: postgres
     restart: always
     environment:
       - POSTGRES_DB=${DB_NAME}
       - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      #- POSTGRES_PASSWORD=${DB_PASSWORD} 비밀번호 있게 하려면..
+      - POSTGRES_HOST_AUTH_METHOD=trust # 그냥 갈기려면..
     ports:
       - ${DB_PORT}:5432
     volumes:
