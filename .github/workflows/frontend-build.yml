@@ -1,0 +1,41 @@
+# .github/workflows/frontend-build.yml
+
+name: 'Frontend-Build'
+
+on:
+  pull-request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18.15.0
+          cache: 'yarn'
+          cache-dependency-path: frontend/yarn.lock
+      - run: cd frontend
+
+      - name: Lint Check
+      - run: yarn lint
+      - if: ${{ always() }}
+
+      - name: Typescript Compile Check
+      - run: yarn type-check
+      - if: ${{ always() }}
+
+      - name: Build Check
+      - run: yarn build
+      - if: ${{ always() }}
+
+      - name: Create Commit Comment
+        uses: peter-evans/commit-comment@v2
+        with:
+          sha: ${{ github.sha }}
+          body: |
+            ${GITHUB_JOB} / ${{ inputs.status }}
+            @${{ github.actor }} 다시 확인 부탁드려요!
+        if: failure()
