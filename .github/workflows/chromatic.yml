@@ -7,7 +7,7 @@ name: 'Chromatic'
 on:
   pull_request:
     branches: [ main ]
-    paths: [ 'frontend/**' ]
+    paths: [ '**.stories.ts', '**.stories.tsx' ]
 
 # List of jobs
 jobs:
@@ -30,6 +30,6 @@ jobs:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           workingDir: frontend/
           # Option to prevent the workflow from failing
-          # exitZeroOnChanges: true
+          exitZeroOnChanges: true
       - name: Publish Summary
         run: echo -e "| Results |  |\n| --- | --- |\n| Build Results | ${{steps.chromatic.outputs.buildUrl}} |\n| Storybook Preview | ${{steps.chromatic.outputs.storybookUrl}} |\n| Component Count | ${{steps.chromatic.outputs.componentCount}} |" >> $GITHUB_STEP_SUMMARY
