@@ -3,7 +3,7 @@
 name: 'Frontend-Build'
 
 on:
-  pull-request:
+  pull_request:
     branches: [ main ]
 
 jobs:
@@ -12,30 +12,29 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
           node-version: 18.15.0
           cache: 'yarn'
           cache-dependency-path: frontend/yarn.lock
-      - run: cd frontend
 
+      - name: Install Dependencies
+        run: cd frontend && yarn
       - name: Lint Check
-      - run: yarn lint
-      - if: ${{ always() }}
+        run: cd frontend && yarn lint
 
       - name: Typescript Compile Check
-      - run: yarn type-check
-      - if: ${{ always() }}
+        run: cd frontend && yarn type-check
 
       - name: Build Check
-      - run: yarn build
-      - if: ${{ always() }}
+        run: cd frontend && yarn build
 
       - name: Create Commit Comment
         uses: peter-evans/commit-comment@v2
         with:
           sha: ${{ github.sha }}
           body: |
-            ${GITHUB_JOB} / ${{ inputs.status }}
             @${{ github.actor }} 다시 확인 부탁드려요!
         if: failure()
