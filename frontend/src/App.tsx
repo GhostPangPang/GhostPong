@@ -4,15 +4,31 @@ import { ThemeProvider } from 'styled-components';
 import theme from '@styles/theme';
 import { Header } from '@components/layout/Header';
 import { Content } from '@components/layout/Content';
+import ErrorFallback from '@components/error/ErrorFallback';
+import { ErrorBoundary } from 'react-error-boundary';
 
 function App() {
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyle />
-      <Header />
-      <Content>
-        <Box />
-      </Content>
+      <ErrorBoundary
+        FallbackComponent={ErrorFallback}
+        onReset={() => {
+          // reset the state of your app so the error doesn't happen again
+        }}
+      >
+        <Header />
+      </ErrorBoundary>
+      <ErrorBoundary
+        FallbackComponent={ErrorFallback}
+        onReset={() => {
+          // reset the state of your app so the error doesn't happen again
+        }}
+      >
+        <Content>
+          <Box />
+        </Content>
+      </ErrorBoundary>
     </ThemeProvider>
   );
 }
