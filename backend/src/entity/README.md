@@ -1,3 +1,0 @@
-# entity
-
-TypeORM entities
