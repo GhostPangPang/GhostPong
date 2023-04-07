@@ -20,7 +20,10 @@
     }
   },
   "rules": {
-    // Add your own rules here to override ones from the extended configs.
+    "indent": ["error", 2],
+    "linebreak-style": ["error", "unix"],
+    "quotes": ["error", "single"],
+    "semi": ["error", "always"],
     "react/react-in-jsx-scope": "off"
   }
 }
