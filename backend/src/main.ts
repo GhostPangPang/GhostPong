@@ -6,14 +6,13 @@ import { AppConfigService } from './config/app/configuration.service';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  const config = new DocumentBuilder()
+  const swaggerConfig = new DocumentBuilder()
     .setTitle('GhostPong API')
     .setDescription('The GhostPong API description')
     .setVersion('1.0')
     .addTag('GhostPong')
     .build();
-
-  const document = SwaggerModule.createDocument(app, config);
+  const document = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('api', app, document);
 
   const appConfig: AppConfigService = app.get(AppConfigService);
