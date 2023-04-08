@@ -1,10 +1,11 @@
 # .github/workflows/frontend-build.yml
 
-name: "Frontend-Build"
+name: 'Frontend-Build'
 
 on:
   pull_request:
     branches: [ main ]
+    paths: [ 'frontend/**' ]
 
 jobs:
   build:
@@ -17,7 +18,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18.15.0
-          cache: "yarn"
+          cache: 'yarn'
           cache-dependency-path: frontend/yarn.lock
 
       - name: Install Dependencies
