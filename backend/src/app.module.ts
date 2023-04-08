@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AppConfigModule } from './config/app/configuration.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { DatabaseConfigModule } from './config/database/configuration.module';
 import { DatabaseConfigService } from './config/database/configuration.service';
 
