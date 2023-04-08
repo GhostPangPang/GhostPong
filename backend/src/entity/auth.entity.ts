@@ -1,0 +1,25 @@
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+
+export enum AuthStatus {
+  REGISTERD = 'REGISTERD',
+  UNREGISTERD = 'UNREGISTERD',
+}
+
+@Entity()
+export class Auth {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column({ length: 320 })
+  email: string;
+
+  @Column({ length: 320, nullable: true })
+  two_fa: string;
+
+  @Column({
+    type: 'enum',
+    enum: AuthStatus,
+    default: AuthStatus.UNREGISTERD,
+  })
+  status: AuthStatus;
+}
