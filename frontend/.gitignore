@@ -15,6 +15,7 @@ dist-ssr
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
+!.vscode/settings.json
 .idea
 .DS_Store
 *.suo
@@ -27,6 +28,7 @@ dist-ssr
 # https://yarnpkg.com/getting-started/qa#which-files-should-be-gitignored
 
 .yarn/*
+.yarn/install-state.gz
 !.yarn/releases
 !.yarn/patches
 !.yarn/plugins
@@ -43,4 +45,3 @@ dist-ssr
 # End of https://www.toptal.com/developers/gitignore/api/yarn
 
 .eslintcache
-install-state.gz
