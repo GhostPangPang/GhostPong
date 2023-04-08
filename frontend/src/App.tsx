@@ -1,10 +1,10 @@
-import { GlobalStyle } from '@styles/GlobalStyle';
-import { Box } from '@components/common/Box/Box';
+import { GlobalStyle } from '@/styles/GlobalStyle';
+import { Box } from '@/components/common/Box/Box';
 import { ThemeProvider } from 'styled-components';
-import theme from '@styles/theme';
-import { Header } from '@components/layout/Header';
-import { Content } from '@components/layout/Content';
-import ErrorFallback from '@components/error/ErrorFallback';
+import theme from '@/styles/theme';
+import { Header } from '@/components/layout/Header';
+import { Content } from '@/components/layout/Content';
+import ErrorFallback from '@/components/error/ErrorFallback';
 import { ErrorBoundary } from 'react-error-boundary';
 
 function App() {

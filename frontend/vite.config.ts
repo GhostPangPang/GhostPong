@@ -8,13 +8,14 @@ export default defineConfig({
   plugins: [react(), svgr()],
   resolve: {
     alias: {
-      '@assets': path.resolve(__dirname, './src/assets'),
-      '@styles': path.resolve(__dirname, './src/assets/styles'),
-      '@imgs': path.resolve(__dirname, './src/assets/imgs'),
-      '@components': path.resolve(__dirname, './src/components'),
-      '@pages': path.resolve(__dirname, './src/pages'),
-      '@hooks': path.resolve(__dirname, './src/hooks'),
-      '@utils': path.resolve(__dirname, './src/utils'),
+      '@/**': path.resolve(__dirname, './src/**'),
+      '@/assets': path.resolve(__dirname, './src/assets'),
+      '@/styles': path.resolve(__dirname, './src/assets/styles'),
+      '@/imgs': path.resolve(__dirname, './src/assets/imgs'),
+      '@/components': path.resolve(__dirname, './src/components'),
+      '@/pages': path.resolve(__dirname, './src/pages'),
+      '@/hooks': path.resolve(__dirname, './src/hooks'),
+      '@/utils': path.resolve(__dirname, './src/utils'),
     },
   },
   server: {

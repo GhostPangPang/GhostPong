@@ -18,13 +18,14 @@
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
-      "@assets/*": ["src/assets/*"],
-      "@styles/*": ["src/assets/styles/*"],
-      "@imgs/*": ["src/assets/imgs/*"],
-      "@components/*": ["src/components/*"],
-      "@pages/*": ["src/pages/*"],
-      "@hooks/*": ["src/hooks/*"],
-      "@utils/*": ["src/utils/*"]
+      "@/*": ["src/*"],
+      "@/assets/*": ["src/assets/*"],
+      "@/styles/*": ["src/assets/styles/*"],
+      "@/imgs/*": ["src/assets/imgs/*"],
+      "@/components/*": ["src/components/*"],
+      "@/pages/*": ["src/pages/*"],
+      "@/hooks/*": ["src/hooks/*"],
+      "@/utils/*": ["src/utils/*"]
     }
   },
   "include": ["src", "src/vite-env.d.ts"],
