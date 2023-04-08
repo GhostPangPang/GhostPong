@@ -64,10 +64,11 @@
 	},
 	"lint-staged": {
 		"*.{ts,tsx}": [
-			"cd frontend && yarn lint --fix && yarn prettier"
+			"yarn lint",
+			"yarn prettier"
 		],
 		"*.{js,jsx}": [
-			"cd frontend && yarn prettier"
+			"yarn prettier"
 		]
 	}
 }
