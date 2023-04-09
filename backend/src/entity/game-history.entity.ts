@@ -8,10 +8,10 @@ export class GameHistory {
   id: number;
 
   @ManyToOne(() => User)
-  winnerId: number;
+  winner: User;
 
   @ManyToOne(() => User)
-  loserId: number;
+  loser: User;
 
   @Column()
   winnerScore: number;

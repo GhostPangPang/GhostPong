@@ -5,7 +5,7 @@ import { User } from './user.entity';
 @Entity()
 export class UserRecord {
   @OneToOne(() => User)
-  @JoinColumn()
+  @JoinColumn({ name: 'id' })
   @PrimaryColumn()
   id: number;
 

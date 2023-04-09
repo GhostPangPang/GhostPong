@@ -8,10 +8,10 @@ export class Friendship {
   id: number;
 
   @ManyToOne(() => User)
-  senderId: number;
+  sender: User;
 
   @ManyToOne(() => User)
-  receiverId: number;
+  receiver: User;
 
   @Column({ default: false })
   accept: boolean;

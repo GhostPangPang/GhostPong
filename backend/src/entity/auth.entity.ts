@@ -1,4 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+
+import { User } from './user.entity';
 
 export enum AuthStatus {
   REGISTERD = 'REGISTERD',
@@ -7,6 +9,7 @@ export enum AuthStatus {
 
 @Entity()
 export class Auth {
+  @OneToOne(() => User, (user) => user.id)
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -14,7 +17,7 @@ export class Auth {
   email: string;
 
   @Column({ length: 320, nullable: true })
-  two_fa: string;
+  twoFa: string;
 
   @Column({
     type: 'enum',

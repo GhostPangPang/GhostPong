@@ -1,4 +1,4 @@
-import { Entity, ManyToOne, PrimaryColumn } from 'typeorm';
+import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 
 import { User } from './user.entity';
 
@@ -6,9 +6,11 @@ import { User } from './user.entity';
 export class BlockedUser {
   @ManyToOne(() => User)
   @PrimaryColumn()
+  @JoinColumn({ name: 'user_id' })
   userId: number;
 
   @ManyToOne(() => User)
   @PrimaryColumn()
+  @JoinColumn({ name: 'blocked_user_id' })
   blockedUserId: number;
 }
