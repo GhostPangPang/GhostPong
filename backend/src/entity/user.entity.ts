@@ -4,9 +4,9 @@ import { Auth } from './auth.entity';
 
 @Entity({ name: 'users' })
 export class User {
-  @PrimaryColumn()
   @OneToOne(() => Auth, (auth) => auth.id)
-  @JoinColumn() // necessary for one-to-one relationship
+  @JoinColumn({ name: 'id' }) // necessary for one-to-one relationship
+  @PrimaryColumn()
   id: number;
 
   @Column({ length: 8 })

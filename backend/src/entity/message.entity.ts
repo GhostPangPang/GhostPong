@@ -9,10 +9,10 @@ export class Message {
   id: number;
 
   @ManyToOne(() => User)
-  senderId: number;
+  sender: User;
 
   @ManyToOne(() => Friendship)
-  friendId: number;
+  friend: Friendship;
 
   @Column({ length: 512 })
   contents: string;

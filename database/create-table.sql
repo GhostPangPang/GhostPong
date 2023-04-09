@@ -17,7 +17,7 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- Name: auth_status_enum; Type: TYPE; Schema: public; Owner: jisukim
+-- Name: auth_status_enum; Type: TYPE; Schema: public;
 --
 
 CREATE TYPE public.auth_status_enum AS ENUM (
@@ -26,27 +26,23 @@ CREATE TYPE public.auth_status_enum AS ENUM (
 );
 
 
-ALTER TYPE public.auth_status_enum OWNER TO jisukim;
 
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
 
 --
--- Name: achievement; Type: TABLE; Schema: public; Owner: jisukim
+-- Name: achievement; Type: TABLE; Schema: public;
 --
 
 CREATE TABLE public.achievement (
-    user_id integer NOT NULL,
     achievement integer NOT NULL,
-    user_id_id integer
+    user_id integer NOT NULL
 );
 
 
-ALTER TABLE public.achievement OWNER TO jisukim;
-
 --
--- Name: auth; Type: TABLE; Schema: public; Owner: jisukim
+-- Name: auth; Type: TABLE; Schema: public;
 --
 
 CREATE TABLE public.auth (
@@ -57,10 +53,8 @@ CREATE TABLE public.auth (
 );
 
 
-ALTER TABLE public.auth OWNER TO jisukim;
-
 --
--- Name: auth_id_seq; Type: SEQUENCE; Schema: public; Owner: jisukim
+-- Name: auth_id_seq; Type: SEQUENCE; Schema: public;
 --
 
 CREATE SEQUENCE public.auth_id_seq
@@ -72,46 +66,39 @@ CREATE SEQUENCE public.auth_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.auth_id_seq OWNER TO jisukim;
 
 --
--- Name: auth_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: jisukim
+-- Name: auth_id_seq; Type: SEQUENCE OWNED BY; Schema: public;
 --
 
 ALTER SEQUENCE public.auth_id_seq OWNED BY public.auth.id;
 
 
 --
--- Name: blocked_user; Type: TABLE; Schema: public; Owner: jisukim
---
+-- Name: blocked_user; Type: TABLE; Schema: public;
 
 CREATE TABLE public.blocked_user (
     user_id integer NOT NULL,
-    blocked_user_id integer NOT NULL,
-    user_id_id integer,
-    blocked_user_id_id integer
+    blocked_user_id integer NOT NULL
 );
 
 
-ALTER TABLE public.blocked_user OWNER TO jisukim;
 
 --
--- Name: friendship; Type: TABLE; Schema: public; Owner: jisukim
+-- Name: friendship; Type: TABLE; Schema: public;
 --
 
 CREATE TABLE public.friendship (
     id integer NOT NULL,
     accept boolean DEFAULT false NOT NULL,
     last_messege_time timestamp without time zone DEFAULT '-infinity'::timestamp without time zone NOT NULL,
-    sender_id_id integer,
-    receiver_id_id integer
+    sender_id integer,
+    receiver_id integer
 );
 
 
-ALTER TABLE public.friendship OWNER TO jisukim;
-
 --
--- Name: friendship_id_seq; Type: SEQUENCE; Schema: public; Owner: jisukim
+-- Name: friendship_id_seq; Type: SEQUENCE; Schema: public;
 --
 
 CREATE SEQUENCE public.friendship_id_seq
@@ -123,17 +110,15 @@ CREATE SEQUENCE public.friendship_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.friendship_id_seq OWNER TO jisukim;
-
 --
--- Name: friendship_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: jisukim
+-- Name: friendship_id_seq; Type: SEQUENCE OWNED BY; Schema: public;
 --
 
 ALTER SEQUENCE public.friendship_id_seq OWNED BY public.friendship.id;
 
 
 --
--- Name: game_history; Type: TABLE; Schema: public; Owner: jisukim
+-- Name: game_history; Type: TABLE; Schema: public;
 --
 
 CREATE TABLE public.game_history (
@@ -141,15 +126,14 @@ CREATE TABLE public.game_history (
     winner_score integer NOT NULL,
     loser_score integer NOT NULL,
     created_at timestamp without time zone DEFAULT now() NOT NULL,
-    winner_id_id integer,
-    loser_id_id integer
+    winner_id integer,
+    loser_id integer
 );
 
 
-ALTER TABLE public.game_history OWNER TO jisukim;
 
 --
--- Name: game_history_id_seq; Type: SEQUENCE; Schema: public; Owner: jisukim
+-- Name: game_history_id_seq; Type: SEQUENCE; Schema: public;
 --
 
 CREATE SEQUENCE public.game_history_id_seq
@@ -161,32 +145,30 @@ CREATE SEQUENCE public.game_history_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.game_history_id_seq OWNER TO jisukim;
 
 --
--- Name: game_history_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: jisukim
+-- Name: game_history_id_seq; Type: SEQUENCE OWNED BY; Schema: public;
 --
 
 ALTER SEQUENCE public.game_history_id_seq OWNED BY public.game_history.id;
 
 
 --
--- Name: message; Type: TABLE; Schema: public; Owner: jisukim
+-- Name: message; Type: TABLE; Schema: public;
 --
 
 CREATE TABLE public.message (
     id integer NOT NULL,
     contents character varying(512) NOT NULL,
     created_at timestamp without time zone DEFAULT now() NOT NULL,
-    sender_id_id integer,
-    friend_id_id integer
+    sender_id integer,
+    friend_id integer
 );
 
 
-ALTER TABLE public.message OWNER TO jisukim;
 
 --
--- Name: message_id_seq; Type: SEQUENCE; Schema: public; Owner: jisukim
+-- Name: message_id_seq; Type: SEQUENCE; Schema: public;
 --
 
 CREATE SEQUENCE public.message_id_seq
@@ -198,97 +180,88 @@ CREATE SEQUENCE public.message_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.message_id_seq OWNER TO jisukim;
 
 --
--- Name: message_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: jisukim
+-- Name: message_id_seq; Type: SEQUENCE OWNED BY; Schema: public;
 --
 
 ALTER SEQUENCE public.message_id_seq OWNED BY public.message.id;
 
 
 --
--- Name: message_view; Type: TABLE; Schema: public; Owner: jisukim
+-- Name: message_view; Type: TABLE; Schema: public;
 --
 
 CREATE TABLE public.message_view (
     user_id integer NOT NULL,
     friend_id integer NOT NULL,
-    last_view_time timestamp without time zone DEFAULT '-infinity'::timestamp without time zone NOT NULL,
-    user_id_id integer,
-    friend_id_id integer
+    last_view_time timestamp without time zone DEFAULT '-infinity'::timestamp without time zone NOT NULL
 );
 
 
-ALTER TABLE public.message_view OWNER TO jisukim;
 
 --
--- Name: user_record; Type: TABLE; Schema: public; Owner: jisukim
+-- Name: user_record; Type: TABLE; Schema: public;
 --
 
 CREATE TABLE public.user_record (
     id integer NOT NULL,
     win_count integer DEFAULT 0 NOT NULL,
-    lose_count integer DEFAULT 0 NOT NULL,
-    id_id integer
+    lose_count integer DEFAULT 0 NOT NULL
 );
 
 
-ALTER TABLE public.user_record OWNER TO jisukim;
 
 --
--- Name: users; Type: TABLE; Schema: public; Owner: jisukim
+-- Name: users; Type: TABLE; Schema: public;
 --
 
 CREATE TABLE public.users (
     id integer NOT NULL,
     nickname character varying(8) NOT NULL,
     exp integer DEFAULT 0 NOT NULL,
-    image character varying(256) NOT NULL,
-    id_id integer
+    image character varying(256) NOT NULL
 );
 
 
-ALTER TABLE public.users OWNER TO jisukim;
-
 --
--- Name: auth id; Type: DEFAULT; Schema: public; Owner: jisukim
+-- Name: auth id; Type: DEFAULT; Schema: public;
 --
 
 ALTER TABLE ONLY public.auth ALTER COLUMN id SET DEFAULT nextval('public.auth_id_seq'::regclass);
 
 
 --
--- Name: friendship id; Type: DEFAULT; Schema: public; Owner: jisukim
+-- Name: friendship id; Type: DEFAULT; Schema: public;
 --
 
 ALTER TABLE ONLY public.friendship ALTER COLUMN id SET DEFAULT nextval('public.friendship_id_seq'::regclass);
 
 
 --
--- Name: game_history id; Type: DEFAULT; Schema: public; Owner: jisukim
+-- Name: game_history id; Type: DEFAULT; Schema: public;
 --
 
 ALTER TABLE ONLY public.game_history ALTER COLUMN id SET DEFAULT nextval('public.game_history_id_seq'::regclass);
 
 
 --
--- Name: message id; Type: DEFAULT; Schema: public; Owner: jisukim
+-- Name: message id; Type: DEFAULT; Schema: public;
 --
 
 ALTER TABLE ONLY public.message ALTER COLUMN id SET DEFAULT nextval('public.message_id_seq'::regclass);
 
 
 --
--- Data for Name: achievement; Type: TABLE DATA; Schema: public; Owner: jisukim
+-- Data for Name: achievement; Type: TABLE DATA; Schema: public;
 --
 
-COPY public.achievement (user_id, achievement, user_id_id) FROM stdin;
+COPY public.achievement (achievement, user_id) FROM stdin;
 \.
 
 
 --
--- Data for Name: auth; Type: TABLE DATA; Schema: public; Owner: jisukim
+-- Data for Name: auth; Type: TABLE DATA; Schema: public;
 --
 
 COPY public.auth (id, email, two_fa, status) FROM stdin;
@@ -296,91 +269,91 @@ COPY public.auth (id, email, two_fa, status) FROM stdin;
 
 
 --
--- Data for Name: blocked_user; Type: TABLE DATA; Schema: public; Owner: jisukim
+-- Data for Name: blocked_user; Type: TABLE DATA; Schema: public;
 --
 
-COPY public.blocked_user (user_id, blocked_user_id, user_id_id, blocked_user_id_id) FROM stdin;
+COPY public.blocked_user (user_id, blocked_user_id) FROM stdin;
 \.
 
 
 --
--- Data for Name: friendship; Type: TABLE DATA; Schema: public; Owner: jisukim
+-- Data for Name: friendship; Type: TABLE DATA; Schema: public;
 --
 
-COPY public.friendship (id, accept, last_messege_time, sender_id_id, receiver_id_id) FROM stdin;
+COPY public.friendship (id, accept, last_messege_time, sender_id, receiver_id) FROM stdin;
 \.
 
 
 --
--- Data for Name: game_history; Type: TABLE DATA; Schema: public; Owner: jisukim
+-- Data for Name: game_history; Type: TABLE DATA; Schema: public;
 --
 
-COPY public.game_history (id, winner_score, loser_score, created_at, winner_id_id, loser_id_id) FROM stdin;
+COPY public.game_history (id, winner_score, loser_score, created_at, winner_id, loser_id) FROM stdin;
 \.
 
 
 --
--- Data for Name: message; Type: TABLE DATA; Schema: public; Owner: jisukim
+-- Data for Name: message; Type: TABLE DATA; Schema: public;
 --
 
-COPY public.message (id, contents, created_at, sender_id_id, friend_id_id) FROM stdin;
+COPY public.message (id, contents, created_at, sender_id, friend_id) FROM stdin;
 \.
 
 
 --
--- Data for Name: message_view; Type: TABLE DATA; Schema: public; Owner: jisukim
+-- Data for Name: message_view; Type: TABLE DATA; Schema: public;
 --
 
-COPY public.message_view (user_id, friend_id, last_view_time, user_id_id, friend_id_id) FROM stdin;
+COPY public.message_view (user_id, friend_id, last_view_time) FROM stdin;
 \.
 
 
 --
--- Data for Name: user_record; Type: TABLE DATA; Schema: public; Owner: jisukim
+-- Data for Name: user_record; Type: TABLE DATA; Schema: public;
 --
 
-COPY public.user_record (id, win_count, lose_count, id_id) FROM stdin;
+COPY public.user_record (id, win_count, lose_count) FROM stdin;
 \.
 
 
 --
--- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: jisukim
+-- Data for Name: users; Type: TABLE DATA; Schema: public;
 --
 
-COPY public.users (id, nickname, exp, image, id_id) FROM stdin;
+COPY public.users (id, nickname, exp, image) FROM stdin;
 \.
 
 
 --
--- Name: auth_id_seq; Type: SEQUENCE SET; Schema: public; Owner: jisukim
+-- Name: auth_id_seq; Type: SEQUENCE SET; Schema: public;
 --
 
 SELECT pg_catalog.setval('public.auth_id_seq', 1, false);
 
 
 --
--- Name: friendship_id_seq; Type: SEQUENCE SET; Schema: public; Owner: jisukim
+-- Name: friendship_id_seq; Type: SEQUENCE SET; Schema: public;
 --
 
 SELECT pg_catalog.setval('public.friendship_id_seq', 1, false);
 
 
 --
--- Name: game_history_id_seq; Type: SEQUENCE SET; Schema: public; Owner: jisukim
+-- Name: game_history_id_seq; Type: SEQUENCE SET; Schema: public;
 --
 
 SELECT pg_catalog.setval('public.game_history_id_seq', 1, false);
 
 
 --
--- Name: message_id_seq; Type: SEQUENCE SET; Schema: public; Owner: jisukim
+-- Name: message_id_seq; Type: SEQUENCE SET; Schema: public;
 --
 
 SELECT pg_catalog.setval('public.message_id_seq', 1, false);
 
 
 --
--- Name: game_history PK_0e74b90c56b815ed54e90a29f1a; Type: CONSTRAINT; Schema: public; Owner: jisukim
+-- Name: game_history PK_0e74b90c56b815ed54e90a29f1a; Type: CONSTRAINT; Schema: public;
 --
 
 ALTER TABLE ONLY public.game_history
@@ -388,7 +361,7 @@ ALTER TABLE ONLY public.game_history
 
 
 --
--- Name: blocked_user PK_5e9407ddba716fe853c8d8e8ae8; Type: CONSTRAINT; Schema: public; Owner: jisukim
+-- Name: blocked_user PK_5e9407ddba716fe853c8d8e8ae8; Type: CONSTRAINT; Schema: public;
 --
 
 ALTER TABLE ONLY public.blocked_user
@@ -396,7 +369,7 @@ ALTER TABLE ONLY public.blocked_user
 
 
 --
--- Name: auth PK_7e416cf6172bc5aec04244f6459; Type: CONSTRAINT; Schema: public; Owner: jisukim
+-- Name: auth PK_7e416cf6172bc5aec04244f6459; Type: CONSTRAINT; Schema: public;
 --
 
 ALTER TABLE ONLY public.auth
@@ -404,7 +377,7 @@ ALTER TABLE ONLY public.auth
 
 
 --
--- Name: users PK_a3ffb1c0c8416b9fc6f907b7433; Type: CONSTRAINT; Schema: public; Owner: jisukim
+-- Name: users PK_a3ffb1c0c8416b9fc6f907b7433; Type: CONSTRAINT; Schema: public;
 --
 
 ALTER TABLE ONLY public.users
@@ -412,7 +385,7 @@ ALTER TABLE ONLY public.users
 
 
 --
--- Name: message_view PK_a69f8288f28c3e46f5667e6ae77; Type: CONSTRAINT; Schema: public; Owner: jisukim
+-- Name: message_view PK_a69f8288f28c3e46f5667e6ae77; Type: CONSTRAINT; Schema: public;
 --
 
 ALTER TABLE ONLY public.message_view
@@ -420,7 +393,7 @@ ALTER TABLE ONLY public.message_view
 
 
 --
--- Name: message PK_ba01f0a3e0123651915008bc578; Type: CONSTRAINT; Schema: public; Owner: jisukim
+-- Name: message PK_ba01f0a3e0123651915008bc578; Type: CONSTRAINT; Schema: public;
 --
 
 ALTER TABLE ONLY public.message
@@ -428,7 +401,7 @@ ALTER TABLE ONLY public.message
 
 
 --
--- Name: user_record PK_d0c1972a0031748dfb3c0cba1e1; Type: CONSTRAINT; Schema: public; Owner: jisukim
+-- Name: user_record PK_d0c1972a0031748dfb3c0cba1e1; Type: CONSTRAINT; Schema: public;
 --
 
 ALTER TABLE ONLY public.user_record
@@ -436,7 +409,7 @@ ALTER TABLE ONLY public.user_record
 
 
 --
--- Name: achievement PK_d1561e1c8475065dc4794b2514e; Type: CONSTRAINT; Schema: public; Owner: jisukim
+-- Name: achievement PK_d1561e1c8475065dc4794b2514e; Type: CONSTRAINT; Schema: public;
 --
 
 ALTER TABLE ONLY public.achievement
@@ -444,7 +417,7 @@ ALTER TABLE ONLY public.achievement
 
 
 --
--- Name: friendship PK_dbd6fb568cd912c5140307075cc; Type: CONSTRAINT; Schema: public; Owner: jisukim
+-- Name: friendship PK_dbd6fb568cd912c5140307075cc; Type: CONSTRAINT; Schema: public;
 --
 
 ALTER TABLE ONLY public.friendship
@@ -452,123 +425,107 @@ ALTER TABLE ONLY public.friendship
 
 
 --
--- Name: users REL_4e1a9b2e94b013bd2cd1b211e3; Type: CONSTRAINT; Schema: public; Owner: jisukim
---
-
-ALTER TABLE ONLY public.users
-    ADD CONSTRAINT "REL_4e1a9b2e94b013bd2cd1b211e3" UNIQUE (id_id);
-
-
---
--- Name: user_record REL_8ff36382a525f9ae9d8cec514d; Type: CONSTRAINT; Schema: public; Owner: jisukim
---
-
-ALTER TABLE ONLY public.user_record
-    ADD CONSTRAINT "REL_8ff36382a525f9ae9d8cec514d" UNIQUE (id_id);
-
-
---
--- Name: message FK_370a46a36b3a5169c0335311471; Type: FK CONSTRAINT; Schema: public; Owner: jisukim
---
-
-ALTER TABLE ONLY public.message
-    ADD CONSTRAINT "FK_370a46a36b3a5169c0335311471" FOREIGN KEY (sender_id_id) REFERENCES public.users(id);
-
-
---
--- Name: users FK_4e1a9b2e94b013bd2cd1b211e34; Type: FK CONSTRAINT; Schema: public; Owner: jisukim
---
-
-ALTER TABLE ONLY public.users
-    ADD CONSTRAINT "FK_4e1a9b2e94b013bd2cd1b211e34" FOREIGN KEY (id_id) REFERENCES public.auth(id);
-
-
---
--- Name: blocked_user FK_5444d3185eb813e2bd16ec8552f; Type: FK CONSTRAINT; Schema: public; Owner: jisukim
---
-
-ALTER TABLE ONLY public.blocked_user
-    ADD CONSTRAINT "FK_5444d3185eb813e2bd16ec8552f" FOREIGN KEY (user_id_id) REFERENCES public.users(id);
-
-
---
--- Name: blocked_user FK_59e829478b1782d1bacbc17294e; Type: FK CONSTRAINT; Schema: public; Owner: jisukim
---
-
-ALTER TABLE ONLY public.blocked_user
-    ADD CONSTRAINT "FK_59e829478b1782d1bacbc17294e" FOREIGN KEY (blocked_user_id_id) REFERENCES public.users(id);
-
-
---
--- Name: friendship FK_6d8618e80b7c41b76fb9a087933; Type: FK CONSTRAINT; Schema: public; Owner: jisukim
---
-
-ALTER TABLE ONLY public.friendship
-    ADD CONSTRAINT "FK_6d8618e80b7c41b76fb9a087933" FOREIGN KEY (receiver_id_id) REFERENCES public.users(id);
-
-
---
--- Name: game_history FK_75ca9a755af3f8b55db66c7c802; Type: FK CONSTRAINT; Schema: public; Owner: jisukim
---
-
-ALTER TABLE ONLY public.game_history
-    ADD CONSTRAINT "FK_75ca9a755af3f8b55db66c7c802" FOREIGN KEY (loser_id_id) REFERENCES public.users(id);
-
-
---
--- Name: message_view FK_79ed4aa2c8f4ab4fa95ab5513b2; Type: FK CONSTRAINT; Schema: public; Owner: jisukim
---
-
-ALTER TABLE ONLY public.message_view
-    ADD CONSTRAINT "FK_79ed4aa2c8f4ab4fa95ab5513b2" FOREIGN KEY (friend_id_id) REFERENCES public.users(id);
-
-
---
--- Name: user_record FK_8ff36382a525f9ae9d8cec514d9; Type: FK CONSTRAINT; Schema: public; Owner: jisukim
---
-
-ALTER TABLE ONLY public.user_record
-    ADD CONSTRAINT "FK_8ff36382a525f9ae9d8cec514d9" FOREIGN KEY (id_id) REFERENCES public.users(id);
-
-
---
--- Name: achievement FK_a8284a3bb76decdffde2afd9872; Type: FK CONSTRAINT; Schema: public; Owner: jisukim
+-- Name: achievement FK_635944ebf4aa97cae0cf6ca1ac9; Type: FK CONSTRAINT; Schema: public;
 --
 
 ALTER TABLE ONLY public.achievement
-    ADD CONSTRAINT "FK_a8284a3bb76decdffde2afd9872" FOREIGN KEY (user_id_id) REFERENCES public.users(id);
+    ADD CONSTRAINT "FK_635944ebf4aa97cae0cf6ca1ac9" FOREIGN KEY (user_id) REFERENCES public.users(id);
 
 
 --
--- Name: friendship FK_eaa4e4be5796f6dad7c1e516ec1; Type: FK CONSTRAINT; Schema: public; Owner: jisukim
---
-
-ALTER TABLE ONLY public.friendship
-    ADD CONSTRAINT "FK_eaa4e4be5796f6dad7c1e516ec1" FOREIGN KEY (sender_id_id) REFERENCES public.users(id);
-
-
---
--- Name: message FK_f77d084284dc778ae53b0f8eb87; Type: FK CONSTRAINT; Schema: public; Owner: jisukim
---
-
-ALTER TABLE ONLY public.message
-    ADD CONSTRAINT "FK_f77d084284dc778ae53b0f8eb87" FOREIGN KEY (friend_id_id) REFERENCES public.friendship(id);
-
-
---
--- Name: game_history FK_fb06db9d7fa36ec76e0f9d94b72; Type: FK CONSTRAINT; Schema: public; Owner: jisukim
---
-
-ALTER TABLE ONLY public.game_history
-    ADD CONSTRAINT "FK_fb06db9d7fa36ec76e0f9d94b72" FOREIGN KEY (winner_id_id) REFERENCES public.users(id);
-
-
---
--- Name: message_view FK_fc6af45653b20066c1eb739553f; Type: FK CONSTRAINT; Schema: public; Owner: jisukim
+-- Name: message_view FK_6793de42c3eca75d3ef9b97a88b; Type: FK CONSTRAINT; Schema: public;
 --
 
 ALTER TABLE ONLY public.message_view
-    ADD CONSTRAINT "FK_fc6af45653b20066c1eb739553f" FOREIGN KEY (user_id_id) REFERENCES public.users(id);
+    ADD CONSTRAINT "FK_6793de42c3eca75d3ef9b97a88b" FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
+-- Name: game_history FK_7019e74ea4d02635745a61c58e1; Type: FK CONSTRAINT; Schema: public;
+--
+
+ALTER TABLE ONLY public.game_history
+    ADD CONSTRAINT "FK_7019e74ea4d02635745a61c58e1" FOREIGN KEY (winner_id) REFERENCES public.users(id);
+
+
+--
+-- Name: friendship FK_86463167c10dc37dbf9d39728bd; Type: FK CONSTRAINT; Schema: public;
+--
+
+ALTER TABLE ONLY public.friendship
+    ADD CONSTRAINT "FK_86463167c10dc37dbf9d39728bd" FOREIGN KEY (sender_id) REFERENCES public.users(id);
+
+
+--
+-- Name: friendship FK_8cced01afb7c006b9643aed97bf; Type: FK CONSTRAINT; Schema: public;
+--
+
+ALTER TABLE ONLY public.friendship
+    ADD CONSTRAINT "FK_8cced01afb7c006b9643aed97bf" FOREIGN KEY (receiver_id) REFERENCES public.users(id);
+
+
+--
+-- Name: users FK_a3ffb1c0c8416b9fc6f907b7433; Type: FK CONSTRAINT; Schema: public;
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT "FK_a3ffb1c0c8416b9fc6f907b7433" FOREIGN KEY (id) REFERENCES public.auth(id);
+
+
+--
+-- Name: message_view FK_a8ae0ad544f2eba7e32e566d4f1; Type: FK CONSTRAINT; Schema: public;
+--
+
+ALTER TABLE ONLY public.message_view
+    ADD CONSTRAINT "FK_a8ae0ad544f2eba7e32e566d4f1" FOREIGN KEY (friend_id) REFERENCES public.users(id);
+
+
+--
+-- Name: game_history FK_bfbf49da476f5a8a3e25ed5e1d3; Type: FK CONSTRAINT; Schema: public;
+--
+
+ALTER TABLE ONLY public.game_history
+    ADD CONSTRAINT "FK_bfbf49da476f5a8a3e25ed5e1d3" FOREIGN KEY (loser_id) REFERENCES public.users(id);
+
+
+--
+-- Name: message FK_c0ab99d9dfc61172871277b52f6; Type: FK CONSTRAINT; Schema: public;
+--
+
+ALTER TABLE ONLY public.message
+    ADD CONSTRAINT "FK_c0ab99d9dfc61172871277b52f6" FOREIGN KEY (sender_id) REFERENCES public.users(id);
+
+
+--
+-- Name: message FK_cba26a3eec7d3d131f17d4efdae; Type: FK CONSTRAINT; Schema: public;
+--
+
+ALTER TABLE ONLY public.message
+    ADD CONSTRAINT "FK_cba26a3eec7d3d131f17d4efdae" FOREIGN KEY (friend_id) REFERENCES public.friendship(id);
+
+
+--
+-- Name: blocked_user FK_cd5ab0713578c02d22dc896b994; Type: FK CONSTRAINT; Schema: public;
+--
+
+ALTER TABLE ONLY public.blocked_user
+    ADD CONSTRAINT "FK_cd5ab0713578c02d22dc896b994" FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
+-- Name: user_record FK_d0c1972a0031748dfb3c0cba1e1; Type: FK CONSTRAINT; Schema: public;
+--
+
+ALTER TABLE ONLY public.user_record
+    ADD CONSTRAINT "FK_d0c1972a0031748dfb3c0cba1e1" FOREIGN KEY (id) REFERENCES public.users(id);
+
+
+--
+-- Name: blocked_user FK_f88699f6ba7d51f7765849a73b9; Type: FK CONSTRAINT; Schema: public;
+--
+
+ALTER TABLE ONLY public.blocked_user
+    ADD CONSTRAINT "FK_f88699f6ba7d51f7765849a73b9" FOREIGN KEY (blocked_user_id) REFERENCES public.users(id);
 
 
 --
