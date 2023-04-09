@@ -9,7 +9,6 @@ export enum AuthStatus {
 
 @Entity()
 export class Auth {
-  @OneToOne(() => User, (user) => user.id)
   @PrimaryGeneratedColumn()
   id: number;
 
