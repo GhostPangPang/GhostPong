@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { ReactComponent as Logo } from '@/imgs/logo-sm.svg';
+import { ReactComponent as Logo } from '@/svgs/logo-sm.svg';
 
 const StyledHeader = styled.header`
   display: flex;
