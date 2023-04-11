@@ -14,8 +14,8 @@
 		"build-storybook": "storybook build",
 		"type-check": "tsc --noEmit",
 		"chromatic": "chromatic --exit-zero-on-changes",
-		"lint": "eslint . --ext .ts,.tsx",
-		"prettier": "prettier --write ."
+		"lint": "eslint src --ext .ts,.tsx",
+		"prettier": "prettier src"
 	},
 	"dependencies": {
 		"react": "^18.2.0",
@@ -74,10 +74,10 @@
 	"lint-staged": {
 		"*.{ts,tsx}": [
 			"yarn lint --cache-file . --fix",
-			"yarn prettier"
+			"yarn prettier --write"
 		],
 		"*.{js,jsx}": [
-			"yarn prettier"
+			"yarn prettier --write"
 		]
 	}
 }
