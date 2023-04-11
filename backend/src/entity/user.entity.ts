@@ -9,7 +9,7 @@ export class User {
   @PrimaryColumn()
   id: number;
 
-  @Column({ length: 8 })
+  @Column({ length: 8, unique: true })
   nickname: string;
 
   @Column({ default: 0 })

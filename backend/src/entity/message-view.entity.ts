@@ -1,9 +1,10 @@
-import { Column, Entity, ManyToOne, PrimaryColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryColumn, Unique } from 'typeorm';
 
 import { Friendship } from './friendship.entity';
 import { User } from './user.entity';
 
 @Entity()
+@Unique(['user', 'friend'])
 export class MessageView {
   @ManyToOne(() => User)
   @PrimaryColumn({ name: 'user_id' })
