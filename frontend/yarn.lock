@@ -1980,6 +1980,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@polka/url@npm:^1.0.0-next.20":
+  version: 1.0.0-next.21
+  resolution: "@polka/url@npm:1.0.0-next.21"
+  checksum: c7654046d38984257dd639eab3dc770d1b0340916097b2fac03ce5d23506ada684e05574a69b255c32ea6a144a957c8cd84264159b545fca031c772289d88788
+  languageName: node
+  linkType: hard
+
 "@rollup/pluginutils@npm:^4.2.0":
   version: 4.2.1
   resolution: "@rollup/pluginutils@npm:4.2.1"
@@ -4380,6 +4387,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@vitest/ui@npm:^0.30.1":
+  version: 0.30.1
+  resolution: "@vitest/ui@npm:0.30.1"
+  dependencies:
+    "@vitest/utils": 0.30.1
+    fast-glob: ^3.2.12
+    fflate: ^0.7.4
+    flatted: ^3.2.7
+    pathe: ^1.1.0
+    picocolors: ^1.0.0
+    sirv: ^2.0.2
+  checksum: 5b7a2440f95ff34d7a4f71d4c88569d82b49814088adab54c9271ee949a4d00e0141680d055c470a0e5584d8d5354ee4febcaa29f7ccf1af597bfb14c4fc54dd
+  languageName: node
+  linkType: hard
+
 "@vitest/utils@npm:0.30.0":
   version: 0.30.0
   resolution: "@vitest/utils@npm:0.30.0"
@@ -4388,6 +4410,17 @@ __metadata:
     loupe: ^2.3.6
     pretty-format: ^27.5.1
   checksum: 5be61df96b16a501bd6c0c5313056ef60b427b0ebb9734a62898aecf23f5415c1ceca9e0bdcd53e2ce4675e750fe48e7f7fa9d2b86be9a9d4f4fee5b28c8d8ce
+  languageName: node
+  linkType: hard
+
+"@vitest/utils@npm:0.30.1":
+  version: 0.30.1
+  resolution: "@vitest/utils@npm:0.30.1"
+  dependencies:
+    concordance: ^5.0.4
+    loupe: ^2.3.6
+    pretty-format: ^27.5.1
+  checksum: a685b6ba34b0173e4da388055dc2a22ba335a74cf99679f7036cea1d183e0ee804a01984148eaad0e0f48bfb786d33800ff6dd549b94f3d064e14caa0857ee62
   languageName: node
   linkType: hard
 
@@ -7062,7 +7095,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-glob@npm:^3.2.11, fast-glob@npm:^3.2.2, fast-glob@npm:^3.2.9":
+"fast-glob@npm:^3.2.11, fast-glob@npm:^3.2.12, fast-glob@npm:^3.2.2, fast-glob@npm:^3.2.9":
   version: 3.2.12
   resolution: "fast-glob@npm:3.2.12"
   dependencies:
@@ -7129,6 +7162,13 @@ __metadata:
   version: 5.0.4
   resolution: "fetch-retry@npm:5.0.4"
   checksum: 5c8a87f523223052b1192cc353001ceff8fe9f87926577c7e6532140c0780421cd7f7e0230e3d69f73f308b4071c4e6317b53e1058e31213dac1100c3ff96513
+  languageName: node
+  linkType: hard
+
+"fflate@npm:^0.7.4":
+  version: 0.7.4
+  resolution: "fflate@npm:0.7.4"
+  checksum: b812ab26047432db70ff4c73eb45ad53bd0774575b4818b9c61c2921e89ec65d1259f06ec1618f2ac55e6a2f2e29b6dc09173d213b46580bc69efae5344bf8f1
   languageName: node
   linkType: hard
 
@@ -7245,7 +7285,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"flatted@npm:^3.1.0":
+"flatted@npm:^3.1.0, flatted@npm:^3.2.7":
   version: 3.2.7
   resolution: "flatted@npm:3.2.7"
   checksum: 427633049d55bdb80201c68f7eb1cbd533e03eac541f97d3aecab8c5526f12a20ccecaeede08b57503e772c769e7f8680b37e8d482d1e5f8d7e2194687f9ea35
@@ -7549,6 +7589,7 @@ __metadata:
     "@typescript-eslint/parser": latest
     "@vitejs/plugin-react-swc": ^3.0.0
     "@vitest/coverage-c8": ^0.30.1
+    "@vitest/ui": ^0.30.1
     chromatic: ^6.17.3
     eslint: ^8.37.0
     eslint-config-prettier: ^8.8.0
@@ -9786,6 +9827,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"mrmime@npm:^1.0.0":
+  version: 1.0.1
+  resolution: "mrmime@npm:1.0.1"
+  checksum: cc979da44bbbffebaa8eaf7a45117e851f2d4cb46a3ada6ceb78130466a04c15a0de9a9ce1c8b8ba6f6e1b8618866b1352992bf1757d241c0ddca558b9f28a77
+  languageName: node
+  linkType: hard
+
 "ms@npm:2.0.0":
   version: 2.0.0
   resolution: "ms@npm:2.0.0"
@@ -11658,6 +11706,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"sirv@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "sirv@npm:2.0.2"
+  dependencies:
+    "@polka/url": ^1.0.0-next.20
+    mrmime: ^1.0.0
+    totalist: ^3.0.0
+  checksum: 6982f8ecee9392d246d7eeea8144e50334fe1b46a4fa942995a844ea88c2d518b17cce781bb09926c9a5692a7002a207d18dfd67af2aa538a15e733dc2042298
+  languageName: node
+  linkType: hard
+
 "sisteransi@npm:^1.0.5":
   version: 1.0.5
   resolution: "sisteransi@npm:1.0.5"
@@ -12405,6 +12464,13 @@ __metadata:
   version: 1.0.1
   resolution: "toidentifier@npm:1.0.1"
   checksum: 952c29e2a85d7123239b5cfdd889a0dde47ab0497f0913d70588f19c53f7e0b5327c95f4651e413c74b785147f9637b17410ac8c846d5d4a20a5a33eb6dc3a45
+  languageName: node
+  linkType: hard
+
+"totalist@npm:^3.0.0":
+  version: 3.0.1
+  resolution: "totalist@npm:3.0.1"
+  checksum: 5132d562cf88ff93fd710770a92f31dbe67cc19b5c6ccae2efc0da327f0954d211bbfd9456389655d726c624f284b4a23112f56d1da931ca7cfabbe1f45e778a
   languageName: node
   linkType: hard
 
