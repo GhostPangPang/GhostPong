@@ -3,7 +3,7 @@ interface ErrorFallbackProps {
   resetErrorBoundary: () => void;
 }
 
-const ErrorFallback = ({ error, resetErrorBoundary }: ErrorFallbackProps) => {
+export const ErrorFallback = ({ error, resetErrorBoundary }: ErrorFallbackProps) => {
   return (
     <div role="alert">
       <p>Something went wrong:</p>
@@ -12,5 +12,3 @@ const ErrorFallback = ({ error, resetErrorBoundary }: ErrorFallbackProps) => {
     </div>
   );
 };
-
-export default ErrorFallback;

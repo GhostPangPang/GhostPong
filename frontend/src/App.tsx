@@ -4,7 +4,7 @@ import { ThemeProvider } from 'styled-components';
 import theme from '@/styles/theme';
 import { Header } from '@/components/layout/Header';
 import { Content } from '@/components/layout/Content';
-import ErrorFallback from '@/components/common/Error/ErrorFallback';
+import { ErrorFallback } from '@/components/error/ErrorFallback';
 import { ErrorBoundary } from 'react-error-boundary';
 
 function App() {
