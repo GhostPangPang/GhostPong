@@ -1,8 +1,9 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, Unique } from 'typeorm';
 
 import { User } from './user.entity';
 
 @Entity()
+@Unique(['sender', 'receiver'])
 export class Friendship {
   @PrimaryGeneratedColumn()
   id: number;

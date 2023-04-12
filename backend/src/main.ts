@@ -1,3 +1,4 @@
+import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
@@ -6,6 +7,15 @@ import { AppConfigService } from './config/app/configuration.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  // validation pipe 를 global 으로 사용.
+  // (transform: true 는 DTO 에서 @IsNumber() 를 사용할 때, string 을 number 로 자동 변환해줌)
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    }),
+  );
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle('GhostPong API')
