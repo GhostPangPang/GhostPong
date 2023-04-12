@@ -3,17 +3,17 @@ import styled from 'styled-components';
 export interface AvatarProps {
   src?: string;
   alt?: string;
-  size?: 'small' | 'medium' | 'large';
+  size?: 'sm' | 'md' | 'lg';
   onClick?: (event: React.MouseEvent<HTMLImageElement>) => void;
 }
 
 const getSize = (size: AvatarProps['size']) => {
   switch (size) {
-    case 'small':
+    case 'sm':
       return '4rem';
-    case 'medium':
+    case 'md':
       return '6.4rem';
-    case 'large':
+    case 'lg':
       return '18rem';
   }
 };
