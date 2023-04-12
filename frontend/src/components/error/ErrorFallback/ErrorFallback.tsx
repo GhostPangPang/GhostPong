@@ -3,14 +3,12 @@ interface ErrorFallbackProps {
   resetErrorBoundary: () => void;
 }
 
-const ErrorFallback = ({ error, resetErrorBoundary }: ErrorFallbackProps) => {
+export const ErrorFallback = ({ error, resetErrorBoundary }: ErrorFallbackProps) => {
   return (
     <div role="alert">
       <p>Something went wrong:</p>
-      <pre style={{ color: 'red' }}>{error.message}</pre>
+      <pre style={{ color: 'yellow' }}>{error.message}</pre>
       <button onClick={resetErrorBoundary}>Try again</button>
     </div>
   );
 };
-
-export default ErrorFallback;

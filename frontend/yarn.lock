@@ -3555,7 +3555,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/dom@npm:^9.0.0":
+"@testing-library/dom@npm:^9.0.0, @testing-library/dom@npm:^9.2.0":
   version: 9.2.0
   resolution: "@testing-library/dom@npm:9.2.0"
   dependencies:
@@ -7577,6 +7577,7 @@ __metadata:
     "@storybook/react-vite": ^7.0.2
     "@storybook/testing-library": ^0.0.14-next.2
     "@storybook/theming": 6.5.8
+    "@testing-library/dom": ^9.2.0
     "@testing-library/jest-dom": ^5.16.5
     "@testing-library/react": ^14.0.0
     "@testing-library/user-event": ^14.4.3
