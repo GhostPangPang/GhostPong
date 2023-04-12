@@ -3,7 +3,7 @@
     "target": "ESNext",
     "useDefineForClassFields": true,
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
-    "types": ["vite/client", "vite-plugin-svgr/client"],
+    "types": ["vite/client", "vite-plugin-svgr/client", "vitest/globals"],
     "allowJs": false,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -22,12 +22,14 @@
       "@/assets/*": ["src/assets/*"],
       "@/styles/*": ["src/assets/styles/*"],
       "@/imgs/*": ["src/assets/imgs/*"],
+      "@/svgs/*": ["src/assets/svgs/*"],
+      "@/test/*": ["src/test/*"],
       "@/components/*": ["src/components/*"],
       "@/pages/*": ["src/pages/*"],
       "@/hooks/*": ["src/hooks/*"],
       "@/utils/*": ["src/utils/*"]
     }
   },
-  "include": ["src", "src/vite-env.d.ts"],
+  "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
