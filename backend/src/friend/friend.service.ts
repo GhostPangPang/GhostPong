@@ -19,8 +19,7 @@ export class FriendService {
   async checkFriendCountLimit(userID: number): Promise<void> {
     const count = await this.friendshipRepository.count({
       where: {
-        sender: { id: userID },
-        accept: true,
+        receiver: { id: userID },
       },
     });
     if (count >= FRIEND_LIMIT) throw new ConflictException('친구 신청 정원이 꽉 찬 유저입니다.');
