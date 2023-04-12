@@ -6,7 +6,7 @@ module.exports = {
     sourceType: 'module',
   },
   plugins: ['@typescript-eslint', 'import', 'prettier'],
-  extends: ['plugin:@typescript-eslint/recommended', 'plugin:prettier/recommended', 'plugin:import/recommended'],
+  extends: ['plugin:@typescript-eslint/recommended', 'plugin:import/recommended'],
   root: true,
   env: {
     node: true,
@@ -19,6 +19,8 @@ module.exports = {
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/no-unused-vars': 'error',
+    '@typescript-eslint/no-explicit-any': 'error',
+    'prettier/prettier': 'error',
     'import/order': [
       'error',
       {

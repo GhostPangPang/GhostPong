@@ -21,7 +21,7 @@
     "db": "docker compose --env-file .env -f ../docker-compose.yml up -d",
     "db:down": "docker compose --env-file .env -f ../docker-compose.yml down",
     "db:reset": "docker compose --env-file .env -f ../docker-compose.yml down -v",
-    "postinstall": "cd .. && husky install backend/.husky"
+    "postinstall": "if [ ! -d .husky/_ ]; then cd .. && husky install backend/.husky; fi"
   },
   "dependencies": {
     "@hapi/joi": "^17.1.1",
@@ -32,6 +32,7 @@
     "@nestjs/serve-static": "^3.0.1",
     "@nestjs/swagger": "^6.3.0",
     "@nestjs/typeorm": "^9.0.1",
+    "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
     "pg": "^8.10.0",
     "postgresql": "^0.0.1",
@@ -44,7 +45,7 @@
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",
     "@nestjs/schematics": "^9.0.0",
-    "@nestjs/testing": "^9.0.0",
+    "@nestjs/testing": "^9.4.0",
     "@types/express": "^4.17.13",
     "@types/hapi__joi": "^17.1.9",
     "@types/jest": "29.2.4",
