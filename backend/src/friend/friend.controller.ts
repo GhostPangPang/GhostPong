@@ -1,5 +1,16 @@
-import { Controller, Param, Post, Query } from '@nestjs/common';
-import { ApiOkResponse, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { Controller, Headers, HttpCode, HttpStatus, Param, Post, Query } from '@nestjs/common';
+import {
+  ApiConflictResponse,
+  ApiHeaders,
+  ApiNotFoundResponse,
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
+
+import { ErrorResponseDto } from '../common/dto/error-response.dto';
+import { SuccessResponseDto } from '../common/dto/sucess-response.dto';
 
 import { FriendService } from './friend.service';
 
@@ -11,32 +22,35 @@ export class FriendController {
   //@Get()
   //getFriends() {}
 
-  /**
-   * 친구 신청하기 (닉네임)
-   * @example { "nickname": "test" }
-
-   * @param nickname
-   * @returns
-   */
-  @ApiOkResponse({ description: '친구 신청을 보냈습니다.' })
+  @ApiOperation({ summary: '친구 신청하기 (닉네임)' })
+  @ApiConflictResponse({
+    type: ErrorResponseDto,
+    description: '신청 정원 초과, 이미 친구 상태, 이미 친구 신청 상태, 자기 자신에게 신청',
+  })
+  @ApiNotFoundResponse({ type: ErrorResponseDto, description: '유저 없음' })
+  @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
   @ApiQuery({ name: 'nickname', description: '친구 신청할 유저의 닉네임' })
+  @HttpCode(HttpStatus.OK)
   @Post()
   requestFriendByNickname(
-    @Query('nickname')
-    nickname: string,
-  ) {
-    const myId = 1;
-
+    @Query('nickname') nickname: string,
+    @Headers('x-my-id') myId: number,
+  ): Promise<SuccessResponseDto> {
     return this.friendService.requestFriendByNickname(myId, nickname);
   }
 
-  @ApiOkResponse({ description: '친구 신청을 보냈습니다.' })
+  @ApiOperation({ summary: '친구 신청하기 (id)' })
+  @ApiConflictResponse({
+    type: ErrorResponseDto,
+    description: '신청 정원 초과, 이미 친구 상태, 이미 친구 신청 상태, 자기 자신에게 신청',
+  })
+  @ApiNotFoundResponse({ type: ErrorResponseDto, description: '유저 없음' })
+  @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
+  @ApiParam({ name: 'userId', description: '친구 신청할 유저의 아이디' })
+  @HttpCode(HttpStatus.OK)
   @Post('/:userId')
-  requestFriend(@Param('userId') userId: number) {
-    // me to me 하면 어쩌지?
-    const myId = 1;
-
-    return this.friendService.requestFriend(myId, userId);
+  requestFriendById(@Param('userId') userId: number, @Headers('x-my-id') myId: number): Promise<SuccessResponseDto> {
+    return this.friendService.requestFriendById(myId, userId);
   }
 
   /*  @Delete('/:userId')
@@ -51,13 +65,3 @@ export class FriendController {
   @Post('/deny/:userId')
   denyFriend() {}*/
 }
-
-/**
- * 친구 신청 거절	POST	/friend/deny/{user_id}
- * 친구 신청 수락	POST	/friend/accept/{user_id}
- * 친구 끊기	DELETE	/friend/{user_id}
- * 친구 신청하기 (id)	POST	/friend/{user_id}
- * 친구 신청하기 (닉네임)	POST	/friend?nickname=””
- * 친구 신청받은 리스트 가져오기	GET	/friend/request
- * 친구 정보 리스트 가져오기	GET	/friend
- */
