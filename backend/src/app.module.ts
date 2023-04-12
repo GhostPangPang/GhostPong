@@ -6,6 +6,7 @@ import { AppService } from './app.service';
 import { AppConfigModule } from './config/app/configuration.module';
 import { DatabaseConfigModule } from './config/database/configuration.module';
 import { DatabaseConfigService } from './config/database/configuration.service';
+import { FriendModule } from './friend/friend.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { DatabaseConfigService } from './config/database/configuration.service';
       imports: [DatabaseConfigModule],
       useClass: DatabaseConfigService,
     }),
+    FriendModule,
   ],
   controllers: [AppController],
   providers: [AppService],
