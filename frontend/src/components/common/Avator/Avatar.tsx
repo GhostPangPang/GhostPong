@@ -33,7 +33,7 @@ const StyledAvatar = styled.img<AvatarProps>`
 export const Avatar = ({
   src = 'https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg',
   alt = 'default_name',
-  size = 'medium',
+  size = 'md',
   onClick,
 }: AvatarProps) => {
   return <StyledAvatar src={src} alt={alt} size={size} onClick={onClick} />;
