@@ -40,6 +40,13 @@ export class FriendController {
     return this.friendService.requestFriendByNickname(myId, nickname);
   }
 
+  @ApiOperation({ summary: '친구 신청받은 리스트 가져오기' })
+  @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
+  @Get('request')
+  getFriendRequestList(@Headers('x-my-id') myId: number): Promise<RequestedFriendResponseDto> {
+    return this.friendService.getFriendRequestList(myId);
+  }
+
   @ApiOperation({ summary: '친구 신청하기 (id)' })
   @ApiConflictResponse({
     type: ErrorResponseDto,
@@ -49,25 +56,20 @@ export class FriendController {
   @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
   @ApiParam({ name: 'userId', description: '친구 신청할 유저의 아이디' })
   @HttpCode(HttpStatus.OK)
-  @Post('/:userId')
+  @Post(':userId')
   requestFriendById(@Param('userId') userId: number, @Headers('x-my-id') myId: number): Promise<SuccessResponseDto> {
     return this.friendService.requestFriendById(myId, userId);
   }
 
-  @ApiOperation({ summary: '친구 신청받은 리스트 가져오기' })
+  /*
   @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
-  @Get('/request')
-  getFriendRequestList(@Headers('x-my-id') myId: number): Promise<RequestedFriendResponseDto> {
-    return this.friendService.getFriendRequestList(myId);
-  }
+  @Post('accept/:userId')
+  acceptFriend(@Param('userId') userId: number) {}
 
-  /*  @Delete('/:userId')
+  @Post('deny/:userId')
+  denyFriend(@Param('userId') userId: number) {}
+
+  @Delete(':userId')
   deleteFriend() {}
 */
-  /*
-  @Post('/accept/:userId')
-  acceptFriend() {}
-
-  @Post('/deny/:userId')
-  denyFriend() {}*/
 }
