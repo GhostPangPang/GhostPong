@@ -31,4 +31,8 @@ export const GlobalStyle = createGlobalStyle<{ theme: typeof theme }>`
   * {
     box-sizing: border-box;
   }
+
+  a[href], input[type='submit'], input[type='image'], label[for], select, button {
+       cursor: pointer;
+  }
 `;
