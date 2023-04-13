@@ -3,9 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { EntityNotFoundError, Repository } from 'typeorm';
 
 import { FRIEND_LIMIT } from '../common/constant';
-import { SuccessResponseDto } from '../common/dto/sucess-response.dto';
+import { SuccessResponseDto } from '../common/dto/success-response.dto';
 import { Friendship } from '../entity/friendship.entity';
 import { User } from '../entity/user.entity';
+
+import { RequestedFriendResponseDto } from './dto/requested-friend-response.dto';
 
 @Injectable()
 export class FriendService {
@@ -87,5 +89,16 @@ export class FriendService {
       sender: { id: senderId },
       receiver: { id: receiverId },
     });
+  }
+
+  async getFriendRequestList(userId: number): Promise<RequestedFriendResponseDto> {
+    return {
+      requests: (
+        await this.friendshipRepository.find({
+          relations: ['sender'],
+          where: { receiver: { id: userId }, accept: false },
+        })
+      ).map((friendship) => friendship.sender),
+    };
   }
 }

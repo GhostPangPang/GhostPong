@@ -1,5 +1,5 @@
 export class SuccessResponseDto {
-  constructor(readonly msg: string) {
+  constructor(msg: string) {
     this.message = msg;
   }
   /**
