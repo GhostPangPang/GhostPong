@@ -1,4 +1,4 @@
-import { Controller, Headers, HttpCode, HttpStatus, Param, Post, Query } from '@nestjs/common';
+import { Controller, Get, Headers, HttpCode, HttpStatus, Param, Post, Query } from '@nestjs/common';
 import {
   ApiConflictResponse,
   ApiHeaders,
@@ -10,8 +10,9 @@ import {
 } from '@nestjs/swagger';
 
 import { ErrorResponseDto } from '../common/dto/error-response.dto';
-import { SuccessResponseDto } from '../common/dto/sucess-response.dto';
+import { SuccessResponseDto } from '../common/dto/success-response.dto';
 
+import { RequestedFriendResponseDto } from './dto/requested-friend-response.dto';
 import { FriendService } from './friend.service';
 
 @ApiTags('friend')
@@ -53,12 +54,17 @@ export class FriendController {
     return this.friendService.requestFriendById(myId, userId);
   }
 
+  @ApiOperation({ summary: '친구 신청받은 리스트 가져오기' })
+  @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
+  @Get('/request')
+  getFriendRequestList(@Headers('x-my-id') myId: number): Promise<RequestedFriendResponseDto> {
+    return this.friendService.getFriendRequestList(myId);
+  }
+
   /*  @Delete('/:userId')
   deleteFriend() {}
-
-  @Get('/request')
-  getFriendRequestList() {}
-
+*/
+  /*
   @Post('/accept/:userId')
   acceptFriend() {}
 
