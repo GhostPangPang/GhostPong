@@ -40,14 +40,14 @@ export class FriendController {
     @Query('nickname') nickname: string,
     @Headers('x-my-id') myId: number,
   ): Promise<SuccessResponseDto> {
-    return this.friendService.requestFriendByNickname(myId, nickname);
+    return this.friendService.requestFriendByNickname(+myId, nickname);
   }
 
   @ApiOperation({ summary: '친구 신청받은 리스트 가져오기' })
   @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
   @Get('request')
   getFriendRequestList(@Headers('x-my-id') myId: number): Promise<RequestedFriendResponseDto> {
-    return this.friendService.getFriendRequestList(myId);
+    return this.friendService.getFriendRequestList(+myId);
   }
 
   @ApiOperation({ summary: '친구 신청하기 (id)' })
@@ -60,7 +60,7 @@ export class FriendController {
   @HttpCode(HttpStatus.OK)
   @Post(':userId')
   requestFriendById(@Param('userId') userId: number, @Headers('x-my-id') myId: number): Promise<SuccessResponseDto> {
-    return this.friendService.requestFriendById(myId, userId);
+    return this.friendService.requestFriendById(+myId, userId);
   }
 
   @ApiOperation({ summary: '친구 신청 수락하기' })
@@ -72,15 +72,23 @@ export class FriendController {
   @ApiParam({ name: 'userId', description: '친구 신청 수락할 유저의 아이디' })
   @HttpCode(HttpStatus.OK)
   @Post('accept/:userId')
-  acceptFriendRequest(@Param('userId') userId: number, @Headers('x-my-id') myId: number) {
-    return this.friendService.acceptFriendRequest(userId, myId);
+  acceptFriendRequest(@Param('userId') userId: number, @Headers('x-my-id') myId: number): Promise<SuccessResponseDto> {
+    return this.friendService.acceptFriendRequest(userId, +myId);
+  }
+
+  @ApiOperation({ summary: '친구 신청 거절하기' })
+  @ApiBadRequestResponse({ type: ErrorResponseDto, description: '자기 자신에게 거절요청' })
+  @ApiNotFoundResponse({ type: ErrorResponseDto, description: '유저 신청내역 없음' })
+  @ApiConflictResponse({ type: ErrorResponseDto, description: '이미 친구 상태' })
+  @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
+  @HttpCode(HttpStatus.OK)
+  @Post('reject/:userId')
+  rejectFriendRequest(@Param('userId') userId: number, @Headers('x-my-id') myId: number): Promise<SuccessResponseDto> {
+    // FIXME: myId 임시 헤더라서 + 갈겼습니다...
+    return this.friendService.rejectFriendRequest(userId, +myId);
   }
 
   /*
-  @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
-  @Post('deny/:userId')
-  denyFriendRequest(@Param('userId') userId: number) {}
-
   @Delete(':userId')
   deleteFriend() {}
   */

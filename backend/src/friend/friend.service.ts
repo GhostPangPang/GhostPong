@@ -113,4 +113,14 @@ export class FriendService {
     );
     return new SuccessResponseDto('친구 추가 되었습니다.');
   }
+
+  async rejectFriendRequest(senderId: number, receiverId: number): Promise<SuccessResponseDto> {
+    if (senderId === receiverId) throw new BadRequestException('스스로를 거부하지 마십시오...');
+    const friendship = await this.findFriendshipByUsers(senderId, receiverId);
+    if (friendship === null) throw new NotFoundException('존재하지 않는 친구 신청입니다.');
+    if (friendship.accept === true) throw new ConflictException('이미 친구인 유저입니다.');
+
+    await this.friendshipRepository.delete({ id: friendship.id });
+    return new SuccessResponseDto('친구 신청을 거절했습니다.');
+  }
 }
