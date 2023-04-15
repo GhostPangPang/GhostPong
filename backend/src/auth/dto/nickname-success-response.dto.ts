@@ -1,6 +1,6 @@
 export class NicknameSuccessResponseDto {
-  constructor(msg: string) {
-    this.nickname = msg;
+  constructor(nickname: string) {
+    this.nickname = nickname;
   }
 
   nickname: string;
