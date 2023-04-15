@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -17,6 +17,7 @@ export class AuthService {
     private readonly userRepository: Repository<User>,
   ) {}
 
+  // TODO refactor: Move to user (@san)
   async checkDuplicatedNickname(nickname: string): Promise<void> {
     // check duplicated nickname
     if (await this.userRepository.findOneBy({ nickname })) {
@@ -24,8 +25,16 @@ export class AuthService {
     }
   }
 
+  async checkAuthId(authId: number): Promise<void> {
+    if (await this.authRepository.findOneBy({ id: authId })) {
+      throw new NotFoundException('존재하지 않는 인증 정보입니다.');
+    }
+  }
+
+  // TODO refactor: Move to user (@san)
   // create new User's nickname
-  async createNickname(authId: number, nickname: string): Promise<NicknameSuccessResponseDto> {
+  async createUser(authId: number, nickname: string): Promise<NicknameSuccessResponseDto> {
+    await this.checkAuthId(authId);
     await this.checkDuplicatedNickname(nickname);
     await this.userRepository.insert({
       id: authId,
