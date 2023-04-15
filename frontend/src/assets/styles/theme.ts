@@ -35,6 +35,13 @@ const boxShadow = {
   lg: '0px 8px 16px rgba(0, 0, 0, 0.25)',
 };
 
+const padding = {
+  sm: '0.8rem',
+  md: '1.6rem',
+  lg: '2.4rem',
+  layout: '0 2.4rem',
+};
+
 const theme = {
   color,
   backgroundColor,
@@ -42,6 +49,7 @@ const theme = {
   fontSize,
   borderRadius,
   boxShadow,
+  padding,
 };
 
 export default theme;

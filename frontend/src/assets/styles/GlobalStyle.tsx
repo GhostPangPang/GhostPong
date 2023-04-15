@@ -17,7 +17,6 @@ export const GlobalStyle = createGlobalStyle<{ theme: typeof theme }>`
 
   #root {
     height: 100%;
-	padding: 0 2.4rem;
   }
 
   html,
