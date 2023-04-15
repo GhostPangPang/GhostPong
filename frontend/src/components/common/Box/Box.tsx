@@ -13,7 +13,6 @@ type BoxProps = {
 export const Box = ({ width, height, children, ...props }: BoxProps) => {
   return (
     <GBox width={width} height={height} {...props}>
-      Box
       {children}
     </GBox>
   );

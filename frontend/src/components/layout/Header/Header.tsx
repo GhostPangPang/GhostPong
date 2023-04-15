@@ -12,7 +12,7 @@ const StyledHeader = styled.header`
 export const Header = () => {
   return (
     <StyledHeader>
-      <Logo />
+      <Logo height="80%" />
     </StyledHeader>
   );
 };

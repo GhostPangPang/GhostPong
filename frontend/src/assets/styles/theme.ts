@@ -29,7 +29,7 @@ const borderRadius = {
   md: '8px',
 };
 
-const shadow = {
+const boxShadow = {
   sm: '0px 2px 4px rgba(0, 0, 0, 0.25)',
   md: '0px 4px 8px rgba(0, 0, 0, 0.25)',
   lg: '0px 8px 16px rgba(0, 0, 0, 0.25)',
@@ -41,7 +41,7 @@ const theme = {
   weight,
   fontSize,
   borderRadius,
-  shadow,
+  boxShadow,
 };
 
 export default theme;
