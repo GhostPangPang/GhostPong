@@ -16,8 +16,8 @@
     "build-stories": "yarn build-storybook ...",
     "type-check": "tsc --noEmit",
     "chromatic": "chromatic --exit-zero-on-changes",
-    "lint": "eslint src --ext .ts,.tsx",
-    "prettier": "prettier src"
+    "lint": "eslint",
+    "prettier": "prettier"
   },
   "dependencies": {
     "react": "^18.2.0",
