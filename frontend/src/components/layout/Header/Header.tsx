@@ -4,7 +4,7 @@ import { ReactComponent as Logo } from '@/svgs/logo-sm.svg';
 export const Header = () => {
   return (
     <StyledHeader>
-      <Logo />
+      <Logo height="80%" />
     </StyledHeader>
   );
 };
