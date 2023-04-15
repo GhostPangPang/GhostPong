@@ -1,4 +1,10 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityNotFoundError, Repository } from 'typeorm';
 
@@ -18,77 +24,66 @@ export class FriendService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async checkFriendCountLimit(userID: number): Promise<void> {
-    const count = await this.friendshipRepository.count({
+  private async countFriend(userId: number): Promise<number> {
+    return this.friendshipRepository.count({
       where: {
-        receiver: { id: userID },
+        receiver: { id: userId },
+        accept: true,
       },
     });
-    if (count >= FRIEND_LIMIT) throw new ConflictException('친구 신청 정원이 꽉 찬 유저입니다.');
   }
 
-  async checkExistsFriendship(senderId: number, receiverId: number): Promise<void> {
-    const count = await this.friendshipRepository.count({
+  private async countFriendRequest(userId: number): Promise<number> {
+    return this.friendshipRepository.count({
       where: {
-        sender: { id: senderId },
-        receiver: { id: receiverId },
+        receiver: { id: userId },
+        accept: false,
       },
     });
-    if (count !== 0) throw new ConflictException('이미 친구 신청을 보냈거나 친구인 유저입니다.');
   }
 
-  async findUserNicknameById(id: number): Promise<string> {
-    // FIXME: Replace with UserService.
-    try {
-      return (
-        await this.userRepository.findOneOrFail({
-          select: ['nickname'],
-          where: { id: id },
-        })
-      ).nickname;
-    } catch (error) {
-      throw error instanceof EntityNotFoundError ? new NotFoundException('존재하지 않는 유저입니다.') : error;
-    }
+  private findFriendshipByUsers(senderId: number, receiverId: number): Promise<Friendship | null> {
+    return this.friendshipRepository.findOneBy({
+      sender: { id: senderId },
+      receiver: { id: receiverId },
+    });
   }
 
-  async findUserIdByNickname(nickname: string): Promise<number> {
-    // FIXME: Replace with UserService.
+  private async findUserIdByNickname(nickname: string): Promise<User> {
     try {
-      return (
-        await this.userRepository.findOneOrFail({
-          select: ['id'],
-          where: { nickname: nickname },
-        })
-      ).id;
+      return await this.userRepository.findOneOrFail({
+        select: ['id'],
+        where: { nickname: nickname },
+      });
     } catch (error) {
       throw error instanceof EntityNotFoundError ? new NotFoundException('존재하지 않는 유저입니다.') : error;
     }
   }
 
   async requestFriendByNickname(senderId: number, nickname: string): Promise<SuccessResponseDto> {
-    const receiverId = await this.findUserIdByNickname(nickname);
-    await this.requestFriend(senderId, receiverId);
-    return new SuccessResponseDto(`${nickname} 에게 친구 신청을 보냈습니다.`);
+    return this.requestFriendById(senderId, (await this.findUserIdByNickname(nickname)).id);
   }
 
   async requestFriendById(senderId: number, receiverId: number): Promise<SuccessResponseDto> {
-    await this.requestFriend(senderId, receiverId);
-    return new SuccessResponseDto(`${await this.findUserNicknameById(receiverId)} 에게 친구 신청을 보냈습니다.`);
-  }
+    if (senderId === receiverId) throw new BadRequestException('당신은 이미 당신의 소중한 친구입니다. ^_^');
 
-  /**
-   * id 로 FreindShip row 를 만든다.
-   * @param id 친구 신청할 유저의 id
-   */
-  async requestFriend(senderId: number, receiverId: number): Promise<void> {
-    if (senderId === receiverId) throw new ConflictException('당신은 이미 당신의 소중한 친구입니다. ^_^');
+    const friendship = await this.findFriendshipByUsers(senderId, receiverId);
+    if (friendship !== null) {
+      if (friendship.accept) {
+        throw new ConflictException('이미 친구인 유저입니다.');
+      }
+      throw new ConflictException('이미 친구 신청을 보낸 유저입니다.');
+    }
+    if ((await this.countFriend(receiverId)) >= FRIEND_LIMIT)
+      throw new ForbiddenException('친구 정원이 꽉 찬 유저입니다.');
+    if ((await this.countFriendRequest(senderId)) >= FRIEND_LIMIT)
+      throw new ForbiddenException('친구 신청 정원이 꽉 찬 유저입니다.');
 
-    await this.checkExistsFriendship(senderId, receiverId);
-    await this.checkFriendCountLimit(receiverId);
     await this.friendshipRepository.insert({
       sender: { id: senderId },
       receiver: { id: receiverId },
     });
+    return new SuccessResponseDto('친구 신청을 보냈습니다.');
   }
 
   async getFriendRequestList(userId: number): Promise<RequestedFriendResponseDto> {
@@ -100,5 +95,22 @@ export class FriendService {
         })
       ).map((friendship) => friendship.sender),
     };
+  }
+
+  async acceptFriendRequest(senderId: number, receiverId: number): Promise<SuccessResponseDto> {
+    if (senderId === receiverId) throw new BadRequestException('당신은 이미 당신의 소중한 친구입니다. ^_^');
+    const friendship = await this.findFriendshipByUsers(senderId, receiverId);
+    if (friendship === null) throw new NotFoundException('존재하지 않는 친구 신청입니다.');
+    if (friendship.accept === true) throw new ConflictException('이미 친구인 유저입니다.');
+    if ((await this.countFriend(senderId)) >= FRIEND_LIMIT)
+      throw new ForbiddenException('친구 정원이 꽉 찬 유저입니다.');
+
+    await this.friendshipRepository.update(
+      { id: friendship.id },
+      {
+        accept: true,
+      },
+    );
+    return new SuccessResponseDto('친구 추가 되었습니다.');
   }
 }
