@@ -3,3 +3,4 @@
  */
 
 export const FRIEND_LIMIT = 42;
+export const DEFAULT_IMAGE = 'default image';

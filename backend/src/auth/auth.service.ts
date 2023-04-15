@@ -2,6 +2,7 @@ import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
+import { DEFAULT_IMAGE } from '../common/constant';
 import { Auth } from '../entity/auth.entity';
 import { User } from '../entity/user.entity';
 
@@ -29,6 +30,8 @@ export class AuthService {
     await this.userRepository.insert({
       id: authId,
       nickname: nickname,
+      exp: 0,
+      image: DEFAULT_IMAGE,
     });
     return new NicknameSuccessResponseDto(nickname);
   }
