@@ -1,10 +1,6 @@
 import styled from 'styled-components';
 import { GComponent, GComponentProps } from '../GComponent';
 
-// interface BoxProps extends React.HTMLAttributes<HTMLDivElement> {
-//   children?: React.ReactNode;
-// }
-
 type BoxProps = {
   width?: string;
   height?: string;
