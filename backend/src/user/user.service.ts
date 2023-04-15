@@ -16,13 +16,13 @@ export class UserService {
     private readonly blockedUserRepository: Repository<BlockedUser>,
   ) {}
 
-  async requestMetaInfo(myId: number): Promise<MetaInfoResponseDto> {
-    const metaInfo = await this.findMetaInfoById(myId);
+  async getUserMetaInfo(myId: number): Promise<MetaInfoResponseDto> {
+    const metaInfo = await this.findUserById(myId);
     const numbers = await this.findBlockedByUserId(myId);
     return new MetaInfoResponseDto(metaInfo, numbers);
   }
 
-  async findMetaInfoById(userId: number): Promise<User> {
+  async findUserById(userId: number): Promise<User> {
     const user = await this.userRepository.findOne({
       where: {
         id: userId,
@@ -33,15 +33,10 @@ export class UserService {
   }
 
   async findBlockedByUserId(userId: number): Promise<number[]> {
-    const blockedList = await this.blockedUserRepository
-      .createQueryBuilder('blockedUser')
-      .select('blockedUser')
-      .where('blockedUser.userId = :id', { id: userId })
-      .getMany();
-    const numbers: number[] = [];
-    if (blockedList) {
-      blockedList.forEach((BlockedUser) => numbers.push(BlockedUser.blockedUserId));
-    }
-    return numbers;
+    return (
+      await this.blockedUserRepository.findBy({
+        userId: userId,
+      })
+    ).map((blockedUser) => blockedUser.blockedUserId);
   }
 }
