@@ -7,7 +7,7 @@ export const GlobalStyle = createGlobalStyle<{ theme: typeof theme }>`
 
   @font-face {
     font-family: 'ChailceNoggin';
-    src: url('../font/ChailceNoggin.ttf');
+    src: url('/font/ChailceNoggin.ttf');
   }
 
   /* 결과 → 16px × 62.5% = 10px */

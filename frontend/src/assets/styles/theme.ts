@@ -1,5 +1,6 @@
 const color = {
   primary: '#7875FF',
+  secondary: '#61FFE3',
   background: '#2F2F2F',
   foreground: '#FFFFFF',
   surface: 'rgba(161, 161, 161, 0.28)',
@@ -7,7 +8,7 @@ const color = {
 
 const backgroundColor = color;
 
-const weight = {
+const fontWeight = {
   bold: 700,
   medium: 500,
   regular: 400,
@@ -45,7 +46,7 @@ const padding = {
 const theme = {
   color,
   backgroundColor,
-  weight,
+  fontWeight,
   fontSize,
   borderRadius,
   boxShadow,
