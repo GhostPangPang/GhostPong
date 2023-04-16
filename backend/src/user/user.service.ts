@@ -6,7 +6,7 @@ import { SuccessResponseDto } from '../common/dto/success-response.dto';
 import { BlockedUser } from '../entity/blocked-user.entity';
 import { User } from '../entity/user.entity';
 
-import { MetaInfoResponseDto } from './dto/meta-info-response.dto';
+import { UserInfoResponseDto } from './dto/user-info-response.dto';
 
 @Injectable()
 export class UserService {
@@ -17,10 +17,10 @@ export class UserService {
     private readonly blockedUserRepository: Repository<BlockedUser>,
   ) {}
 
-  async getUserInfo(myId: number): Promise<MetaInfoResponseDto> {
-    const metaInfo = await this.findExistUser(myId);
+  async getUserInfo(myId: number): Promise<UserInfoResponseDto> {
+    const userInfo = await this.findExistUser(myId);
     const numbers = await this.findBlockedByUserId(myId);
-    return new MetaInfoResponseDto(metaInfo, numbers);
+    return new UserInfoResponseDto(userInfo, numbers);
   }
 
   async updateProfileImage(myId: number, imageUrl: string): Promise<SuccessResponseDto> {
@@ -34,7 +34,7 @@ export class UserService {
       id: userId,
     });
     if (user === null) {
-      throw new NotFoundException('존재하지 않은 유저입니다.');
+      throw new NotFoundException('존재하지 않는 유저입니다.');
     }
     return user;
   }

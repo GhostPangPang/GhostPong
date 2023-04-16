@@ -4,8 +4,8 @@ import { ApiHeaders, ApiNotFoundResponse, ApiOperation, ApiTags } from '@nestjs/
 import { ErrorResponseDto } from '../common/dto/error-response.dto';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
 
-import { MetaInfoResponseDto } from './dto/meta-info-response.dto';
 import { UpdateImageRequest } from './dto/update-image-request.dto';
+import { UserInfoResponseDto } from './dto/user-info-response.dto';
 import { UserService } from './user.service';
 
 @ApiTags('user')
@@ -17,7 +17,7 @@ export class UserController {
   @ApiNotFoundResponse({ type: ErrorResponseDto, description: '유저 없음' })
   @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
   @Get()
-  getUserMetaInfo(@Headers('x-my-id') myId: number): Promise<MetaInfoResponseDto> {
+  getUserMetaInfo(@Headers('x-my-id') myId: number): Promise<UserInfoResponseDto> {
     return this.userService.getUserInfo(myId);
   }
 

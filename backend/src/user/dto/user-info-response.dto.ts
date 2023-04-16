@@ -1,6 +1,6 @@
 import { User } from '../../entity/user.entity';
 
-export class MetaInfoResponseDto {
+export class UserInfoResponseDto {
   constructor(user: User, numbers: number[]) {
     this.nickname = user.nickname;
     this.image = user.image;
