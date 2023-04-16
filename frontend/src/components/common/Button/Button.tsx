@@ -44,7 +44,7 @@ const GButton = styled(GComponent)<ButtonProps>`
   }
 
   border-color: ${(props) => props.color || props.theme.color.primary};
-  ${({ props }) => {
+  ${(props) => {
     switch (props.size) {
       case 'sm':
         return `
