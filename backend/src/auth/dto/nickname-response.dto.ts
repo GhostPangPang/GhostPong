@@ -3,5 +3,8 @@ export class NicknameResponseDto {
     this.nickname = nickname;
   }
 
+  /**
+   * 변경된 nickname
+   */
   nickname: string;
 }
