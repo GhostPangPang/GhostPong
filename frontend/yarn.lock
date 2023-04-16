@@ -7602,6 +7602,7 @@ __metadata:
     husky: ">=7"
     jsdom: ^21.1.1
     lint-staged: ">=10"
+    polished: ^4.2.2
     prettier: ^2.8.7
     prop-types: ^15.8.1
     react: ^18.2.0
