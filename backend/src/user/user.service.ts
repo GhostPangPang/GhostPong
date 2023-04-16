@@ -54,7 +54,7 @@ export class UserService {
     const user = await this.userRepository.findOne({
       where: { id: myId },
     });
-    if (!user) throw new NotFoundException('존재하지 않는 유저입니다. ');
+    if (user === null) throw new NotFoundException('존재하지 않는 유저입니다. ');
 
     try {
       await this.userRepository.update({ id: myId }, { image: imageUrl });
