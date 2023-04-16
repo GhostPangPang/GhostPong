@@ -18,7 +18,7 @@ export class UserController {
   @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
   @Get()
   getUserMetaInfo(@Headers('x-my-id') myId: number): Promise<MetaInfoResponseDto> {
-    return this.userService.getUserMetaInfo(myId);
+    return this.userService.getUserInfo(myId);
   }
 
   @ApiOperation({ summary: '유저 프로필 사진 변경하기' })
