@@ -31,10 +31,17 @@ export class AuthService {
     }
   }
 
+  async checkAlreadyExist(authId: number): Promise<void> {
+    if (await this.userRepository.findOneBy({ id: authId })) {
+      throw new ConflictException('이미 존재하는 user입니다.');
+    }
+  }
+
   // TODO refactor: Move to user (@san)
   // create new User's nickname
   async createUser(authId: number, nickname: string): Promise<NicknameResponseDto> {
     await this.checkAuthId(authId);
+    await this.checkAlreadyExist(authId);
     await this.checkDuplicatedNickname(nickname);
     await this.userRepository.insert({
       id: authId,
