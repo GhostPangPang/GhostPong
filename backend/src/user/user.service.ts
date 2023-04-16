@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -38,7 +38,7 @@ export class UserService {
         id: userId,
       },
     });
-    if (!user) throw new NotFoundException('존재하지 않는 유저입니다.');
+    if (user === null) throw new NotFoundException('존재하지 않는 유저입니다.');
     return user;
   }
 
@@ -51,15 +51,7 @@ export class UserService {
   }
 
   async updateProfileImageById(myId: number, imageUrl: string): Promise<void> {
-    const user = await this.userRepository.findOne({
-      where: { id: myId },
-    });
-    if (user === null) throw new NotFoundException('존재하지 않는 유저입니다. ');
-
-    try {
-      await this.userRepository.update({ id: myId }, { image: imageUrl });
-    } catch (error) {
-      throw new ConflictException('이미지 업로드에 실패하였습니다.');
-    }
+    await this.findUserById(myId);
+    await this.userRepository.update({ id: myId }, { image: imageUrl });
   }
 }
