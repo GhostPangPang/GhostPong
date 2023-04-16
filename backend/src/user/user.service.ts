@@ -33,10 +33,8 @@ export class UserService {
   */
 
   async findUserById(userId: number): Promise<User> {
-    const user = await this.userRepository.findOne({
-      where: {
-        id: userId,
-      },
+    const user = await this.userRepository.findOneBy({
+      id: userId,
     });
     if (user === null) throw new NotFoundException('존재하지 않는 유저입니다.');
     return user;
