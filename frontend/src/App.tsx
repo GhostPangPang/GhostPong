@@ -6,6 +6,7 @@ import { Header } from '@/components/layout/Header';
 import { Content } from '@/components/layout/Content';
 import { ErrorFallback } from '@/components/error/ErrorFallback';
 import { ErrorBoundary } from 'react-error-boundary';
+import { Button } from './components/common/Button';
 
 function App() {
   return (
@@ -26,7 +27,7 @@ function App() {
         }}
       >
         <Content>
-          <Box />
+          <Button size="md">Button</Button>
         </Content>
       </ErrorBoundary>
     </ThemeProvider>
