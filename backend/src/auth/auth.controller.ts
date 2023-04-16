@@ -5,7 +5,7 @@ import { ErrorResponseDto } from '../common/dto/error-response.dto';
 
 import { AuthService } from './auth.service';
 import { NicknameRequestDto } from './dto/nickname-request.dto';
-import { NicknameSuccessResponseDto } from './dto/nickname-success-response.dto';
+import { NicknameResponseDto } from './dto/nickname-response.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -19,14 +19,14 @@ export class AuthController {
     type: ErrorResponseDto,
     description: '중복된 nickname',
   })
-  @ApiNotFoundResponse({ type: ErrorResponseDto, description: '' })
+  @ApiNotFoundResponse({ type: ErrorResponseDto, description: 'Invalid한 auth-id' })
   @ApiHeaders([{ name: 'x-auth-id', description: '내 auth 아이디 (임시값)' }])
   @HttpCode(HttpStatus.OK)
   @Post('nickname')
   createUser(
     @Headers('x-auth-id') authId: number,
     @Body() { nickname }: NicknameRequestDto,
-  ): Promise<NicknameSuccessResponseDto> {
+  ): Promise<NicknameResponseDto> {
     return this.authService.createUser(authId, nickname);
   }
 
