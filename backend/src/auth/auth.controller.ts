@@ -17,7 +17,7 @@ export class AuthController {
   @ApiOperation({ summary: '닉네임 초기 설정' })
   @ApiConflictResponse({
     type: ErrorResponseDto,
-    description: '중복된 nickname',
+    description: '중복된 nickname 또는 이미 생성된 user(중복된 auth-id)',
   })
   @ApiNotFoundResponse({ type: ErrorResponseDto, description: 'Invalid한 auth-id' })
   @ApiHeaders([{ name: 'x-auth-id', description: '내 auth 아이디 (임시값)' }])
