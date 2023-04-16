@@ -23,12 +23,13 @@ export const Link: Story = {
     as: 'a',
     size: 'md',
     children: 'Button',
+    href: 'https://naver.com',
   },
 };
 
 export const Korean: Story = {
   args: {
-    as: 'a',
+    as: 'button',
     size: 'md',
     children: '차단',
   },
