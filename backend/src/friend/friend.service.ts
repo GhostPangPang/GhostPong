@@ -95,12 +95,7 @@ export class FriendService {
       throw new ConflictException('이미 친구인 유저입니다.');
     }
     await this.checkFriendLimit(receiverId);
-    await this.friendshipRepository.update(
-      { id: friendship.id },
-      {
-        accept: true,
-      },
-    );
+    await this.friendshipRepository.update({ id: friendship.id }, { accept: true });
     return new SuccessResponseDto('친구 추가 되었습니다.');
   }
 
