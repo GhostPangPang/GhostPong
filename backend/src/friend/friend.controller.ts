@@ -13,7 +13,8 @@ import {
 import { ErrorResponseDto } from '../common/dto/error-response.dto';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
 
-import { RequestedFriendResponseDto } from './dto/requested-friend-response.dto';
+import { FriendsResponseDto } from './dto/friend-response.dto';
+import { RequestedFriendsResponseDto } from './dto/requested-friend-response.dto';
 import { FriendService } from './friend.service';
 
 @ApiTags('friend')
@@ -21,8 +22,12 @@ import { FriendService } from './friend.service';
 export class FriendController {
   constructor(private readonly friendService: FriendService) {}
 
-  //@Get()
-  //getFriends() {}
+  @ApiOperation({ summary: '친구 리스트 가져오기' })
+  @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
+  @Get()
+  getFriendsList(@Headers('x-my-id') myId: number): Promise<FriendsResponseDto> {
+    return this.friendService.getFriendsList(+myId);
+  }
 
   // TODO : validtaion pipe 추가..
   @ApiOperation({ summary: '친구 신청하기 (닉네임)' })
@@ -43,8 +48,8 @@ export class FriendController {
   @ApiOperation({ summary: '친구 신청받은 리스트 가져오기' })
   @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
   @Get('request')
-  getFriendRequestList(@Headers('x-my-id') myId: number): Promise<RequestedFriendResponseDto> {
-    return this.friendService.getFriendRequestList(+myId);
+  getFriendRequestsList(@Headers('x-my-id') myId: number): Promise<RequestedFriendsResponseDto> {
+    return this.friendService.getFriendRequestsList(+myId);
   }
 
   @ApiOperation({ summary: '친구 신청하기 (id)' })

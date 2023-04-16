@@ -13,7 +13,8 @@ import { SuccessResponseDto } from '../common/dto/success-response.dto';
 import { Friendship } from '../entity/friendship.entity';
 import { User } from '../entity/user.entity';
 
-import { RequestedFriendResponseDto } from './dto/requested-friend-response.dto';
+import { FriendsResponseDto } from './dto/friend-response.dto';
+import { RequestedFriendsResponseDto } from './dto/requested-friend-response.dto';
 
 @Injectable()
 export class FriendService {
@@ -64,6 +65,28 @@ export class FriendService {
   // !SECTION private
 
   // SECTION: public
+  async getFriendsList(userId: number): Promise<FriendsResponseDto> {
+    return {
+      friends: (
+        await this.friendshipRepository.find({
+          relations: ['sender', 'receiver', 'messageView'],
+          where: [
+            { sender: { id: userId }, accept: true },
+            { receiver: { id: userId }, accept: true },
+          ],
+        })
+      ).map(({ sender, receiver, lastMessegeTime, messageView }) => {
+        // messgeView 가 없으면 (find() 가 undefined null
+        const lastViewTime = messageView.find((view) => view.user.id === userId)?.lastViewTime || null;
+        return {
+          ...(sender.id === userId ? receiver : sender),
+          lastMessegeTime,
+          lastViewTime,
+        };
+      }),
+    };
+  }
+
   async requestFriendByNickname(senderId: number, nickname: string): Promise<SuccessResponseDto> {
     try {
       return this.requestFriendById(
@@ -75,12 +98,7 @@ export class FriendService {
     }
   }
 
-  /**
-   *
-   * @param senderId 신청 보내는 유저 : 나
-   * @param receiverId 신청 받는 유저 : 상대방
-   * @returns
-   */
+  // FIXME :  2 -> 3 있으면 3 -> 2 도 안돼야 하는데 돌아감
   async requestFriendById(senderId: number, receiverId: number): Promise<SuccessResponseDto> {
     // FIXME : pipe 로 로직 바꾸기
     if (senderId === receiverId) {
@@ -112,12 +130,13 @@ export class FriendService {
     return new SuccessResponseDto('친구 신청을 보냈습니다.');
   }
 
-  async getFriendRequestList(userId: number): Promise<RequestedFriendResponseDto> {
+  async getFriendRequestsList(userId: number): Promise<RequestedFriendsResponseDto> {
     return {
       requests: (
         await this.friendshipRepository.find({
           relations: ['sender'],
           where: { receiver: { id: userId }, accept: false },
+          order: { lastMessegeTime: 'DESC' },
         })
       ).map((friendship) => friendship.sender),
     };
