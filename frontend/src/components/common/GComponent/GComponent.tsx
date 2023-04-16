@@ -1,6 +1,7 @@
 import { forwardRef } from 'react';
-import { GSystemProps, getSystemStyle, Theme } from './GSystemStyle';
+import { GSystemProps, getSystemStyle } from './GSystemStyle';
 import { useTheme } from 'styled-components';
+import { Theme } from '@/assets/styles/types';
 
 type AsProp<T extends React.ElementType> = {
   as?: T;
