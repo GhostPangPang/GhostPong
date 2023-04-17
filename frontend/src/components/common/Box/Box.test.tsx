@@ -1,10 +1,10 @@
 import { describe, test, expect } from 'vitest';
 import { render } from '@/test';
-import { Header } from './Header';
+import { Box } from './Box';
 
 describe('Header', () => {
   test('should render successfully', () => {
-    const { baseElement } = render(<Header />);
+    const { baseElement } = render(<Box>Box</Box>);
     expect(baseElement).toBeTruthy();
   });
 });

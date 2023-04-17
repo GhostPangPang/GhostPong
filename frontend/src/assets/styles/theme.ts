@@ -2,7 +2,10 @@ const color = {
   primary: '#7875FF',
   background: '#2F2F2F',
   foreground: '#FFFFFF',
+  surface: 'rgba(161, 161, 161, 0.28)',
 };
+
+const backgroundColor = color;
 
 const weight = {
   bold: 700,
@@ -21,23 +24,32 @@ const fontSize = {
   xl: '2.4rem', // 24px
 };
 
-const responsive = {
-  mobile: '@media (max-width: 767px)',
-  tablet: '@media (min-width: 768px) and (max-width: 1059px)',
-  pc: '@media (min-width: 1060px)',
-};
-
 const borderRadius = {
   sm: '4px',
   md: '8px',
 };
 
+const boxShadow = {
+  sm: '0px 2px 4px rgba(0, 0, 0, 0.25)',
+  md: '0px 4px 8px rgba(0, 0, 0, 0.25)',
+  lg: '0px 8px 16px rgba(0, 0, 0, 0.25)',
+};
+
+const padding = {
+  sm: '0.8rem',
+  md: '1.6rem',
+  lg: '2.4rem',
+  layout: '0 2.4rem',
+};
+
 const theme = {
   color,
+  backgroundColor,
   weight,
   fontSize,
-  responsive,
   borderRadius,
+  boxShadow,
+  padding,
 };
 
 export default theme;

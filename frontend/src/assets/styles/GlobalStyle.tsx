@@ -17,7 +17,6 @@ export const GlobalStyle = createGlobalStyle<{ theme: typeof theme }>`
 
   #root {
     height: 100%;
-	padding: 0 2.4rem;
   }
 
   html,
@@ -30,5 +29,9 @@ export const GlobalStyle = createGlobalStyle<{ theme: typeof theme }>`
 
   * {
     box-sizing: border-box;
+  }
+
+  a[href], input[type='submit'], input[type='image'], label[for], select, button {
+       cursor: pointer;
   }
 `;
