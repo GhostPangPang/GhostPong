@@ -32,6 +32,9 @@ export const GlobalStyle = createGlobalStyle<{ theme: typeof theme }>`
   }
 
   a[href], input[type='submit'], input[type='image'], label[for], select, button {
-       cursor: pointer;
+    cursor: pointer;
+  }
+  a:link {
+    text-decoration: none;
   }
 `;
