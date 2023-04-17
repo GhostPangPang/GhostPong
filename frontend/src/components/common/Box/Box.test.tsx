@@ -1,10 +1,11 @@
 import { describe, test, expect } from 'vitest';
-import { render } from '@/test';
+import { render, screen } from '@/test';
 import { Box } from './Box';
 
 describe('Header', () => {
   test('should render successfully', () => {
-    const { baseElement } = render(<Box>Box</Box>);
-    expect(baseElement).toBeTruthy();
+    render(<Box width="300px" height="300px" borderRadius="sm" />);
   });
+  screen.debug();
+  expect(screen.getByRole('div')).toBeTruthy();
 });

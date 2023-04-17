@@ -5,3 +5,5 @@
 export type WithoutNullableValues<Type> = {
   [Key in keyof Type]: WithoutNullableValues<NonNullable<Type[Key]>>;
 };
+
+export type Modify<T, R> = Omit<T, keyof R> & R;
