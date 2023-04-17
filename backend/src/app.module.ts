@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
+import { BlockedModule } from './blocked/blocked.module';
 import { AppConfigModule } from './config/app/configuration.module';
 import { DatabaseConfigModule } from './config/database/configuration.module';
 import { DatabaseConfigService } from './config/database/configuration.service';
@@ -20,6 +21,7 @@ import { UserModule } from './user/user.module';
     FriendModule,
     UserModule,
     AuthModule,
+    BlockedModule,
   ],
   controllers: [AppController],
   providers: [AppService],
