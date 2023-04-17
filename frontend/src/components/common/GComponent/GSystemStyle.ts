@@ -1,7 +1,5 @@
-import theme from '@/assets/styles/theme';
+import { Theme } from '@/assets/styles/types';
 import { WithoutNullableValues } from '@/types';
-
-export type Theme = typeof theme;
 
 export type GSystemProps = {
   [key in keyof Theme]?: keyof Theme[key];

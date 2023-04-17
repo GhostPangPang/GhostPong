@@ -1,23 +1,39 @@
 import { forwardRef } from 'react';
-import { GSystemProps, getSystemStyle, Theme } from './GSystemStyle';
+import { GSystemProps, getSystemStyle } from './GSystemStyle';
 import { useTheme } from 'styled-components';
+import { Theme } from '@/assets/styles/types';
 
-export type GComponentProps<T extends React.ElementType> = {
+type AsProp<T extends React.ElementType> = {
   as?: T;
-} & GSystemProps &
-  React.ComponentPropsWithoutRef<T>;
+};
 
-export type GComponentType = <T extends React.ElementType = 'div'>(
+export type RefProp<T extends React.ElementType> = React.ComponentPropsWithRef<T>['ref'];
+
+export type GComponentProps<T extends React.ElementType> = AsProp<T> &
+  React.ComponentPropsWithoutRef<T> & { ref?: RefProp<T> };
+
+export type GComponentType = <T extends React.ElementType>(
   props: GComponentProps<T> & {
     ref?: React.ComponentPropsWithRef<T>['ref'];
   },
 ) => React.ReactElement | null;
 
+// 기존 HTML props 처리 + ref 처리
 // eslint-disable-next-line react/display-name
 export const GComponent: GComponentType = forwardRef(
+  <T extends React.ElementType = 'div'>({ as, ...props }: GComponentProps<T>, ref: RefProp<T>['ref']) => {
+    const Element = as || 'div';
+
+    return <Element ref={ref} {...props} />;
+  },
+);
+
+// SystemStyleProps 처리 + 기존 HTML props 처리 + ref 처리
+// eslint-disable-next-line react/display-name
+export const GStyledComponent: GComponentType = forwardRef(
   <T extends React.ElementType = 'div'>(
-    { as, ...props }: GComponentProps<T>,
-    ref: React.ComponentPropsWithRef<T>['ref'],
+    { as, ...props }: GComponentProps<T> & GSystemProps,
+    ref: RefProp<T>['ref'],
   ) => {
     const Element = as || 'div';
     const theme = useTheme() as Theme;

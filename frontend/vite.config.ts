@@ -12,10 +12,10 @@ export default defineConfig({
   resolve: {
     alias: {
       '@/**': path.resolve(__dirname, './src/**'),
-      '@/assets': path.resolve(__dirname, './src/assets'),
       '@/styles': path.resolve(__dirname, './src/assets/styles'),
       '@/imgs': path.resolve(__dirname, './src/assets/imgs'),
       '@/svgs': path.resolve(__dirname, './src/assets/svgs'),
+      '@/assets': path.resolve(__dirname, './src/assets'),
       '@/test': path.resolve(__dirname, './src/test'),
       '@/components': path.resolve(__dirname, './src/components'),
       '@/pages': path.resolve(__dirname, './src/pages'),

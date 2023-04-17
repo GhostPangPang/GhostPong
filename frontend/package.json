@@ -16,10 +16,11 @@
     "build-stories": "yarn build-storybook ...",
     "type-check": "tsc --noEmit",
     "chromatic": "chromatic --exit-zero-on-changes",
-    "lint": "eslint src --ext .ts,.tsx",
-    "prettier": "prettier src"
+    "lint": "eslint",
+    "prettier": "prettier"
   },
   "dependencies": {
+    "polished": "^4.2.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-error-boundary": "^4.0.3",

@@ -7,7 +7,7 @@ export const GlobalStyle = createGlobalStyle<{ theme: typeof theme }>`
 
   @font-face {
     font-family: 'ChailceNoggin';
-    src: url('../font/ChailceNoggin.ttf');
+    src: url('/font/ChailceNoggin.ttf');
   }
 
   /* 결과 → 16px × 62.5% = 10px */
@@ -32,6 +32,9 @@ export const GlobalStyle = createGlobalStyle<{ theme: typeof theme }>`
   }
 
   a[href], input[type='submit'], input[type='image'], label[for], select, button {
-       cursor: pointer;
+    cursor: pointer;
+  }
+  a:link {
+    text-decoration: none;
   }
 `;

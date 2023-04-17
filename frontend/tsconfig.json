@@ -19,10 +19,10 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
-      "@/assets/*": ["src/assets/*"],
       "@/styles/*": ["src/assets/styles/*"],
       "@/imgs/*": ["src/assets/imgs/*"],
       "@/svgs/*": ["src/assets/svgs/*"],
+      "@/assets/*": ["src/assets/*"],
       "@/test/*": ["src/test/*"],
       "@/components/*": ["src/components/*"],
       "@/pages/*": ["src/pages/*"],

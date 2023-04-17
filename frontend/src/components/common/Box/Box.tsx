@@ -1,10 +1,10 @@
 import styled from 'styled-components';
 import { GComponent, GComponentProps } from '../GComponent';
 
-type BoxProps = {
+interface BoxProps extends GComponentProps<'div'> {
   width?: string;
   height?: string;
-} & GComponentProps<'div'>;
+}
 
 export const Box = ({ width, height, children, ...props }: BoxProps) => {
   return (
