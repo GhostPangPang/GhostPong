@@ -12,11 +12,11 @@ export interface ButtonProps {
 export const Button = <T extends React.ElementType = 'button'>({
   as,
   size,
-  borderColor,
+  color,
   ...props
 }: ButtonProps & GComponentProps<T>) => {
   const Element = as || 'button';
-  return <GButton as={Element} size={size} borderColor={borderColor} {...props} />;
+  return <GButton as={Element} size={size} color={color} {...props} />;
 };
 
 const GButton = styled(GComponent)<ButtonProps>`
