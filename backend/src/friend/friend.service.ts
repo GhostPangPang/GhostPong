@@ -24,8 +24,14 @@ export class FriendService {
     private readonly userRepository: Repository<User>,
   ) {}
 
+  // SECTION: private
   private async checkFriendLimit(userId: number): Promise<void> {
-    if ((await this.friendshipRepository.countBy({ receiver: { id: userId }, accept: true })) >= FRIEND_LIMIT) {
+    if (
+      (await this.friendshipRepository.countBy([
+        { receiver: { id: userId }, accept: true },
+        { sender: { id: userId }, accept: true },
+      ])) >= FRIEND_LIMIT
+    ) {
       throw new ForbiddenException('친구 정원이 꽉 찬 유저입니다.');
     }
   }
@@ -35,7 +41,9 @@ export class FriendService {
       throw new ForbiddenException('친구 신청 정원이 꽉 찬 유저입니다.');
     }
   }
+  // !SECTION private
 
+  // SECTION: public
   async requestFriendByNickname(senderId: number, nickname: string): Promise<SuccessResponseDto> {
     try {
       return this.requestFriendById(
@@ -48,14 +56,25 @@ export class FriendService {
   }
 
   async requestFriendById(senderId: number, receiverId: number): Promise<SuccessResponseDto> {
-    if (senderId === receiverId) throw new BadRequestException('당신은 이미 당신의 소중한 친구입니다. ^_^');
+    // FIXME : pipe 로 로직 바꾸기
+    if (senderId === receiverId) {
+      throw new BadRequestException('당신은 이미 당신의 소중한 친구입니다. ^_^');
+    }
+    // check receiver exists
+    try {
+      await this.userRepository.findOneByOrFail({ id: receiverId });
+    } catch (error) {
+      throw error instanceof EntityNotFoundError ? new NotFoundException('존재하지 않는 유저입니다.') : error;
+    }
 
-    const friendship = await this.friendshipRepository.findOneBy({
-      sender: { id: senderId },
-      receiver: { id: receiverId },
-    });
+    const friendship = await this.friendshipRepository.findOneBy([
+      { sender: { id: senderId }, receiver: { id: receiverId } }, // sender -> receiver
+      { sender: { id: receiverId }, receiver: { id: senderId } }, // receiver -> sender
+    ]);
     if (friendship !== null) {
-      throw new ConflictException(friendship.accept ? '이미 친구인 유저입니다.' : '이미 친구 신청을 보낸 유저입니다.');
+      throw new ConflictException(
+        friendship.accept ? '이미 친구인 유저입니다.' : '이미 친구 신청을 보냈거나 받은 유저입니다.',
+      );
     }
     await this.checkFriendLimit(receiverId);
     await this.checkFriendRequestLimit(receiverId);
@@ -118,4 +137,5 @@ export class FriendService {
     await this.friendshipRepository.delete({ id: friendship.id });
     return new SuccessResponseDto('친구 신청을 거절했습니다.');
   }
+  // !SECTION public
 }
