@@ -56,8 +56,8 @@ export const Box: BoxType & { displayName?: string } = forwardRef(
       transform,
       opacity,
       ...props
-    }: BoxProps<T> & GSystemProps,
-    ref: RefProp<T>['ref'],
+    }: BoxProps<T>,
+    ref: RefProp<T>,
   ) => {
     const Element = as || 'div';
     const theme = useTheme() as Theme;

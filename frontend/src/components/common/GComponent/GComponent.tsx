@@ -11,7 +11,7 @@ export type GComponentProps<T extends React.ElementType> = AsProp<T> &
 
 export type GComponentType = <T extends React.ElementType>(
   props: GComponentProps<T> & {
-    ref?: React.ComponentPropsWithRef<T>['ref'];
+    ref?: RefProp<T>;
   },
 ) => React.ReactElement | null;
 
