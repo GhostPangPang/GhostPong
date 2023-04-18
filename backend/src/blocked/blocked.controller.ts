@@ -3,7 +3,6 @@ import {
   ApiConflictResponse,
   ApiForbiddenResponse,
   ApiHeaders,
-  ApiNotFoundResponse,
   ApiOperation,
   ApiParam,
   ApiQuery,
@@ -21,12 +20,8 @@ export class BlockedController {
   constructor(private readonly blockedService: BlockedService) {}
 
   @ApiOperation({ summary: 'id로 유저 차단하기(토글->마우스 이용)' })
-  @ApiNotFoundResponse({ type: ErrorResponseDto, description: '유저 없음' })
   @ApiForbiddenResponse({ type: ErrorResponseDto, description: '차단 목록 정원 다참' })
-  @ApiConflictResponse({
-    type: ErrorResponseDto,
-    description: '이미 차단함 유저, 스스로를 차단할 수 없음',
-  })
+  @ApiConflictResponse({ type: ErrorResponseDto, description: '이미 차단함 유저' })
   @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
   @ApiParam({ name: 'userId', description: '차단할 사람 아이디' })
   @HttpCode(HttpStatus.OK)
@@ -36,12 +31,8 @@ export class BlockedController {
   }
 
   @ApiOperation({ summary: 'nickname으로 유저 차단하기(직접 입력)' })
-  @ApiNotFoundResponse({ type: ErrorResponseDto, description: '유저 없음' })
   @ApiForbiddenResponse({ type: ErrorResponseDto, description: '차단 목록 정원 다참' })
-  @ApiConflictResponse({
-    type: ErrorResponseDto,
-    description: '이미 차단함 유저, 스스로를 차단할 수 없음',
-  })
+  @ApiConflictResponse({ type: ErrorResponseDto, description: '이미 차단한 유저' })
   @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
   @ApiQuery({ name: 'nickname', description: '차단할 유저 닉네임' })
   @HttpCode(HttpStatus.OK)

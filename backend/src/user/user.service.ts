@@ -30,19 +30,15 @@ export class UserService {
   }
 
   async findExistUserById(userId: number): Promise<User> {
-    const user = await this.userRepository.findOneBy({
-      id: userId,
-    });
+    const user = await this.userRepository.findOneBy({ id: userId });
     if (user === null) {
       throw new NotFoundException('존재하지 않는 유저입니다.');
     }
     return user;
   }
 
-  async findExistUserByNickname(userNickname: string): Promise<User> {
-    const user = await this.userRepository.findOneBy({
-      nickname: userNickname,
-    });
+  async findExistUserByNickname(nickname: string): Promise<User> {
+    const user = await this.userRepository.findOneBy({ nickname: nickname });
     if (user === null) {
       throw new NotFoundException('존재하지 않는 유저입니다.');
     }
@@ -50,10 +46,8 @@ export class UserService {
   }
 
   async findBlockedByUserId(userId: number): Promise<number[]> {
-    return (
-      await this.blockedUserRepository.findBy({
-        userId: userId,
-      })
-    ).map((blockedUser) => blockedUser.blockedUserId);
+    return (await this.blockedUserRepository.findBy({ userId: userId })).map(
+      (blockedUser) => blockedUser.blockedUserId,
+    );
   }
 }
