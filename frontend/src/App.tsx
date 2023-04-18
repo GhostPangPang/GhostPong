@@ -1,3 +1,5 @@
+import ReactDOM from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
 import { GlobalStyle } from '@/styles/GlobalStyle';
 import { ThemeProvider } from 'styled-components';
 import theme from '@/styles/theme';
@@ -9,12 +11,13 @@ import { Button } from '@/common/Button';
 
 function App() {
   return (
-    <ThemeProvider theme={theme}>
-      <GlobalStyle />
-      <ErrorBoundary
+    <BrowserRouter>
+      <ThemeProvider theme={theme}>
+        <GlobalStyle />
+        {/* <ErrorBoundary
         FallbackComponent={ErrorFallback}
         onReset={() => {
-          // reset the state of your app so the error doesn't happen again
+          // reset the state of your app so the error doesn't happen agai
         }}
       >
         <Header />
@@ -27,9 +30,11 @@ function App() {
       >
         <Content>
           <Button size="md">Button</Button>
+          <Rive src="/riv/ghostp.riv" />
         </Content>
-      </ErrorBoundary>
-    </ThemeProvider>
+      </ErrorBoundary> */}
+      </ThemeProvider>
+    </BrowserRouter>
   );
 }
 
