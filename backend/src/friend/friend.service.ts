@@ -76,7 +76,7 @@ export class FriendService {
           ],
         })
       ).map(({ sender, receiver, lastMessegeTime, messageView }) => {
-        // messgeView 가 없으면 (find() 가 undefined null
+        // messgeView 가 없으면 (find() 가 undefined 이면) null
         const lastViewTime = messageView.find((view) => view.user.id === userId)?.lastViewTime || null;
         return {
           ...(sender.id === userId ? receiver : sender),
@@ -98,7 +98,6 @@ export class FriendService {
     }
   }
 
-  // FIXME :  2 -> 3 있으면 3 -> 2 도 안돼야 하는데 돌아감
   async requestFriendById(senderId: number, receiverId: number): Promise<SuccessResponseDto> {
     // FIXME : pipe 로 로직 바꾸기
     if (senderId === receiverId) {
