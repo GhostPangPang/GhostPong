@@ -1,6 +1,9 @@
 # env files
 .env
 
+# seeding result
+/seeding/results
+
 # compiled output
 /dist
 /node_modules

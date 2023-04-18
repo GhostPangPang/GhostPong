@@ -1,16 +1,10 @@
 // file name should be <entityName>.factory.ts
 
-import { Faker } from '@faker-js/faker';
-import { Auth, AuthStatus } from '../../src/entity/auth.entity';
-import { setSeederFactory } from 'typeorm-extension';
+import { faker } from '@faker-js/faker';
+import { AuthStatus } from '../../src/entity/auth.entity';
 
-export default setSeederFactory(Auth, (faker: Faker) => {
-  const auth = new Auth();
-
+export default () => ({
   //auth.id is auto generated
-  //auth.status = faker.datatype.boolean() ? AuthStatus.REGISTERD : AuthStatus.UNREGISTERD;
-  auth.status = AuthStatus.REGISTERD;
-  auth.email = faker.internet.email();
-
-  return auth;
+  status: faker.datatype.boolean() && faker.datatype.boolean() ? AuthStatus.UNREGISTERD : AuthStatus.REGISTERD,
+  email: faker.internet.email(),
 });
