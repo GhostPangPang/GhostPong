@@ -1,4 +1,4 @@
-import { Controller, Headers, Param, Post, Query } from '@nestjs/common';
+import { Controller, Headers, HttpCode, HttpStatus, Param, Post, Query } from '@nestjs/common';
 import {
   ApiConflictResponse,
   ApiForbiddenResponse,
@@ -29,6 +29,7 @@ export class BlockedController {
   })
   @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
   @ApiParam({ name: 'userId', description: '차단할 사람 아이디' })
+  @HttpCode(HttpStatus.OK)
   @Post(':userId')
   blockUserById(@Headers('x-my-id') myId: number, @Param('userId') userId: number): Promise<SuccessResponseDto> {
     return this.blockedService.blockUserById(+myId, +userId);
@@ -43,6 +44,7 @@ export class BlockedController {
   })
   @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
   @ApiQuery({ name: 'nickname', description: '차단할 유저 닉네임' })
+  @HttpCode(HttpStatus.OK)
   @Post()
   blockUserByNickname(
     @Headers('x-my-id') myId: number,
