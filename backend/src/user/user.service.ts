@@ -48,7 +48,7 @@ export class UserService {
       nickname: nickname,
       image: DEFAULT_IMAGE,
     });
-
+    await this.authService.changeAuthStatus(authId);
     return new NicknameResponseDto(nickname);
   }
 
@@ -80,7 +80,7 @@ export class UserService {
     }
   }
 
-  async checkAlreadyExist(userId: number): Promise<void> {
+  private async checkAlreadyExist(userId: number): Promise<void> {
     if (await this.userRepository.findOneBy({ id: userId })) {
       throw new ConflictException('이미 존재하는 user입니다.');
     }
