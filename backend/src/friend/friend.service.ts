@@ -98,6 +98,12 @@ export class FriendService {
     }
   }
 
+  /**
+   *
+   * @param senderId 신청 보내는 유저 : 나
+   * @param receiverId 신청 받는 유저 : 상대방
+   * @returns
+   */
   async requestFriendById(senderId: number, receiverId: number): Promise<SuccessResponseDto> {
     // FIXME : pipe 로 로직 바꾸기
     if (senderId === receiverId) {
