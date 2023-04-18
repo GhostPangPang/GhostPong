@@ -7,6 +7,7 @@ import { SuccessResponseDto } from '../common/dto/success-response.dto';
 import { BlockedUser } from '../entity/blocked-user.entity';
 import { User } from '../entity/user.entity';
 
+import { UpdateNicknameResponseDto } from './dto/update-nickname-response.dto';
 import { UserInfoResponseDto } from './dto/user-info-response.dto';
 
 @Injectable()
@@ -28,6 +29,12 @@ export class UserService {
     await this.findExistUserById(myId);
     await this.userRepository.update({ id: myId }, { image: imageUrl });
     return new SuccessResponseDto('이미지 변경 완료되었습니다.');
+  }
+
+  async updateNickname(myId: number, nickname: string): Promise<UpdateNicknameResponseDto> {
+    await this.checkDuplicatedNickname(nickname);
+    await this.userRepository.update({ id: myId }, { nickname: nickname });
+    return new UpdateNicknameResponseDto(nickname);
   }
 
   async createUser(authId: number, nickname: string): Promise<void> {

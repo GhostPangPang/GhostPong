@@ -1,10 +1,12 @@
 import { Body, Controller, Get, Headers, Patch } from '@nestjs/common';
-import { ApiHeaders, ApiNotFoundResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiConflictResponse, ApiHeaders, ApiNotFoundResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { ErrorResponseDto } from '../common/dto/error-response.dto';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
 
 import { UpdateImageRequest } from './dto/update-image-request.dto';
+import { UpdateNicknameRequestDto } from './dto/update-nickname-request.dto';
+import { UpdateNicknameResponseDto } from './dto/update-nickname-response.dto';
 import { UserInfoResponseDto } from './dto/user-info-response.dto';
 import { UserService } from './user.service';
 
@@ -30,5 +32,16 @@ export class UserController {
     @Body() updateImageRequest: UpdateImageRequest,
   ): Promise<SuccessResponseDto> {
     return this.userService.updateProfileImage(myId, updateImageRequest.image);
+  }
+
+  @ApiOperation({ summary: '유저 닉네임 변경하기' })
+  @ApiConflictResponse({ type: ErrorResponseDto, description: '중복된 닉네임' })
+  @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
+  @Patch('nickname')
+  updateNickname(
+    @Headers('x-my-id') myId: number,
+    @Body() updateNicknameDto: UpdateNicknameRequestDto,
+  ): Promise<UpdateNicknameResponseDto> {
+    return this.userService.updateNickname(myId, updateNicknameDto.nickname);
   }
 }
