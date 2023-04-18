@@ -58,10 +58,7 @@ export class BlockedService {
         accept: true,
       },
     ]);
-    if (friendship !== null) {
-      return friendship;
-    }
-    return null;
+    return friendship;
   }
 
   /* 
