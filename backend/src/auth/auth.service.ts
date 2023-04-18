@@ -1,10 +1,9 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { DEFAULT_IMAGE } from '../common/constant';
 import { Auth } from '../entity/auth.entity';
-import { User } from '../entity/user.entity';
+import { UserService } from '../user/user.service';
 
 import { NicknameResponseDto } from './dto/nickname-response.dto';
 
@@ -13,17 +12,8 @@ export class AuthService {
   constructor(
     @InjectRepository(Auth)
     private readonly authRepository: Repository<Auth>,
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    private readonly userService: UserService,
   ) {}
-
-  // TODO refactor: Move to user (@san)
-  async checkDuplicatedNickname(nickname: string): Promise<void> {
-    // check duplicated nickname
-    if (await this.userRepository.findOneBy({ nickname })) {
-      throw new ConflictException('중복된 닉네임입니다.');
-    }
-  }
 
   async checkAuthId(authId: number): Promise<void> {
     if ((await this.authRepository.findOneBy({ id: authId })) === null) {
@@ -31,23 +21,9 @@ export class AuthService {
     }
   }
 
-  async checkAlreadyExist(authId: number): Promise<void> {
-    if (await this.userRepository.findOneBy({ id: authId })) {
-      throw new ConflictException('이미 존재하는 user입니다.');
-    }
-  }
-
-  // TODO refactor: Move to user (@san)
-  // create new User's nickname
   async createUser(authId: number, nickname: string): Promise<NicknameResponseDto> {
     await this.checkAuthId(authId);
-    await this.checkAlreadyExist(authId);
-    await this.checkDuplicatedNickname(nickname);
-    await this.userRepository.insert({
-      id: authId,
-      nickname: nickname,
-      image: DEFAULT_IMAGE,
-    });
+    await this.userService.createUser(authId, nickname);
     return new NicknameResponseDto(nickname);
   }
 }
