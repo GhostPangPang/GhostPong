@@ -2,12 +2,13 @@ import { ConflictException, Injectable, NotFoundException } from '@nestjs/common
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
+import { AuthService } from '../auth/auth.service';
 import { DEFAULT_IMAGE } from '../common/constant';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
 import { BlockedUser } from '../entity/blocked-user.entity';
 import { User } from '../entity/user.entity';
 
-import { UpdateNicknameResponseDto } from './dto/update-nickname-response.dto';
+import { NicknameResponseDto } from './dto/nickname-response.dto';
 import { UserInfoResponseDto } from './dto/user-info-response.dto';
 
 @Injectable()
@@ -17,6 +18,7 @@ export class UserService {
     private readonly userRepository: Repository<User>,
     @InjectRepository(BlockedUser)
     private readonly blockedUserRepository: Repository<BlockedUser>,
+    private readonly authService: AuthService,
   ) {}
 
   async getUserInfo(myId: number): Promise<UserInfoResponseDto> {
@@ -31,13 +33,14 @@ export class UserService {
     return new SuccessResponseDto('이미지 변경 완료되었습니다.');
   }
 
-  async updateNickname(myId: number, nickname: string): Promise<UpdateNicknameResponseDto> {
+  async updateNickname(myId: number, nickname: string): Promise<NicknameResponseDto> {
     await this.checkDuplicatedNickname(nickname);
     await this.userRepository.update({ id: myId }, { nickname: nickname });
-    return new UpdateNicknameResponseDto(nickname);
+    return new NicknameResponseDto(nickname);
   }
 
-  async createUser(authId: number, nickname: string): Promise<void> {
+  async createUser(authId: number, nickname: string): Promise<NicknameResponseDto> {
+    await this.authService.checkAuthId(authId);
     await this.checkAlreadyExist(authId);
     await this.checkDuplicatedNickname(nickname);
     await this.userRepository.insert({
@@ -45,6 +48,8 @@ export class UserService {
       nickname: nickname,
       image: DEFAULT_IMAGE,
     });
+
+    return new NicknameResponseDto(nickname);
   }
 
   /* 
@@ -68,15 +73,15 @@ export class UserService {
     return user;
   }
 
-  async checkDuplicatedNickname(nickname: string): Promise<void> {
+  private async checkDuplicatedNickname(nickname: string): Promise<void> {
     // check duplicated nickname
     if (await this.userRepository.findOneBy({ nickname })) {
       throw new ConflictException('중복된 닉네임입니다.');
     }
   }
 
-  async checkAlreadyExist(authId: number): Promise<void> {
-    if (await this.userRepository.findOneBy({ id: authId })) {
+  async checkAlreadyExist(userId: number): Promise<void> {
+    if (await this.userRepository.findOneBy({ id: userId })) {
       throw new ConflictException('이미 존재하는 user입니다.');
     }
   }
@@ -84,7 +89,7 @@ export class UserService {
   /* 
   repository method
   */
-
+  // TODO: blocked 도메인으로 바꾸기
   async findBlockedByUserId(userId: number): Promise<number[]> {
     return (await this.blockedUserRepository.findBy({ userId: userId })).map(
       (blockedUser) => blockedUser.blockedUserId,

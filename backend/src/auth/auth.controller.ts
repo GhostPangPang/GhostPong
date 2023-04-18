@@ -1,34 +1,12 @@
-import { Body, Controller, Headers, HttpCode, HttpStatus, Post } from '@nestjs/common';
-import { ApiConflictResponse, ApiHeaders, ApiNotFoundResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-
-import { ErrorResponseDto } from '../common/dto/error-response.dto';
+import { Controller } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 
 import { AuthService } from './auth.service';
-import { NicknameRequestDto } from './dto/nickname-request.dto';
-import { NicknameResponseDto } from './dto/nickname-response.dto';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
-
-  // TODO refactor: Move to user (@san)
-  // 닉네임 초기 설정
-  @ApiOperation({ summary: '닉네임 초기 설정' })
-  @ApiConflictResponse({
-    type: ErrorResponseDto,
-    description: '중복된 nickname 또는 이미 생성된 user(중복된 auth-id)',
-  })
-  @ApiNotFoundResponse({ type: ErrorResponseDto, description: 'Invalid한 auth-id' })
-  @ApiHeaders([{ name: 'x-auth-id', description: '내 auth 아이디 (임시값)' }])
-  @HttpCode(HttpStatus.OK)
-  @Post('nickname')
-  createUser(
-    @Headers('x-auth-id') authId: number,
-    @Body() { nickname }: NicknameRequestDto,
-  ): Promise<NicknameResponseDto> {
-    return this.authService.createUser(authId, nickname);
-  }
 
   /*
   @Post('2fa')

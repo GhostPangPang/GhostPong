@@ -1,12 +1,12 @@
-import { Body, Controller, Get, Headers, Patch } from '@nestjs/common';
+import { Body, Controller, Get, Headers, HttpCode, HttpStatus, Patch, Post } from '@nestjs/common';
 import { ApiConflictResponse, ApiHeaders, ApiNotFoundResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { ErrorResponseDto } from '../common/dto/error-response.dto';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
 
+import { NicknameRequestDto } from './dto/nickname-request.dto';
+import { NicknameResponseDto } from './dto/nickname-response.dto';
 import { UpdateImageRequest } from './dto/update-image-request.dto';
-import { UpdateNicknameRequestDto } from './dto/update-nickname-request.dto';
-import { UpdateNicknameResponseDto } from './dto/update-nickname-response.dto';
 import { UserInfoResponseDto } from './dto/user-info-response.dto';
 import { UserService } from './user.service';
 
@@ -40,8 +40,24 @@ export class UserController {
   @Patch('nickname')
   updateNickname(
     @Headers('x-my-id') myId: number,
-    @Body() updateNicknameDto: UpdateNicknameRequestDto,
-  ): Promise<UpdateNicknameResponseDto> {
+    @Body() updateNicknameDto: NicknameRequestDto,
+  ): Promise<NicknameResponseDto> {
     return this.userService.updateNickname(myId, updateNicknameDto.nickname);
+  }
+
+  @ApiOperation({ summary: '닉네임 초기 설정 && 유저 생성' })
+  @ApiConflictResponse({
+    type: ErrorResponseDto,
+    description: '중복된 nickname 또는 이미 생성된 user(중복된 auth-id)',
+  })
+  @ApiNotFoundResponse({ type: ErrorResponseDto, description: 'Invalid한 auth-id' })
+  @ApiHeaders([{ name: 'x-auth-id', description: '내 auth 아이디 (임시값)' }])
+  @HttpCode(HttpStatus.OK)
+  @Post()
+  createUser(
+    @Headers('x-auth-id') authId: number,
+    @Body() { nickname }: NicknameRequestDto,
+  ): Promise<NicknameResponseDto> {
+    return this.userService.createUser(authId, nickname);
   }
 }

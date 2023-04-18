@@ -1,4 +1,4 @@
-export class UpdateNicknameResponseDto {
+export class NicknameResponseDto {
   constructor(nickname: string) {
     this.nickname = nickname;
   }
