@@ -14,7 +14,6 @@ import { UserRecord } from '../src/entity/user-record.entity';
 import { User } from '../src/entity/user.entity';
 
 import seeder from './seeder/message.seeder';
-//import { runSeeders, SeederOptions } from 'typeorm-extension';
 
 config();
 
