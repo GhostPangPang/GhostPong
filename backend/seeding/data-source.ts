@@ -2,7 +2,7 @@
 import { config } from 'dotenv';
 
 import { DataSource, DataSourceOptions } from 'typeorm';
-import seeder from './seeder/auth-user.seeder';
+import seeder from './seeder/message.seeder';
 //import { runSeeders, SeederOptions } from 'typeorm-extension';
 import * as path from 'path';
 
@@ -28,11 +28,11 @@ config();
     type: 'postgres',
     host: process.env.DB_HOST,
     port: Number(process.env.DB_PORT),
-    database: 'testdb',
+    database: process.env.TEST_DB_NAME,
     username: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     synchronize: true,
-    entities: [Auth, User, Friendship /*Message, MessageView, UserRecord, GameHistory, BlockedUser, Achievement*/],
+    entities: [Auth, User, Friendship, Message, MessageView, UserRecord, GameHistory, BlockedUser, Achievement],
     namingStrategy: new SnakeNamingStrategy(),
   };
 

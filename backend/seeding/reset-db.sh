@@ -1,8 +1,4 @@
 #!/bin/bash
-DB=$1;
-if [ -z $1 ] ; then
-  echo "Please provide a database name";
-  read -p "Database name: " DB;
-fi
-dropdb $DB 2>/dev/null; createdb $DB;
+DB=$(grep "TEST_DB_NAME" .env | cut -d "=" -f 2)
+dropdb $DB -f 2>/dev/null; createdb $DB;
 rm -rf seeding/results;
