@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { BLOCKED_USER_LIMIT } from '../common/constant';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
 import { BlockedUser } from '../entity/blocked-user.entity';
+import { Friendship } from '../entity/friendship.entity';
 import { UserService } from '../user/user.service';
 
 @Injectable()
@@ -12,6 +13,8 @@ export class BlockedService {
   constructor(
     @InjectRepository(BlockedUser)
     private readonly blockedUserRepository: Repository<BlockedUser>,
+    @InjectRepository(Friendship)
+    private readonly friendshipRepository: Repository<Friendship>,
     private readonly userService: UserService,
   ) {}
 
@@ -31,8 +34,34 @@ export class BlockedService {
     }
     await this.checkBlockedCountLimit(myId);
     await this.checkExistBlockedUser(myId, userId);
+    const friendship = await this.checkIsFriend(myId, userId);
+    if (friendship !== null) {
+      await this.friendshipRepository.delete(friendship);
+    }
     await this.blockedUserRepository.insert({ userId: myId, blockedUserId: userId });
     return new SuccessResponseDto('유저를 차단하였습니다.');
+  }
+
+  /* 
+  TODO: friend 도메인으로 옮기면 좋을 것 같은 메서드들 
+  */
+  async checkIsFriend(myId: number, userId: number): Promise<Friendship | null> {
+    const friendship = await this.friendshipRepository.findOneBy([
+      {
+        sender: { id: myId },
+        receiver: { id: userId },
+        accept: true,
+      },
+      {
+        sender: { id: userId },
+        receiver: { id: myId },
+        accept: true,
+      },
+    ]);
+    if (friendship !== null) {
+      return friendship;
+    }
+    return null;
   }
 
   /* 
