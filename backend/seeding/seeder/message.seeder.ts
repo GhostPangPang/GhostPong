@@ -1,16 +1,16 @@
-import { DataSource, Repository } from 'typeorm';
 import * as fs from 'fs';
-
-import { Auth } from '../../src/entity/auth.entity';
-import { User } from '../../src/entity/user.entity';
-import authFactory from '../factory/auth.factory';
-import userFactory from '../factory/user.factory';
-import { Friendship } from '../../src/entity/friendship.entity';
 import * as path from 'path';
 
+import { DataSource, Repository } from 'typeorm';
+
+import { Auth } from '../../src/entity/auth.entity';
+import { Friendship } from '../../src/entity/friendship.entity';
+import { Message } from '../../src/entity/message.entity';
+import { User } from '../../src/entity/user.entity';
+import authFactory from '../factory/auth.factory';
 import frieindshipFactory from '../factory/frieindship.factory';
 import messageFactory from '../factory/message.factory';
-import { Message } from '../../src/entity/message.entity';
+import userFactory from '../factory/user.factory';
 
 export default async (dataSource: DataSource) => {
   const resultDir = path.join(__dirname, '../results');
@@ -39,7 +39,7 @@ export default async (dataSource: DataSource) => {
   // generate friendship
   // 1/2 확률로 친구관계 생기게, 그 중 1/2 확률로 accept.
   const friendsSeed = [];
-  for (let i: number = 0; i < users.length; i++) {
+  for (let i = 0; i < users.length; i++) {
     for (let j: number = i + 1; j < users.length; j++) {
       Math.random() <= 0.1 && friendsSeed.push(frieindshipFactory(users[i], users[j]));
     }
@@ -63,13 +63,13 @@ export default async (dataSource: DataSource) => {
     .filter((friend) => friend.lastMessegeTime !== undefined && friend.accept === true)
     .map((friend) => {
       const random = Math.floor(Math.random() * 200);
-      for (let i: number = 0; i < random; i++) {
+      for (let i = 0; i < random; i++) {
         messageSeed.push(messageFactory(friend));
       }
     });
 
   const promises = [];
-  for (let i: number = 0; i < messageSeed.length; i += 10) {
+  for (let i = 0; i < messageSeed.length; i += 10) {
     promises.push(messageRepository.save(messageSeed.slice(i, i + 10)));
   }
   const messages = await Promise.all(promises);

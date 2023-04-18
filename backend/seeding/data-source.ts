@@ -1,21 +1,20 @@
 //import dotenv
 import { config } from 'dotenv';
-
 import { DataSource, DataSourceOptions } from 'typeorm';
+import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
+
+import { Achievement } from '../src/entity/achievement.entity';
+import { Auth } from '../src/entity/auth.entity';
+import { BlockedUser } from '../src/entity/blocked-user.entity';
+import { Friendship } from '../src/entity/friendship.entity';
+import { GameHistory } from '../src/entity/game-history.entity';
+import { MessageView } from '../src/entity/message-view.entity';
+import { Message } from '../src/entity/message.entity';
+import { UserRecord } from '../src/entity/user-record.entity';
+import { User } from '../src/entity/user.entity';
+
 import seeder from './seeder/message.seeder';
 //import { runSeeders, SeederOptions } from 'typeorm-extension';
-import * as path from 'path';
-
-import { Auth } from '../src/entity/auth.entity';
-import { User } from '../src/entity/user.entity';
-import { Friendship } from '../src/entity/friendship.entity';
-import { Message } from '../src/entity/message.entity';
-import { MessageView } from '../src/entity/message-view.entity';
-import { UserRecord } from '../src/entity/user-record.entity';
-import { GameHistory } from '../src/entity/game-history.entity';
-import { BlockedUser } from '../src/entity/blocked-user.entity';
-import { Achievement } from '../src/entity/achievement.entity';
-import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 config();
 

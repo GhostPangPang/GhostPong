@@ -1,6 +1,7 @@
 // file name should be <entityName>.factory.ts
 
 import { faker } from '@faker-js/faker';
+
 import { Auth } from '../../src/entity/auth.entity';
 
 export default (auth: Auth) => {

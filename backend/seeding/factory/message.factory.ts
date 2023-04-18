@@ -1,8 +1,8 @@
 // file name should be <entityName>.factory.ts
 
 import { faker } from '@faker-js/faker';
+
 import { Friendship } from '../../src/entity/friendship.entity';
-import { Message } from '../../src/entity/message.entity';
 
 export default (friendship: Friendship) => {
   return {
