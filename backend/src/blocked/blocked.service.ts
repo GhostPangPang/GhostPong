@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -42,7 +42,7 @@ export class BlockedService {
   async checkBlockedCountLimit(userId: number): Promise<void> {
     const count = await this.blockedUserRepository.countBy({ userId: userId });
     if (count >= BLOCKED_USER_LIMIT) {
-      throw new ConflictException('차단 목록 정원이 찼습니다.');
+      throw new ForbiddenException('차단 목록 정원이 찼습니다.');
     }
   }
 
