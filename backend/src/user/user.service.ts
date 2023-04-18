@@ -18,20 +18,30 @@ export class UserService {
   ) {}
 
   async getUserInfo(myId: number): Promise<UserInfoResponseDto> {
-    const userInfo = await this.findExistUser(myId);
+    const userInfo = await this.findExistUserById(myId);
     const numbers = await this.findBlockedByUserId(myId);
     return new UserInfoResponseDto(userInfo, numbers);
   }
 
   async updateProfileImage(myId: number, imageUrl: string): Promise<SuccessResponseDto> {
-    await this.findExistUser(myId);
+    await this.findExistUserById(myId);
     await this.userRepository.update({ id: myId }, { image: imageUrl });
     return new SuccessResponseDto('이미지 변경 완료되었습니다.');
   }
 
-  async findExistUser(userId: number): Promise<User> {
+  async findExistUserById(userId: number): Promise<User> {
     const user = await this.userRepository.findOneBy({
       id: userId,
+    });
+    if (user === null) {
+      throw new NotFoundException('존재하지 않는 유저입니다.');
+    }
+    return user;
+  }
+
+  async findExistUserByNickname(userNickname: string): Promise<User> {
+    const user = await this.userRepository.findOneBy({
+      nickname: userNickname,
     });
     if (user === null) {
       throw new NotFoundException('존재하지 않는 유저입니다.');

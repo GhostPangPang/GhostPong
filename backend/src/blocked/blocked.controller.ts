@@ -1,5 +1,13 @@
-import { Controller, Headers, Param, Post } from '@nestjs/common';
-import { ApiConflictResponse, ApiHeaders, ApiNotFoundResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { Controller, Headers, Param, Post, Query } from '@nestjs/common';
+import {
+  ApiConflictResponse,
+  ApiHeaders,
+  ApiNotFoundResponse,
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 
 import { ErrorResponseDto } from '../common/dto/error-response.dto';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
@@ -22,5 +30,21 @@ export class BlockedController {
   @Post(':userId')
   blockUserById(@Headers('x-my-id') myId: number, @Param('userId') userId: number): Promise<SuccessResponseDto> {
     return this.blockedService.blockUserById(+myId, +userId);
+  }
+
+  @ApiOperation({ summary: 'nickname으로 유저 차단하기(직접 입력)' })
+  @ApiNotFoundResponse({ type: ErrorResponseDto, description: '유저 없음' })
+  @ApiConflictResponse({
+    type: ErrorResponseDto,
+    description: '차단 목록 정원 다참, 이미 차단함 유저, 스스로를 차단할 수 없음',
+  })
+  @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
+  @ApiQuery({ name: 'nickname', description: '차단할 유저 닉네임' })
+  @Post()
+  blockUserByNickname(
+    @Headers('x-my-id') myId: number,
+    @Query('nickname') nickname: string,
+  ): Promise<SuccessResponseDto> {
+    return this.blockedService.blockUserByNickname(+myId, nickname);
   }
 }
