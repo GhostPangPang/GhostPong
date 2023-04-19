@@ -74,6 +74,7 @@ export class FriendService {
             { sender: { id: userId }, accept: true },
             { receiver: { id: userId }, accept: true },
           ],
+          order: { lastMessegeTime: 'DESC' },
         })
       ).map(({ sender, receiver, lastMessegeTime, messageView }) => {
         // messgeView 가 없으면 (find() 가 undefined 이면) null
@@ -141,7 +142,6 @@ export class FriendService {
         await this.friendshipRepository.find({
           relations: ['sender'],
           where: { receiver: { id: userId }, accept: false },
-          order: { lastMessegeTime: 'DESC' },
         })
       ).map((friendship) => friendship.sender),
     };
