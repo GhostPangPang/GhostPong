@@ -6,19 +6,17 @@ export interface AvatarProps {
   onClick?: (event: React.MouseEvent<HTMLImageElement>) => void;
 }
 
-export const Avatar = <T extends React.ElementType = 'img'>({
-  as,
+export const Avatar = ({
   size = 'md',
   src = 'https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg',
   alt = 'default_name',
   onClick,
   ...props
-}: AvatarProps & GComponentProps<T>) => {
-  const Element = as || 'img';
-  return <GAvatar as={Element} size={size} src={src} alt={alt} onClick={onClick} {...props} />;
+}: AvatarProps & React.ComponentPropsWithoutRef<'img'>) => {
+  return <GAvatar as="img" size={size} src={src} alt={alt} onClick={onClick} {...props} />;
 };
 
-const GAvatar = styled(GComponent)<AvatarProps>`
+const GAvatar = styled.img<AvatarProps>`
   border-radius: 50%;
   object-fit: cover;
   ${(props) => {
