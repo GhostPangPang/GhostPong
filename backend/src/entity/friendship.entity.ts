@@ -1,5 +1,6 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, Unique } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, Unique } from 'typeorm';
 
+import { MessageView } from './message-view.entity';
 import { User } from './user.entity';
 
 @Entity()
@@ -21,4 +22,7 @@ export class Friendship {
     default: () => "'-infinity'",
   })
   lastMessegeTime: Date;
+
+  @OneToMany(() => MessageView, (messageView) => messageView.friend)
+  messageView: MessageView[];
 }

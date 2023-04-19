@@ -13,7 +13,8 @@ import { SuccessResponseDto } from '../common/dto/success-response.dto';
 import { Friendship } from '../entity/friendship.entity';
 import { User } from '../entity/user.entity';
 
-import { RequestedFriendResponseDto } from './dto/requested-friend-response.dto';
+import { FriendsResponseDto } from './dto/friend-response.dto';
+import { RequestedFriendsResponseDto } from './dto/requested-friend-response.dto';
 
 @Injectable()
 export class FriendService {
@@ -64,6 +65,29 @@ export class FriendService {
   // !SECTION private
 
   // SECTION: public
+  async getFriendsList(userId: number): Promise<FriendsResponseDto> {
+    return {
+      friends: (
+        await this.friendshipRepository.find({
+          relations: ['sender', 'receiver', 'messageView'],
+          where: [
+            { sender: { id: userId }, accept: true },
+            { receiver: { id: userId }, accept: true },
+          ],
+          order: { lastMessegeTime: 'DESC' },
+        })
+      ).map(({ sender, receiver, lastMessegeTime, messageView }) => {
+        // messgeView 가 없으면 (find() 가 undefined 이면) null
+        const lastViewTime = messageView.find((view) => view.user.id === userId)?.lastViewTime || null;
+        return {
+          ...(sender.id === userId ? receiver : sender),
+          lastMessegeTime,
+          lastViewTime,
+        };
+      }),
+    };
+  }
+
   async requestFriendByNickname(senderId: number, nickname: string): Promise<SuccessResponseDto> {
     try {
       return this.requestFriendById(
@@ -112,7 +136,7 @@ export class FriendService {
     return new SuccessResponseDto('친구 신청을 보냈습니다.');
   }
 
-  async getFriendRequestList(userId: number): Promise<RequestedFriendResponseDto> {
+  async getFriendRequestsList(userId: number): Promise<RequestedFriendsResponseDto> {
     return {
       requests: (
         await this.friendshipRepository.find({

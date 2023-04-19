@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, PrimaryColumn, Unique } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryColumn, Relation, Unique } from 'typeorm';
 
 import { Friendship } from './friendship.entity';
 import { User } from './user.entity';
@@ -10,9 +10,9 @@ export class MessageView {
   @PrimaryColumn({ name: 'user_id' })
   user: User;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => Friendship)
   @PrimaryColumn({ name: 'friend_id' })
-  friend: Friendship;
+  friend: Relation<Friendship>;
 
   @Column({ default: () => "'-infinity'" })
   lastViewTime: Date;
