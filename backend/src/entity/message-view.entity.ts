@@ -10,7 +10,7 @@ export class MessageView {
   @PrimaryColumn({ name: 'user_id' })
   user: User;
 
-  @ManyToOne(() => Friendship)
+  @ManyToOne(() => Friendship, { onDelete: 'CASCADE' })
   @PrimaryColumn({ name: 'friend_id' })
   friend: Relation<Friendship>;
 
