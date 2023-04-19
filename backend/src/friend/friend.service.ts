@@ -6,12 +6,13 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityNotFoundError, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import { FRIEND_LIMIT } from '../common/constant';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
 import { Friendship } from '../entity/friendship.entity';
 import { User } from '../entity/user.entity';
+import { UserService } from '../user/user.service';
 
 import { FriendsResponseDto } from './dto/friend-response.dto';
 import { RequestedFriendsResponseDto } from './dto/requested-friend-response.dto';
@@ -22,7 +23,7 @@ export class FriendService {
     @InjectRepository(Friendship)
     private readonly friendshipRepository: Repository<Friendship>,
     @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    private readonly userService: UserService,
   ) {}
 
   // SECTION: private
@@ -89,14 +90,7 @@ export class FriendService {
   }
 
   async requestFriendByNickname(senderId: number, nickname: string): Promise<SuccessResponseDto> {
-    try {
-      return this.requestFriendById(
-        senderId,
-        (await this.userRepository.findOneOrFail({ select: ['id'], where: { nickname: nickname } })).id,
-      );
-    } catch (error) {
-      throw error instanceof EntityNotFoundError ? new NotFoundException('존재하지 않는 유저입니다.') : error;
-    }
+    return this.requestFriendById(senderId, (await this.userService.findExistUserByNickname(nickname)).id);
   }
 
   /**
@@ -111,12 +105,7 @@ export class FriendService {
       throw new BadRequestException('당신은 이미 당신의 소중한 친구입니다. ^_^');
     }
     // check receiver exists
-    try {
-      await this.userRepository.findOneByOrFail({ id: receiverId });
-    } catch (error) {
-      throw error instanceof EntityNotFoundError ? new NotFoundException('존재하지 않는 유저입니다.') : error;
-    }
-
+    await this.userService.findExistUserById(receiverId);
     const friendship = await this.friendshipRepository.findOneBy([
       { sender: { id: senderId }, receiver: { id: receiverId } }, // sender -> receiver
       { sender: { id: receiverId }, receiver: { id: senderId } }, // receiver -> sender
