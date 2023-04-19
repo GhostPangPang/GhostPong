@@ -85,8 +85,6 @@ export class FriendService {
     if (senderId === receiverId) {
       throw new BadRequestException('당신은 이미 당신의 소중한 친구입니다. ^_^');
     }
-    // check receiver exists
-    await this.userService.findExistUserById(receiverId);
     // 친구 신청 혹은 친구 관계가 있는 지 확인. 하나라도 있으면 error 이므로 findOneBy.
     const friendship = await this.friendshipRepository.findOneBy([
       { sender: { id: senderId }, receiver: { id: receiverId } }, // sender -> receiver
@@ -97,6 +95,7 @@ export class FriendService {
         friendship.accept ? '이미 친구인 유저입니다.' : '이미 친구 신청을 보냈거나 받은 유저입니다.',
       );
     }
+    await this.checkFriendLimit(senderId, '나');
     await this.checkFriendLimit(receiverId, '상대방');
     await this.checkFriendRequestLimit(receiverId);
 
