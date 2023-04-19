@@ -228,7 +228,7 @@ export class FriendService {
     if (senderId === receiverId) {
       throw new BadRequestException('스스로를 거부하지 마십시오...');
     }
-    await this.friendshipRepository.remove(await this.findExistFriendRequest(senderId, receiverId));
+    await this.friendshipRepository.delete((await this.findExistFriendRequest(senderId, receiverId)).id);
     return new SuccessResponseDto('친구 신청을 거절했습니다.');
   }
   // !SECTION public
