@@ -6,4 +6,4 @@ export default {
   component: Avatar,
 } as Meta;
 
-export const Default = (args: AvatarProps) => <Avatar {...args} />;
+export const Default = (props: AvatarProps) => <Avatar {...props} />;
