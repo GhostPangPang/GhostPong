@@ -11,7 +11,7 @@ export class Message {
   @ManyToOne(() => User)
   sender: User;
 
-  @ManyToOne(() => Friendship)
+  @ManyToOne(() => Friendship, { onDelete: 'CASCADE' })
   friend: Friendship;
 
   @Column({ length: 512 })

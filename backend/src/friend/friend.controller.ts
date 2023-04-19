@@ -1,4 +1,4 @@
-import { Controller, Get, Headers, HttpCode, HttpStatus, Param, Post, Query } from '@nestjs/common';
+import { Controller, Delete, Get, Headers, HttpCode, HttpStatus, Param, Post, Query } from '@nestjs/common';
 import {
   ApiConflictResponse,
   ApiForbiddenResponse,
@@ -63,6 +63,12 @@ export class FriendController {
     return this.friendService.requestFriendById(+myId, userId);
   }
 
+  @ApiOperation({ summary: '친구 삭제하기' })
+  @Delete(':userId')
+  deleteFriend(@Param('userId') userId: number, @Headers('x-my-id') myId: number): Promise<SuccessResponseDto> {
+    return this.friendService.deleteFriend(+myId, userId);
+  }
+
   @ApiOperation({ summary: '친구 신청 수락하기' })
   @ApiForbiddenResponse({ type: ErrorResponseDto, description: '친구 정원 초과' })
   @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
@@ -81,9 +87,4 @@ export class FriendController {
     // FIXME: myId 임시 헤더라서 + 갈겼습니다...
     return this.friendService.rejectFriendRequest(userId, +myId);
   }
-
-  /*
-  @Delete(':userId')
-  deleteFriend() {}
-  */
 }

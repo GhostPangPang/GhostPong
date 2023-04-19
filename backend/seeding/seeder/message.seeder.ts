@@ -17,7 +17,6 @@ export default async (dataSource: DataSource) => {
 
   const authRepository: Repository<Auth> = dataSource.getRepository(Auth);
   const auths = await authRepository.save(Array(Number(process.argv[2])).fill(null).map(authFactory));
-  //const auths = await factoryManager.get(Auth).saveMany(Number(process.argv[2]));
   console.log('auth ' + auths.length + ' rows created.');
   fs.mkdir(resultDir, () => {
     fs.writeFile(path.join(resultDir, 'auths.json'), JSON.stringify(auths), (err) => {
@@ -68,9 +67,10 @@ export default async (dataSource: DataSource) => {
       }
     });
 
+  // insert 할 양이 많으면 error 가 발생하므로 100개씩 나눠서 insert
   const promises = [];
-  for (let i = 0; i < messageSeed.length; i += 10) {
-    promises.push(messageRepository.save(messageSeed.slice(i, i + 10)));
+  for (let i = 0; i < messageSeed.length; i += 100) {
+    promises.push(messageRepository.save(messageSeed.slice(i, i + 100)));
   }
   const messages = await Promise.all(promises);
 
