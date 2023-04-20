@@ -1,7 +1,5 @@
 import styled from 'styled-components';
-import React from 'react';
-import { GComponent, GComponentProps } from '../GComponent';
-import { Color } from '@/styles/types';
+import { Color } from '@/types/style';
 import { darken, lighten } from 'polished';
 
 export interface ButtonProps {
@@ -9,23 +7,12 @@ export interface ButtonProps {
   color?: Color;
 }
 
-export const Button = <T extends React.ElementType = 'button'>({
-  as,
-  size,
-  color,
-  ...props
-}: ButtonProps & GComponentProps<T>) => {
-  const Element = as || 'button';
-  return <GButton as={Element} size={size} color={color} {...props} />;
-};
-
-const GButton = styled(GComponent)<ButtonProps>`
+export const Button = styled.button<ButtonProps>`
   display: flex;
   align-items: center;
   justify-content: center;
 
-  font-family: 'ChailceNoggin', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif,
-    'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+  font-family: 'ChailceNoggin';
   font-weight: ${(props) => props.theme.fontWeight.bold};
 
   background-color: ${(props) => props.theme.color.surface};
