@@ -43,6 +43,7 @@ export class UserService {
     await this.authService.checkExistAuthId(authId);
     await this.checkAlreadyExistUser(authId);
     await this.checkDuplicatedNickname(nickname);
+    // TODO: Add transcation
     await this.userRepository.insert({
       id: authId,
       nickname: nickname,
