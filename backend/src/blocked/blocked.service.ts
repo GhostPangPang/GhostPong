@@ -1,4 +1,11 @@
-import { ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  ForbiddenException,
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -15,6 +22,7 @@ export class BlockedService {
     private readonly blockedUserRepository: Repository<BlockedUser>,
     @InjectRepository(Friendship)
     private readonly friendshipRepository: Repository<Friendship>,
+    @Inject(forwardRef(() => UserService))
     private readonly userService: UserService,
   ) {}
 
@@ -57,7 +65,8 @@ export class BlockedService {
 
   /* 
     TODO: friend 도메인으로 옮기면 좋을 것 같은 메서드들 
-    */
+  */
+
   async checkIsFriend(myId: number, userId: number): Promise<Friendship | null> {
     const friendship = await this.friendshipRepository.findOneBy([
       { sender: { id: myId }, receiver: { id: userId }, accept: true },
@@ -87,4 +96,9 @@ export class BlockedService {
   /* 
   repository method
   */
+  async findBlockedByUserId(userId: number): Promise<number[]> {
+    return (await this.blockedUserRepository.findBy({ userId: userId })).map(
+      (blockedUser) => blockedUser.blockedUserId,
+    );
+  }
 }
