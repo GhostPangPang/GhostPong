@@ -1,40 +1,39 @@
 import styled from 'styled-components';
 
-export interface AvatarProps {
-  src?: string;
-  alt?: string;
+export type AvatarProps = {
   size?: 'sm' | 'md' | 'lg';
   onClick?: (event: React.MouseEvent<HTMLImageElement>) => void;
-}
-
-const getSize = (size: AvatarProps['size']) => {
-  switch (size) {
-    case 'sm':
-      return '4rem';
-    case 'md':
-      return '6.4rem';
-    case 'lg':
-      return '18rem';
-  }
-};
+} & React.ComponentPropsWithoutRef<'img'>;
 
 const StyledAvatar = styled.img<AvatarProps>`
-  ${(props) => {
-    const size = getSize(props.size);
-    return `
-      width: ${size};
-      height: ${size};
-    `;
-  }}
   border-radius: 50%;
   object-fit: cover;
+  ${(props) => {
+    switch (props.size) {
+      case 'sm':
+        return `
+        width: 4rem;
+        height: 4rem;
+        `;
+      case 'md':
+        return `
+        width: 6.4rem;
+        height: 6.4rem;
+        `;
+      case 'lg':
+        return `
+        width: 18rem;
+        height: 18rem;
+        `;
+    }
+  }}
 `;
 
 export const Avatar = ({
-  src = 'https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg',
-  alt = 'default_name',
   size = 'md',
+  src = 'https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg',
   onClick,
+  ...props
 }: AvatarProps) => {
-  return <StyledAvatar src={src} alt={alt} size={size} onClick={onClick} />;
+  return <StyledAvatar as="img" size={size} src={src} onClick={onClick} {...props} />;
 };
