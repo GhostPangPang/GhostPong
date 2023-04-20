@@ -67,7 +67,6 @@ export class UserService {
 
   async findExistUserByNickname(nickname: string): Promise<User> {
     const user = await this.userRepository.findOneBy({ nickname: nickname });
-
     if (user === null) {
       throw new NotFoundException('존재하지 않는 유저입니다.');
     }
