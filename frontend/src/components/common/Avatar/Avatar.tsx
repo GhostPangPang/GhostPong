@@ -1,22 +1,11 @@
 import styled from 'styled-components';
-import { GComponent, GComponentProps } from '../GComponent';
 
-export interface AvatarProps {
+export type AvatarProps = {
   size?: 'sm' | 'md' | 'lg';
   onClick?: (event: React.MouseEvent<HTMLImageElement>) => void;
-}
+} & React.ComponentPropsWithoutRef<'img'>;
 
-export const Avatar = ({
-  size = 'md',
-  src = 'https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg',
-  alt = 'default_name',
-  onClick,
-  ...props
-}: AvatarProps & React.ComponentPropsWithoutRef<'img'>) => {
-  return <GAvatar as="img" size={size} src={src} alt={alt} onClick={onClick} {...props} />;
-};
-
-const GAvatar = styled.img<AvatarProps>`
+const StyledAvatar = styled.img<AvatarProps>`
   border-radius: 50%;
   object-fit: cover;
   ${(props) => {
@@ -39,3 +28,12 @@ const GAvatar = styled.img<AvatarProps>`
     }
   }}
 `;
+
+export const Avatar = ({
+  size = 'md',
+  src = 'https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg',
+  onClick,
+  ...props
+}: AvatarProps) => {
+  return <StyledAvatar as="img" size={size} src={src} onClick={onClick} {...props} />;
+};
