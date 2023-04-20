@@ -1,6 +1,6 @@
 import { ConflictException, forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 
 import { AuthService } from '../auth/auth.service';
 import { BlockedService } from '../blocked/blocked.service';
@@ -43,13 +43,12 @@ export class UserService {
     await this.authService.checkExistAuthId(authId);
     await this.checkAlreadyExistUser(authId);
     await this.checkDuplicatedNickname(nickname);
-    // TODO: Add transcation
-    await this.userRepository.insert({
-      id: authId,
-      nickname: nickname,
-      image: DEFAULT_IMAGE,
+
+    await this.userRepository.manager.transaction(async (manager: EntityManager) => {
+      const user = new User(authId, nickname, DEFAULT_IMAGE);
+      await manager.save(user);
+      await this.authService.changeAuthStatus(authId);
     });
-    await this.authService.changeAuthStatus(authId);
     return new NicknameResponseDto(nickname);
   }
 
