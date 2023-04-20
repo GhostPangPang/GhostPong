@@ -3,15 +3,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { BlockedUser } from '../entity/blocked-user.entity';
 import { Friendship } from '../entity/friendship.entity';
-import { User } from '../entity/user.entity';
-import { UserService } from '../user/user.service';
+import { UserModule } from '../user/user.module';
 
 import { BlockedController } from './blocked.controller';
 import { BlockedService } from './blocked.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([BlockedUser, User, Friendship])],
+  imports: [TypeOrmModule.forFeature([BlockedUser, Friendship]), UserModule],
   controllers: [BlockedController],
-  providers: [BlockedService, UserService],
+  providers: [BlockedService],
 })
 export class BlockedModule {}
