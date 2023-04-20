@@ -42,21 +42,26 @@ export class BlockedService {
     return new SuccessResponseDto('유저를 차단하였습니다.');
   }
 
+  async deleteBlockedUser(myId: number, userId: number): Promise<SuccessResponseDto> {
+    if (myId === userId) {
+      throw new ConflictException('본인 자신은 차단되어 있지 않습니다!!!');
+    }
+    await this.userService.findExistUserById(userId);
+    const blockedUser = await this.blockedUserRepository.findOneBy({ userId: myId, blockedUserId: userId });
+    if (blockedUser === null) {
+      throw new NotFoundException('차단한 적이 없는 유저입니다.');
+    }
+    await this.blockedUserRepository.delete(blockedUser);
+    return new SuccessResponseDto('차단 해제 되었습니다.');
+  }
+
   /* 
-  TODO: friend 도메인으로 옮기면 좋을 것 같은 메서드들 
-  */
+    TODO: friend 도메인으로 옮기면 좋을 것 같은 메서드들 
+    */
   async checkIsFriend(myId: number, userId: number): Promise<Friendship | null> {
     const friendship = await this.friendshipRepository.findOneBy([
-      {
-        sender: { id: myId },
-        receiver: { id: userId },
-        accept: true,
-      },
-      {
-        sender: { id: userId },
-        receiver: { id: myId },
-        accept: true,
-      },
+      { sender: { id: myId }, receiver: { id: userId }, accept: true },
+      { sender: { id: userId }, receiver: { id: myId }, accept: true },
     ]);
     return friendship;
   }
@@ -65,18 +70,15 @@ export class BlockedService {
   validation check method
   */
 
-  async checkBlockedCountLimit(userId: number): Promise<void> {
+  private async checkBlockedCountLimit(userId: number): Promise<void> {
     const count = await this.blockedUserRepository.countBy({ userId: userId });
     if (count >= BLOCKED_USER_LIMIT) {
       throw new ForbiddenException('차단 목록 정원이 찼습니다.');
     }
   }
 
-  async checkExistBlockedUser(userId: number, blockedUserId: number): Promise<void> {
-    const record = await this.blockedUserRepository.findOneBy({
-      userId: userId,
-      blockedUserId: blockedUserId,
-    });
+  private async checkExistBlockedUser(userId: number, blockedUserId: number): Promise<void> {
+    const record = await this.blockedUserRepository.findOneBy({ userId: userId, blockedUserId: blockedUserId });
     if (record !== null) {
       throw new NotFoundException('이미 차단한 유저입니다.');
     }
