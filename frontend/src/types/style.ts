@@ -23,8 +23,8 @@ export type FlexContainerProps = {
 } & ContainerProps;
 
 export type GridContainerProps = {
-  columns: number;
-  rows: number;
+  columns?: number;
+  rows?: number;
   areas?: string;
   autoColumns?: string;
   autoRows?: string;
