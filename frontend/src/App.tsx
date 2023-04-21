@@ -1,12 +1,11 @@
 import { GlobalStyle } from '@/styles/GlobalStyle';
-import { Box } from '@/components/common/Box/Box';
 import { ThemeProvider } from 'styled-components';
 import theme from '@/styles/theme';
-import { Header } from '@/components/layout/Header';
-import { Content } from '@/components/layout/Content';
-import { ErrorFallback } from '@/components/error/ErrorFallback';
+import { Header } from '@/layout/Header';
+import { Content } from '@/layout/Content';
+import { ErrorFallback } from '@/error/ErrorFallback';
 import { ErrorBoundary } from 'react-error-boundary';
-import { Button } from './components/common/Button';
+import { Button } from '@/common/Button';
 
 function App() {
   return (
