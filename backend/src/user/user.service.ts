@@ -23,7 +23,7 @@ export class UserService {
 
   async getUserInfo(myId: number): Promise<UserInfoResponseDto> {
     const userInfo = await this.findExistUserById(myId);
-    const numbers = await this.blockedService.findBlockedByUserId(myId);
+    const numbers = await this.blockedService.findBlockedIdByUserId(myId);
     return new UserInfoResponseDto(userInfo, numbers);
   }
 
