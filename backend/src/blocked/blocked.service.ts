@@ -15,6 +15,8 @@ import { BlockedUser } from '../entity/blocked-user.entity';
 import { Friendship } from '../entity/friendship.entity';
 import { UserService } from '../user/user.service';
 
+import { BlockedUserListDto } from './dto/blocked-list-response.dto';
+
 @Injectable()
 export class BlockedService {
   constructor(
@@ -60,6 +62,11 @@ export class BlockedService {
     }
     await this.blockedUserRepository.delete({ userId: blockedUser.userId, blockedUserId: blockedUser.blockedUserId });
     return new SuccessResponseDto('차단 해제 되었습니다.');
+  }
+
+  async getBlockedUserList(myId: number): Promise<BlockedUserListDto> {
+    myId;
+    return new BlockedUserListDto();
   }
 
   /* 
