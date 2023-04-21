@@ -46,7 +46,7 @@ export class BlockedController {
   }
 
   @ApiOperation({ summary: '유저 차단한거 해제하기' })
-  @ApiNotFoundResponse({ type: ErrorResponseDto, description: '차단한 적이 없는 유저, 존재하지 않는 유저' })
+  @ApiNotFoundResponse({ type: ErrorResponseDto, description: '차단한 기록이 없는 유저, 존재하지 않는 유저' })
   @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
   @ApiParam({ name: 'userId', description: '차단 해제할 사람 아이디' })
   @Delete(':userId')

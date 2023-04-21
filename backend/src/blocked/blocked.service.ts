@@ -54,10 +54,9 @@ export class BlockedService {
     if (myId === userId) {
       throw new ConflictException('본인 자신은 차단되어 있지 않습니다!!!');
     }
-    await this.userService.findExistUserById(userId);
     const blockedUser = await this.blockedUserRepository.findOneBy({ userId: myId, blockedUserId: userId });
     if (blockedUser === null) {
-      throw new NotFoundException('차단된 유저가 아닙니다.');
+      throw new NotFoundException('차단한 기록이 없습니다.');
     }
     await this.blockedUserRepository.delete(blockedUser);
     return new SuccessResponseDto('차단 해제 되었습니다.');
