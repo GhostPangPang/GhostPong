@@ -1,14 +1,15 @@
 import { ReactComponent as Logo } from '@/svgs/logo-sm.svg';
-import { Grid } from '../Grid';
+import { Grid, GridItemProps } from '../Grid';
 
-export const Header = () => {
+export const Header = (props: GridItemProps) => {
   return (
     <Grid
       as="header"
       container="flex"
       justifyContent="space-between"
       alignItems="center"
-      size={{ height: '9.6rem', padding: 'layout' }}
+      size={{ padding: 'header' }}
+      {...props}
     >
       <Logo />
     </Grid>
