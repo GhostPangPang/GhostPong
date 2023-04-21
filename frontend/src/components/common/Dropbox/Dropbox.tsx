@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import { darken, lighten } from 'polished';
+import ResizeObserver from 'resize-observer-polyfill';
 
 type Placement = 'topright' | 'topleft' | 'bottomright' | 'bottomleft';
 
