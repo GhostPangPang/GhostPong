@@ -1,4 +1,11 @@
-import { ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  ForbiddenException,
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -15,6 +22,7 @@ export class BlockedService {
     private readonly blockedUserRepository: Repository<BlockedUser>,
     @InjectRepository(Friendship)
     private readonly friendshipRepository: Repository<Friendship>,
+    @Inject(forwardRef(() => UserService))
     private readonly userService: UserService,
   ) {}
 
@@ -42,21 +50,26 @@ export class BlockedService {
     return new SuccessResponseDto('유저를 차단하였습니다.');
   }
 
+  async deleteBlockedUser(myId: number, userId: number): Promise<SuccessResponseDto> {
+    if (myId === userId) {
+      throw new ConflictException('본인 자신은 차단되어 있지 않습니다!!!');
+    }
+    const blockedUser = await this.blockedUserRepository.findOneBy({ userId: myId, blockedUserId: userId });
+    if (blockedUser === null) {
+      throw new NotFoundException('차단 기록이 없습니다.');
+    }
+    await this.blockedUserRepository.delete({ userId: blockedUser.userId, blockedUserId: blockedUser.blockedUserId });
+    return new SuccessResponseDto('차단 해제 되었습니다.');
+  }
+
   /* 
-  TODO: friend 도메인으로 옮기면 좋을 것 같은 메서드들 
+    TODO: friend 도메인으로 옮기면 좋을 것 같은 메서드들 
   */
+
   async checkIsFriend(myId: number, userId: number): Promise<Friendship | null> {
     const friendship = await this.friendshipRepository.findOneBy([
-      {
-        sender: { id: myId },
-        receiver: { id: userId },
-        accept: true,
-      },
-      {
-        sender: { id: userId },
-        receiver: { id: myId },
-        accept: true,
-      },
+      { sender: { id: myId }, receiver: { id: userId }, accept: true },
+      { sender: { id: userId }, receiver: { id: myId }, accept: true },
     ]);
     return friendship;
   }
@@ -65,18 +78,15 @@ export class BlockedService {
   validation check method
   */
 
-  async checkBlockedCountLimit(userId: number): Promise<void> {
+  private async checkBlockedCountLimit(userId: number): Promise<void> {
     const count = await this.blockedUserRepository.countBy({ userId: userId });
     if (count >= BLOCKED_USER_LIMIT) {
       throw new ForbiddenException('차단 목록 정원이 찼습니다.');
     }
   }
 
-  async checkExistBlockedUser(userId: number, blockedUserId: number): Promise<void> {
-    const record = await this.blockedUserRepository.findOneBy({
-      userId: userId,
-      blockedUserId: blockedUserId,
-    });
+  private async checkExistBlockedUser(userId: number, blockedUserId: number): Promise<void> {
+    const record = await this.blockedUserRepository.findOneBy({ userId: userId, blockedUserId: blockedUserId });
     if (record !== null) {
       throw new NotFoundException('이미 차단한 유저입니다.');
     }
@@ -85,4 +95,9 @@ export class BlockedService {
   /* 
   repository method
   */
+  async findBlockedId(userId: number): Promise<number[]> {
+    return (await this.blockedUserRepository.findBy({ userId: userId })).map(
+      (blockedUser) => blockedUser.blockedUserId,
+    );
+  }
 }

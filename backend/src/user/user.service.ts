@@ -1,11 +1,11 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 
 import { AuthService } from '../auth/auth.service';
+import { BlockedService } from '../blocked/blocked.service';
 import { DEFAULT_IMAGE } from '../common/constant';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
-import { BlockedUser } from '../entity/blocked-user.entity';
 import { User } from '../entity/user.entity';
 
 import { NicknameResponseDto } from './dto/nickname-response.dto';
@@ -16,14 +16,14 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    @InjectRepository(BlockedUser)
-    private readonly blockedUserRepository: Repository<BlockedUser>,
     private readonly authService: AuthService,
+    @Inject(forwardRef(() => BlockedService))
+    private readonly blockedService: BlockedService,
   ) {}
 
   async getUserInfo(myId: number): Promise<UserInfoResponseDto> {
     const userInfo = await this.findExistUserById(myId);
-    const numbers = await this.findBlockedByUserId(myId);
+    const numbers = await this.blockedService.findBlockedId(myId);
     return new UserInfoResponseDto(userInfo, numbers);
   }
 
@@ -43,13 +43,10 @@ export class UserService {
     await this.authService.checkExistAuthId(authId);
     await this.checkAlreadyExistUser(authId);
     await this.checkDuplicatedNickname(nickname);
-    // TODO: Add transcation
-    await this.userRepository.insert({
-      id: authId,
-      nickname: nickname,
-      image: DEFAULT_IMAGE,
+    await this.userRepository.manager.transaction(async (manager: EntityManager) => {
+      await manager.insert(User, { id: authId, nickname: nickname, image: DEFAULT_IMAGE });
+      await this.authService.changeAuthStatus(authId);
     });
-    await this.authService.changeAuthStatus(authId);
     return new NicknameResponseDto(nickname);
   }
 
@@ -89,10 +86,4 @@ export class UserService {
   /* 
   repository method
   */
-  // TODO: blocked 도메인으로 바꾸기
-  async findBlockedByUserId(userId: number): Promise<number[]> {
-    return (await this.blockedUserRepository.findBy({ userId: userId })).map(
-      (blockedUser) => blockedUser.blockedUserId,
-    );
-  }
 }

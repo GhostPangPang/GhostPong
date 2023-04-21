@@ -1,8 +1,9 @@
-import { Controller, Headers, HttpCode, HttpStatus, Param, Post, Query } from '@nestjs/common';
+import { Controller, Delete, Headers, HttpCode, HttpStatus, Param, Post, Query } from '@nestjs/common';
 import {
   ApiConflictResponse,
   ApiForbiddenResponse,
   ApiHeaders,
+  ApiNotFoundResponse,
   ApiOperation,
   ApiParam,
   ApiQuery,
@@ -42,5 +43,14 @@ export class BlockedController {
     @Query('nickname') nickname: string,
   ): Promise<SuccessResponseDto> {
     return this.blockedService.blockUserByNickname(+myId, nickname);
+  }
+
+  @ApiOperation({ summary: '유저 차단 해제' })
+  @ApiNotFoundResponse({ type: ErrorResponseDto, description: '차단한 기록이 없는 유저, 존재하지 않는 유저' })
+  @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
+  @ApiParam({ name: 'userId', description: '차단 해제할 사람 아이디' })
+  @Delete(':userId')
+  deleteBlockedUser(@Headers('x-my-id') myId: number, @Param('userId') userId: number): Promise<SuccessResponseDto> {
+    return this.blockedService.deleteBlockedUser(+myId, userId);
   }
 }
