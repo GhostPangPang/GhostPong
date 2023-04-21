@@ -5,8 +5,8 @@ import { Header } from '../Header';
 export const MainLayout = () => {
   return (
     <>
-      <Header />
-      <Content>
+      <Header xs={0} />
+      <Content alignSelf="stretch" xs={1}>
         <Outlet />
       </Content>
     </>
