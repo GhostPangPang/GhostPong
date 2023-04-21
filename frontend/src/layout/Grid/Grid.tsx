@@ -1,36 +1,30 @@
 import {
   FlexContainerProps,
-  FlexItemProps,
   GridContainerProps,
-  GridItemProps,
+  ItemProps,
   LayoutProps,
   PositionProps,
   ResponsiveProps,
 } from '@/types/style';
 import styled, { css } from 'styled-components';
 
-type ItemProps = FlexItemProps & GridItemProps;
-type ContainerType = 'flex' | 'grid' | undefined;
+type ContainerType = 'flex' | 'grid' | 'item';
 
-export type GridProps<T extends ContainerType = undefined> = {
+export type GridItemProps = ItemProps & ResponsiveProps;
+export type GridProps<T extends ContainerType = 'item'> = {
   as?: React.ElementType;
   children?: React.ReactNode;
   container?: T;
   size?: LayoutProps;
   position?: PositionProps;
   responsive?: ResponsiveProps;
-} & ItemProps &
+} & GridItemProps &
   LayoutProps &
   PositionProps &
-  (T extends 'flex'
-    ? FlexContainerProps & ResponsiveProps
-    : T extends 'grid'
-    ? GridContainerProps
-    : Record<string, never>);
+  (T extends 'flex' ? FlexContainerProps & ResponsiveProps : T extends 'grid' ? GridContainerProps : void);
 
 const StyledGrid = styled.div<GridProps>`
   flex-grow: 1;
-  flex-basis: auto;
   ${(props) => css`
     display: block;
     ${props.order && `order: ${props.order};`}
@@ -47,7 +41,7 @@ const StyledGrid = styled.div<GridProps>`
     props.size &&
     css`
       ${props.size.width ? `width: ${props.size.width};` : 'width: 100%;'}
-      ${props.size.height ? `height: ${props.size.height};` : 'height: 100%;'}
+      ${props.size.height ? `height: ${props.size.height};` : 'height: auto;'}
       ${props.size.minWidth && `min-width: ${props.size.minWidth};`}
       ${props.size.minHeight && `min-height: ${props.size.minHeight};`}
       ${props.size.maxWidth && `max-width: ${props.size.maxWidth};`}
@@ -138,28 +132,59 @@ const StyledGridContainer = styled(StyledGrid)<GridProps<'grid'>>`
 export const Grid = <T extends ContainerType>({
   children,
   container,
-  gap,
-  rowGap,
-  columnGap,
-  justifyContent,
-  alignItems,
-  alignContent,
   justifySelf,
   alignSelf,
+  order,
+  flexGrow,
+  flexShrink,
+  flexBasis,
+  gridColumn,
+  gridRow,
+  gridArea,
+  xs,
+  sm,
+  md,
+  lg,
   ...props
 }: GridProps<T>) => {
   if (container === 'grid') {
-    const { columns, rows, areas, autoFlow, autoRows, autoColumns, justifyItems, ...rest } = props as GridProps<'grid'>;
+    const {
+      gap,
+      rowGap,
+      columnGap,
+      justifyContent,
+      alignItems,
+      alignContent,
+      columns,
+      rows,
+      areas,
+      autoFlow,
+      autoRows,
+      autoColumns,
+      justifyItems,
+      ...rest
+    } = props as GridProps<'grid'>;
     return (
       <StyledGridContainer
+        justifySelf={justifySelf}
+        alignSelf={alignSelf}
+        order={order}
+        flexGrow={flexGrow}
+        flexShrink={flexShrink}
+        flexBasis={flexBasis}
+        gridColumn={gridColumn}
+        gridRow={gridRow}
+        gridArea={gridArea}
+        xs={xs}
+        sm={sm}
+        md={md}
+        lg={lg}
         gap={gap}
         rowGap={rowGap}
         columnGap={columnGap}
         justifyContent={justifyContent}
         alignItems={alignItems}
         alignContent={alignContent}
-        justifySelf={justifySelf}
-        alignSelf={alignSelf}
         columns={columns}
         rows={rows}
         areas={areas}
@@ -173,17 +198,29 @@ export const Grid = <T extends ContainerType>({
       </StyledGridContainer>
     );
   } else if (container === 'flex') {
-    const { direction, wrap, ...rest } = props as GridProps<'flex'>;
+    const { gap, rowGap, columnGap, justifyContent, alignItems, alignContent, direction, wrap, ...rest } =
+      props as GridProps<'flex'>;
     return (
       <StyledFlexContainer
+        justifySelf={justifySelf}
+        alignSelf={alignSelf}
+        order={order}
+        flexGrow={flexGrow}
+        flexShrink={flexShrink}
+        flexBasis={flexBasis}
+        gridColumn={gridColumn}
+        gridRow={gridRow}
+        gridArea={gridArea}
+        xs={xs}
+        sm={sm}
+        md={md}
+        lg={lg}
         gap={gap}
         rowGap={rowGap}
         columnGap={columnGap}
         justifyContent={justifyContent}
         alignItems={alignItems}
         alignContent={alignContent}
-        justifySelf={justifySelf}
-        alignSelf={alignSelf}
         direction={direction}
         wrap={wrap}
         {...rest}
@@ -194,14 +231,19 @@ export const Grid = <T extends ContainerType>({
   } else {
     return (
       <StyledGrid
-        gap={gap}
-        rowGap={rowGap}
-        columnGap={columnGap}
-        justifyContent={justifyContent}
-        alignItems={alignItems}
-        alignContent={alignContent}
         justifySelf={justifySelf}
         alignSelf={alignSelf}
+        order={order}
+        flexGrow={flexGrow}
+        flexShrink={flexShrink}
+        flexBasis={flexBasis}
+        gridColumn={gridColumn}
+        gridRow={gridRow}
+        gridArea={gridArea}
+        xs={xs}
+        sm={sm}
+        md={md}
+        lg={lg}
         {...props}
       >
         {children}
