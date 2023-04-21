@@ -56,7 +56,7 @@ export class BlockedService {
     }
     const blockedUser = await this.blockedUserRepository.findOneBy({ userId: myId, blockedUserId: userId });
     if (blockedUser === null) {
-      throw new NotFoundException('차단한 기록이 없습니다.');
+      throw new NotFoundException('차단 기록이 없습니다.');
     }
     await this.blockedUserRepository.delete(blockedUser);
     return new SuccessResponseDto('차단 해제 되었습니다.');
