@@ -6,9 +6,9 @@ import { Friendship } from '../../src/entity/friendship.entity';
 
 export default (friendship: Friendship) => {
   return {
-    sender: faker.datatype.boolean() ? friendship.sender : friendship.receiver,
-    friend: friendship,
-    contents: faker.lorem.sentence(),
+    senderId: faker.datatype.boolean() ? friendship.sender.id : friendship.receiver.id,
+    friendId: friendship.id,
+    content: faker.lorem.sentence(),
     createdAt: faker.date.past(1, friendship.lastMessegeTime),
   };
 };
