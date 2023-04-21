@@ -18,16 +18,18 @@ export class MessageService {
   ) {}
 
   /**
+   * 메시지 리스트 가져오메
    *
+   * @param myId 내 아이디
    * @param friendId 친구와의 friendship의 id
    * @param offset 마지막으로 가져온 메시지의 id
    */
-  async getMessagesList(friendId: number, offset: number): Promise<MessageResponseDto> {
+  async getMessagesList(myId: number, friendId: number, offset: number): Promise<MessageResponseDto> {
     const friendship = await this.friendshipRepository.findOneBy([{ id: friendId, accept: true }]);
     if (friendship === null) {
       throw new NotFoundException('친구 관계가 없습니다.');
     }
-    if (friendship.sender.id !== friendId && friendship.receiver.id !== friendId) {
+    if (friendship.sender.id !== myId && friendship.receiver.id !== myId) {
       throw new ForbiddenException('친구 관계에 속한 유저가 아닙니다.');
     }
     return {
