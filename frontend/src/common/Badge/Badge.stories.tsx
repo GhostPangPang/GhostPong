@@ -5,10 +5,19 @@ import { Avatar } from '../Avatar';
 export default {
   title: 'Badge',
   component: Badge,
+  parameters: {
+    layout: 'centered',
+  },
 } as Meta;
 
 export const Default = (props: BadgeProps) => (
   <Badge {...props}>
-    <Avatar size={props.size} onClick={props.onClick} />
+    <Avatar size="md" onClick={props.onClick} />
+  </Badge>
+);
+
+export const AvatarSm = (props: BadgeProps) => (
+  <Badge {...props}>
+    <Avatar size="sm" onClick={props.onClick} />
   </Badge>
 );
