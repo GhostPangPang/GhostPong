@@ -9,6 +9,7 @@ import { AppConfigModule } from './config/app/configuration.module';
 import { DatabaseConfigModule } from './config/database/configuration.module';
 import { DatabaseConfigService } from './config/database/configuration.service';
 import { FriendModule } from './friend/friend.module';
+import { MessageModule } from './message/message.module';
 import { UserModule } from './user/user.module';
 
 @Module({
@@ -18,10 +19,11 @@ import { UserModule } from './user/user.module';
       imports: [DatabaseConfigModule],
       useClass: DatabaseConfigService,
     }),
-    FriendModule,
-    UserModule,
     AuthModule,
     BlockedModule,
+    FriendModule,
+    MessageModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
