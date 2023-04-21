@@ -11,7 +11,7 @@ export const LobyPage = () => {
       <Grid gridColumn="1" gridRow="2" alignSelf="end">
         <Button size="md">Message</Button>
       </Grid>
-      <Grid container="flex" justifyContent="end" alignItems="end" gridColumn="2/4" gridRow="2">
+      <Grid container="flex" justifyContent="end" alignItems="end" gridColumn="2/4" gridRow="2" columnGap={1}>
         <Button size="md">Normal</Button>
         <Button size="md">Random</Button>
       </Grid>

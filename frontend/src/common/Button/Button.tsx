@@ -21,16 +21,13 @@ export const Button = styled.button<ButtonProps>`
   border: 3px solid;
 
   &:hover {
-    background: ${(props) => lighten(0.1, props.theme.color.surface)};
+    background: ${(props) => lighten(0.1, props.theme.color.gray)};
   }
   &:active {
-    background: ${(props) => darken(0.1, props.theme.color.surface)};
-  }
-  & + & {
-    margin-left: 1rem;
+    background: ${(props) => darken(0.1, props.theme.color.gray)};
   }
 
-  border-color: ${(props) => props.color || props.theme.color.primary};
+  border-color: ${(props) => (props.color ? props.theme.color[props.color] : props.theme.color.primary)};
   ${(props) => {
     switch (props.size) {
       case 'sm':
@@ -51,7 +48,7 @@ export const Button = styled.button<ButtonProps>`
         `;
       case 'lg':
         return `
-          width: 42rem;
+          width: 32rem;
           height: 4.8rem;
           border-radius: 0.8rem;
           padding: 0.8rem 1.6rem;
