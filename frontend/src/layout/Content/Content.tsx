@@ -1,15 +1,13 @@
-import styled from 'styled-components';
+import { Grid } from '../Grid';
 
 interface ContentProps {
   children?: JSX.Element | JSX.Element[];
 }
 
 export const Content = ({ children }: ContentProps) => {
-  return <StyledContent>{children}</StyledContent>;
+  return (
+    <Grid as="main" size={{ height: '100%', padding: 'layout' }}>
+      {children}
+    </Grid>
+  );
 };
-
-const StyledContent = styled.main`
-  height: 100%;
-
-  padding: ${(props) => props.theme.padding.layout};
-`;
