@@ -95,7 +95,7 @@ export class BlockedService {
   /* 
   repository method
   */
-  async findBlockedIdByUserId(userId: number): Promise<number[]> {
+  async findBlockedId(userId: number): Promise<number[]> {
     return (await this.blockedUserRepository.findBy({ userId: userId })).map(
       (blockedUser) => blockedUser.blockedUserId,
     );
