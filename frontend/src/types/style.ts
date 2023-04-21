@@ -25,6 +25,8 @@ export type FlexContainerProps = {
 export type GridContainerProps = {
   columns?: number;
   rows?: number;
+  columnsSize?: number[];
+  rowsSize?: number[];
   areas?: string;
   autoColumns?: string;
   autoRows?: string;

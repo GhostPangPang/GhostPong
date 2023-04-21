@@ -46,8 +46,8 @@ const StyledGrid = styled.div<GridProps>`
   ${(props) =>
     props.size &&
     css`
-      ${props.size.width && `width: ${props.size.width};`}
-      ${props.size.height && `height: ${props.size.height};`}
+      ${props.size.width ? `width: ${props.size.width};` : 'width: 100%;'}
+      ${props.size.height ? `height: ${props.size.height};` : 'height: 100%;'}
       ${props.size.minWidth && `min-width: ${props.size.minWidth};`}
       ${props.size.minHeight && `min-height: ${props.size.minHeight};`}
       ${props.size.maxWidth && `max-width: ${props.size.maxWidth};`}
@@ -114,8 +114,14 @@ const StyledFlexContainer = styled(StyledGrid)<GridProps<'flex'>>`
 const StyledGridContainer = styled(StyledGrid)<GridProps<'grid'>>`
   ${(props) => css`
     display: grid;
-    ${props.columns && `grid-template-columns: repeat(${props.columns}, 1fr);`}
-    ${props.rows && `grid-template-rows: repeat(${props.rows}, 1fr);`}
+    ${props.columns &&
+    `grid-template-columns: ${
+      props.columnsSize ? `${props.columnsSize.map((size) => size + 'fr').join(' ')}` : `repeat(${props.columns}, 1fr)`
+    };`}
+    ${props.rows &&
+    `grid-template-rows: ${
+      props.rowsSize ? `${props.rowsSize.map((size) => size + 'fr').join(' ')}` : `repeat(${props.columns}, 1fr)`
+    };`}
     ${props.areas && `grid-template-areas: ${props.areas};`}
     ${props.autoColumns && `grid-auto-columns: ${props.autoColumns};`}
     ${props.autoRows && `grid-auto-rows: ${props.autoRows};`}
