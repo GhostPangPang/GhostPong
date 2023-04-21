@@ -1,23 +1,12 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
+import ResizeObserver from 'resize-observer-polyfill';
 
 export interface BadgeProps {
-  size: 'sm' | 'md' | 'lg';
   status: 'online' | 'offline' | 'game';
-  onClick?: (event: React.MouseEvent<HTMLImageElement>) => void;
-  children: JSX.Element;
+  onClick?: React.MouseEventHandler;
+  children: React.ReactNode;
 }
-
-const getSize = (size: string) => {
-  switch (size) {
-    case 'sm':
-      return '4rem';
-    case 'md':
-      return '6.4rem';
-    case 'lg':
-      return '18rem';
-  }
-};
 
 const StyledStatus = styled.div<{ status: 'online' | 'offline' | 'game' }>`
   width: 0.8rem;
@@ -39,26 +28,46 @@ const StyledStatus = styled.div<{ status: 'online' | 'offline' | 'game' }>`
   }};
 `;
 
-const StyledBadge = styled.div<{ size: string }>`
+const StyledBadge = styled.div<{ width: number; height: number }>`
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 1em;
-  ${(props) => {
-    const size = getSize(props.size);
-    return `
-      width: ${size};
-      height: ${size};
-    `;
-  }}
+  width: ${({ width }) => width}px;
+  height: ${({ height }) => height}px;
   position: relative;
 `;
 
-export const Badge = ({ size, status, onClick, children }: BadgeProps) => {
+export const Badge = ({ status, onClick, children }: BadgeProps) => {
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  const badgeRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new ResizeObserver(() => {
+      const child = badgeRef.current?.firstChild as HTMLElement;
+      const { width: childWidth, height: childHeight } = child.getBoundingClientRect();
+      setDimensions({
+        width: childWidth,
+        height: childHeight,
+      });
+    });
+
+    const child = badgeRef.current?.firstChild;
+    if (child instanceof HTMLElement) {
+      observer.observe(child);
+    }
+
+    return () => {
+      if (child instanceof HTMLElement) {
+        observer.unobserve(child);
+      }
+    };
+  }, []);
+
   return (
-    <StyledBadge size={size}>
-      <StyledStatus status={status} />
+    <StyledBadge ref={badgeRef} width={dimensions.width} height={dimensions.height}>
       {React.cloneElement(children as React.ReactElement, { onClick })}
+      <StyledStatus status={status} />
     </StyledBadge>
   );
 };
