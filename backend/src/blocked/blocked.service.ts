@@ -58,7 +58,7 @@ export class BlockedService {
     if (blockedUser === null) {
       throw new NotFoundException('차단 기록이 없습니다.');
     }
-    await this.blockedUserRepository.delete(blockedUser);
+    await this.blockedUserRepository.delete({ userId: blockedUser.userId, blockedUserId: blockedUser.blockedUserId });
     return new SuccessResponseDto('차단 해제 되었습니다.');
   }
 
