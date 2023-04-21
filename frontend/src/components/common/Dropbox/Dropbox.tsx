@@ -1,17 +1,23 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
+import { darken, lighten } from 'polished';
 
 type Placement = 'topright' | 'topleft' | 'bottomright' | 'bottomleft';
 
-export interface DropboxProps {
+type DropboxProps = {
   items: { label: React.ReactNode; onClick?: () => void }[];
-  size: 'sm' | 'md' | 'lg';
   placement: Placement;
-  isVisible: boolean;
-  setIsVisible: (isVisible: boolean) => void;
-}
+  children: React.ReactNode;
+};
 
-const List = styled.ul<{ placement: Placement }>`
+const StyledDropbox = styled.div<{ width: number; height: number }>`
+  display: flex;
+  position: relative;
+  width: ${({ width }) => width}px;
+  height: ${({ height }) => height}px;
+`;
+
+const StyledList = styled.ul<{ placement: Placement }>`
   display: flex;
   flex-direction: column;
   list-style: none;
@@ -20,83 +26,94 @@ const List = styled.ul<{ placement: Placement }>`
   color: white;
   font-size: 1.5rem;
   padding: 0rem;
-  margin: 0;
   position: absolute;
   ${({ placement }) => {
     switch (placement) {
       case 'topright':
         return `
           bottom: calc(100%);
-          right: calc(-150%);
+          left: calc(0%);
           `;
       case 'topleft':
         return `
           bottom: calc(100%);
-          left: calc(-150%);
+          right: calc(0%);
           `;
       case 'bottomright':
         return `
           top: calc(100%);
-          right: calc(-150%);
+          left: calc(0%);
           `;
       case 'bottomleft':
         return `
           top: calc(100%);
-          left: calc(-150%);
+          right: calc(0%);
           `;
     }
-  }}
+  }}/* margin: 0.5rem; */
 `;
 
-const Item = styled.li`
-  padding: 1.5rem 3rem 1.5rem 1.5rem;
+const StyledItem = styled.li`
+  padding: 1.3rem 2.6rem 1.3rem 1.3rem;
   cursor: pointer;
-  /* white-space: nowrap; */
   &:hover {
-    background-color: #626262;
-    border-radius: 0.25rem;
+    background: ${(props) => lighten(0.1, props.theme.color.surface)};
   }
+  &:active {
+    background: ${(props) => darken(0.1, props.theme.color.surface)};
+  }
+  white-space: nowrap;
 `;
 
-const StyledDropBox = styled.div<{ size: DropboxProps['size'] }>`
-  ${({ size }) => {
-    switch (size) {
-      case 'sm':
-        return `
-        width: 4rem;
-        height: 4rem;
-      `;
-      case 'md':
-        return `
-        width: 6.4rem;
-        height: 6.4rem;
-      `;
-      case 'lg':
-        return `
-        width: 18rem;
-        height: 18rem;
-      `;
-    }
-  }}
-  transform: translate(0, -100%);
-`;
+export const Dropbox = ({ items, placement, children }: DropboxProps) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  const dropboxRef = useRef<HTMLDivElement>(null);
 
-export const Dropbox = ({ items, size, placement, isVisible, setIsVisible }: DropboxProps) => {
-  const handleMouseLeave = () => {
+  const handleOnClick = () => {
+    setIsVisible(!isVisible);
+  };
+
+  const handleOnMouseLeave = () => {
     setIsVisible(false);
   };
 
+  // useEffect를 사용하여 자식의 크기를 가져온다.
+  // 이렇게 하면 자식의 크기가 변경되어도 자동으로 크기를 가져올 수 있다.
+  useEffect(() => {
+    const observer = new ResizeObserver(() => {
+      const child = dropboxRef.current?.firstChild as HTMLElement;
+      const { width: childWidth, height: childHeight } = child.getBoundingClientRect();
+      setDimensions({
+        width: childWidth,
+        height: childHeight,
+      });
+    });
+
+    const child = dropboxRef.current?.firstChild;
+    if (child instanceof HTMLElement) {
+      observer.observe(child);
+    }
+
+    return () => {
+      if (child instanceof HTMLElement) {
+        observer.unobserve(child);
+      }
+    };
+  }, []);
+
   return (
-    <StyledDropBox onMouseLeave={handleMouseLeave} size={size}>
+    <StyledDropbox onClick={handleOnClick} ref={dropboxRef} width={dimensions.width} height={dimensions.height}>
+      {children}
       {isVisible && (
-        <List placement={placement}>
+        <StyledList placement={placement} onMouseLeave={handleOnMouseLeave}>
           {items.map((item, index) => (
-            <Item key={index} onClick={item.onClick}>
+            <StyledItem key={index} onClick={item.onClick}>
               {item.label}
-            </Item>
+            </StyledItem>
           ))}
-        </List>
+        </StyledList>
       )}
-    </StyledDropBox>
+    </StyledDropbox>
   );
 };
