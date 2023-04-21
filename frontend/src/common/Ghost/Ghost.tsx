@@ -8,7 +8,7 @@ export const Ghost = () => {
     {
       src: 'ghost.riv',
       autoplay: true,
-      stateMachines: ['State Machine 1'],
+      stateMachines: ['Waiting'],
     },
     { fitCanvasToArtboardHeight: true },
   );
