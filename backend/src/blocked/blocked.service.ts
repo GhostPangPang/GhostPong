@@ -65,8 +65,11 @@ export class BlockedService {
   }
 
   async getBlockedUserList(myId: number): Promise<BlockedUserListDto> {
-    myId;
-    return new BlockedUserListDto();
+    return {
+      blocked: (await this.blockedUserRepository.find({ relations: ['blockedUser'], where: [{ userId: myId }] })).map(
+        (blockedUser) => blockedUser.blockedUser,
+      ),
+    };
   }
 
   /* 
