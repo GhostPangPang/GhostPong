@@ -4,7 +4,6 @@ import { EntityManager, Repository } from 'typeorm';
 
 import { AuthService } from '../auth/auth.service';
 import { BlockedService } from '../blocked/blocked.service';
-import { DEFAULT_IMAGE } from '../common/constant';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
 import { User } from '../entity/user.entity';
 
@@ -44,13 +43,13 @@ export class UserService {
     await this.checkAlreadyExistUser(authId);
     await this.checkDuplicatedNickname(nickname);
     await this.userRepository.manager.transaction(async (manager: EntityManager) => {
-      await manager.insert(User, { id: authId, nickname: nickname, image: DEFAULT_IMAGE });
+      await manager.insert(User, { id: authId, nickname: nickname });
       await this.authService.changeAuthStatus(authId);
     });
     return new NicknameResponseDto(nickname);
   }
 
-  /* 
+  /*
   validation method
   */
 
@@ -83,7 +82,7 @@ export class UserService {
     }
   }
 
-  /* 
+  /*
   repository method
   */
 }
