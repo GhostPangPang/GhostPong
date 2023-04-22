@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 import { Friendship } from './friendship.entity';
 import { User } from './user.entity';
@@ -8,15 +8,23 @@ export class Message {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User)
-  sender: User;
+  @Column()
+  senderId: number;
 
-  @ManyToOne(() => Friendship, { onDelete: 'CASCADE' })
-  friend: Friendship;
+  @Column()
+  friendId: number;
 
   @Column({ length: 512 })
-  contents: string;
+  content: string;
 
   @Column({ default: () => 'now()' })
   createdAt: Date;
+
+  @ManyToOne(() => User)
+  @JoinColumn()
+  sender: User;
+
+  @ManyToOne(() => Friendship, { onDelete: 'CASCADE' })
+  @JoinColumn()
+  friend: Friendship;
 }
