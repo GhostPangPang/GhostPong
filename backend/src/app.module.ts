@@ -23,7 +23,9 @@ import { UserModule } from './user/user.module';
       useClass: DatabaseConfigService,
     }),
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '../..', 'public'),
+      rootPath: join(__dirname, '..', '..', 'public'),
+      renderPath: '/asset',
+      serveStaticOptions: { index: false, redirect: false },
     }),
     FriendModule,
     UserModule,
