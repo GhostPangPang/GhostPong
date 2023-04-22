@@ -1,5 +1,5 @@
 import { User } from '../../entity/user.entity';
 
-export class BlockedUserListDto {
+export class BlockedUserResponseDto {
   blocked: User[];
 }

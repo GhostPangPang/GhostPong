@@ -14,7 +14,7 @@ import { ErrorResponseDto } from '../common/dto/error-response.dto';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
 
 import { BlockedService } from './blocked.service';
-import { BlockedUserListDto } from './dto/blocked-list-response.dto';
+import { BlockedUserResponseDto } from './dto/blocked-user-response.dto';
 
 @ApiTags('blocked')
 @Controller('blocked')
@@ -58,7 +58,7 @@ export class BlockedController {
   @ApiOperation({ summary: '차단한 유저 목록(정보 포함) 가져오기' })
   @Get()
   @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
-  getBlockedUserList(@Headers('x-my-id') myId: number): Promise<BlockedUserListDto> {
+  getBlockedUserList(@Headers('x-my-id') myId: number): Promise<BlockedUserResponseDto> {
     return this.blockedService.getBlockedUserList(+myId);
   }
 }
