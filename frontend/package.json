@@ -26,8 +26,8 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-error-boundary": "^4.0.3",
-    "resize-observer-polyfill": "^1.5.1",
     "react-router-dom": "^6.10.0",
+    "resize-observer-polyfill": "^1.5.1",
     "styled-components": "^5.3.9",
     "styled-normalize": "^8.0.7"
   },

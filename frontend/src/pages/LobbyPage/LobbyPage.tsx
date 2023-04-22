@@ -2,7 +2,7 @@ import { Button } from '@/common/Button';
 import { Grid } from '@/layout/Grid';
 import Rive from '@rive-app/react-canvas';
 
-export const LobyPage = () => {
+export const LobbyPage = () => {
   return (
     <Grid container="grid" rows={2} columns={3} rowsSize={[1, 0]} columnsSize={[1, 2, 1]}>
       <Grid gridColumn="2" alignSelf="center" justifySelf="center" size={{ height: '360px', width: '360px' }}>

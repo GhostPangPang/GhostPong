@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { LobyPage } from './LobyPage';
+import type { StoryObj } from '@storybook/react';
+import { LobbyPage } from './LobbyPage';
 
 const meta = {
   title: 'Common/LobyPage',

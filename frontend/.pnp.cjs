@@ -75,8 +75,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react", "npm:18.2.0"],\
             ["react-dom", "virtual:cc38defef59748d3ec79a388cfcde85b4d057fb9455e5e4bd72ab8fd3f3043f27f94cf2740f0669e3145517dcdf50bac7d684be6bedfd5353b3e00e9ee55b388#npm:18.2.0"],\
             ["react-error-boundary", "virtual:cc38defef59748d3ec79a388cfcde85b4d057fb9455e5e4bd72ab8fd3f3043f27f94cf2740f0669e3145517dcdf50bac7d684be6bedfd5353b3e00e9ee55b388#npm:4.0.3"],\
-            ["resize-observer-polyfill", "npm:1.5.1"],\
             ["react-router-dom", "virtual:cc38defef59748d3ec79a388cfcde85b4d057fb9455e5e4bd72ab8fd3f3043f27f94cf2740f0669e3145517dcdf50bac7d684be6bedfd5353b3e00e9ee55b388#npm:6.10.0"],\
+            ["resize-observer-polyfill", "npm:1.5.1"],\
             ["storybook", "npm:7.0.2"],\
             ["styled-components", "virtual:cc38defef59748d3ec79a388cfcde85b4d057fb9455e5e4bd72ab8fd3f3043f27f94cf2740f0669e3145517dcdf50bac7d684be6bedfd5353b3e00e9ee55b388#npm:5.3.9"],\
             ["styled-normalize", "virtual:cc38defef59748d3ec79a388cfcde85b4d057fb9455e5e4bd72ab8fd3f3043f27f94cf2740f0669e3145517dcdf50bac7d684be6bedfd5353b3e00e9ee55b388#npm:8.0.7"],\
@@ -10292,11 +10292,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react", "npm:18.2.0"],\
             ["react-dom", "virtual:cc38defef59748d3ec79a388cfcde85b4d057fb9455e5e4bd72ab8fd3f3043f27f94cf2740f0669e3145517dcdf50bac7d684be6bedfd5353b3e00e9ee55b388#npm:18.2.0"],\
             ["react-error-boundary", "virtual:cc38defef59748d3ec79a388cfcde85b4d057fb9455e5e4bd72ab8fd3f3043f27f94cf2740f0669e3145517dcdf50bac7d684be6bedfd5353b3e00e9ee55b388#npm:4.0.3"],\
-<<<<<<< HEAD
-            ["resize-observer-polyfill", "npm:1.5.1"],\
-=======
             ["react-router-dom", "virtual:cc38defef59748d3ec79a388cfcde85b4d057fb9455e5e4bd72ab8fd3f3043f27f94cf2740f0669e3145517dcdf50bac7d684be6bedfd5353b3e00e9ee55b388#npm:6.10.0"],\
->>>>>>> 36fa88e (:green_heart: chore: Add @rive-app/react-canvas)
+            ["resize-observer-polyfill", "npm:1.5.1"],\
             ["storybook", "npm:7.0.2"],\
             ["styled-components", "virtual:cc38defef59748d3ec79a388cfcde85b4d057fb9455e5e4bd72ab8fd3f3043f27f94cf2740f0669e3145517dcdf50bac7d684be6bedfd5353b3e00e9ee55b388#npm:5.3.9"],\
             ["styled-normalize", "virtual:cc38defef59748d3ec79a388cfcde85b4d057fb9455e5e4bd72ab8fd3f3043f27f94cf2740f0669e3145517dcdf50bac7d684be6bedfd5353b3e00e9ee55b388#npm:8.0.7"],\
