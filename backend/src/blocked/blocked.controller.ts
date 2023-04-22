@@ -1,4 +1,4 @@
-import { Controller, Delete, Headers, HttpCode, HttpStatus, Param, Post, Query } from '@nestjs/common';
+import { Controller, Delete, Get, Headers, HttpCode, HttpStatus, Param, Post, Query } from '@nestjs/common';
 import {
   ApiConflictResponse,
   ApiForbiddenResponse,
@@ -14,6 +14,7 @@ import { ErrorResponseDto } from '../common/dto/error-response.dto';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
 
 import { BlockedService } from './blocked.service';
+import { BlockedUserResponseDto } from './dto/blocked-user-response.dto';
 
 @ApiTags('blocked')
 @Controller('blocked')
@@ -52,5 +53,12 @@ export class BlockedController {
   @Delete(':userId')
   deleteBlockedUser(@Headers('x-my-id') myId: number, @Param('userId') userId: number): Promise<SuccessResponseDto> {
     return this.blockedService.deleteBlockedUser(+myId, userId);
+  }
+
+  @ApiOperation({ summary: '차단한 유저 목록(정보 포함) 가져오기' })
+  @Get()
+  @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
+  getBlockedUserList(@Headers('x-my-id') myId: number): Promise<BlockedUserResponseDto> {
+    return this.blockedService.getBlockedUserList(+myId);
   }
 }

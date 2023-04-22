@@ -15,6 +15,8 @@ import { BlockedUser } from '../entity/blocked-user.entity';
 import { Friendship } from '../entity/friendship.entity';
 import { UserService } from '../user/user.service';
 
+import { BlockedUserResponseDto } from './dto/blocked-user-response.dto';
+
 @Injectable()
 export class BlockedService {
   constructor(
@@ -62,8 +64,16 @@ export class BlockedService {
     return new SuccessResponseDto('차단 해제 되었습니다.');
   }
 
-  /* 
-    TODO: friend 도메인으로 옮기면 좋을 것 같은 메서드들 
+  async getBlockedUserList(myId: number): Promise<BlockedUserResponseDto> {
+    return {
+      blocked: (await this.blockedUserRepository.find({ relations: ['blockedUser'], where: [{ userId: myId }] })).map(
+        (blockedUser) => blockedUser.blockedUser,
+      ),
+    };
+  }
+
+  /*
+    TODO: friend 도메인으로 옮기면 좋을 것 같은 메서드들
   */
 
   async checkIsFriend(myId: number, userId: number): Promise<Friendship | null> {
@@ -74,7 +84,7 @@ export class BlockedService {
     return friendship;
   }
 
-  /* 
+  /*
   validation check method
   */
 
@@ -92,7 +102,7 @@ export class BlockedService {
     }
   }
 
-  /* 
+  /*
   repository method
   */
   async findBlockedId(userId: number): Promise<number[]> {
