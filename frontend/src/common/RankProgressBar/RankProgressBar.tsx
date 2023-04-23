@@ -59,10 +59,10 @@ const Badge = styled.img`
 `;
 
 interface RankPrgressBarProps {
-  exp?: number;
+  exp: number;
 }
 
-export const RankProgressBar = ({ exp = 22 }: RankPrgressBarProps) => {
+export const RankProgressBar = ({ exp = 0 }: RankPrgressBarProps) => {
   const rank = useMemo(() => getRank(exp), [exp]);
   const [minExp, maxExp] = useMemo(() => getRankRange(rank), [rank]);
   const percentage = useMemo(() => {
