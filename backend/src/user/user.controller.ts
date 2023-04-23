@@ -1,6 +1,32 @@
-import { Body, Controller, Get, Headers, HttpCode, HttpStatus, Patch, Post } from '@nestjs/common';
-import { ApiConflictResponse, ApiHeaders, ApiNotFoundResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  Body,
+  Controller,
+  Get,
+  Headers,
+  HttpCode,
+  HttpStatus,
+  Patch,
+  PayloadTooLargeException,
+  Post,
+  Res,
+  UnsupportedMediaTypeException,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import {
+  ApiBody,
+  ApiConflictResponse,
+  ApiConsumes,
+  ApiHeaders,
+  ApiNotFoundResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
+import { Response } from 'express';
+import { diskStorage } from 'multer';
 
+import { MAX_IMAGE_SIZE } from '../common/constant';
 import { ErrorResponseDto } from '../common/dto/error-response.dto';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
 
@@ -21,6 +47,40 @@ export class UserController {
   @Get()
   getUserMetaInfo(@Headers('x-my-id') myId: number): Promise<UserInfoResponseDto> {
     return this.userService.getUserInfo(myId);
+  }
+
+  @ApiOperation({ summary: '이미지 업로드' })
+  @ApiConsumes('multipart/form-data')
+  @ApiHeaders([{ name: 'x-my-id', required: true, description: '내 아이디' }])
+  @ApiBody({ schema: { type: 'object', properties: { image: { type: 'string', format: 'binary' } } } })
+  @UseInterceptors(
+    FileInterceptor('image', {
+      fileFilter: (_req, file, cb) => {
+        if (!file.mimetype.match(/image\/(gif|jpeg|png)/)) {
+          cb(new UnsupportedMediaTypeException('gif, jpeg, png 형식의 파일만 업로드 가능합니다.'), false);
+        }
+        if (file.size > MAX_IMAGE_SIZE) {
+          cb(new PayloadTooLargeException('이미지 파일은 4MB 이하로 업로드 가능합니다.'), false);
+        }
+        cb(null, true);
+      },
+      storage: diskStorage({
+        destination: 'public/asset',
+        filename: (req, file, cb) => {
+          // FIXME : auth guard 적용 후 req.user.id로 변경
+          const myId = req.headers['x-my-id'];
+          const extArray = file.mimetype.split('/');
+          cb(null, 'profile-' + myId + '.' + extArray[extArray.length - 1]);
+        },
+      }),
+    }),
+  )
+  @Post('image')
+  uploadImage(@UploadedFile() file: Express.Multer.File, @Res() res: Response): void {
+    res.set('Location', file.path.slice(6));
+    res.status(HttpStatus.CREATED).send({
+      message: '이미지 업로드 완료되었습니다.',
+    });
   }
 
   @ApiOperation({ summary: '유저 프로필 사진 변경하기' })
