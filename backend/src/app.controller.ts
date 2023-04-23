@@ -1,12 +1,11 @@
 import {
   Controller,
-  FileTypeValidator,
   Get,
   HttpStatus,
-  MaxFileSizeValidator,
-  ParseFilePipe,
+  PayloadTooLargeException,
   Post,
   Res,
+  UnsupportedMediaTypeException,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -33,6 +32,15 @@ export class AppController {
   @ApiBody({ schema: { type: 'object', properties: { image: { type: 'string', format: 'binary' } } } })
   @UseInterceptors(
     FileInterceptor('image', {
+      fileFilter: (req, file, cb) => {
+        if (!file.mimetype.match(/image\/(gif|jpeg|png)/)) {
+          cb(new UnsupportedMediaTypeException('gif, jpeg, png 형식의 파일만 업로드 가능합니다.'), false);
+        }
+        if (file.size > MAX_IMAGE_SIZE) {
+          cb(new PayloadTooLargeException('이미지 파일은 4MB 이하로 업로드 가능합니다.'), false);
+        }
+        cb(null, true);
+      },
       storage: diskStorage({
         destination: 'public/asset',
         filename: (req, file, cb) => {
@@ -45,18 +53,7 @@ export class AppController {
     }),
   )
   @Post('image')
-  uploadImage(
-    @UploadedFile(
-      new ParseFilePipe({
-        validators: [
-          new MaxFileSizeValidator({ maxSize: MAX_IMAGE_SIZE }),
-          new FileTypeValidator({ fileType: /image\/(png|jpeg|gif)/ }),
-        ],
-      }),
-    )
-    file: Express.Multer.File,
-    @Res() res: Response,
-  ): void {
+  uploadImage(@UploadedFile() file: Express.Multer.File, @Res() res: Response): void {
     res.set('Location', file.path.slice(6));
     res.status(HttpStatus.CREATED).send({
       message: '이미지 업로드 완료되었습니다.',
