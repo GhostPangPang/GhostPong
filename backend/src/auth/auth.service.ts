@@ -1,15 +1,18 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-// import { JwtService } from '@nestjs/jwt';
 
 import { Auth, AuthStatus } from '../entity/auth.entity';
+
+import { LoginRequestDto } from './dto/login-request.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(Auth)
     private readonly authRepository: Repository<Auth>,
+    private readonly jwtService: JwtService,
   ) {}
 
   async checkExistAuthId(authId: number): Promise<void> {

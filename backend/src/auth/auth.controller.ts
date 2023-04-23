@@ -34,6 +34,6 @@ export class AuthController {
     console.log('email');
     console.log(user.email);
 
-    return '42 Login Callback!';
+    return this.authService.login(user);
   }
 }
