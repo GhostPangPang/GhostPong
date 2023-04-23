@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-42';
 
-import { FtAuthConfigService } from '../../config/ftAuth/configuration.service';
+import { FtAuthConfigService } from '../../config/auth/ft/configuration.service';
 import { LoginRequestDto } from '../dto/login-request.dto';
 
 @Injectable()
