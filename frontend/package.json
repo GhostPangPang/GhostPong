@@ -22,6 +22,7 @@
   "dependencies": {
     "@rive-app/canvas": "^1.1.4",
     "@rive-app/react-canvas": "^3.0.43",
+    "@tanstack/react-query": "^4.29.3",
     "polished": "^4.2.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
