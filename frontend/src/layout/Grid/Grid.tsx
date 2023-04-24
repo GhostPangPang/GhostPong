@@ -66,24 +66,24 @@ const StyledGrid = styled.div<GridProps>`
       ${props.position.zIndex && `z-index: ${props.position.zIndex};`}
     `}
     ${(props) => css`
-    ${props.xs &&
+    ${props.xs !== undefined &&
     `flex-grow: ${props.xs}; flex-basis: ${
       typeof props.xs === 'number' ? `${props.xs * 100}%` : props.xs === 'auto' ? 'auto' : '0'
     };`}
     @media (min-width: 600px) {
-      ${props.sm &&
+      ${props.sm !== undefined &&
       `flex-grow: ${props.sm}; flex-basis: ${
         typeof props.sm === 'number' ? `${props.sm * 100}%` : props.sm === 'auto' ? 'auto' : '0'
       };`}
     }
     @media (min-width: 960px) {
-      ${props.md &&
+      ${props.md !== undefined &&
       `flex-grow: ${props.md}; flex-basis: ${
         typeof props.md === 'number' ? `${props.md * 100}%` : props.md === 'auto' ? 'auto' : '0'
       };`}
     }
     @media (min-width: 1280px) {
-      ${props.lg &&
+      ${props.lg !== undefined &&
       `flex-grow: ${props.lg}; flex-basis: ${
         typeof props.lg === 'number' ? `${props.lg * 100}%` : props.lg === 'auto' ? 'auto' : '0'
       };`}
