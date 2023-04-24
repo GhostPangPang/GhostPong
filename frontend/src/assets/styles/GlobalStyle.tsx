@@ -1,5 +1,6 @@
 import { createGlobalStyle } from 'styled-components';
 import { normalize } from 'styled-normalize';
+import bg from '@/assets/svgs/bg.svg';
 import theme from './theme';
 
 export const GlobalStyle = createGlobalStyle<{ theme: typeof theme }>`
@@ -16,6 +17,8 @@ export const GlobalStyle = createGlobalStyle<{ theme: typeof theme }>`
   }
 
   #root {
+    display: flex;
+    flex-direction: column;
     height: 100%;
   }
 
@@ -24,8 +27,8 @@ export const GlobalStyle = createGlobalStyle<{ theme: typeof theme }>`
     height: 100%;
 
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-    background-color: ${(props) => props.theme.color.background};
-    overflow: hidden;
+    background-image: url(${bg});
+    background-repeat: repeat-x;
   }
 
   * {

@@ -25,6 +25,8 @@ export type FlexContainerProps = {
 export type GridContainerProps = {
   columns?: number;
   rows?: number;
+  columnsSize?: number[];
+  rowsSize?: number[];
   areas?: string;
   autoColumns?: string;
   autoRows?: string;
@@ -35,20 +37,14 @@ export type GridContainerProps = {
 export type ItemProps = {
   justifySelf?: 'start' | 'end' | 'center' | 'stretch';
   alignSelf?: 'start' | 'end' | 'center' | 'stretch';
-};
-
-export type FlexItemProps = {
   order?: 'auto' | number;
   flexGrow?: number;
   flexShrink?: 'auto' | number;
   flexBasis?: 'auto' | 'fill' | 'max-content' | 'min-content' | 'fit-content' | 'content' | string;
-} & ItemProps;
-
-export type GridItemProps = {
   gridColumn?: string;
   gridRow?: string;
   gridArea?: string;
-} & ItemProps;
+};
 
 export type LayoutProps = {
   display?: 'flex' | 'grid' | 'inline-flex' | 'inline-grid' | 'block' | 'inline-block' | 'inline' | 'none';

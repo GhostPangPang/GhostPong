@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import profile from '@/svgs/default-profile.svg';
 
 export type AvatarProps = {
   size?: 'sm' | 'md' | 'lg';
@@ -29,11 +30,6 @@ const StyledAvatar = styled.img<AvatarProps>`
   }}
 `;
 
-export const Avatar = ({
-  size = 'md',
-  src = 'https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg',
-  onClick,
-  ...props
-}: AvatarProps) => {
+export const Avatar = ({ size = 'md', src = profile, onClick, ...props }: AvatarProps) => {
   return <StyledAvatar as="img" size={size} src={src} onClick={onClick} {...props} />;
 };

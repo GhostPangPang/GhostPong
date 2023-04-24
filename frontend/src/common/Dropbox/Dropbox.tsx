@@ -5,11 +5,11 @@ import ResizeObserver from 'resize-observer-polyfill';
 
 type Placement = 'topright' | 'topleft' | 'bottomright' | 'bottomleft';
 
-type DropboxProps = {
+export interface DropboxProps {
   items: { label: React.ReactNode; onClick?: () => void }[];
   placement: Placement;
   children: React.ReactNode;
-};
+}
 
 const StyledDropbox = styled.div<{ width: number; height: number }>`
   display: flex;

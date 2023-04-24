@@ -4,6 +4,7 @@ const color = {
   background: '#2F2F2F',
   foreground: '#FFFFFF',
   gray100: '#D9D9D9',
+  gray: '#4A4A4A',
   surface: 'rgba(161, 161, 161, 0.28)',
 };
 
@@ -41,7 +42,8 @@ const padding = {
   sm: '0.8rem',
   md: '1.6rem',
   lg: '2.4rem',
-  layout: '0 2.4rem',
+  header: '4rem',
+  content: '0 4rem 4rem 4rem',
 };
 
 const theme = {

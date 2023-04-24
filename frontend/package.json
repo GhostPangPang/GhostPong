@@ -20,10 +20,13 @@
     "prettier": "prettier"
   },
   "dependencies": {
+    "@rive-app/canvas": "^1.1.4",
+    "@rive-app/react-canvas": "^3.0.43",
     "polished": "^4.2.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-error-boundary": "^4.0.3",
+    "react-router-dom": "^6.10.0",
     "resize-observer-polyfill": "^1.5.1",
     "styled-components": "^5.3.9",
     "styled-normalize": "^8.0.7"
