@@ -3,6 +3,7 @@ const color = {
   secondary: '#61FFE3',
   background: '#2F2F2F',
   foreground: '#FFFFFF',
+  gray100: '#D9D9D9',
   surface: 'rgba(161, 161, 161, 0.28)',
 };
 
