@@ -1,7 +1,7 @@
 import { ReactComponent as Logo } from '@/svgs/logo-sm.svg';
 import { Grid } from '../Grid';
 import { Avatar } from '@/common/Avatar';
-import { Dropbox } from '@/common/Dropbox';
+import { Dropbox, DropboxProps } from '@/common/Dropbox';
 import { Text } from '@/common/Text';
 import { RankProgressBar } from '@/common/RankProgressBar';
 
@@ -9,16 +9,10 @@ interface HeaderProps {
   nickname: string;
   image: string;
   exp: number;
+  items: DropboxProps['items'];
 }
 
-export const Header = ({ nickname, image, exp }: HeaderProps) => {
-  const items = [
-    { label: '프로필', onClick: () => console.log('프로필 클릭') },
-    { label: '메세지', onClick: () => console.log('메세지 클릭') },
-    { label: '내 정보 수정', onClick: () => console.log('내 정보 수정 클릭') },
-    { label: '로그아웃', onClick: () => console.log('로그아웃 클릭') },
-  ];
-
+export const Header = ({ nickname, image, exp, items }: HeaderProps) => {
   return (
     <Grid
       as="header"
