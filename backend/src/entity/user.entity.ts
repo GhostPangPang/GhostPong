@@ -15,6 +15,6 @@ export class User {
   @Column({ default: 0 })
   exp: number;
 
-  @Column({ length: 256 })
+  @Column({ length: 256, nullable: true })
   image: string;
 }

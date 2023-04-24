@@ -1,5 +1,28 @@
-import { Body, Controller, Get, Headers, HttpCode, HttpStatus, Patch, Post } from '@nestjs/common';
-import { ApiConflictResponse, ApiHeaders, ApiNotFoundResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  Body,
+  Controller,
+  Get,
+  Headers,
+  HttpCode,
+  HttpStatus,
+  Patch,
+  Post,
+  Res,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
+import {
+  ApiBody,
+  ApiConflictResponse,
+  ApiConsumes,
+  ApiHeaders,
+  ApiNotFoundResponse,
+  ApiOperation,
+  ApiPayloadTooLargeResponse,
+  ApiTags,
+  ApiUnsupportedMediaTypeResponse,
+} from '@nestjs/swagger';
+import { Response } from 'express';
 
 import { ErrorResponseDto } from '../common/dto/error-response.dto';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
@@ -8,6 +31,7 @@ import { NicknameRequestDto } from './dto/nickname-request.dto';
 import { NicknameResponseDto } from './dto/nickname-response.dto';
 import { UpdateImageRequest } from './dto/update-image-request.dto';
 import { UserInfoResponseDto } from './dto/user-info-response.dto';
+import { FileUploadInterceptor } from './interceptor/file-upload.interceptor';
 import { UserService } from './user.service';
 
 @ApiTags('user')
@@ -21,6 +45,21 @@ export class UserController {
   @Get()
   getUserMetaInfo(@Headers('x-my-id') myId: number): Promise<UserInfoResponseDto> {
     return this.userService.getUserInfo(myId);
+  }
+
+  @ApiOperation({ summary: '이미지 업로드' })
+  @ApiConsumes('multipart/form-data')
+  @ApiUnsupportedMediaTypeResponse({ type: ErrorResponseDto, description: 'gif, jpeg, png 형식의 파일이 아닌 경우' })
+  @ApiPayloadTooLargeResponse({ type: ErrorResponseDto, description: '이미지 용량 초과' })
+  @ApiHeaders([{ name: 'x-my-id', required: true, description: '내 아이디' }])
+  @ApiBody({ schema: { type: 'object', properties: { image: { type: 'string', format: 'binary' } } } })
+  @UseInterceptors(FileUploadInterceptor)
+  @Post('image')
+  uploadImage(@UploadedFile() file: Express.Multer.File, @Res() res: Response): void {
+    res.set('Location', file.path.slice(6));
+    res.status(HttpStatus.CREATED).send({
+      message: '이미지 업로드 완료되었습니다.',
+    });
   }
 
   @ApiOperation({ summary: '유저 프로필 사진 변경하기' })

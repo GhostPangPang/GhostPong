@@ -1,4 +1,7 @@
+import { join } from 'path';
+
 import { Module } from '@nestjs/common';
+import { ServeStaticModule } from '@nestjs/serve-static';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AppController } from './app.controller';
@@ -19,6 +22,13 @@ import { UserModule } from './user/user.module';
       imports: [DatabaseConfigModule],
       useClass: DatabaseConfigService,
     }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', '..', 'public'),
+      renderPath: '/asset',
+      serveStaticOptions: { index: false, redirect: false },
+    }),
+    FriendModule,
+    UserModule,
     AuthModule,
     BlockedModule,
     FriendModule,
