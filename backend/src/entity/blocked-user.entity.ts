@@ -7,12 +7,12 @@ export class BlockedUser {
   @PrimaryColumn()
   userId: number;
 
+  @PrimaryColumn()
+  blockedUserId: number;
+
   @ManyToOne(() => User)
   @JoinColumn()
   user: User;
-
-  @PrimaryColumn()
-  blockedUserId: number;
 
   @ManyToOne(() => User)
   @JoinColumn()

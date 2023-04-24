@@ -1,6 +1,7 @@
-import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryColumn } from 'typeorm';
 
 import { Auth } from './auth.entity';
+import { BlockedUser } from './blocked-user.entity';
 
 @Entity({ name: 'users' })
 export class User {
@@ -17,4 +18,8 @@ export class User {
 
   @Column({ length: 256, nullable: true })
   image: string;
+
+  @OneToMany(() => BlockedUser, (blockedUser) => blockedUser.user)
+  @JoinColumn()
+  blockedUsers: BlockedUser[];
 }
