@@ -8,7 +8,7 @@ export default (auth: Auth) => {
   return {
     id: auth.id,
     nickname: faker.helpers.unique(faker.word.noun, [{ length: { min: 3, max: 8 } }]),
-    exp: faker.datatype.number(100000),
+    exp: faker.datatype.number(210),
     image: faker.image.imageUrl(),
   };
 };
