@@ -54,8 +54,8 @@ const getRankRange = (rank: Rank): [number, number] => {
 };
 
 const Badge = styled.img`
-  position: absolute;
-  left: 0;
+  position: relative;
+  left: 1rem;
 `;
 
 interface RankPrgressBarProps {
@@ -81,7 +81,7 @@ export const RankProgressBar = ({ exp = 0 }: RankPrgressBarProps) => {
   return (
     <Grid container="flex" alignItems="center">
       <Badge src={badges[rank]} />
-      <ProgressBar percentage={percentage} />
+      <ProgressBar percentage={percentage} msg={rank} />
     </Grid>
   );
 };

@@ -1,10 +1,6 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 
-interface ProgressBarProps {
-  percentage: number;
-}
-
 const StyledProgressBar = styled.div`
   background-color: ${({ theme }) => theme.color.gray100};
   border-radius: ${({ theme }) => theme.borderRadius.md};
@@ -27,10 +23,10 @@ interface StyledExpProps {
 
 const StyledExp = styled.div<{ expInfo: StyledExpProps }>`
   position: absolute;
-  width: min-content;
   font-size: ${({ theme }) => theme.fontSize.xxs};
   background-color: ${({ theme }) => theme.color.surface};
   color: ${({ theme }) => theme.color.foreground};
+  border-radius: 0.2rem;
   padding: 0.4rem;
   margin-top: 0.5rem;
 
@@ -38,7 +34,12 @@ const StyledExp = styled.div<{ expInfo: StyledExpProps }>`
   left: ${({ expInfo }) => expInfo.left}px;
 `;
 
-export const ProgressBar = ({ percentage }: ProgressBarProps) => {
+interface ProgressBarProps {
+  percentage: number;
+  msg?: string;
+}
+
+export const ProgressBar = ({ percentage, msg }: ProgressBarProps) => {
   const [expInfo, setExpInfo] = useState({ visible: false, left: 0 });
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -52,7 +53,7 @@ export const ProgressBar = ({ percentage }: ProgressBarProps) => {
   return (
     <StyledProgressBar onMouseMoveCapture={handleMouseMove} onMouseLeave={handleMouseLeave}>
       <StyledBar percentage={percentage} />
-      <StyledExp expInfo={expInfo}>{Math.round(percentage)}%</StyledExp>
+      <StyledExp expInfo={expInfo}>{(msg ? `${msg} ,` : '') + Math.round(percentage)}%</StyledExp>
     </StyledProgressBar>
   );
 };
