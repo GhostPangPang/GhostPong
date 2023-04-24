@@ -3,7 +3,7 @@ import { LobbyPage } from './LobbyPage';
 
 const meta = {
   title: 'Common/LobyPage',
-  component: LobyPage,
+  component: LobbyPage,
 };
 
 export default meta;
