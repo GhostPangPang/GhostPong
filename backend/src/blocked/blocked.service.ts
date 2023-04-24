@@ -1,11 +1,4 @@
-import {
-  ConflictException,
-  ForbiddenException,
-  forwardRef,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -24,19 +17,8 @@ export class BlockedService {
     private readonly blockedUserRepository: Repository<BlockedUser>,
     @InjectRepository(Friendship)
     private readonly friendshipRepository: Repository<Friendship>,
-    @Inject(forwardRef(() => UserService))
     private readonly userService: UserService,
   ) {}
-
-  async blockUserById(myId: number, userId: number): Promise<SuccessResponseDto> {
-    await this.userService.findExistUserById(userId);
-    return this.blockUser(myId, userId);
-  }
-
-  async blockUserByNickname(myId: number, nickname: string): Promise<SuccessResponseDto> {
-    const user = await this.userService.findExistUserByNickname(nickname);
-    return this.blockUser(myId, user.id);
-  }
 
   async blockUser(myId: number, userId: number): Promise<SuccessResponseDto> {
     if (myId === userId) {
@@ -50,6 +32,16 @@ export class BlockedService {
     }
     await this.blockedUserRepository.insert({ userId: myId, blockedUserId: userId });
     return new SuccessResponseDto('유저를 차단하였습니다.');
+  }
+
+  async blockUserById(myId: number, userId: number): Promise<SuccessResponseDto> {
+    await this.userService.findExistUserById(userId);
+    return this.blockUser(myId, userId);
+  }
+
+  async blockUserByNickname(myId: number, nickname: string): Promise<SuccessResponseDto> {
+    const user = await this.userService.findExistUserByNickname(nickname);
+    return this.blockUser(myId, user.id);
   }
 
   async deleteBlockedUser(myId: number, userId: number): Promise<SuccessResponseDto> {

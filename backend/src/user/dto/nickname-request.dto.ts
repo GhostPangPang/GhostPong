@@ -8,6 +8,6 @@ export class NicknameRequestDto {
   @IsNotEmpty()
   @IsString()
   @MaxLength(8)
-  @Matches('/^[가-힣a-zA-Z0-9]*$/')
+  @Matches(/^[가-힣a-zA-Z0-9]*$/)
   nickname: string;
 }

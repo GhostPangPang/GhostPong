@@ -29,7 +29,7 @@ import { SuccessResponseDto } from '../common/dto/success-response.dto';
 
 import { NicknameRequestDto } from './dto/nickname-request.dto';
 import { NicknameResponseDto } from './dto/nickname-response.dto';
-import { UpdateImageRequest } from './dto/update-image-request.dto';
+import { UpdateImageRequestDto } from './dto/update-image-request.dto';
 import { UserInfoResponseDto } from './dto/user-info-response.dto';
 import { FileUploadInterceptor } from './interceptor/file-upload.interceptor';
 import { UserService } from './user.service';
@@ -68,9 +68,9 @@ export class UserController {
   @Patch('image')
   updateProfileImage(
     @Headers('x-my-id') myId: number,
-    @Body() updateImageRequest: UpdateImageRequest,
+    @Body() updateImageRequestDto: UpdateImageRequestDto,
   ): Promise<SuccessResponseDto> {
-    return this.userService.updateProfileImage(myId, updateImageRequest.image);
+    return this.userService.updateUserImage(myId, updateImageRequestDto.image);
   }
 
   @ApiOperation({ summary: '유저 닉네임 변경하기' })
@@ -81,7 +81,7 @@ export class UserController {
     @Headers('x-my-id') myId: number,
     @Body() updateNicknameDto: NicknameRequestDto,
   ): Promise<NicknameResponseDto> {
-    return this.userService.updateNickname(myId, updateNicknameDto.nickname);
+    return this.userService.updateUserNickname(myId, updateNicknameDto.nickname);
   }
 
   @ApiOperation({ summary: '닉네임 초기 설정 && 유저 생성' })

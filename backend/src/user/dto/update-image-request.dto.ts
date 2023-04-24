@@ -1,9 +1,9 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 
-export class UpdateImageRequest {
+export class UpdateImageRequestDto {
   /**
    * image의 url
-   * @example 'src/dfwf/dfwdgwgd13fw....'
+   * @example '/asset/profile-1.jpg'
    */
   @IsNotEmpty()
   @IsString()
