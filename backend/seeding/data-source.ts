@@ -19,6 +19,8 @@ config();
 (async () => {
   if (process.argv[2] === undefined) {
     console.log('Please enter the number of auths to be created.');
+    console.log('ex) yarn seed 300\n');
+    process.exit(1);
   }
 
   const options: DataSourceOptions = {
