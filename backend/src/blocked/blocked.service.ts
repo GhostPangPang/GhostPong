@@ -1,4 +1,10 @@
-import { ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -15,22 +21,18 @@ export class BlockedService {
   constructor(
     @InjectRepository(BlockedUser)
     private readonly blockedUserRepository: Repository<BlockedUser>,
-    @InjectRepository(Friendship)
-    private readonly friendshipRepository: Repository<Friendship>,
     private readonly userService: UserService,
   ) {}
 
   async blockUser(myId: number, userId: number): Promise<SuccessResponseDto> {
     if (myId === userId) {
-      throw new ConflictException('스스로를 미워하지 마십시오.');
+      throw new BadRequestException('스스로를 미워하지 마십시오.');
     }
     await this.checkBlockedCountLimit(myId);
-    await this.checkExistBlockedUser(myId, userId);
-    const friendship = await this.checkIsFriend(myId, userId);
-    if (friendship !== null) {
-      await this.friendshipRepository.delete(friendship);
+    if ((await this.findBlockedUser(myId, userId)) === null) {
+      throw new ConflictException('이미 차단한 유저입니다.');
     }
-    await this.blockedUserRepository.insert({ userId: myId, blockedUserId: userId });
+    await this.blockUserAndDeleteFriendships(myId, userId);
     return new SuccessResponseDto('유저를 차단하였습니다.');
   }
 
@@ -46,7 +48,7 @@ export class BlockedService {
 
   async deleteBlockedUser(myId: number, userId: number): Promise<SuccessResponseDto> {
     if (myId === userId) {
-      throw new ConflictException('본인 자신은 차단되어 있지 않습니다!!!');
+      throw new BadRequestException('본인 자신은 차단되어 있지 않습니다!!!');
     }
     const blockedUser = await this.blockedUserRepository.findOneBy({ userId: myId, blockedUserId: userId });
     if (blockedUser === null) {
@@ -58,22 +60,20 @@ export class BlockedService {
 
   async getBlockedUserList(myId: number): Promise<BlockedUserResponseDto> {
     return {
-      blocked: (await this.blockedUserRepository.find({ relations: ['blockedUser'], where: [{ userId: myId }] })).map(
+      blocked: (await this.blockedUserRepository.find({ relations: ['blockedUser'], where: { userId: myId } })).map(
         (blockedUser) => blockedUser.blockedUser,
       ),
     };
   }
 
-  /*
-    TODO: friend 도메인으로 옮기면 좋을 것 같은 메서드들
-  */
-
-  async checkIsFriend(myId: number, userId: number): Promise<Friendship | null> {
-    const friendship = await this.friendshipRepository.findOneBy([
-      { sender: { id: myId }, receiver: { id: userId }, accept: true },
-      { sender: { id: userId }, receiver: { id: myId }, accept: true },
-    ]);
-    return friendship;
+  /**
+   * 차단 기록이 없는지 확인.
+   *
+   * @param userId 나의 id
+   * @param blockedUserId 차단당할 유저의 id
+   */
+  async findBlockedUser(userId: number, blockedUserId: number): Promise<BlockedUser | null> {
+    return this.blockedUserRepository.findOneBy({ userId: userId, blockedUserId: blockedUserId });
   }
 
   /*
@@ -87,19 +87,21 @@ export class BlockedService {
     }
   }
 
-  private async checkExistBlockedUser(userId: number, blockedUserId: number): Promise<void> {
-    const record = await this.blockedUserRepository.findOneBy({ userId: userId, blockedUserId: blockedUserId });
-    if (record !== null) {
-      throw new NotFoundException('이미 차단한 유저입니다.');
-    }
-  }
-
-  /*
-  repository method
-  */
-  async findBlockedId(userId: number): Promise<number[]> {
-    return (await this.blockedUserRepository.findBy({ userId: userId })).map(
-      (blockedUser) => blockedUser.blockedUserId,
-    );
+  /**
+   * 유저를 차단하고 친구 및 친구 신청 관계를 모두 삭제한다.
+   *
+   * @param userId 차단할 사람의 id (나)
+   * @param blockedUserId 차단당할 사람의 id (상대방)
+   */
+  private async blockUserAndDeleteFriendships(userId: number, blockedUserId: number): Promise<void> {
+    this.blockedUserRepository.manager.transaction(async (manager) => {
+      await manager
+        .createQueryBuilder(Friendship, 'friendship')
+        .delete()
+        .where('friendship.receiver_id = :userId AND friendship.sender_id = :blockedUserId', { userId, blockedUserId })
+        .orWhere('friendship.sender_id = :userId AND friendship.receiver_id= :blockedUserId', { userId, blockedUserId })
+        .execute();
+      await manager.insert(BlockedUser, { userId: userId, blockedUserId: blockedUserId });
+    });
   }
 }

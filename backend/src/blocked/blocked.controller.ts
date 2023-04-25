@@ -20,16 +20,11 @@ import { BlockedUserResponseDto } from './dto/blocked-user-response.dto';
 @Controller('blocked')
 export class BlockedController {
   constructor(private readonly blockedService: BlockedService) {}
-
-  @ApiOperation({ summary: 'id로 유저 차단하기(토글->마우스 이용)' })
-  @ApiForbiddenResponse({ type: ErrorResponseDto, description: '차단 목록 정원 다참' })
-  @ApiConflictResponse({ type: ErrorResponseDto, description: '이미 차단함 유저' })
+  @ApiOperation({ summary: '차단한 유저 목록(정보 포함) 가져오기' })
+  @Get()
   @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
-  @ApiParam({ name: 'userId', description: '차단할 사람 아이디' })
-  @HttpCode(HttpStatus.OK)
-  @Post(':userId')
-  blockUserById(@Headers('x-my-id') myId: number, @Param('userId') userId: number): Promise<SuccessResponseDto> {
-    return this.blockedService.blockUserById(+myId, +userId);
+  getBlockedUserList(@Headers('x-my-id') myId: number): Promise<BlockedUserResponseDto> {
+    return this.blockedService.getBlockedUserList(+myId);
   }
 
   @ApiOperation({ summary: 'nickname으로 유저 차단하기(직접 입력)' })
@@ -46,6 +41,17 @@ export class BlockedController {
     return this.blockedService.blockUserByNickname(+myId, nickname);
   }
 
+  @ApiOperation({ summary: 'id로 유저 차단하기(토글->마우스 이용)' })
+  @ApiForbiddenResponse({ type: ErrorResponseDto, description: '차단 목록 정원 다참' })
+  @ApiConflictResponse({ type: ErrorResponseDto, description: '이미 차단한 유저' })
+  @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
+  @ApiParam({ name: 'userId', description: '차단할 사람 아이디' })
+  @HttpCode(HttpStatus.OK)
+  @Post(':userId')
+  blockUserById(@Headers('x-my-id') myId: number, @Param('userId') userId: number): Promise<SuccessResponseDto> {
+    return this.blockedService.blockUserById(+myId, +userId);
+  }
+
   @ApiOperation({ summary: '유저 차단 해제' })
   @ApiNotFoundResponse({ type: ErrorResponseDto, description: '차단한 기록이 없는 유저, 존재하지 않는 유저' })
   @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
@@ -53,12 +59,5 @@ export class BlockedController {
   @Delete(':userId')
   deleteBlockedUser(@Headers('x-my-id') myId: number, @Param('userId') userId: number): Promise<SuccessResponseDto> {
     return this.blockedService.deleteBlockedUser(+myId, userId);
-  }
-
-  @ApiOperation({ summary: '차단한 유저 목록(정보 포함) 가져오기' })
-  @Get()
-  @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
-  getBlockedUserList(@Headers('x-my-id') myId: number): Promise<BlockedUserResponseDto> {
-    return this.blockedService.getBlockedUserList(+myId);
   }
 }
