@@ -2,29 +2,35 @@ import styled from 'styled-components';
 import profile from '@/svgs/default-profile.svg';
 
 export type AvatarProps = {
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'sm' | 'md' | 'lg' | 'xl';
   onClick?: (event: React.MouseEvent<HTMLImageElement>) => void;
 } & React.ComponentPropsWithoutRef<'img'>;
 
 const StyledAvatar = styled.img<AvatarProps>`
   border-radius: 50%;
   object-fit: cover;
+  cursor: ${(props) => (props.onClick ? 'pointer' : 'default')};
   ${(props) => {
     switch (props.size) {
       case 'sm':
         return `
+        width: 2.4rem;
+        height: 2.4rem;
+        `;
+      case 'md':
+        return `
         width: 4rem;
         height: 4rem;
         `;
-      case 'md':
+      case 'lg':
         return `
         width: 6.4rem;
         height: 6.4rem;
         `;
-      case 'lg':
+      case 'xl':
         return `
-        width: 18rem;
-        height: 18rem;
+          width: 16rem;
+          height: 16rem;
         `;
     }
   }}

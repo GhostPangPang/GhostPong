@@ -33,22 +33,22 @@ const StyledList = styled.ul<{ placement: Placement }>`
       case 'topright':
         return `
           bottom: calc(100%);
-          left: calc(0%);
+          right: calc(0%);
           `;
       case 'topleft':
         return `
           bottom: calc(100%);
-          right: calc(0%);
+          left: calc(0%);
           `;
       case 'bottomright':
         return `
           top: calc(100%);
-          left: calc(0%);
+          right: calc(0%);
           `;
       case 'bottomleft':
         return `
           top: calc(100%);
-          right: calc(0%);
+          left: calc(0%);
           `;
     }
   }}/* margin: 0.5rem; */

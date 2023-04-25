@@ -29,7 +29,7 @@ export const Header = ({ nickname, image, exp, items }: HeaderProps) => {
       <Grid container="flex" justifyContent="end" alignItems="center" gap={1.5} xs={3}>
         <Text size="sm">{nickname}</Text>
         <Dropbox items={items} placement="bottomleft">
-          <Avatar size="sm" src={image} />
+          <Avatar size="md" src={image} />
         </Dropbox>
       </Grid>
     </Grid>
