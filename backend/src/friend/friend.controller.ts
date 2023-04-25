@@ -53,7 +53,7 @@ export class FriendController {
   }
 
   @ApiOperation({ summary: '친구 신청하기 (id)' })
-  @ApiForbiddenResponse({ type: ErrorResponseDto, description: '친구 신청 정원 초과, 친구 정원 초과' })
+  @ApiForbiddenResponse({ type: ErrorResponseDto, description: '차단 관계, 친구 신청 정원 초과, 친구 정원 초과' })
   @ApiConflictResponse({ type: ErrorResponseDto, description: '이미 친구 상태, 이미 친구 신청 상태' })
   @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
   @ApiParam({ name: 'userId', description: '친구 신청할 유저의 아이디' })
