@@ -3,12 +3,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
 
 import { AuthService } from '../auth/auth.service';
-import { DEFAULT_IMAGE } from '../common/constant';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
 import { User } from '../entity/user.entity';
 
 import { NicknameResponseDto } from './dto/nickname-response.dto';
 import { UserInfoResponseDto } from './dto/user-info-response.dto';
+import { UserProfileResponseDto } from './dto/user-profile-response.dto';
 
 @Injectable()
 export class UserService {
@@ -31,6 +31,19 @@ export class UserService {
       image,
       exp,
       blockedUsers: blockedUsers.map((blockedUser) => blockedUser.blockedUserId),
+    };
+  }
+
+  async getUserProfile(userId: number): Promise<UserProfileResponseDto> {
+    const { nickname, image, exp, userRecord, achievements } = await this.findExistUserProfile(userId);
+
+    return {
+      nickname,
+      image,
+      exp,
+      winCount: userRecord.winCount,
+      loseCount: userRecord.loseCount,
+      achievements: achievements.map((achievement) => achievement.achievement),
     };
   }
 
@@ -101,6 +114,21 @@ export class UserService {
     }
     return user;
   }
+
+  private async findExistUserProfile(userId: number): Promise<User> {
+    const user = await this.userRepository
+      .createQueryBuilder('user')
+      .leftJoin('user.userRecord', 'userRecord', 'userRecord.id = user.id')
+      .leftJoin('user.achievements', 'achievement')
+      .select(['user', 'userRecord', 'achievement'])
+      .where('user.id = :userId', { userId: userId })
+      .getOne();
+    if (user === null) {
+      throw new NotFoundException('존재하지 않는 유저입니다.');
+    }
+    return user;
+  }
+
   /*
   repository method
   */

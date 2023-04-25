@@ -5,6 +5,7 @@ import {
   Headers,
   HttpCode,
   HttpStatus,
+  Param,
   Patch,
   Post,
   Res,
@@ -31,6 +32,7 @@ import { NicknameRequestDto } from './dto/nickname-request.dto';
 import { NicknameResponseDto } from './dto/nickname-response.dto';
 import { UpdateImageRequestDto } from './dto/update-image-request.dto';
 import { UserInfoResponseDto } from './dto/user-info-response.dto';
+import { UserProfileResponseDto } from './dto/user-profile-response.dto';
 import { FileUploadInterceptor } from './interceptor/file-upload.interceptor';
 import { UserService } from './user.service';
 
@@ -98,5 +100,12 @@ export class UserController {
     @Body() updateNicknameDto: NicknameRequestDto,
   ): Promise<NicknameResponseDto> {
     return this.userService.updateUserNickname(myId, updateNicknameDto.nickname);
+  }
+
+  @ApiOperation({ summary: '유저 프로필 가져오기' })
+  @ApiNotFoundResponse({ type: ErrorResponseDto, description: '존재하지 않는 사용자' })
+  @Get('/:userId/profile')
+  getUserProfile(@Param('userId') userId: number): Promise<UserProfileResponseDto> {
+    return this.userService.getUserProfile(userId);
   }
 }
