@@ -1,8 +1,29 @@
 import { User } from '../../entity/user.entity';
 
-class FriendInformation extends User {
+class FriendInformation {
+  /**
+   * 친구 관계 아이디 (나와 상대방의 friendship id)
+   * @example 1
+   */
+  friendId: number;
+
+  /**
+   * 마지막으로 메세지를 주고 받은 시간
+   * @example '2021-08-01T00:00:00.000Z'
+   */
   lastMessegeTime: Date | null;
+
+  /**
+   * 마지막으로 메세지를 읽은 시간 (나)
+   * @example '2021-08-01T00:00:00.000Z'
+   */
   lastViewTime: Date | null;
+
+  /**
+   * 친구의 유저 정보
+   * @example { id: 1, nickname: 'san1', profileImage: '/asset/profile-1.jpg', exp: 0 }
+   */
+  user: User;
 }
 
 export class FriendsResponseDto {
