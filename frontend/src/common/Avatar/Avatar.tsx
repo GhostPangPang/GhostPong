@@ -9,6 +9,7 @@ export type AvatarProps = {
 const StyledAvatar = styled.img<AvatarProps>`
   border-radius: 50%;
   object-fit: cover;
+  cursor: pointer;
   ${(props) => {
     switch (props.size) {
       case 'sm':
