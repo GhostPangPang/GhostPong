@@ -1,10 +1,17 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Response } from 'express';
 
-import { ReqUser } from './auth.decorator';
 import { AuthService } from './auth.service';
-import { LoginRequestDto } from './dto/login-request.dto';
+import { ReqUser } from './decorator/auth.decorator';
+import { LoginInfoDto } from './dto/login-info.dto';
+
+// import { TokenDto } from '../common/dto/token.dto';
+
+// interface RequestWithUser extends Request {
+//   user: TokenDto;
+// }
 
 @ApiTags('auth')
 @Controller('auth')
@@ -26,14 +33,53 @@ export class AuthController {
   @ApiOperation({ summary: '42 로그인 callback' })
   @UseGuards(AuthGuard('42')) // strategy.validate() -> return 값 기반으로 request 객체 담아줌
   @Get('42login/callback')
-  callbackLogin(@ReqUser() user: LoginRequestDto) {
+  async callbackLogin(@ReqUser() user: LoginInfoDto, @Res() res: Response) {
     // 또는 @ReqUser('email') email: string
     console.log('42 Login Callback!');
 
-    console.log('user : ', user);
-    console.log('email');
-    console.log(user.email);
+    if (user.isRegistered === false) {
+      // UNREGSIETERED -> JOIN (sign up)
+      console.log('UNREGISTERED -> JOIN (sign up)');
+      const token = await this.authService.signUp(user);
+      res
+        .cookie('jwt-for-unregistered', token, {
+          // httpOnly: true,
+          secure: true,
+          sameSite: 'none',
+        })
+        .redirect('http://localhost:3000/auth/register'); // FIXME : register page url
+    } else {
+      // REGISTERED -> LOGIN (sign in)
+      console.log('REGISTERED -> LOGIN (sign in)');
+      const token = await this.authService.signIn(user);
+      res
+        .cookie('jwt-for-registered', token, {
+          // httpOnly: true,
+          secure: true,
+          sameSite: 'none',
+        })
+        .redirect('http://localhost:3000/auth'); // FIXME : Lobby page url
+    }
+  }
 
-    return this.authService.login(user);
+  // SECTION : TEST
+  // 닉네임 설정하는 페이지로 redirect
+  @UseGuards(AuthGuard('auth'))
+  @Get('register')
+  test2() {
+    // test2(@ReqUser() request: Response) {
+    console.log('Redirect : auth strategy(tmp jwt) guard success!');
+    // console.log((request as any).user);
+    return 'Redirect to NICKNAME SETTING page!';
+  }
+
+  // 최종적으로 redirect할 lobby page라고 가정
+  @UseGuards(AuthGuard('user'))
+  @Get()
+  test() {
+    // test(@ReqUser() request: Response) {
+    console.log('Redirect : user strategy(jwt) guard success!');
+    // console.log((request as any).user);
+    return 'Redirect to LOBBY page!';
   }
 }

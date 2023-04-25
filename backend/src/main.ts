@@ -1,6 +1,7 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import * as cookieParser from 'cookie-parser';
 
 import { AppModule } from './app.module';
 import { AppConfigService } from './config/app/configuration.service';
@@ -14,8 +15,10 @@ async function bootstrap() {
       transform: true,
       whitelist: true,
       forbidNonWhitelisted: true,
+      // validateCustomDecorators: true, // custom decorator 에 대한 validation 을 수행
     }),
   );
+  app.use(cookieParser());
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle('GhostPong API')

@@ -1,13 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
+import { InjectRepository } from '@nestjs/typeorm';
 import { Strategy } from 'passport-42';
+import { Repository } from 'typeorm';
 
 import { FtAuthConfigService } from '../../config/auth/ft/configuration.service';
-import { LoginRequestDto } from '../dto/login-request.dto';
+import { Auth } from '../../entity/auth.entity';
+import { UserService } from '../../user/user.service';
+import { LoginInfoDto } from '../dto/login-info.dto';
 
 @Injectable()
 export class FtOAuthStrategy extends PassportStrategy(Strategy, '42') {
-  constructor(private readonly ftAuthConfigService: FtAuthConfigService) {
+  constructor(
+    private readonly ftAuthConfigService: FtAuthConfigService,
+    @InjectRepository(Auth)
+    private readonly authRepository: Repository<Auth>,
+    private readonly userService: UserService,
+  ) {
     super({
       clientID: ftAuthConfigService.id,
       clientSecret: ftAuthConfigService.secret,
@@ -27,14 +36,21 @@ export class FtOAuthStrategy extends PassportStrategy(Strategy, '42') {
    * @param cb  validate()에서 return한 값이 request 객체에 담김
    * @returns  validate()에서 return한 값
    */
-  async validate(accessToken: string, refreshToken: string, profile: LoginRequestDto) {
-    // async validate(accessToken: string, refreshToken: string, profile: LoginRequestDto, cb: () => void) {
-    const user: LoginRequestDto = {
-      email: profile.email,
-      accessToken,
-      refreshToken,
-    };
-    // cb(null, user); // user를 request 객체에 담아서 callbackURL로 넘김 -> express스러운 방법인듯
-    return user;
+  async validate(accessToken: string, refreshToken: string, profile: LoginInfoDto) {
+    const auth = await this.authRepository.findOneBy({ email: profile.email });
+
+    // if (auth === null || (await this.userService.findExistUserById(auth.id)) === null) {
+    if (auth === null || (await this.userService.getUser(auth.id)) === null) {
+      profile.isRegistered = false;
+      profile.id = null;
+    } else {
+      profile.isRegistered = true;
+      profile.id = auth.id;
+    }
+
+    // profile.accessToken = accessToken;
+    // profile.freshToken = refreshToken;
+
+    return profile;
   }
 }
