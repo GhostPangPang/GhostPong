@@ -1,12 +1,4 @@
-import { User } from '../../entity/user.entity';
-
 export class UserInfoResponseDto {
-  constructor(user: User, numbers: number[]) {
-    this.nickname = user.nickname;
-    this.image = user.image;
-    this.exp = user.exp;
-    this.blockedUsers = numbers;
-  }
   /**
    * 현재 로그인한 유저의 닉네임
    * @example 'san'
@@ -15,7 +7,7 @@ export class UserInfoResponseDto {
 
   /**
    * 유저의 프로필 사진 url
-   * @example '/src/.../...'
+   * @example '/asset/profile-1.jpg'
    */
   image: string;
 

@@ -5,6 +5,7 @@ import {
   Headers,
   HttpCode,
   HttpStatus,
+  Param,
   Patch,
   Post,
   Res,
@@ -27,10 +28,11 @@ import { Response } from 'express';
 import { ErrorResponseDto } from '../common/dto/error-response.dto';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
 
-import { NicknameRequestDto } from './dto/nickname-request.dto';
-import { NicknameResponseDto } from './dto/nickname-response.dto';
-import { UpdateImageRequest } from './dto/update-image-request.dto';
+import { UpdateImageRequestDto } from './dto/update-image-request.dto';
 import { UserInfoResponseDto } from './dto/user-info-response.dto';
+import { UserNicknameRequestDto } from './dto/user-nickname-request.dto';
+import { UserNicknameResponseDto } from './dto/user-nickname-response.dto';
+import { UserProfileResponseDto } from './dto/user-profile-response.dto';
 import { FileUploadInterceptor } from './interceptor/file-upload.interceptor';
 import { UserService } from './user.service';
 
@@ -45,6 +47,22 @@ export class UserController {
   @Get()
   getUserMetaInfo(@Headers('x-my-id') myId: number): Promise<UserInfoResponseDto> {
     return this.userService.getUserInfo(myId);
+  }
+
+  @ApiOperation({ summary: '닉네임 초기 설정 및 유저 생성' })
+  @ApiConflictResponse({
+    type: ErrorResponseDto,
+    description: '중복된 nickname 또는 이미 생성된 user(중복된 auth-id), 이미 registered인 유저',
+  })
+  @ApiNotFoundResponse({ type: ErrorResponseDto, description: 'Invalid한 auth-id' })
+  @ApiHeaders([{ name: 'x-auth-id', description: '내 auth 아이디 (임시값)' }])
+  @HttpCode(HttpStatus.OK)
+  @Post()
+  createUser(
+    @Headers('x-auth-id') authId: number,
+    @Body() { nickname }: UserNicknameRequestDto,
+  ): Promise<UserNicknameResponseDto> {
+    return this.userService.createUser(authId, nickname);
   }
 
   @ApiOperation({ summary: '이미지 업로드' })
@@ -68,9 +86,9 @@ export class UserController {
   @Patch('image')
   updateProfileImage(
     @Headers('x-my-id') myId: number,
-    @Body() updateImageRequest: UpdateImageRequest,
+    @Body() updateImageRequestDto: UpdateImageRequestDto,
   ): Promise<SuccessResponseDto> {
-    return this.userService.updateProfileImage(myId, updateImageRequest.image);
+    return this.userService.updateUserImage(myId, updateImageRequestDto.image);
   }
 
   @ApiOperation({ summary: '유저 닉네임 변경하기' })
@@ -79,24 +97,15 @@ export class UserController {
   @Patch('nickname')
   updateNickname(
     @Headers('x-my-id') myId: number,
-    @Body() updateNicknameDto: NicknameRequestDto,
-  ): Promise<NicknameResponseDto> {
-    return this.userService.updateNickname(myId, updateNicknameDto.nickname);
+    @Body() updateNicknameDto: UserNicknameRequestDto,
+  ): Promise<UserNicknameResponseDto> {
+    return this.userService.updateUserNickname(myId, updateNicknameDto.nickname);
   }
 
-  @ApiOperation({ summary: '닉네임 초기 설정 && 유저 생성' })
-  @ApiConflictResponse({
-    type: ErrorResponseDto,
-    description: '중복된 nickname 또는 이미 생성된 user(중복된 auth-id), 이미 registered인 유저',
-  })
-  @ApiNotFoundResponse({ type: ErrorResponseDto, description: 'Invalid한 auth-id' })
-  @ApiHeaders([{ name: 'x-auth-id', description: '내 auth 아이디 (임시값)' }])
-  @HttpCode(HttpStatus.OK)
-  @Post()
-  createUser(
-    @Headers('x-auth-id') authId: number,
-    @Body() { nickname }: NicknameRequestDto,
-  ): Promise<NicknameResponseDto> {
-    return this.userService.createUser(authId, nickname);
+  @ApiOperation({ summary: '유저 프로필 가져오기' })
+  @ApiNotFoundResponse({ type: ErrorResponseDto, description: '존재하지 않는 사용자' })
+  @Get(':userId/profile')
+  getUserProfile(@Param('userId') userId: number): Promise<UserProfileResponseDto> {
+    return this.userService.getUserProfile(userId);
   }
 }

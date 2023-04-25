@@ -1,6 +1,9 @@
-import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryColumn } from 'typeorm';
 
+import { Achievement } from './achievement.entity';
 import { Auth } from './auth.entity';
+import { BlockedUser } from './blocked-user.entity';
+import { UserRecord } from './user-record.entity';
 
 @Entity({ name: 'users' })
 export class User {
@@ -17,4 +20,13 @@ export class User {
 
   @Column({ length: 256, nullable: true })
   image: string;
+
+  @OneToOne(() => UserRecord, (userRecord) => userRecord.user)
+  userRecord: UserRecord;
+
+  @OneToMany(() => BlockedUser, (blockedUser) => blockedUser.user)
+  blockedUsers: BlockedUser[];
+
+  @OneToMany(() => Achievement, (achievement) => achievement.user)
+  achievements: Achievement[];
 }

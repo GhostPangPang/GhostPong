@@ -4,8 +4,6 @@ import { User } from './user.entity';
 
 @Entity()
 export class UserRecord {
-  @OneToOne(() => User)
-  @JoinColumn({ name: 'id' })
   @PrimaryColumn()
   id: number;
 
@@ -14,4 +12,8 @@ export class UserRecord {
 
   @Column({ default: 0 })
   loseCount: number;
+
+  @OneToOne(() => User, (user) => user.userRecord)
+  @JoinColumn({ name: 'id' })
+  user: User;
 }
