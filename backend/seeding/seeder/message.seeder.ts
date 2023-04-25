@@ -1,14 +1,18 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
+import { faker } from '@faker-js/faker';
 import { DataSource, Repository } from 'typeorm';
 
 import { Auth } from '../../src/entity/auth.entity';
 import { Friendship } from '../../src/entity/friendship.entity';
+import { GameHistory } from '../../src/entity/game-history.entity';
 import { Message } from '../../src/entity/message.entity';
+import { UserRecord } from '../../src/entity/user-record.entity';
 import { User } from '../../src/entity/user.entity';
 import authFactory from '../factory/auth.factory';
 import frieindshipFactory from '../factory/frieindship.factory';
+import gameHistoryFactory from '../factory/game-history.factory';
 import messageFactory from '../factory/message.factory';
 import userFactory from '../factory/user.factory';
 
@@ -35,12 +39,21 @@ export default async (dataSource: DataSource) => {
     console.log('created user information has been saved to seeding/results/users.json\n');
   });
 
+  // generate user record
+  const userRecord = users.map((user) => ({
+    id: user.id,
+  }));
+
+  await dataSource.getRepository(UserRecord).save(userRecord);
+
   // generate friendship
   // 1/2 확률로 친구관계 생기게, 그 중 1/2 확률로 accept.
   const friendsSeed = [];
   for (let i = 0; i < users.length; i++) {
     for (let j: number = i + 1; j < users.length; j++) {
-      Math.random() <= 0.1 && friendsSeed.push(frieindshipFactory(users[i], users[j]));
+      const isFirstUserI = faker.datatype.boolean();
+      Math.random() <= 0.1 &&
+        friendsSeed.push(frieindshipFactory(users[isFirstUserI ? i : j], users[isFirstUserI ? j : i]));
     }
   }
 
@@ -72,14 +85,29 @@ export default async (dataSource: DataSource) => {
   for (let i = 0; i < messageSeed.length; i += 100) {
     promises.push(messageRepository.save(messageSeed.slice(i, i + 100)));
   }
-  const messages = await Promise.all(promises);
+  await Promise.all(promises);
 
-  console.log('message ' + messages.length + ' rows created.');
+  console.log('message ' + messageSeed.length + ' rows created.\n');
 
-  fs.writeFile(path.join(resultDir, 'messages.json'), JSON.stringify(messages), (err) => {
-    if (err) throw err;
-    console.log('created message information has been saved to seeding/results/messages.json\n');
-  });
+  //fs.writeFile(path.join(resultDir, 'messages.json'), JSON.stringify(messages), (err) => {
+  //  if (err) throw err;
+  //  console.log('created message information has been saved to seeding/results/messages.json\n');
+  //});
+
+  // generate game history
+
+  const gameSeed = [];
+  for (let i = 0; i < users.length; i++) {
+    for (let j: number = i + 1; j < users.length; j++) {
+      const isFirstUserI = faker.datatype.boolean();
+      Math.random() <= 0.1 &&
+        gameSeed.push(gameHistoryFactory(users[isFirstUserI ? i : j], users[isFirstUserI ? j : i]));
+    }
+  }
+  const gameHistoryRepository = dataSource.getRepository(GameHistory);
+  await gameHistoryRepository.save(gameSeed);
+
+  console.log('game history ' + gameSeed.length + ' rows created.\n');
 
   dataSource.destroy();
 };
