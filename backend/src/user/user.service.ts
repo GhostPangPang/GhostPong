@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Inject, Injectable, NotFoundException, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
 
@@ -21,6 +21,7 @@ export class UserService {
     private readonly userRepository: Repository<User>,
     @InjectRepository(GameHistory)
     private readonly gameHistoryRepository: Repository<GameHistory>,
+    @Inject(forwardRef(() => AuthService))
     private readonly authService: AuthService,
   ) {}
 
@@ -85,6 +86,11 @@ export class UserService {
       skip: isNaN(cursor) ? 0 : cursor * HISTORY_SIZE_PER_PAGE,
     });
     return { histories };
+  }
+
+  // FIXME delete this method (tmp method for hannkim)
+  async getUser(userId: number): Promise<User | null> {
+    return await this.userRepository.findOneBy({ id: userId });
   }
 
   /*
