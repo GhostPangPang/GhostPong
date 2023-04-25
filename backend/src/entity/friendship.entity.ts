@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, Unique } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, Unique } from 'typeorm';
 
 import { MessageView } from './message-view.entity';
 import { User } from './user.entity';
@@ -9,10 +9,18 @@ export class Friendship {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column()
+  senderId: number;
+
+  @Column()
+  receiverId: number;
+
   @ManyToOne(() => User)
+  @JoinColumn()
   sender: User;
 
   @ManyToOne(() => User)
+  @JoinColumn()
   receiver: User;
 
   @Column({ default: false })
