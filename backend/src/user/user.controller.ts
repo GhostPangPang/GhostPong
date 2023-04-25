@@ -47,6 +47,22 @@ export class UserController {
     return this.userService.getUserInfo(myId);
   }
 
+  @ApiOperation({ summary: '닉네임 초기 설정 및 유저 생성' })
+  @ApiConflictResponse({
+    type: ErrorResponseDto,
+    description: '중복된 nickname 또는 이미 생성된 user(중복된 auth-id), 이미 registered인 유저',
+  })
+  @ApiNotFoundResponse({ type: ErrorResponseDto, description: 'Invalid한 auth-id' })
+  @ApiHeaders([{ name: 'x-auth-id', description: '내 auth 아이디 (임시값)' }])
+  @HttpCode(HttpStatus.OK)
+  @Post()
+  createUser(
+    @Headers('x-auth-id') authId: number,
+    @Body() { nickname }: NicknameRequestDto,
+  ): Promise<NicknameResponseDto> {
+    return this.userService.createUser(authId, nickname);
+  }
+
   @ApiOperation({ summary: '이미지 업로드' })
   @ApiConsumes('multipart/form-data')
   @ApiUnsupportedMediaTypeResponse({ type: ErrorResponseDto, description: 'gif, jpeg, png 형식의 파일이 아닌 경우' })
@@ -82,21 +98,5 @@ export class UserController {
     @Body() updateNicknameDto: NicknameRequestDto,
   ): Promise<NicknameResponseDto> {
     return this.userService.updateUserNickname(myId, updateNicknameDto.nickname);
-  }
-
-  @ApiOperation({ summary: '닉네임 초기 설정 && 유저 생성' })
-  @ApiConflictResponse({
-    type: ErrorResponseDto,
-    description: '중복된 nickname 또는 이미 생성된 user(중복된 auth-id), 이미 registered인 유저',
-  })
-  @ApiNotFoundResponse({ type: ErrorResponseDto, description: 'Invalid한 auth-id' })
-  @ApiHeaders([{ name: 'x-auth-id', description: '내 auth 아이디 (임시값)' }])
-  @HttpCode(HttpStatus.OK)
-  @Post()
-  createUser(
-    @Headers('x-auth-id') authId: number,
-    @Body() { nickname }: NicknameRequestDto,
-  ): Promise<NicknameResponseDto> {
-    return this.userService.createUser(authId, nickname);
   }
 }
