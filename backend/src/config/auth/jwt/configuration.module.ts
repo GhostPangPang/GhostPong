@@ -10,8 +10,10 @@ import { JwtConfigService } from './configuration.service';
     ConfigModule.forRoot({
       load: [configuration],
       validationSchema: Joi.object({
-        JWT_SECRETKEY: Joi.string(),
-        JWT_EXPIREIN: Joi.string(),
+        USER_JWT_SECRETKEY: Joi.string(),
+        USER_JWT_EXPIREIN: Joi.string(),
+        AUTH_JWT_SECRETKEY: Joi.string(),
+        AUTH_JWT_EXPIREIN: Joi.string(),
       }),
     }),
   ],
