@@ -16,14 +16,14 @@ const StyledStatus = styled.div<{ status: 'online' | 'offline' | 'game' }>`
   top: 0rem;
   right: 0rem;
   transform: translate(40%, -40%);
-  background-color: ${(props) => {
-    switch (props.status) {
+  background-color: ${({ status, theme }) => {
+    switch (status) {
       case 'online':
-        return '#2FD240';
+        return theme.color.online;
       case 'offline':
-        return '#8E8E8E';
+        return theme.color.gray100;
       case 'game':
-        return '#E57ADB';
+        return theme.color.primary;
     }
   }};
 `;
