@@ -6,8 +6,8 @@ import { AuthService } from '../auth/auth.service';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
 import { User } from '../entity/user.entity';
 
-import { NicknameResponseDto } from './dto/nickname-response.dto';
 import { UserInfoResponseDto } from './dto/user-info-response.dto';
+import { UserNicknameResponseDto } from './dto/user-nickname-response.dto';
 import { UserProfileResponseDto } from './dto/user-profile-response.dto';
 
 @Injectable()
@@ -34,7 +34,7 @@ export class UserService {
     };
   }
 
-  async createUser(authId: number, nickname: string): Promise<NicknameResponseDto> {
+  async createUser(authId: number, nickname: string): Promise<UserNicknameResponseDto> {
     await this.authService.checkExistAuthId(authId); // FIXME : guard
     await this.checkAlreadyExistUser(authId);
     await this.checkDuplicatedNickname(nickname);
@@ -42,7 +42,7 @@ export class UserService {
       await manager.insert(User, { id: authId, nickname: nickname });
       await this.authService.changeAuthStatus(authId);
     });
-    return new NicknameResponseDto(nickname);
+    return new UserNicknameResponseDto(nickname);
   }
 
   async updateUserImage(myId: number, imageUrl: string): Promise<SuccessResponseDto> {
@@ -51,10 +51,10 @@ export class UserService {
     return new SuccessResponseDto('이미지 변경 완료되었습니다.');
   }
 
-  async updateUserNickname(myId: number, nickname: string): Promise<NicknameResponseDto> {
+  async updateUserNickname(myId: number, nickname: string): Promise<UserNicknameResponseDto> {
     await this.checkDuplicatedNickname(nickname);
     await this.userRepository.update({ id: myId }, { nickname: nickname });
-    return new NicknameResponseDto(nickname);
+    return new UserNicknameResponseDto(nickname);
   }
 
   async getUserProfile(userId: number): Promise<UserProfileResponseDto> {

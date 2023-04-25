@@ -28,10 +28,10 @@ import { Response } from 'express';
 import { ErrorResponseDto } from '../common/dto/error-response.dto';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
 
-import { NicknameRequestDto } from './dto/nickname-request.dto';
-import { NicknameResponseDto } from './dto/nickname-response.dto';
 import { UpdateImageRequestDto } from './dto/update-image-request.dto';
 import { UserInfoResponseDto } from './dto/user-info-response.dto';
+import { UserNicknameRequestDto } from './dto/user-nickname-request.dto';
+import { UserNicknameResponseDto } from './dto/user-nickname-response.dto';
 import { UserProfileResponseDto } from './dto/user-profile-response.dto';
 import { FileUploadInterceptor } from './interceptor/file-upload.interceptor';
 import { UserService } from './user.service';
@@ -60,8 +60,8 @@ export class UserController {
   @Post()
   createUser(
     @Headers('x-auth-id') authId: number,
-    @Body() { nickname }: NicknameRequestDto,
-  ): Promise<NicknameResponseDto> {
+    @Body() { nickname }: UserNicknameRequestDto,
+  ): Promise<UserNicknameResponseDto> {
     return this.userService.createUser(authId, nickname);
   }
 
@@ -97,8 +97,8 @@ export class UserController {
   @Patch('nickname')
   updateNickname(
     @Headers('x-my-id') myId: number,
-    @Body() updateNicknameDto: NicknameRequestDto,
-  ): Promise<NicknameResponseDto> {
+    @Body() updateNicknameDto: UserNicknameRequestDto,
+  ): Promise<UserNicknameResponseDto> {
     return this.userService.updateUserNickname(myId, updateNicknameDto.nickname);
   }
 

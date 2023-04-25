@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString, Matches, MaxLength } from 'class-validator';
 
-export class NicknameRequestDto {
+export class UserNicknameRequestDto {
   /**
    * nickname
    * @example 'san1'
