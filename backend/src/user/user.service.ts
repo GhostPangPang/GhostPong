@@ -34,17 +34,15 @@ export class UserService {
     };
   }
 
-  async getUserProfile(userId: number): Promise<UserProfileResponseDto> {
-    const { nickname, image, exp, userRecord, achievements } = await this.findExistUserProfile(userId);
-
-    return {
-      nickname,
-      image,
-      exp,
-      winCount: userRecord.winCount,
-      loseCount: userRecord.loseCount,
-      achievements: achievements.map((achievement) => achievement.achievement),
-    };
+  async createUser(authId: number, nickname: string): Promise<NicknameResponseDto> {
+    await this.authService.checkExistAuthId(authId); // FIXME : guard
+    await this.checkAlreadyExistUser(authId);
+    await this.checkDuplicatedNickname(nickname);
+    await this.userRepository.manager.transaction(async (manager: EntityManager) => {
+      await manager.insert(User, { id: authId, nickname: nickname });
+      await this.authService.changeAuthStatus(authId);
+    });
+    return new NicknameResponseDto(nickname);
   }
 
   async updateUserImage(myId: number, imageUrl: string): Promise<SuccessResponseDto> {
@@ -59,15 +57,16 @@ export class UserService {
     return new NicknameResponseDto(nickname);
   }
 
-  async createUser(authId: number, nickname: string): Promise<NicknameResponseDto> {
-    await this.authService.checkExistAuthId(authId); // FIXME : guard
-    await this.checkAlreadyExistUser(authId);
-    await this.checkDuplicatedNickname(nickname);
-    await this.userRepository.manager.transaction(async (manager: EntityManager) => {
-      await manager.insert(User, { id: authId, nickname: nickname });
-      await this.authService.changeAuthStatus(authId);
-    });
-    return new NicknameResponseDto(nickname);
+  async getUserProfile(userId: number): Promise<UserProfileResponseDto> {
+    const { nickname, image, exp, userRecord, achievements } = await this.findExistUserProfile(userId);
+    return {
+      nickname,
+      image,
+      exp,
+      winCount: userRecord.winCount,
+      loseCount: userRecord.loseCount,
+      achievements: achievements.map((achievement) => achievement.achievement),
+    };
   }
 
   /*
