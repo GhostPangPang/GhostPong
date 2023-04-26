@@ -28,10 +28,10 @@ export class BlockedService {
     if (myId === userId) {
       throw new BadRequestException('스스로를 미워하지 마십시오.');
     }
-    await this.checkBlockedCountLimit(myId);
     if ((await this.findBlockedUser(myId, userId)) !== null) {
       throw new ConflictException('이미 차단한 유저입니다.');
     }
+    await this.checkBlockedCountLimit(myId);
     await this.blockUserAndDeleteFriendships(myId, userId);
     return new SuccessResponseDto('유저를 차단하였습니다.');
   }
