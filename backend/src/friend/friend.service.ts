@@ -8,9 +8,9 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { BlockedService } from '../blocked/blocked.service';
 import { FRIEND_LIMIT } from '../common/constant';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
+import { BlockedUser } from '../entity/blocked-user.entity';
 import { Friendship } from '../entity/friendship.entity';
 import { UserService } from '../user/user.service';
 
@@ -22,8 +22,9 @@ export class FriendService {
   constructor(
     @InjectRepository(Friendship)
     private readonly friendshipRepository: Repository<Friendship>,
+    @InjectRepository(BlockedUser)
+    private readonly blockedUserRepository: Repository<BlockedUser>,
     private readonly userService: UserService,
-    private readonly blockedService: BlockedService,
   ) {}
 
   // SECTION: public
@@ -208,12 +209,16 @@ export class FriendService {
     if (senderId === receiverId) {
       throw new BadRequestException('당신은 이미 당신의 소중한 친구입니다. ^_^');
     }
-    if ((await this.blockedService.findBlockedUser(senderId, receiverId)) === null) {
-      throw new ForbiddenException('당신을 차단한 유저입니다.');
+    const blockedUser = await this.blockedUserRepository.findOneBy([
+      { userId: senderId, blockedUserId: receiverId },
+      { userId: receiverId, blockedUserId: senderId },
+    ]);
+    if (blockedUser !== null) {
+      throw new ForbiddenException(
+        blockedUser.blockedUserId === senderId ? '당신을 차단한 유저입니다.' : '당신이 차단한 유저입니다.',
+      );
     }
-    if ((await this.blockedService.findBlockedUser(receiverId, senderId)) === null) {
-      throw new ForbiddenException('당신이 차단한 유저입니다.');
-    }
+
     // 친구 신청 혹은 친구 관계가 있는 지 확인. 하나라도 있으면 error 이므로 findOneBy.
     const friendship = await this.friendshipRepository.findOneBy([
       { senderId: senderId, receiverId: receiverId }, // sender -> receiver
@@ -221,7 +226,11 @@ export class FriendService {
     ]);
     if (friendship !== null) {
       throw new ConflictException(
-        friendship.accept ? '이미 친구인 유저입니다.' : '이미 친구 신청을 보냈거나 받은 유저입니다.',
+        friendship.accept
+          ? '이미 친구인 유저입니다.'
+          : friendship.senderId === senderId
+          ? '이미 친구 신청을 보낸 유저입니다.'
+          : '이미 친구 신청을 받은 유저입니다.',
       );
     }
     await this.checkFriendLimit(senderId, '나');
