@@ -3,7 +3,7 @@ import { Text } from '@/common/Text';
 import { Avatar } from '@/common/Avatar';
 import { InfoBox } from './InfoBox';
 import { AchievementBox } from './AchievementBox';
-import { HistroyBox } from './HistoryBox';
+// import { HistroyBox } from './HistoryBox';
 
 import { ReactComponent as Gold } from '@/svgs/tmpgold.svg';
 import { ReactComponent as Achievement1 } from '@/svgs/achievment1.svg';
