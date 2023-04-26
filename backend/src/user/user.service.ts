@@ -3,10 +3,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
 
 import { AuthService } from '../auth/auth.service';
+import { HISTORY_SIZE_PER_PAGE } from '../common/constant';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
 import { AuthStatus } from '../entity/auth.entity';
+import { GameHistory } from '../entity/game-history.entity';
 import { User } from '../entity/user.entity';
 
+import { UserHistoryResponseDto } from './dto/user-history-response.dto';
 import { UserInfoResponseDto } from './dto/user-info-response.dto';
 import { UserNicknameResponseDto } from './dto/user-nickname-response.dto';
 import { UserProfileResponseDto } from './dto/user-profile-response.dto';
@@ -16,6 +19,8 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(GameHistory)
+    private readonly gameHistoryRepository: Repository<GameHistory>,
     private readonly authService: AuthService,
   ) {}
 
@@ -68,6 +73,18 @@ export class UserService {
       loseCount: userRecord.loseCount,
       achievements: achievements.map((achievement) => achievement.achievement),
     };
+  }
+
+  async getUserHistory(userId: number, cursor: number): Promise<UserHistoryResponseDto> {
+    await this.findExistUserById(userId);
+    const histories = await this.gameHistoryRepository.find({
+      relations: ['winner', 'loser'],
+      where: [{ winner: { id: userId } }, { loser: { id: userId } }],
+      order: { createdAt: 'DESC' },
+      take: HISTORY_SIZE_PER_PAGE,
+      skip: isNaN(cursor) ? 0 : cursor * HISTORY_SIZE_PER_PAGE,
+    });
+    return { histories };
   }
 
   /*

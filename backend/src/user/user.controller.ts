@@ -8,6 +8,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Res,
   UploadedFile,
   UseInterceptors,
@@ -19,7 +20,9 @@ import {
   ApiHeaders,
   ApiNotFoundResponse,
   ApiOperation,
+  ApiParam,
   ApiPayloadTooLargeResponse,
+  ApiQuery,
   ApiTags,
   ApiUnsupportedMediaTypeResponse,
 } from '@nestjs/swagger';
@@ -29,6 +32,7 @@ import { ErrorResponseDto } from '../common/dto/error-response.dto';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
 
 import { UpdateImageRequestDto } from './dto/update-image-request.dto';
+import { UserHistoryResponseDto } from './dto/user-history-response.dto';
 import { UserInfoResponseDto } from './dto/user-info-response.dto';
 import { UserNicknameRequestDto } from './dto/user-nickname-request.dto';
 import { UserNicknameResponseDto } from './dto/user-nickname-response.dto';
@@ -107,5 +111,14 @@ export class UserController {
   @Get(':userId/profile')
   getUserProfile(@Param('userId') userId: number): Promise<UserProfileResponseDto> {
     return this.userService.getUserProfile(userId);
+  }
+
+  @ApiOperation({ summary: '유저 게임 기록 가져오기' })
+  @ApiNotFoundResponse({ type: ErrorResponseDto, description: '존재하지 않는 사용자' })
+  @ApiQuery({ name: 'cursor', description: '페이지 번호', required: false, example: 1 })
+  @ApiParam({ name: 'userId', description: '유저 아이디', example: 1 })
+  @Get(':userId/history')
+  getUserHistory(@Param('userId') userId: number, @Query('cursor') cursor: number): Promise<UserHistoryResponseDto> {
+    return this.userService.getUserHistory(userId, cursor);
   }
 }
