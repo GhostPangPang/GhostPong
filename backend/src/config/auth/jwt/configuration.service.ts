@@ -8,18 +8,16 @@ export class JwtConfigService {
   // SECTION registered user
   get userSecretKey() {
     return this.configService.get<string>('jwt.userSecretKey');
-    // return { secret: this.configService.get<string>('jwt.userSecretKey') };
   }
 
   get userExpireIn() {
-    return { expiresIn: this.configService.get<string>('jwt.userExpireIn') };
+    return this.configService.get<string>('jwt.userExpireIn');
   }
 
   get userJwtSignOptions() {
     return {
-      // ...this.userSecretKey,
       secret: this.userSecretKey,
-      expiresIn: this.configService.get<string>('jwt.userExpireIn'),
+      expiresIn: this.userExpireIn,
     };
   }
   // !SECTION registered user
@@ -27,18 +25,16 @@ export class JwtConfigService {
   // SECTION unregistered user
   get authSecretKey() {
     return this.configService.get<string>('jwt.authSecretKey');
-    // return { secret: this.configService.get<string>('jwt.authSecretKey') };
   }
 
   get authExpireIn() {
-    return { expiresIn: this.configService.get<string>('jwt.authExpireIn') };
+    return this.configService.get<string>('jwt.authExpireIn');
   }
 
   get authJwtSignOptions() {
     return {
       secret: this.authSecretKey,
-      // ...this.authSecretKey,
-      expiresIn: this.configService.get<string>('jwt.authExpireIn'),
+      expiresIn: this.authExpireIn,
     };
   }
   // !SECTION unregistered user
