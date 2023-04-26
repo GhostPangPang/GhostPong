@@ -3,11 +3,13 @@ import profile from '@/svgs/default-profile.svg';
 
 export type AvatarProps = {
   size?: 'sm' | 'md' | 'lg' | 'xl';
+  border?: string;
   onClick?: (event: React.MouseEvent<HTMLImageElement>) => void;
 } & React.ComponentPropsWithoutRef<'img'>;
 
 const StyledAvatar = styled.img<AvatarProps>`
   border-radius: 50%;
+  border: ${(props) => props.border || 'none'};
   object-fit: cover;
   cursor: ${(props) => (props.onClick ? 'pointer' : 'default')};
   ${(props) => {
