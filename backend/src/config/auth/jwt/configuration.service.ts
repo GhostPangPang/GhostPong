@@ -5,21 +5,41 @@ import { ConfigService } from '@nestjs/config';
 export class JwtConfigService {
   constructor(private configService: ConfigService) {}
 
-  // registered user
+  // SECTION registered user
   get userSecretKey() {
     return this.configService.get<string>('jwt.userSecretKey');
+    // return { secret: this.configService.get<string>('jwt.userSecretKey') };
   }
 
   get userExpireIn() {
-    return this.configService.get<string>('jwt.userExpireIn');
+    return { expiresIn: this.configService.get<string>('jwt.userExpireIn') };
   }
 
-  // unregistered user
+  get userJwtSignOptions() {
+    return {
+      // ...this.userSecretKey,
+      secret: this.userSecretKey,
+      expiresIn: this.configService.get<string>('jwt.userExpireIn'),
+    };
+  }
+  // !SECTION registered user
+
+  // SECTION unregistered user
   get authSecretKey() {
     return this.configService.get<string>('jwt.authSecretKey');
+    // return { secret: this.configService.get<string>('jwt.authSecretKey') };
   }
 
   get authExpireIn() {
-    return this.configService.get<string>('jwt.authExpireIn');
+    return { expiresIn: this.configService.get<string>('jwt.authExpireIn') };
   }
+
+  get authJwtSignOptions() {
+    return {
+      secret: this.authSecretKey,
+      // ...this.authSecretKey,
+      expiresIn: this.configService.get<string>('jwt.authExpireIn'),
+    };
+  }
+  // !SECTION unregistered user
 }

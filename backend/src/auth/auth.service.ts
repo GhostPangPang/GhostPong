@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
+import { JwtConfigService } from '../config/auth/jwt/configuration.service';
 import { Auth, AuthStatus } from '../entity/auth.entity';
 import { UserService } from '../user/user.service';
 
@@ -14,6 +15,7 @@ export class AuthService {
     @InjectRepository(Auth)
     private readonly authRepository: Repository<Auth>,
     private readonly jwtService: JwtService,
+    private readonly jwtConfigService: JwtConfigService,
     @Inject(forwardRef(() => UserService))
     private readonly userService: UserService,
   ) {}
@@ -28,10 +30,6 @@ export class AuthService {
     }
   }
 
-  async updateAuthStatus(authId: number): Promise<void> {
-    await this.authRepository.update({ id: authId }, { status: AuthStatus.REGISTERD });
-  }
-
   // UNREGISTERD -> SIGN UP (Register)
   async signUp(user: LoginInfoDto): Promise<string> {
     const auth = await this.authRepository.findOneBy({ email: user.email });
@@ -44,13 +42,12 @@ export class AuthService {
     }
     // const payload = { userId: user.id, email: user.email };
     const payload = { userId: user.id };
-    return this.jwtService.sign(payload);
+    return this.jwtService.sign(payload, this.jwtConfigService.authJwtSignOptions);
   }
 
   // REGISTERD -> SIGN IN (Login)
   async signIn(user: LoginInfoDto): Promise<string> {
-    // const payload = { userId: user.id, email: user.email };
     const payload = { userId: user.id };
-    return this.jwtService.sign(payload);
+    return this.jwtService.sign(payload, this.jwtConfigService.userJwtSignOptions);
   }
 }

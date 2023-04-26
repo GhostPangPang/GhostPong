@@ -1,4 +1,5 @@
 import { Controller, Get, Res, UseGuards } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
@@ -7,16 +8,10 @@ import { AuthService } from './auth.service';
 import { ReqUser } from './decorator/auth.decorator';
 import { LoginInfoDto } from './dto/login-info.dto';
 
-// import { TokenDto } from '../common/dto/token.dto';
-
-// interface RequestWithUser extends Request {
-//   user: TokenDto;
-// }
-
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService, private readonly jwtService: JwtService) {}
 
   /*
   @Post('2fa')
@@ -65,9 +60,9 @@ export class AuthController {
   // SECTION : TEST
   // 닉네임 설정하는 페이지로 redirect
   @UseGuards(AuthGuard('auth'))
+  // @UseGuards(AuthStrategy)
   @Get('register')
   test2() {
-    // test2(@ReqUser() request: Response) {
     console.log('Redirect : auth strategy(tmp jwt) guard success!');
     // console.log((request as any).user);
     return 'Redirect to NICKNAME SETTING page!';
@@ -75,11 +70,10 @@ export class AuthController {
 
   // 최종적으로 redirect할 lobby page라고 가정
   @UseGuards(AuthGuard('user'))
+  // @UseGuards(UserStrategy)
   @Get()
   test() {
-    // test(@ReqUser() request: Response) {
     console.log('Redirect : user strategy(jwt) guard success!');
-    // console.log((request as any).user);
     return 'Redirect to LOBBY page!';
   }
 }

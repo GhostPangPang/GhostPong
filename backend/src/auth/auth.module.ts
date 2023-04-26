@@ -18,24 +18,25 @@ import { UserStrategy } from './strategy/user.strategy';
   // 사용할 entity
   imports: [
     TypeOrmModule.forFeature([Auth]),
-    JwtModule.registerAsync({
-      imports: [JwtConfigModule],
-      useFactory: async (jwtConfigService: JwtConfigService) => ({
-        secret: jwtConfigService.userSecretKey,
-        signOptions: { expiresIn: jwtConfigService.userExpireIn },
-      }),
-      inject: [JwtConfigService],
-    }),
-    JwtModule.registerAsync({
-      imports: [JwtConfigModule],
-      useFactory: async (jwtConfigService: JwtConfigService) => ({
-        secret: jwtConfigService.authSecretKey,
-        signOptions: { expiresIn: jwtConfigService.authExpireIn },
-      }),
-      inject: [JwtConfigService],
-    }),
+    JwtModule.register({}),
+    // JwtModule.registerAsync({
+    //   imports: [JwtConfigModule],
+    //   useFactory: async (jwtConfigService: JwtConfigService) => ({
+    //     secret: jwtConfigService.userSecretKey,
+    //     signOptions: { expiresIn: jwtConfigService.userExpireIn },
+    //   }),
+    //   inject: [JwtConfigService],
+    // }),
+    // JwtModule.registerAsync({
+    //   imports: [JwtConfigModule],
+    //   useFactory: async (jwtConfigService: JwtConfigService) => ({
+    //     secret: jwtConfigService.authSecretKey,
+    //     signOptions: { expiresIn: jwtConfigService.authExpireIn },
+    //   }),
+    //   inject: [JwtConfigService],
+    // }),
     FtAuthConfigModule,
-    JwtConfigModule,
+    forwardRef(() => JwtConfigModule),
     forwardRef(() => UserModule),
   ],
   providers: [AuthService, FtOAuthStrategy, AuthStrategy, UserStrategy, JwtConfigService],
