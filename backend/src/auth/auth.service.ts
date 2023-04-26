@@ -20,8 +20,4 @@ export class AuthService {
       throw new ConflictException('이미 등록된 유저입니다.');
     }
   }
-
-  async changeAuthStatus(authId: number): Promise<void> {
-    await this.authRepository.update({ id: authId }, { status: AuthStatus.REGISTERD });
-  }
 }
