@@ -29,7 +29,7 @@ export class BlockedService {
       throw new BadRequestException('스스로를 미워하지 마십시오.');
     }
     await this.checkBlockedCountLimit(myId);
-    if ((await this.findBlockedUser(myId, userId)) === null) {
+    if ((await this.findBlockedUser(myId, userId)) !== null) {
       throw new ConflictException('이미 차단한 유저입니다.');
     }
     await this.blockUserAndDeleteFriendships(myId, userId);
@@ -101,7 +101,7 @@ export class BlockedService {
         .where('friendship.receiver_id = :userId AND friendship.sender_id = :blockedUserId', { userId, blockedUserId })
         .orWhere('friendship.sender_id = :userId AND friendship.receiver_id= :blockedUserId', { userId, blockedUserId })
         .execute();
-      await manager.insert(BlockedUser, { userId: userId, blockedUserId: blockedUserId });
+      await manager.insert('blocked_user', { userId: userId, blockedUserId: blockedUserId });
     });
   }
 }

@@ -40,7 +40,7 @@ export class UserService {
     await this.checkAlreadyExistUser(authId);
     await this.checkDuplicatedNickname(nickname);
     await this.userRepository.manager.transaction(async (manager: EntityManager) => {
-      await manager.insert('user', { id: authId, nickname: nickname });
+      await manager.insert('users', { id: authId, nickname: nickname });
       await manager.update('auth', { id: authId }, { status: AuthStatus.REGISTERD });
     });
     return new UserNicknameResponseDto(nickname);
