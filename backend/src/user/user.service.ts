@@ -4,6 +4,7 @@ import { EntityManager, Repository } from 'typeorm';
 
 import { AuthService } from '../auth/auth.service';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
+import { AuthStatus } from '../entity/auth.entity';
 import { User } from '../entity/user.entity';
 
 import { UserInfoResponseDto } from './dto/user-info-response.dto';
@@ -39,8 +40,8 @@ export class UserService {
     await this.checkAlreadyExistUser(authId);
     await this.checkDuplicatedNickname(nickname);
     await this.userRepository.manager.transaction(async (manager: EntityManager) => {
-      await manager.insert(User, { id: authId, nickname: nickname });
-      await this.authService.changeAuthStatus(authId);
+      await manager.insert('users', { id: authId, nickname: nickname });
+      await manager.update('auth', { id: authId }, { status: AuthStatus.REGISTERD });
     });
     return new UserNicknameResponseDto(nickname);
   }
