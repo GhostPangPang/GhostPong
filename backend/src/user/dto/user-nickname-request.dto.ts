@@ -1,4 +1,4 @@
-import { UserNicknameRequest } from '@/types/user/user-nickname-request.interface';
+import { UserNicknameRequest } from '@/types/user/request/user-nickname-request.interface';
 
 import { IsNotEmpty, IsString, Matches, MaxLength } from 'class-validator';
 

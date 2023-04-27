@@ -1,6 +1,8 @@
+import { UserInfoResponse } from '@/types/user/response/user-info-response.interface';
+
 import { UserInfoDto } from './user-info.dto';
 
-export class UserInfoResponseDto extends UserInfoDto {
+export class UserInfoResponseDto extends UserInfoDto implements UserInfoResponse {
   /**
    * 유저가 차단한 사람들의 id
    * @example [23, 35, 82]

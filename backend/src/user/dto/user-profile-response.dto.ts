@@ -1,4 +1,4 @@
-import { UserProfileResponse } from '@/types/user/user-profile-response.interface';
+import { UserProfileResponse } from '@/types/user/response/user-profile-response.interface';
 
 export class UserProfileResponseDto implements UserProfileResponse {
   /**

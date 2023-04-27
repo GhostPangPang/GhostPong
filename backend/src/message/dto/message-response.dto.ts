@@ -1,4 +1,4 @@
-import { MessageResponse } from '@/types/message/message-response.interface';
+import { MessageResponse } from '@/types/message/response/message-response.interface';
 
 class MessageInfo {
   /**

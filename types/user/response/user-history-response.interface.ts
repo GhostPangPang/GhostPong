@@ -1,4 +1,4 @@
-import { UserInfo } from "./user-info.interface";
+import { UserInfo } from "../user-info.interface";
 
 export interface UserHistoryResponse {
   histories: {
