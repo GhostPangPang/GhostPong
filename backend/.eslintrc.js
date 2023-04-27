@@ -32,7 +32,9 @@ module.exports = {
     ],
   },
   settings: {
+    'import/external-module-folders': ['../types'], // TODO : check
     'import/resolver': {
+      typescript: {},
       node: {
         moduleDirectory: ['node_modules', 'src'],
         extensions: ['.js', '.ts'],
