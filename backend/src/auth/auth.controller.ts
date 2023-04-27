@@ -32,7 +32,8 @@ export class AuthController {
     // 또는 @ReqUser('email') email: string
     console.log('42 Login Callback!');
 
-    if (user.isRegistered === false) {
+    // if (user.isRegistered === false) {
+    if (user.id === null) {
       // UNREGSIETERED -> JOIN (sign up)
       console.log('UNREGISTERED -> JOIN (sign up)');
       const token = await this.authService.signUp(user);
@@ -46,7 +47,7 @@ export class AuthController {
     } else {
       // REGISTERED -> LOGIN (sign in)
       console.log('REGISTERED -> LOGIN (sign in)');
-      const token = await this.authService.signIn(user);
+      const token = await this.authService.signIn(user.id);
       res
         .cookie('jwt-for-registered', token, {
           // httpOnly: true,
@@ -57,20 +58,18 @@ export class AuthController {
     }
   }
 
-  // SECTION : TEST
+  // FIXME : delete it (tmp for test)
   // 닉네임 설정하는 페이지로 redirect
   @UseGuards(AuthGuard('auth'))
-  // @UseGuards(AuthStrategy)
   @Get('register')
   test2() {
     console.log('Redirect : auth strategy(tmp jwt) guard success!');
-    // console.log((request as any).user);
     return 'Redirect to NICKNAME SETTING page!';
   }
 
+  // FIXME : delete it (tmp for test)
   // 최종적으로 redirect할 lobby page라고 가정
   @UseGuards(AuthGuard('user'))
-  // @UseGuards(UserStrategy)
   @Get()
   test() {
     console.log('Redirect : user strategy(jwt) guard success!');

@@ -19,22 +19,6 @@ import { UserStrategy } from './strategy/user.strategy';
   imports: [
     TypeOrmModule.forFeature([Auth]),
     JwtModule.register({}),
-    // JwtModule.registerAsync({
-    //   imports: [JwtConfigModule],
-    //   useFactory: async (jwtConfigService: JwtConfigService) => ({
-    //     secret: jwtConfigService.userSecretKey,
-    //     signOptions: { expiresIn: jwtConfigService.userExpireIn },
-    //   }),
-    //   inject: [JwtConfigService],
-    // }),
-    // JwtModule.registerAsync({
-    //   imports: [JwtConfigModule],
-    //   useFactory: async (jwtConfigService: JwtConfigService) => ({
-    //     secret: jwtConfigService.authSecretKey,
-    //     signOptions: { expiresIn: jwtConfigService.authExpireIn },
-    //   }),
-    //   inject: [JwtConfigService],
-    // }),
     FtAuthConfigModule,
     forwardRef(() => JwtConfigModule),
     forwardRef(() => UserModule),

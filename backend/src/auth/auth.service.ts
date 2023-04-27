@@ -42,12 +42,13 @@ export class AuthService {
     }
     // const payload = { userId: user.id, email: user.email };
     const payload = { userId: user.id };
-    return this.jwtService.sign(payload, this.jwtConfigService.authJwtSignOptions);
+    return await this.jwtService.sign(payload, this.jwtConfigService.authJwtSignOptions);
   }
 
   // REGISTERD -> SIGN IN (Login)
-  async signIn(user: LoginInfoDto): Promise<string> {
-    const payload = { userId: user.id };
-    return this.jwtService.sign(payload, this.jwtConfigService.userJwtSignOptions);
+  async signIn(userId: number): Promise<string> {
+    const payload = { userId };
+    console.log('sign in');
+    return await this.jwtService.sign(payload, this.jwtConfigService.userJwtSignOptions);
   }
 }

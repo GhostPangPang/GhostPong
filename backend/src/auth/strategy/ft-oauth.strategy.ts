@@ -41,15 +41,10 @@ export class FtOAuthStrategy extends PassportStrategy(Strategy, '42') {
 
     // if (auth === null || (await this.userService.findExistUserById(auth.id)) === null) {
     if (auth === null || (await this.userService.getUser(auth.id)) === null) {
-      profile.isRegistered = false;
       profile.id = null;
     } else {
-      profile.isRegistered = true;
       profile.id = auth.id;
     }
-
-    // profile.accessToken = accessToken;
-    // profile.freshToken = refreshToken;
 
     return profile;
   }

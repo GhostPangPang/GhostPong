@@ -13,5 +13,5 @@ export class LoginInfoDto {
    * isRegisterd: false -> userId: null
    */
   id: number | null;
-  isRegistered: boolean;
+  // isRegistered: boolean;
 }

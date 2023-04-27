@@ -41,7 +41,8 @@ export class UserService {
     };
   }
 
-  async createUser(authId: number, nickname: string): Promise<UserNicknameResponseDto> {
+  // async createUser(authId: number, nickname: string): Promise<UserNicknameResponseDto> {
+  async createUser(authId: number, nickname: string): Promise<string> {
     await this.authService.checkExistAuthId(authId); // FIXME : guard
     await this.checkAlreadyExistUser(authId);
     await this.checkDuplicatedNickname(nickname);
@@ -49,7 +50,7 @@ export class UserService {
       await manager.insert('users', { id: authId, nickname: nickname });
       await manager.update('auth', { id: authId }, { status: AuthStatus.REGISTERD });
     });
-    return new UserNicknameResponseDto(nickname);
+    return await this.authService.signIn(authId);
   }
 
   async updateUserImage(myId: number, imageUrl: string): Promise<SuccessResponseDto> {
