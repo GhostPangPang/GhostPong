@@ -6,6 +6,7 @@ const color = {
   gray100: '#D9D9D9',
   gray: '#4A4A4A',
   surface: 'rgba(161, 161, 161, 0.28)',
+  online: '#2FD240',
 };
 
 const backgroundColor = color;

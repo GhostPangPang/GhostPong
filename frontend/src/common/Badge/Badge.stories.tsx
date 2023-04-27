@@ -3,7 +3,7 @@ import { Badge, BadgeProps } from './Badge';
 import { Avatar } from '../Avatar';
 
 export default {
-  title: 'Badge',
+  title: 'Common/Badge',
   component: Badge,
   parameters: {
     layout: 'centered',
