@@ -1,3 +1,15 @@
+import { ErrorResponseDto } from '../common/dto/error-response.dto';
+import { SuccessResponseDto } from '../common/dto/success-response.dto';
+
+import { UserHistoryResponseDto } from './dto/user-history-response.dto';
+import { UserImageRequestDto } from './dto/user-image-request.dto';
+import { UserInfoResponseDto } from './dto/user-info-response.dto';
+import { UserNicknameRequestDto } from './dto/user-nickname-request.dto';
+import { UserNicknameResponseDto } from './dto/user-nickname-response.dto';
+import { UserProfileResponseDto } from './dto/user-profile-response.dto';
+import { FileUploadInterceptor } from './interceptor/file-upload.interceptor';
+import { UserService } from './user.service';
+
 import {
   Body,
   Controller,
@@ -27,18 +39,6 @@ import {
   ApiUnsupportedMediaTypeResponse,
 } from '@nestjs/swagger';
 import { Response } from 'express';
-
-import { ErrorResponseDto } from '../common/dto/error-response.dto';
-import { SuccessResponseDto } from '../common/dto/success-response.dto';
-
-import { UpdateImageRequestDto } from './dto/update-image-request.dto';
-import { UserHistoryResponseDto } from './dto/user-history-response.dto';
-import { UserInfoResponseDto } from './dto/user-info-response.dto';
-import { UserNicknameRequestDto } from './dto/user-nickname-request.dto';
-import { UserNicknameResponseDto } from './dto/user-nickname-response.dto';
-import { UserProfileResponseDto } from './dto/user-profile-response.dto';
-import { FileUploadInterceptor } from './interceptor/file-upload.interceptor';
-import { UserService } from './user.service';
 
 @ApiTags('user')
 @Controller('user')
@@ -90,7 +90,7 @@ export class UserController {
   @Patch('image')
   updateProfileImage(
     @Headers('x-my-id') myId: number,
-    @Body() updateImageRequestDto: UpdateImageRequestDto,
+    @Body() updateImageRequestDto: UserImageRequestDto,
   ): Promise<SuccessResponseDto> {
     return this.userService.updateUserImage(myId, updateImageRequestDto.image);
   }

@@ -1,4 +1,6 @@
-export class UserProfileResponseDto {
+import { UserProfileResponse } from '@/types/user/user-profile-response.interface';
+
+export class UserProfileResponseDto implements UserProfileResponse {
   /**
    * 유저 닉네임
    * @example nickname
