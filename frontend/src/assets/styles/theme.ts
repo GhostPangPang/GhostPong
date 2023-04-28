@@ -7,6 +7,7 @@ const color = {
   gray: '#4A4A4A',
   surface: 'rgba(161, 161, 161, 0.28)',
   online: '#2FD240',
+  gradient: 'linear-gradient(268.76deg, #7875ff, #61ffe3)',
 };
 
 const backgroundColor = color;
