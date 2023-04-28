@@ -1,4 +1,4 @@
-import { FriendResponse } from '@/types/friend/response/friend-response.interface';
+import { FriendResponse } from '@/types/friend/response';
 
 import { UserInfoDto } from '../../user/dto/user-info.dto';
 

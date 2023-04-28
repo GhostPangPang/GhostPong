@@ -1,4 +1,4 @@
-import { UserInfoResponse } from '@/types/user/response/user-info-response.interface';
+import { UserInfoResponse } from '@/types/user/response';
 
 import { UserInfoDto } from './user-info.dto';
 

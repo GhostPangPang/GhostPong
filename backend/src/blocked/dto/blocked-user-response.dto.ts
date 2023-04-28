@@ -1,4 +1,4 @@
-import { BlockedUserResponse } from '@/types/blocked/response/blocked-user-response.interface';
+import { BlockedUserResponse } from '@/types/blocked/response';
 
 import { UserInfoDto } from '../../user/dto/user-info.dto';
 export class BlockedUserResponseDto implements BlockedUserResponse {

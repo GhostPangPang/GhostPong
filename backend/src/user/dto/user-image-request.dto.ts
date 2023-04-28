@@ -1,4 +1,4 @@
-import { UserImageRequest } from '@/types/user/request/user-image-request.interface';
+import { UserImageRequest } from '@/types/user/request';
 
 import { IsNotEmpty, IsString } from 'class-validator';
 

@@ -1,4 +1,4 @@
-import { UserInfo } from '@/types/user/user-info.interface';
+import { UserInfo } from '@/types/user';
 
 export class UserInfoDto implements UserInfo {
   /**

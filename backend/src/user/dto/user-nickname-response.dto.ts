@@ -1,4 +1,4 @@
-import { UserNicknameResponse } from '@/types/user/response/user-nickname-response.interface';
+import { UserNicknameResponse } from '@/types/user/response';
 
 export class UserNicknameResponseDto implements UserNicknameResponse {
   constructor(nickname: string) {
