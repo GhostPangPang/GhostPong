@@ -1,6 +1,6 @@
 import { UserInfoResponse } from '@/types/user/response';
 
-import { UserInfoDto } from './user-info.dto';
+import { UserInfoDto } from '../user-info.dto';
 
 export class UserInfoResponseDto extends UserInfoDto implements UserInfoResponse {
   /**

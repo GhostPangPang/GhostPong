@@ -1,3 +1,12 @@
+import { FRIEND_LIMIT } from '../common/constant';
+import { SuccessResponseDto } from '../common/dto/success-response.dto';
+import { BlockedUser } from '../entity/blocked-user.entity';
+import { Friendship } from '../entity/friendship.entity';
+import { UserService } from '../user/user.service';
+
+import { FriendsResponseDto } from './dto/response/friend-response.dto';
+import { RequestedFriendsResponseDto } from './dto/response/requested-friend-response.dto';
+
 import {
   BadRequestException,
   ConflictException,
@@ -7,15 +16,6 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-
-import { FRIEND_LIMIT } from '../common/constant';
-import { SuccessResponseDto } from '../common/dto/success-response.dto';
-import { BlockedUser } from '../entity/blocked-user.entity';
-import { Friendship } from '../entity/friendship.entity';
-import { UserService } from '../user/user.service';
-
-import { FriendsResponseDto } from './dto/friend-response.dto';
-import { RequestedFriendsResponseDto } from './dto/requested-friend-response.dto';
 
 @Injectable()
 export class FriendService {

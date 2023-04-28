@@ -1,6 +1,6 @@
 import { UserHistoryResponse } from '@/types/user/response';
 
-import { UserInfoDto } from './user-info.dto';
+import { UserInfoDto } from '../user-info.dto';
 
 class History {
   /**

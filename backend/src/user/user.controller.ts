@@ -1,12 +1,12 @@
 import { ErrorResponseDto } from '../common/dto/error-response.dto';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
 
-import { UserHistoryResponseDto } from './dto/user-history-response.dto';
-import { UserImageRequestDto } from './dto/user-image-request.dto';
-import { UserInfoResponseDto } from './dto/user-info-response.dto';
-import { UserNicknameRequestDto } from './dto/user-nickname-request.dto';
-import { UserNicknameResponseDto } from './dto/user-nickname-response.dto';
-import { UserProfileResponseDto } from './dto/user-profile-response.dto';
+import { UserImageRequestDto } from './dto/request/user-image-request.dto';
+import { UserNicknameRequestDto } from './dto/request/user-nickname-request.dto';
+import { UserHistoryResponseDto } from './dto/response/user-history-response.dto';
+import { UserInfoResponseDto } from './dto/response/user-info-response.dto';
+import { UserNicknameResponseDto } from './dto/response/user-nickname-response.dto';
+import { UserProfileResponseDto } from './dto/response/user-profile-response.dto';
 import { FileUploadInterceptor } from './interceptor/file-upload.interceptor';
 import { UserService } from './user.service';
 
