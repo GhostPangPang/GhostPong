@@ -1,4 +1,6 @@
-export class SuccessResponseDto {
+import { SuccessResponse } from '@/types/common/response';
+
+export class SuccessResponseDto implements SuccessResponse {
   constructor(msg: string) {
     this.message = msg;
   }
