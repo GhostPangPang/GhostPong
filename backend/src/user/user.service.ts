@@ -33,6 +33,7 @@ export class UserService {
   async getUserInfo(myId: number): Promise<UserInfoResponseDto> {
     const { nickname, image, exp, blockedUsers } = await this.findExistUserInfo(myId);
     return {
+      id: myId,
       nickname,
       image,
       exp,
