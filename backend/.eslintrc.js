@@ -41,7 +41,6 @@ module.exports = {
     ],
   },
   settings: {
-    //'import/external-module-folders': ['../types'],
     'import/resolver': {
       typescript: {},
       node: {
