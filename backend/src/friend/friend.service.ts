@@ -112,7 +112,7 @@ export class FriendService {
       throw new NotFoundException('친구 관계가 존재하지 않습니다.');
     }
     await this.friendshipRepository.delete(friendship.id);
-    return new SuccessResponseDto('친구를 삭제했습니다.');
+    return { message: '친구를 삭제했습니다.' };
   }
 
   /**
@@ -131,7 +131,7 @@ export class FriendService {
     await this.checkFriendLimit(receiverId, '나');
     await this.checkFriendLimit(senderId, '상대방');
     await this.friendshipRepository.update({ id: friendship.id }, { accept: true });
-    return new SuccessResponseDto('친구 추가 되었습니다.');
+    return { message: '친구 추가 되었습니다.' };
   }
 
   /**
@@ -147,7 +147,7 @@ export class FriendService {
       throw new BadRequestException('스스로를 거부하지 마십시오...');
     }
     await this.friendshipRepository.delete((await this.findExistFriendRequest(senderId, receiverId)).id);
-    return new SuccessResponseDto('친구 신청을 거절했습니다.');
+    return { message: '친구 신청을 거절했습니다.' };
   }
   // !SECTION public
 
@@ -238,7 +238,7 @@ export class FriendService {
     await this.checkFriendRequestLimit(receiverId);
 
     await this.friendshipRepository.insert({ senderId, receiverId });
-    return new SuccessResponseDto('친구 신청을 보냈습니다.');
+    return { message: '친구 신청을 보냈습니다.' };
   }
 
   // !SECTION private
