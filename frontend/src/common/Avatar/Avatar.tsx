@@ -16,69 +16,41 @@ const StyledAvatar = styled.img<AvatarProps>`
     switch (props.size) {
       case 'sm':
         return `
-        ${
-          props.borderColor
-            ? props.borderColor !== 'gradient'
-              ? `border: 0.15rem solid ${props.theme.color[props.borderColor]};`
-              : `border: 0.15rem solid transparent; background-image: linear-gradient(#fff, #fff), ${
-                  props.theme.color[props.borderColor]
-                };
-                background-origin: border-box;
-                background-clip: content-box, border-box;`
-            : ''
-        } 
+        ${props.borderColor && 'border-width: 0.15rem; border-style: solid;'}
         width: 2.4rem;
         height: 2.4rem;
         `;
       case 'md':
         return `
-        ${
-          props.borderColor
-            ? props.borderColor !== 'gradient'
-              ? `border: 0.2rem solid ${props.theme.color[props.borderColor]};`
-              : `border: 0.2rem solid transparent; background-image: linear-gradient(#fff, #fff), ${
-                  props.theme.color[props.borderColor]
-                };
-                background-origin: border-box;
-                background-clip: content-box, border-box;`
-            : ''
-        } 
+        ${props.borderColor && 'border-width: 0.2rem; border-style: solid;'}
         width: 4rem;
         height: 4rem;
         `;
       case 'lg':
         return `
-        ${
-          props.borderColor
-            ? props.borderColor !== 'gradient'
-              ? `border: 0.3rem solid ${props.theme.color[props.borderColor]};`
-              : `border: 0.3rem solid transparent; background-image: linear-gradient(#fff, #fff), ${
-                  props.theme.color[props.borderColor]
-                };
-                background-origin: border-box;
-                background-clip: content-box, border-box;`
-            : ''
-        } 
+        ${props.borderColor && 'border-width: 0.3rem; border-style: solid;'}
         width: 6.4rem;
         height: 6.4rem;
         `;
       case 'xl':
         return `
-        ${
-          props.borderColor
-            ? props.borderColor !== 'gradient'
-              ? `border: 0.5rem solid ${props.theme.color[props.borderColor]};`
-              : `border: 0.5rem solid transparent; background-image: linear-gradient(#fff, #fff), ${
-                  props.theme.color[props.borderColor]
-                };
-                background-origin: border-box;
-                background-clip: content-box, border-box;`
-            : ''
-        } 
-         width: 16rem;
-         height: 16rem;
+        ${props.borderColor && 'border-width: 0.5rem; border-style: solid;'}
+        width: 16rem;
+        height: 16rem;
         `;
     }
+  }}
+  ${(props) => {
+    return (
+      props.borderColor &&
+      (props.borderColor !== 'gradient'
+        ? `border-color: ${props.theme.color[props.borderColor]};`
+        : `border-color: transparent; background-image: linear-gradient(#fff, #fff), ${
+            props.theme.color[props.borderColor]
+          };
+          background-origin: border-box;
+          background-clip: content-box, border-box;`)
+    );
   }}
 `;
 
