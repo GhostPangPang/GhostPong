@@ -1,3 +1,7 @@
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { EntityManager, Repository } from 'typeorm';
+
 import { AuthService } from '../auth/auth.service';
 import { HISTORY_SIZE_PER_PAGE } from '../common/constant';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
@@ -9,10 +13,6 @@ import { UserHistoryResponseDto } from './dto/response/user-history-response.dto
 import { UserInfoResponseDto } from './dto/response/user-info-response.dto';
 import { UserNicknameResponseDto } from './dto/response/user-nickname-response.dto';
 import { UserProfileResponseDto } from './dto/response/user-profile-response.dto';
-
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, Repository } from 'typeorm';
 
 @Injectable()
 export class UserService {

@@ -1,10 +1,10 @@
+import { Controller, Get, Param, Query, Headers } from '@nestjs/common';
+import { ApiHeaders, ApiNotFoundResponse, ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
+
 import { ErrorResponseDto } from '../common/dto/error-response.dto';
 
 import { MessageResponseDto } from './dto/response/message-response.dto';
 import { MessageService } from './message.service';
-
-import { Controller, Get, Param, Query, Headers } from '@nestjs/common';
-import { ApiHeaders, ApiNotFoundResponse, ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('message')
 @Controller('message')

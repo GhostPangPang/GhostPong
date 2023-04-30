@@ -1,12 +1,12 @@
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { LessThan, Repository } from 'typeorm';
+
 import { MESSAGE_SIZE_PER_PAGE } from '../common/constant';
 import { Friendship } from '../entity/friendship.entity';
 import { Message } from '../entity/message.entity';
 
 import { MessageResponseDto } from './dto/response/message-response.dto';
-
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { LessThan, Repository } from 'typeorm';
 
 @Injectable()
 export class MessageService {

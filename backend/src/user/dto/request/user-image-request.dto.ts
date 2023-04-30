@@ -1,6 +1,6 @@
-import { UserImageRequest } from '@/types/user/request';
-
 import { IsNotEmpty, IsString } from 'class-validator';
+
+import { UserImageRequest } from '@/types/user/request';
 
 export class UserImageRequestDto implements UserImageRequest {
   /**
