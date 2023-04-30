@@ -13,6 +13,7 @@ import { AppConfigService } from './configuration.service';
         APP_ENV: Joi.string().valid('development', 'production', 'test').default('development'),
         APP_URL: Joi.string().default('localhost'),
         APP_PORT: Joi.number().default(3000),
+        CLIENT_PORT: Joi.number().default(5000),
       }),
     }),
   ],

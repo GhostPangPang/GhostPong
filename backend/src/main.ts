@@ -30,6 +30,6 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   const appConfig: AppConfigService = app.get(AppConfigService);
-  await app.listen(appConfig.port);
+  await app.listen(appConfig.appPort);
 }
 bootstrap();
