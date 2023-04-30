@@ -66,19 +66,11 @@ export class UserController {
     @Headers('x-auth-id') authId: number,
     @Body() { nickname }: UserNicknameRequestDto,
     @Res() res: Response,
-  ): Promise<UserNicknameResponseDto> {
+  ): Promise<void> {
     const token = await this.userService.createUser(authId, nickname);
 
-    res.clearCookie('jwt-for-unregistered').cookie('jwt-for-registered', token, {
-      // httpOnly: true,
-      secure: true,
-      sameSite: 'none',
-    });
-    console.log('success clear cookie and set new cookie');
-    res.send({ nickname });
-    return {
-      nickname,
-    };
+    // FIXME : Modify redirect url
+    res.clearCookie('jwt-for-unregistered').redirect(`http://localhost:3000/auth?token=${token}`);
   }
 
   @ApiOperation({ summary: '이미지 업로드' })

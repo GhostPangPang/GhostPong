@@ -1,8 +1,9 @@
 import { Controller, Get, Res, UseGuards } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiHeaders, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
+
+import { AppConfigService } from '../config/app/configuration.service';
 
 import { AuthService } from './auth.service';
 import { ReqUser } from './decorator/auth.decorator';
@@ -11,7 +12,7 @@ import { LoginInfoDto } from './dto/login-info.dto';
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService, private readonly jwtService: JwtService) {}
+  constructor(private readonly authService: AuthService, private readonly appConfigService: AppConfigService) {}
 
   /*
   @Post('2fa')
@@ -31,30 +32,24 @@ export class AuthController {
   async callbackLogin(@ReqUser() user: LoginInfoDto, @Res() res: Response) {
     // 또는 @ReqUser('email') email: string
     console.log('42 Login Callback!');
+    const clinetPort = this.appConfigService.clientPort;
 
-    // if (user.isRegistered === false) {
     if (user.id === null) {
       // UNREGSIETERED -> JOIN (sign up)
       console.log('UNREGISTERED -> JOIN (sign up)');
       const token = await this.authService.signUp(user);
       res
         .cookie('jwt-for-unregistered', token, {
-          // httpOnly: true,
+          httpOnly: true,
           secure: true,
           sameSite: 'none',
         })
-        .redirect('http://localhost:3000/auth/register'); // FIXME : register page url
+        .redirect(`http://localhost:${clinetPort}/auth/register`);
     } else {
       // REGISTERED -> LOGIN (sign in)
       console.log('REGISTERED -> LOGIN (sign in)');
       const token = await this.authService.signIn(user.id);
-      res
-        .cookie('jwt-for-registered', token, {
-          // httpOnly: true,
-          secure: true,
-          sameSite: 'none',
-        })
-        .redirect('http://localhost:3000/auth'); // FIXME : Lobby page url
+      res.redirect(`http://localhost:${clinetPort}/auth?token=${token}`);
     }
   }
 
@@ -72,7 +67,18 @@ export class AuthController {
   @UseGuards(AuthGuard('user'))
   @Get()
   test() {
+    // test(@Query('token') token: string) {
     console.log('Redirect : user strategy(jwt) guard success!');
+    // console.log(token);
     return 'Redirect to LOBBY page!';
+  }
+
+  // FIXME test
+  @ApiOperation({ summary: 'token test' })
+  @ApiHeaders([{ name: 'Authorization', description: 'jwt token' }])
+  @UseGuards(AuthGuard('user'))
+  @Get('test')
+  tokenTest() {
+    console.log('success token test');
   }
 }
