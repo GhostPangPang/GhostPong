@@ -1,9 +1,3 @@
-import { ErrorResponseDto } from '../common/dto/error-response.dto';
-import { SuccessResponseDto } from '../common/dto/success-response.dto';
-
-import { BlockedService } from './blocked.service';
-import { BlockedUserResponseDto } from './dto/response/blocked-user-response.dto';
-
 import { Controller, Delete, Get, Headers, HttpCode, HttpStatus, Param, Post, Query } from '@nestjs/common';
 import {
   ApiConflictResponse,
@@ -15,6 +9,12 @@ import {
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
+
+import { ErrorResponseDto } from '../common/dto/error-response.dto';
+import { SuccessResponseDto } from '../common/dto/success-response.dto';
+
+import { BlockedService } from './blocked.service';
+import { BlockedUserResponseDto } from './dto/response/blocked-user-response.dto';
 
 @ApiTags('blocked')
 @Controller('blocked')

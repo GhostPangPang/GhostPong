@@ -24,6 +24,15 @@ module.exports = {
     'import/order': [
       'error',
       {
+        groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
+        pathGroups: [
+          {
+            pattern: '@/types/**',
+            group: 'internal',
+            position: 'before',
+          },
+        ],
+        pathGroupsExcludedImportTypes: ['@/types/**'],
         alphabetize: {
           order: 'asc',
         },
@@ -32,7 +41,7 @@ module.exports = {
     ],
   },
   settings: {
-    'import/external-module-folders': ['../types'],
+    //'import/external-module-folders': ['../types'],
     'import/resolver': {
       typescript: {},
       node: {
