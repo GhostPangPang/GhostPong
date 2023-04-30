@@ -13,7 +13,7 @@ const StyledBar = styled.div<ProgressBarProps>`
   width: ${({ percentage }) => (percentage < 0 ? 0 : percentage > 100 ? 100 : percentage)}%;
   border-radius: ${({ theme }) => theme.borderRadius.md};
   height: 100%;
-  background: ${({ theme }) => theme.background.gradient};
+  background: ${({ theme }) => theme.backgroundColor.gradient};
 `;
 
 interface StyledExpProps {
