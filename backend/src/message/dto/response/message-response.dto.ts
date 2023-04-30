@@ -1,3 +1,5 @@
+import { MessageResponse } from '@/types/message/response/message-response.interface';
+
 class MessageInfo {
   /**
    * 메시지 아이디
@@ -24,7 +26,7 @@ class MessageInfo {
   createdAt: Date;
 }
 
-export class MessageResponseDto {
+export class MessageResponseDto implements MessageResponse {
   /**
    * 메시지 리스트 (32개)
    */

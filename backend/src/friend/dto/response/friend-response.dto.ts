@@ -1,4 +1,6 @@
-import { User } from '../../entity/user.entity';
+import { FriendResponse } from '@/types/friend/response';
+
+import { UserInfoDto } from '../../../user/dto/user-info.dto';
 
 class FriendInformation {
   /**
@@ -21,12 +23,11 @@ class FriendInformation {
 
   /**
    * 친구의 유저 정보
-   * @example { id: 1, nickname: 'san1', profileImage: '/asset/profile-1.jpg', exp: 0 }
    */
-  user: User;
+  user: UserInfoDto;
 }
 
-export class FriendsResponseDto {
+export class FriendsResponseDto implements FriendResponse {
   /**
    * 친구의 정보 배열
    */

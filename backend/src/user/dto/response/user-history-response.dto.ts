@@ -1,3 +1,7 @@
+import { UserHistoryResponse } from '@/types/user/response';
+
+import { UserInfoDto } from '../user-info.dto';
+
 class History {
   /**
    * 게임 기록 id
@@ -8,22 +12,12 @@ class History {
   /**
    * 게임에서 이긴 유저의 정보
    */
-  winner: {
-    id: number;
-    nickname: string;
-    image: string;
-    exp: number;
-  };
+  winner: UserInfoDto;
 
   /**
    * 게임에서 진 유저의 정보
    */
-  loser: {
-    id: number;
-    nickname: string;
-    image: string;
-    exp: number;
-  };
+  loser: UserInfoDto;
 
   /**
    * 게임에서 이긴 유저의 점수
@@ -44,7 +38,7 @@ class History {
   createdAt: Date;
 }
 
-export class UserHistoryResponseDto {
+export class UserHistoryResponseDto implements UserHistoryResponse {
   /**
    * 유저의 게임 기록 리스트 (10개)
    */

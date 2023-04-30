@@ -1,6 +1,8 @@
+import { UserNicknameRequest } from '@/types/user/request';
+
 import { IsNotEmpty, IsString, Matches, MaxLength } from 'class-validator';
 
-export class UserNicknameRequestDto {
+export class UserNicknameRequestDto implements UserNicknameRequest {
   /**
    * nickname
    * @example 'san1'

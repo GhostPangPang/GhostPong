@@ -1,4 +1,6 @@
-export class UserNicknameResponseDto {
+import { UserNicknameResponse } from '@/types/user/response';
+
+export class UserNicknameResponseDto implements UserNicknameResponse {
   constructor(nickname: string) {
     this.nickname = nickname;
   }

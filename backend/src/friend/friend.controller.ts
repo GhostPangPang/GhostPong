@@ -1,3 +1,10 @@
+import { ErrorResponseDto } from '../common/dto/error-response.dto';
+import { SuccessResponseDto } from '../common/dto/success-response.dto';
+
+import { FriendsResponseDto } from './dto/response/friend-response.dto';
+import { RequestedFriendsResponseDto } from './dto/response/requested-friend-response.dto';
+import { FriendService } from './friend.service';
+
 import { Controller, Delete, Get, Headers, HttpCode, HttpStatus, Param, Post, Query } from '@nestjs/common';
 import {
   ApiConflictResponse,
@@ -9,13 +16,6 @@ import {
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
-
-import { ErrorResponseDto } from '../common/dto/error-response.dto';
-import { SuccessResponseDto } from '../common/dto/success-response.dto';
-
-import { FriendsResponseDto } from './dto/friend-response.dto';
-import { RequestedFriendsResponseDto } from './dto/requested-friend-response.dto';
-import { FriendService } from './friend.service';
 
 @ApiTags('friend')
 @Controller('friend')
