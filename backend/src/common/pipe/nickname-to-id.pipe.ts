@@ -9,7 +9,7 @@ export class NicknameToIdPipe implements PipeTransform<string, Promise<number>> 
   async transform(nickname: string) {
     // validate
     if (!matches(nickname, /^[가-힣a-zA-Z0-9]{1,8}$/)) {
-      throw new BadRequestException('닉네임이 유효하지 않습니다.');
+      throw new BadRequestException('유효하지 않은 닉네임 입니다.');
     }
 
     // transform
