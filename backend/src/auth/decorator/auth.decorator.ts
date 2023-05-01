@@ -6,7 +6,7 @@ import { createParamDecorator } from '@nestjs/common';
  * @User('email') email: string 로 사용
  * @User() user: User 로 사용
  */
-export const ReqUser = createParamDecorator<string>((data, ctx) => {
+export const ExtractUser = createParamDecorator<string>((data, ctx) => {
   const request = ctx.switchToHttp().getRequest();
   const user = request.user;
 

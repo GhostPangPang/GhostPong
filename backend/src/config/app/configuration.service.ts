@@ -16,8 +16,4 @@ export class AppConfigService {
   get appPort() {
     return Number(this.configService.get<number>('app.appPort'));
   }
-
-  get clientPort() {
-    return Number(this.configService.get<number>('app.clientPort'));
-  }
 }

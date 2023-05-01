@@ -4,7 +4,7 @@ import { ApiHeaders, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 
 import { AuthService } from './auth.service';
-import { ReqUser } from './decorator/auth.decorator';
+import { ExtractUser } from './decorator/auth.decorator';
 import { LoginInfoDto } from './dto/login-info.dto';
 
 @ApiTags('auth')
@@ -27,7 +27,7 @@ export class AuthController {
   @ApiOperation({ summary: '42 로그인 callback' })
   @UseGuards(AuthGuard('42')) // strategy.validate() -> return 값 기반으로 request 객체 담아줌
   @Get('42login/callback')
-  async callbackLogin(@ReqUser() user: LoginInfoDto, @Res() res: Response) {
+  async callbackLogin(@ExtractUser() user: LoginInfoDto, @Res() res: Response) {
     // 또는 @ReqUser('email') email: string console.log('42 Login Callback!');
 
     if (user.id === null) {
@@ -43,7 +43,7 @@ export class AuthController {
     } else {
       // REGISTERED -> LOGIN (sign in)
       const token = await this.authService.signIn(user.id);
-      res.redirect(`auth?token=${token}`);
+      res.redirect(`/auth?token=${token}`);
     }
   }
 

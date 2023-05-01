@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
 
 export class LoginInfoDto {
   /**
@@ -12,5 +12,7 @@ export class LoginInfoDto {
    * id === null -> unregistered
    * id !== null -> registered
    */
+  @IsOptional()
+  @IsNumber()
   id: number | null;
 }

@@ -15,7 +15,6 @@ export class AuthStrategy extends PassportStrategy(Strategy, 'auth') {
           return req.cookies['jwt-for-unregistered'];
         },
       ]),
-      // ignoreExpiration: false,
       secretOrKey: jwtConfigService.authSecretKey,
     });
   }
