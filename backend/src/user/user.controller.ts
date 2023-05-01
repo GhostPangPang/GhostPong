@@ -50,7 +50,7 @@ export class UserController {
   @ApiNotFoundResponse({ type: ErrorResponseDto, description: '유저 없음' })
   @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
   @Get()
-  getUserMetaInfo(@Headers('x-my-id') myId: number): Promise<UserInfoResponseDto> {
+  getUserInfo(@Headers('x-my-id') myId: number): Promise<UserInfoResponseDto> {
     return this.userService.getUserInfo(myId);
   }
 
@@ -82,7 +82,7 @@ export class UserController {
   @ApiBody({ schema: { type: 'object', properties: { image: { type: 'string', format: 'binary' } } } })
   @UseInterceptors(FileUploadInterceptor)
   @Post('image')
-  uploadImage(@UploadedFile() file: Express.Multer.File, @Res() res: Response): void {
+  uploadUserImage(@UploadedFile() file: Express.Multer.File, @Res() res: Response): void {
     res.set('Location', file.path.slice(6));
     res.status(HttpStatus.CREATED).send({
       message: '이미지 업로드 완료되었습니다.',
@@ -93,7 +93,7 @@ export class UserController {
   @ApiNotFoundResponse({ type: ErrorResponseDto, description: '존재하지 않는 사용자' })
   @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
   @Patch('image')
-  updateProfileImage(
+  updateUserProfileImage(
     @Headers('x-my-id') myId: number,
     @Body() updateImageRequestDto: UserImageRequestDto,
   ): Promise<SuccessResponseDto> {
@@ -104,7 +104,7 @@ export class UserController {
   @ApiConflictResponse({ type: ErrorResponseDto, description: '중복된 닉네임' })
   @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
   @Patch('nickname')
-  updateNickname(
+  updateUserNickname(
     @Headers('x-my-id') myId: number,
     @Body() updateNicknameDto: UserNicknameRequestDto,
   ): Promise<UserNicknameResponseDto> {

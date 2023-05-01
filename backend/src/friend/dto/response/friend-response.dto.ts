@@ -7,7 +7,7 @@ class FriendInformation {
    * 친구 관계 아이디 (나와 상대방의 friendship id)
    * @example 1
    */
-  friendId: number;
+  id: number;
 
   /**
    * 마지막으로 메세지를 주고 받은 시간
