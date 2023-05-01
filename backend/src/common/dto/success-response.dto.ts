@@ -1,6 +1,8 @@
-export class SuccessResponseDto {
-  constructor(msg: string) {
-    this.message = msg;
+import { SuccessResponse } from '@/types/common/response';
+
+export class SuccessResponseDto implements SuccessResponse {
+  constructor(message: string) {
+    this.message = message;
   }
   /**
    * 성공 응답 메세지

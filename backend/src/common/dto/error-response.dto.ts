@@ -1,4 +1,6 @@
-export class ErrorResponseDto {
+import { ErrorResponse } from '@/types/common/response';
+
+export class ErrorResponseDto implements ErrorResponse {
   /**
    * 에러 상태코드 (40x, 50x)
    * @example 400

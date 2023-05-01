@@ -49,19 +49,19 @@ export class UserService {
       await manager.insert('users', { id: authId, nickname: nickname });
       await manager.update('auth', { id: authId }, { status: AuthStatus.REGISTERD });
     });
-    return new UserNicknameResponseDto(nickname);
+    return { nickname };
   }
 
   async updateUserImage(myId: number, imageUrl: string): Promise<SuccessResponseDto> {
     await this.findExistUserById(myId);
     await this.userRepository.update({ id: myId }, { image: imageUrl });
-    return new SuccessResponseDto('이미지 변경 완료되었습니다.');
+    return { message: '이미지 변경 완료되었습니다.' };
   }
 
   async updateUserNickname(myId: number, nickname: string): Promise<UserNicknameResponseDto> {
     await this.checkDuplicatedNickname(nickname);
     await this.userRepository.update({ id: myId }, { nickname: nickname });
-    return new UserNicknameResponseDto(nickname);
+    return { nickname };
   }
 
   async getUserProfile(userId: number): Promise<UserProfileResponseDto> {
