@@ -11,9 +11,7 @@ import { JwtConfigService } from './configuration.service';
       load: [configuration],
       validationSchema: Joi.object({
         USER_JWT_SECRETKEY: Joi.string(),
-        USER_JWT_EXPIREIN: Joi.string(),
         AUTH_JWT_SECRETKEY: Joi.string(),
-        AUTH_JWT_EXPIREIN: Joi.string(),
       }),
     }),
   ],

@@ -30,7 +30,6 @@ import { Response } from 'express';
 
 import { ErrorResponseDto } from '../common/dto/error-response.dto';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
-import { AppConfigService } from '../config/app/configuration.service';
 
 import { UserImageRequestDto } from './dto/request/user-image-request.dto';
 import { UserNicknameRequestDto } from './dto/request/user-nickname-request.dto';
@@ -44,7 +43,7 @@ import { UserService } from './user.service';
 @ApiTags('user')
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService, private readonly appConfigService: AppConfigService) {}
+  constructor(private readonly userService: UserService) {}
 
   @ApiOperation({ summary: '유저 메타 정보 가져오기' })
   @ApiNotFoundResponse({ type: ErrorResponseDto, description: '유저 없음' })
@@ -69,9 +68,8 @@ export class UserController {
     @Res() res: Response,
   ): Promise<void> {
     const token = await this.userService.createUser(authId, nickname);
-    const clientPort = this.appConfigService.clientPort;
 
-    res.clearCookie('jwt-for-unregistered').redirect(`http://localhost:${clientPort}/auth?token=${token}`);
+    res.clearCookie('jwt-for-unregistered').redirect(`/auth?token=${token}`);
   }
 
   @ApiOperation({ summary: '이미지 업로드' })

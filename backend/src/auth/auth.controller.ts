@@ -3,8 +3,6 @@ import { AuthGuard } from '@nestjs/passport';
 import { ApiHeaders, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 
-import { AppConfigService } from '../config/app/configuration.service';
-
 import { AuthService } from './auth.service';
 import { ReqUser } from './decorator/auth.decorator';
 import { LoginInfoDto } from './dto/login-info.dto';
@@ -12,7 +10,7 @@ import { LoginInfoDto } from './dto/login-info.dto';
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService, private readonly appConfigService: AppConfigService) {}
+  constructor(private readonly authService: AuthService) {}
 
   /*
   @Post('2fa')
@@ -23,20 +21,17 @@ export class AuthController {
   @UseGuards(AuthGuard('42')) // strategy.constructor
   @Get('42login')
   login() {
-    console.log('42Login!');
+    return;
   }
 
   @ApiOperation({ summary: '42 로그인 callback' })
   @UseGuards(AuthGuard('42')) // strategy.validate() -> return 값 기반으로 request 객체 담아줌
   @Get('42login/callback')
   async callbackLogin(@ReqUser() user: LoginInfoDto, @Res() res: Response) {
-    // 또는 @ReqUser('email') email: string
-    console.log('42 Login Callback!');
-    const clinetPort = this.appConfigService.clientPort;
+    // 또는 @ReqUser('email') email: string console.log('42 Login Callback!');
 
     if (user.id === null) {
       // UNREGSIETERED -> JOIN (sign up)
-      console.log('UNREGISTERED -> JOIN (sign up)');
       const token = await this.authService.signUp(user);
       res
         .cookie('jwt-for-unregistered', token, {
@@ -44,12 +39,11 @@ export class AuthController {
           secure: true,
           sameSite: 'none',
         })
-        .redirect(`http://localhost:${clinetPort}/auth/register`);
+        .redirect(`/auth/register`);
     } else {
       // REGISTERED -> LOGIN (sign in)
-      console.log('REGISTERED -> LOGIN (sign in)');
       const token = await this.authService.signIn(user.id);
-      res.redirect(`http://localhost:${clinetPort}/auth?token=${token}`);
+      res.redirect(`auth?token=${token}`);
     }
   }
 
@@ -64,7 +58,7 @@ export class AuthController {
 
   // FIXME : delete it (tmp for test)
   // 최종적으로 redirect할 lobby page라고 가정
-  @UseGuards(AuthGuard('user'))
+  // @UseGuards(AuthGuard('user'))
   @Get()
   test() {
     // test(@Query('token') token: string) {

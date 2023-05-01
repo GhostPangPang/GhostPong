@@ -3,6 +3,8 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
+import { AUTH_JWT_EXPIREIN, USER_JWT_EXPIREIN } from 'src/common/constant';
+
 import { JwtConfigService } from '../config/auth/jwt/configuration.service';
 import { Auth } from '../entity/auth.entity';
 
@@ -26,9 +28,12 @@ export class AuthService {
     } else {
       user.id = auth.id;
     }
-    // const payload = { userId: user.id, email: user.email };
     const payload = { userId: user.id };
-    return await this.jwtService.sign(payload, this.jwtConfigService.authJwtSignOptions);
+    const signOptions = {
+      secret: this.jwtConfigService.authSecretKey,
+      expiresIn: AUTH_JWT_EXPIREIN,
+    };
+    return await this.jwtService.sign(payload, signOptions);
   }
 
   // REGISTERD -> SIGN IN (Login)
@@ -38,7 +43,10 @@ export class AuthService {
     //   throw new NotFoundException('[Login Error] 존재하지 않는 유저입니다.');
     // }
     const payload = { userId };
-
-    return await this.jwtService.sign(payload, this.jwtConfigService.userJwtSignOptions);
+    const signOptions = {
+      secret: this.jwtConfigService.userSecretKey,
+      expiresIn: USER_JWT_EXPIREIN,
+    };
+    return await this.jwtService.sign(payload, signOptions);
   }
 }
