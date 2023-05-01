@@ -6,6 +6,7 @@ import react from '@vitejs/plugin-react-swc';
 import svgr from 'vite-plugin-svgr';
 
 import path from 'path';
+import { env } from 'process';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -24,14 +25,18 @@ export default defineConfig({
       '@/layout': path.resolve(__dirname, './src/layout'),
       '@/pages': path.resolve(__dirname, './src/pages'),
       '@/hooks': path.resolve(__dirname, './src/hooks'),
-      '@/utils': path.resolve(__dirname, './src/utils'),
+      '@/stores': path.resolve(__dirname, './src/stores'),
+      '@/libs': path.resolve(__dirname, './src/libs'),
       '@/types': path.resolve(__dirname, './src/types'),
     },
   },
   server: {
-    port: 3000,
     proxy: {
-      '/api': { target: 'http://localhost:5000', changeOrigin: true, rewrite: (path) => path.replace(/^\/api/, '') },
+      '/api': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
     },
   },
   test: {
