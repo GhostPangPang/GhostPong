@@ -12,6 +12,7 @@ import {
 
 import { ErrorResponseDto } from '../common/dto/error-response.dto';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
+import { NicknameToIdPipe } from '../common/pipe/nickname-to-id.pipe';
 
 import { BlockedService } from './blocked.service';
 import { BlockedUserResponseDto } from './dto/response/blocked-user-response.dto';
@@ -36,9 +37,9 @@ export class BlockedController {
   @Post()
   blockUserByNickname(
     @Headers('x-my-id') myId: number,
-    @Query('nickname') nickname: string,
+    @Query('nickname', NicknameToIdPipe) userId: number,
   ): Promise<SuccessResponseDto> {
-    return this.blockedService.blockUserByNickname(+myId, nickname);
+    return this.blockedService.blockUser(+myId, userId);
   }
 
   @ApiOperation({ summary: 'id로 유저 차단하기(토글->마우스 이용)' })
@@ -49,7 +50,7 @@ export class BlockedController {
   @HttpCode(HttpStatus.OK)
   @Post(':userId')
   blockUserById(@Headers('x-my-id') myId: number, @Param('userId') userId: number): Promise<SuccessResponseDto> {
-    return this.blockedService.blockUserById(+myId, +userId);
+    return this.blockedService.blockUser(+myId, userId);
   }
 
   @ApiOperation({ summary: '유저 차단 해제' })

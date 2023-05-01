@@ -58,20 +58,49 @@ export class FriendService {
     };
   }
 
-  async requestFriendByNickname(senderId: number, nickname: string): Promise<SuccessResponseDto> {
-    return this.requestFriend(senderId, (await this.userService.findExistUserByNickname(nickname)).id);
-  }
-
   /**
-   * id 로 친구 신청
+   * 친구 신청을 보낸다.
    *
-   * @param senderId 신청 보내는 유저 : 나
-   * @param receiverId 신청 받는 유저 : 상대방
+   * @param senderId 보내는 유저 (나)
+   * @param receiverId 신청 받는 유저 (상대방)
    * @returns
    */
-  async requestFriendById(senderId: number, receiverId: number): Promise<SuccessResponseDto> {
+  async requestFriend(senderId: number, receiverId: number): Promise<SuccessResponseDto> {
+    // NOTE: seperate to userId pipe
     await this.userService.findExistUserById(receiverId);
-    return this.requestFriend(senderId, receiverId);
+    if (senderId === receiverId) {
+      throw new BadRequestException('당신은 이미 당신의 소중한 친구입니다. ^_^');
+    }
+    const blockedUser = await this.blockedUserRepository.findOneBy([
+      { userId: senderId, blockedUserId: receiverId },
+      { userId: receiverId, blockedUserId: senderId },
+    ]);
+    if (blockedUser !== null) {
+      throw new ForbiddenException(
+        blockedUser.blockedUserId === senderId ? '당신을 차단한 유저입니다.' : '당신이 차단한 유저입니다.',
+      );
+    }
+
+    // 친구 신청 혹은 친구 관계가 있는 지 확인. 하나라도 있으면 error 이므로 findOneBy.
+    const friendship = await this.friendshipRepository.findOneBy([
+      { senderId: senderId, receiverId: receiverId }, // sender -> receiver
+      { senderId: receiverId, receiverId: senderId }, // receiver -> sender
+    ]);
+    if (friendship !== null) {
+      throw new ConflictException(
+        friendship.accept
+          ? '이미 친구인 유저입니다.'
+          : friendship.senderId === senderId
+          ? '이미 친구 신청을 보낸 유저입니다.'
+          : '이미 친구 신청을 받은 유저입니다.',
+      );
+    }
+    await this.checkFriendLimit(senderId, '나');
+    await this.checkFriendLimit(receiverId, '상대방');
+    await this.checkFriendRequestLimit(receiverId);
+
+    await this.friendshipRepository.insert({ senderId, receiverId });
+    return { message: '친구 신청을 보냈습니다.' };
   }
 
   /**
@@ -196,49 +225,6 @@ export class FriendService {
       throw new ConflictException('이미 친구인 유저입니다.');
     }
     return friendship;
-  }
-
-  /**
-   * 친구 신청을 보낸다.
-   *
-   * @param senderId 보내는 유저 (나)
-   * @param receiverId 신청 받는 유저 (상대방)
-   * @returns
-   */
-  private async requestFriend(senderId: number, receiverId: number): Promise<SuccessResponseDto> {
-    if (senderId === receiverId) {
-      throw new BadRequestException('당신은 이미 당신의 소중한 친구입니다. ^_^');
-    }
-    const blockedUser = await this.blockedUserRepository.findOneBy([
-      { userId: senderId, blockedUserId: receiverId },
-      { userId: receiverId, blockedUserId: senderId },
-    ]);
-    if (blockedUser !== null) {
-      throw new ForbiddenException(
-        blockedUser.blockedUserId === senderId ? '당신을 차단한 유저입니다.' : '당신이 차단한 유저입니다.',
-      );
-    }
-
-    // 친구 신청 혹은 친구 관계가 있는 지 확인. 하나라도 있으면 error 이므로 findOneBy.
-    const friendship = await this.friendshipRepository.findOneBy([
-      { senderId: senderId, receiverId: receiverId }, // sender -> receiver
-      { senderId: receiverId, receiverId: senderId }, // receiver -> sender
-    ]);
-    if (friendship !== null) {
-      throw new ConflictException(
-        friendship.accept
-          ? '이미 친구인 유저입니다.'
-          : friendship.senderId === senderId
-          ? '이미 친구 신청을 보낸 유저입니다.'
-          : '이미 친구 신청을 받은 유저입니다.',
-      );
-    }
-    await this.checkFriendLimit(senderId, '나');
-    await this.checkFriendLimit(receiverId, '상대방');
-    await this.checkFriendRequestLimit(receiverId);
-
-    await this.friendshipRepository.insert({ senderId, receiverId });
-    return { message: '친구 신청을 보냈습니다.' };
   }
 
   // !SECTION private
