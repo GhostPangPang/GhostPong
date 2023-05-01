@@ -49,7 +49,7 @@ export class FriendService {
         // messgeView 가 없으면 (find() 가 undefined 이면) null
         const lastViewTime = messageView.find((view) => view.user.id === userId)?.lastViewTime || null;
         return {
-          friendId: id,
+          id,
           user: sender.id === userId ? receiver : sender,
           lastMessegeTime,
           lastViewTime,
