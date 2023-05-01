@@ -9,9 +9,8 @@ export class LoginInfoDto {
   email: string;
 
   /**
-   * isRegisterd: true -> userId: number
-   * isRegisterd: false -> userId: null
+   * id === null -> unregistered
+   * id !== null -> registered
    */
   id: number | null;
-  // isRegistered: boolean;
 }

@@ -5,8 +5,7 @@ import { Strategy } from 'passport-42';
 import { Repository } from 'typeorm';
 
 import { FtAuthConfigService } from '../../config/auth/ft/configuration.service';
-import { Auth } from '../../entity/auth.entity';
-import { UserService } from '../../user/user.service';
+import { Auth, AuthStatus } from '../../entity/auth.entity';
 import { LoginInfoDto } from '../dto/login-info.dto';
 
 @Injectable()
@@ -15,7 +14,6 @@ export class FtOAuthStrategy extends PassportStrategy(Strategy, '42') {
     private readonly ftAuthConfigService: FtAuthConfigService,
     @InjectRepository(Auth)
     private readonly authRepository: Repository<Auth>,
-    private readonly userService: UserService,
   ) {
     super({
       clientID: ftAuthConfigService.id,
@@ -39,10 +37,11 @@ export class FtOAuthStrategy extends PassportStrategy(Strategy, '42') {
   async validate(accessToken: string, refreshToken: string, profile: LoginInfoDto) {
     const auth = await this.authRepository.findOneBy({ email: profile.email });
 
-    // if (auth === null || (await this.userService.findExistUserById(auth.id)) === null) {
-    if (auth === null || (await this.userService.getUser(auth.id)) === null) {
+    // if (auth === null || (await this.userRepository.findOneBy({ id: auth.id })) === null) {
+    if (auth === null || auth.status === AuthStatus.UNREGISTERD) {
       profile.id = null;
     } else {
+      // auth.status === REGISTERD 이고, user table에 존재하는 경우
       profile.id = auth.id;
     }
 

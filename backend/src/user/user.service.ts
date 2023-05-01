@@ -41,10 +41,9 @@ export class UserService {
     };
   }
 
-  // async createUser(authId: number, nickname: string): Promise<UserNicknameResponseDto> {
   async createUser(authId: number, nickname: string): Promise<string> {
-    await this.authService.checkExistAuthId(authId); // FIXME : guard
-    await this.checkAlreadyExistUser(authId);
+    // await this.authService.checkExistAuthId(authId); // FIXME : guard
+    await this.checkAlreadyExistUser(authId); // user 이미 있으면 에러
     await this.checkDuplicatedNickname(nickname);
     await this.userRepository.manager.transaction(async (manager: EntityManager) => {
       await manager.insert('users', { id: authId, nickname: nickname });
@@ -87,11 +86,6 @@ export class UserService {
       skip: isNaN(cursor) ? 0 : cursor * HISTORY_SIZE_PER_PAGE,
     });
     return { histories };
-  }
-
-  // FIXME delete this method (tmp method for hannkim)
-  async getUser(userId: number): Promise<User | null> {
-    return await this.userRepository.findOneBy({ id: userId });
   }
 
   /*
