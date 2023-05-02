@@ -12,6 +12,7 @@ import {
 
 import { ErrorResponseDto } from '../common/dto/error-response.dto';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
+import { NicknameToIdPipe } from '../common/pipe/nickname-to-id.pipe';
 
 import { FriendsResponseDto } from './dto/response/friend-response.dto';
 import { RequestedFriendsResponseDto } from './dto/response/requested-friend-response.dto';
@@ -29,7 +30,6 @@ export class FriendController {
     return this.friendService.getFriendsList(+myId);
   }
 
-  // TODO : validtaion pipe 추가..
   @ApiOperation({ summary: '친구 신청하기 (닉네임)' })
   @ApiForbiddenResponse({ type: ErrorResponseDto, description: '친구 신청 정원 초과, 친구 정원 초과' })
   @ApiNotFoundResponse({ type: ErrorResponseDto, description: '유저 없음' })
@@ -39,10 +39,10 @@ export class FriendController {
   @HttpCode(HttpStatus.OK)
   @Post()
   requestFriendByNickname(
-    @Query('nickname') nickname: string,
+    @Query('nickname', NicknameToIdPipe) userId: number,
     @Headers('x-my-id') myId: number,
   ): Promise<SuccessResponseDto> {
-    return this.friendService.requestFriendByNickname(+myId, nickname);
+    return this.friendService.requestFriend(+myId, userId);
   }
 
   @ApiOperation({ summary: '친구 신청받은 리스트 가져오기' })
@@ -60,7 +60,7 @@ export class FriendController {
   @HttpCode(HttpStatus.OK)
   @Post(':userId')
   requestFriendById(@Param('userId') userId: number, @Headers('x-my-id') myId: number): Promise<SuccessResponseDto> {
-    return this.friendService.requestFriendById(+myId, userId);
+    return this.friendService.requestFriend(+myId, userId);
   }
 
   @ApiOperation({ summary: '친구 삭제하기' })

@@ -25,6 +25,8 @@ export class BlockedService {
   ) {}
 
   async blockUser(myId: number, userId: number): Promise<SuccessResponseDto> {
+    // NOTE: seperate to userId pipe
+    await this.userService.findExistUserById(userId);
     if (myId === userId) {
       throw new BadRequestException('스스로를 미워하지 마십시오.');
     }
@@ -34,16 +36,6 @@ export class BlockedService {
     await this.checkBlockedCountLimit(myId);
     await this.blockUserAndDeleteFriendships(myId, userId);
     return { message: '유저를 차단하였습니다.' };
-  }
-
-  async blockUserById(myId: number, userId: number): Promise<SuccessResponseDto> {
-    await this.userService.findExistUserById(userId);
-    return this.blockUser(myId, userId);
-  }
-
-  async blockUserByNickname(myId: number, nickname: string): Promise<SuccessResponseDto> {
-    const user = await this.userService.findExistUserByNickname(nickname);
-    return this.blockUser(myId, user.id);
   }
 
   async deleteBlockedUser(myId: number, userId: number): Promise<SuccessResponseDto> {
