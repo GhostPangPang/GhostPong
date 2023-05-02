@@ -3,6 +3,8 @@ import { AuthGuard } from '@nestjs/passport';
 import { ApiHeaders, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 
+import { AUTH_COOKIE_EXPIREIN } from 'src/common/constant';
+
 import { AuthService } from './auth.service';
 import { ExtractUser } from './decorator/auth.decorator';
 import { LoginInfoDto } from './dto/login-info.dto';
@@ -35,9 +37,10 @@ export class AuthController {
       const token = await this.authService.signUp(user);
       res
         .cookie('jwt-for-unregistered', token, {
+          maxAge: AUTH_COOKIE_EXPIREIN,
           httpOnly: true,
           secure: true,
-          sameSite: 'none',
+          sameSite: 'lax',
         })
         .redirect(`/auth/register`);
     } else {

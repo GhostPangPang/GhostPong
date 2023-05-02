@@ -13,7 +13,7 @@ export class AppConfigService {
     return this.configService.get<string>('app.url');
   }
 
-  get appPort() {
-    return Number(this.configService.get<number>('app.appPort'));
+  get port() {
+    return Number(this.configService.get<number>('app.port'));
   }
 }

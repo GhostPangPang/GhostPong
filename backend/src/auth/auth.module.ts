@@ -1,8 +1,7 @@
-import { Module, forwardRef } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { AppConfigModule } from '../config/app/configuration.module';
 import { FtAuthConfigModule } from '../config/auth/ft/configuration.module';
 import { JwtConfigModule } from '../config/auth/jwt/configuration.module';
 import { Auth } from '../entity/auth.entity';
@@ -14,13 +13,7 @@ import { FtOAuthStrategy } from './strategy/ft-oauth.strategy';
 import { UserStrategy } from './strategy/user.strategy';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Auth]),
-    JwtModule.register({}),
-    FtAuthConfigModule,
-    JwtConfigModule,
-    forwardRef(() => AppConfigModule),
-  ],
+  imports: [TypeOrmModule.forFeature([Auth]), JwtModule.register({}), FtAuthConfigModule, JwtConfigModule],
   providers: [AuthService, FtOAuthStrategy, AuthStrategy, UserStrategy],
   controllers: [AuthController],
   exports: [AuthService],
