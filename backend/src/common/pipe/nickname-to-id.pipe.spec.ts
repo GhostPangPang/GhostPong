@@ -1,27 +1,29 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { UserService } from '../../user/user.service';
 import { NicknameToIdPipe } from './nickname-to-id.pipe';
+import { Repository } from 'typeorm';
+import { User } from '../../entity/user.entity';
+import { getRepositoryToken } from '@nestjs/typeorm';
 
 describe('NicknameToUserIdPipe', () => {
   let pipe: NicknameToIdPipe;
-  let userService: UserService;
+  let userRepository: Repository<User>;
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
       providers: [
         NicknameToIdPipe,
         {
-          provide: UserService,
+          provide: getRepositoryToken(User),
           useValue: {
-            findExistUserByNickname: jest.fn().mockResolvedValue({ id: 1234 } as any),
+            findOneBy: jest.fn(),
           },
         },
       ],
     }).compile();
 
     pipe = moduleRef.get<NicknameToIdPipe>(NicknameToIdPipe);
-    userService = moduleRef.get<UserService>(UserService);
+    userRepository = moduleRef.get<Repository<User>>(getRepositoryToken(User));
   });
 
   describe('transform', () => {
@@ -30,12 +32,11 @@ describe('NicknameToUserIdPipe', () => {
     // NOTE: Success case
     it('nickname 으로 userId 를 찾아서 반환', async () => {
       const userId = 1234;
-      jest.spyOn(userService, 'findExistUserByNickname').mockResolvedValue({ id: userId } as any);
+      jest.spyOn(userRepository, 'findOneBy').mockResolvedValue({ id: userId } as any);
 
       const result = await pipe.transform(nickname);
 
       expect(result).toEqual(userId);
-      expect(userService.findExistUserByNickname).toHaveBeenCalledWith(nickname);
     });
 
     // NOTE: Failure case
@@ -56,10 +57,9 @@ describe('NicknameToUserIdPipe', () => {
     });
 
     it('nickname 과 일치하는 유저가 없을 경우 NotFoundException', async () => {
-      jest.spyOn(userService, 'findExistUserByNickname').mockRejectedValueOnce(new NotFoundException());
+      jest.spyOn(userRepository, 'findOneBy').mockRejectedValueOnce(new NotFoundException());
 
       await expect(pipe.transform(nickname)).rejects.toThrow();
-      expect(userService.findExistUserByNickname).toHaveBeenCalledWith(nickname);
     });
   });
 });
