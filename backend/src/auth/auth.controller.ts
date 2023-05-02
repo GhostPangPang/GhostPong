@@ -6,7 +6,7 @@ import { Response } from 'express';
 import { AUTH_COOKIE_EXPIREIN } from 'src/common/constant';
 
 import { AuthService } from './auth.service';
-import { ExtractUser } from './decorator/auth.decorator';
+import { ExtractUser } from './decorator/extract-user.decorator';
 import { LoginInfoDto } from './dto/login-info.dto';
 
 @ApiTags('auth')
@@ -61,7 +61,7 @@ export class AuthController {
 
   // FIXME : delete it (tmp for test)
   // 최종적으로 redirect할 lobby page라고 가정
-  // @UseGuards(AuthGuard('user'))
+  @UseGuards(AuthGuard('user'))
   @Get()
   test() {
     // test(@Query('token') token: string) {
