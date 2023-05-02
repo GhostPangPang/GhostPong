@@ -55,7 +55,6 @@ export class UserService {
   }
 
   async updateUserImage(myId: number, imageUrl: string): Promise<SuccessResponseDto> {
-    await this.findExistUserById(myId);
     await this.userRepository.update({ id: myId }, { image: imageUrl });
     return { message: '이미지 변경 완료되었습니다.' };
   }
@@ -79,7 +78,6 @@ export class UserService {
   }
 
   async getUserHistory(userId: number, cursor: number): Promise<UserHistoryResponseDto> {
-    await this.findExistUserById(userId);
     const histories = await this.gameHistoryRepository.find({
       relations: ['winner', 'loser'],
       where: [{ winner: { id: userId } }, { loser: { id: userId } }],
@@ -93,22 +91,6 @@ export class UserService {
   /*
   validation method
   */
-
-  async findExistUserById(userId: number): Promise<User> {
-    const user = await this.userRepository.findOneBy({ id: userId });
-    if (user === null) {
-      throw new NotFoundException('존재하지 않는 유저입니다.');
-    }
-    return user;
-  }
-
-  async findExistUserByNickname(nickname: string): Promise<User> {
-    const user = await this.userRepository.findOneBy({ nickname: nickname });
-    if (user === null) {
-      throw new NotFoundException('존재하지 않는 유저입니다.');
-    }
-    return user;
-  }
 
   private async checkDuplicatedNickname(nickname: string): Promise<void> {
     if (await this.userRepository.findOneBy({ nickname })) {
@@ -148,8 +130,4 @@ export class UserService {
     }
     return user;
   }
-
-  /*
-  repository method
-  */
 }

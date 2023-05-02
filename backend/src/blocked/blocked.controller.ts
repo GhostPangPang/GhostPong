@@ -1,4 +1,15 @@
-import { Controller, Delete, Get, Headers, HttpCode, HttpStatus, Param, Post, Query } from '@nestjs/common';
+import {
+  Controller,
+  Delete,
+  Get,
+  Headers,
+  HttpCode,
+  HttpStatus,
+  Param,
+  ParseIntPipe,
+  Post,
+  Query,
+} from '@nestjs/common';
 import {
   ApiConflictResponse,
   ApiForbiddenResponse,
@@ -12,6 +23,7 @@ import {
 
 import { ErrorResponseDto } from '../common/dto/error-response.dto';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
+import { CheckUserIdPipe } from '../common/pipe/check-user-id.pipe';
 import { NicknameToIdPipe } from '../common/pipe/nickname-to-id.pipe';
 
 import { BlockedService } from './blocked.service';
@@ -32,7 +44,7 @@ export class BlockedController {
   @ApiForbiddenResponse({ type: ErrorResponseDto, description: '차단 목록 정원 다참' })
   @ApiConflictResponse({ type: ErrorResponseDto, description: '이미 차단한 유저' })
   @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
-  @ApiQuery({ name: 'nickname', description: '차단할 유저 닉네임' })
+  @ApiQuery({ type: String, name: 'nickname', description: '차단할 유저 닉네임' })
   @HttpCode(HttpStatus.OK)
   @Post()
   blockUserByNickname(
@@ -49,7 +61,10 @@ export class BlockedController {
   @ApiParam({ name: 'userId', description: '차단할 사람 아이디' })
   @HttpCode(HttpStatus.OK)
   @Post(':userId')
-  blockUserById(@Headers('x-my-id') myId: number, @Param('userId') userId: number): Promise<SuccessResponseDto> {
+  blockUserById(
+    @Headers('x-my-id') myId: number,
+    @Param('userId', ParseIntPipe, CheckUserIdPipe) userId: number,
+  ): Promise<SuccessResponseDto> {
     return this.blockedService.blockUser(+myId, userId);
   }
 
@@ -58,7 +73,10 @@ export class BlockedController {
   @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
   @ApiParam({ name: 'userId', description: '차단 해제할 사람 아이디' })
   @Delete(':userId')
-  deleteBlockedUser(@Headers('x-my-id') myId: number, @Param('userId') userId: number): Promise<SuccessResponseDto> {
+  deleteBlockedUser(
+    @Headers('x-my-id') myId: number,
+    @Param('userId', ParseIntPipe) userId: number,
+  ): Promise<SuccessResponseDto> {
     return this.blockedService.deleteBlockedUser(+myId, userId);
   }
 }

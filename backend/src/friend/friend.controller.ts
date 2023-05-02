@@ -1,4 +1,15 @@
-import { Controller, Delete, Get, Headers, HttpCode, HttpStatus, Param, Post, Query } from '@nestjs/common';
+import {
+  Controller,
+  Delete,
+  Get,
+  Headers,
+  HttpCode,
+  HttpStatus,
+  Param,
+  ParseIntPipe,
+  Post,
+  Query,
+} from '@nestjs/common';
 import {
   ApiConflictResponse,
   ApiForbiddenResponse,
@@ -12,6 +23,7 @@ import {
 
 import { ErrorResponseDto } from '../common/dto/error-response.dto';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
+import { CheckUserIdPipe } from '../common/pipe/check-user-id.pipe';
 import { NicknameToIdPipe } from '../common/pipe/nickname-to-id.pipe';
 
 import { FriendsResponseDto } from './dto/response/friend-response.dto';
@@ -35,7 +47,7 @@ export class FriendController {
   @ApiNotFoundResponse({ type: ErrorResponseDto, description: '유저 없음' })
   @ApiConflictResponse({ type: ErrorResponseDto, description: '이미 친구 상태, 이미 친구 신청 상태' })
   @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
-  @ApiQuery({ name: 'nickname', description: '친구 신청할 유저의 닉네임' })
+  @ApiQuery({ type: String, name: 'nickname', description: '친구 신청할 유저의 닉네임' })
   @HttpCode(HttpStatus.OK)
   @Post()
   requestFriendByNickname(
@@ -59,13 +71,19 @@ export class FriendController {
   @ApiParam({ name: 'userId', description: '친구 신청할 유저의 아이디' })
   @HttpCode(HttpStatus.OK)
   @Post(':userId')
-  requestFriendById(@Param('userId') userId: number, @Headers('x-my-id') myId: number): Promise<SuccessResponseDto> {
+  requestFriendById(
+    @Param('userId', ParseIntPipe, CheckUserIdPipe) userId: number,
+    @Headers('x-my-id') myId: number,
+  ): Promise<SuccessResponseDto> {
     return this.friendService.requestFriend(+myId, userId);
   }
 
   @ApiOperation({ summary: '친구 삭제하기' })
   @Delete(':userId')
-  deleteFriend(@Param('userId') userId: number, @Headers('x-my-id') myId: number): Promise<SuccessResponseDto> {
+  deleteFriend(
+    @Param('userId', ParseIntPipe) userId: number,
+    @Headers('x-my-id') myId: number,
+  ): Promise<SuccessResponseDto> {
     return this.friendService.deleteFriend(+myId, userId);
   }
 
@@ -75,7 +93,10 @@ export class FriendController {
   @ApiParam({ name: 'userId', description: '친구 신청 수락할 유저의 아이디' })
   @HttpCode(HttpStatus.OK)
   @Post('accept/:userId')
-  acceptFriendRequest(@Param('userId') userId: number, @Headers('x-my-id') myId: number): Promise<SuccessResponseDto> {
+  acceptFriendRequest(
+    @Param('userId', ParseIntPipe) userId: number,
+    @Headers('x-my-id') myId: number,
+  ): Promise<SuccessResponseDto> {
     return this.friendService.acceptFriendRequest(userId, +myId);
   }
 
@@ -83,7 +104,10 @@ export class FriendController {
   @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
   @HttpCode(HttpStatus.OK)
   @Post('reject/:userId')
-  rejectFriendRequest(@Param('userId') userId: number, @Headers('x-my-id') myId: number): Promise<SuccessResponseDto> {
+  rejectFriendRequest(
+    @Param('userId', ParseIntPipe) userId: number,
+    @Headers('x-my-id') myId: number,
+  ): Promise<SuccessResponseDto> {
     // FIXME: myId 임시 헤더라서 + 갈겼습니다...
     return this.friendService.rejectFriendRequest(userId, +myId);
   }
