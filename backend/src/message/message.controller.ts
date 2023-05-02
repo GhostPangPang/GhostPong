@@ -22,6 +22,6 @@ export class MessageController {
     @Query('offset') offset: number,
     @Headers('x-my-id') myId: number,
   ): Promise<MessageResponseDto> {
-    return this.messageService.getMessagesList(myId, friendId, offset);
+    return this.messageService.getMessagesList(+myId, friendId, offset);
   }
 }

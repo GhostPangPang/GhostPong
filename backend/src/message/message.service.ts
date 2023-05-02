@@ -18,7 +18,7 @@ export class MessageService {
   ) {}
 
   /**
-   * 메시지 리스트 가져오메
+   * 메시지 리스트 가져오기
    *
    * @param myId 내 아이디
    * @param friendId 친구와의 friendship의 id
@@ -29,7 +29,7 @@ export class MessageService {
     if (friendship === null) {
       throw new NotFoundException('친구 관계가 없습니다.');
     }
-    if (friendship.sender.id !== myId && friendship.receiver.id !== myId) {
+    if (friendship.senderId !== myId && friendship.receiverId !== myId) {
       throw new ForbiddenException('친구 관계에 속한 유저가 아닙니다.');
     }
     return {
