@@ -62,11 +62,14 @@ export class UserController {
   @ApiHeaders([{ name: 'x-auth-id', description: '내 auth 아이디 (임시값)' }])
   @HttpCode(HttpStatus.OK)
   @Post()
-  createUser(
+  async createUser(
     @Headers('x-auth-id') authId: number,
     @Body() { nickname }: UserNicknameRequestDto,
-  ): Promise<UserNicknameResponseDto> {
-    return this.userService.createUser(authId, nickname);
+    @Res() res: Response,
+  ): Promise<void> {
+    const token = await this.userService.createUser(authId, nickname);
+
+    res.clearCookie('jwt-for-unregistered').redirect(`/auth?token=${token}`);
   }
 
   @ApiOperation({ summary: '이미지 업로드' })

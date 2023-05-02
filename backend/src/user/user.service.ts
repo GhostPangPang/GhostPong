@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Inject, Injectable, NotFoundException, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
 
@@ -21,6 +21,7 @@ export class UserService {
     private readonly userRepository: Repository<User>,
     @InjectRepository(GameHistory)
     private readonly gameHistoryRepository: Repository<GameHistory>,
+    @Inject(forwardRef(() => AuthService))
     private readonly authService: AuthService,
   ) {}
 
@@ -41,15 +42,16 @@ export class UserService {
     };
   }
 
-  async createUser(authId: number, nickname: string): Promise<UserNicknameResponseDto> {
-    await this.authService.checkExistAuthId(authId); // FIXME : guard
-    await this.checkAlreadyExistUser(authId);
+  async createUser(authId: number, nickname: string): Promise<string> {
+    // await this.authService.checkExistAuthId(authId); // FIXME : guard
+    await this.checkAlreadyExistUser(authId); // user 이미 있으면 에러
     await this.checkDuplicatedNickname(nickname);
     await this.userRepository.manager.transaction(async (manager: EntityManager) => {
       await manager.insert('users', { id: authId, nickname: nickname });
       await manager.update('auth', { id: authId }, { status: AuthStatus.REGISTERD });
     });
-    return { nickname };
+    
+    return await this.authService.signIn(authId);
   }
 
   async updateUserImage(myId: number, imageUrl: string): Promise<SuccessResponseDto> {
