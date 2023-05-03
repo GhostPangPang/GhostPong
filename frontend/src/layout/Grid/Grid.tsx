@@ -114,7 +114,7 @@ const StyledGridContainer = styled(StyledGrid)<GridProps<'grid'>>`
     };`}
     ${props.rows &&
     `grid-template-rows: ${
-      props.rowsSize ? `${props.rowsSize.map((size) => size + 'fr').join(' ')}` : `repeat(${props.columns}, 1fr)`
+      props.rowsSize ? `${props.rowsSize.map((size) => size + 'fr').join(' ')}` : `repeat(${props.rows}, 1fr)`
     };`}
     ${props.areas && `grid-template-areas: ${props.areas};`}
     ${props.autoColumns && `grid-auto-columns: ${props.autoColumns};`}
