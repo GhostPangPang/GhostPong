@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 
 const createAxiosInstance = () => {
   const isDev = import.meta.env.DEV;
@@ -7,7 +7,16 @@ const createAxiosInstance = () => {
   return axios.create({ baseURL: import.meta.env.VITE_API_URL, headers, timeout: 100000, withCredentials: true });
 };
 
+const responseInterceptor = (res: AxiosResponse) => {
+  if (res.status >= 200 && res.status < 300) {
+    return res.data;
+  }
+  return Promise.reject(res.data);
+};
+
 export const client = createAxiosInstance();
+client.interceptors.response.use(responseInterceptor);
+// 여기서 auth req interceptor 로 customAuthError 발생시키기 -> ErrorBoundary 에서 해결
 
 export const get = <T>(...args: Parameters<typeof client.get>) => {
   return client.get<T, T>(...args);

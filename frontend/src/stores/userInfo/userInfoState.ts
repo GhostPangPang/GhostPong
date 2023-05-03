@@ -1,4 +1,3 @@
-import { Color } from './../../types/style';
 import { atom, useRecoilState } from 'recoil';
 
 export const STATE = {
@@ -25,5 +24,5 @@ export const UserInfoState = atom<UserInfo>({
 export const useUserInfo = () => {
   const [userInfo, setUserInfo] = useRecoilState(UserInfoState);
 
-  return [userInfo, setUserInfo] as const;
+  return { userInfo, setUserInfo };
 };
