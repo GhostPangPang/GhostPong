@@ -12,7 +12,6 @@ import { FRIEND_LIMIT } from '../common/constant';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
 import { BlockedUser } from '../entity/blocked-user.entity';
 import { Friendship } from '../entity/friendship.entity';
-import { UserService } from '../user/user.service';
 
 import { FriendsResponseDto } from './dto/response/friend-response.dto';
 import { RequestedFriendsResponseDto } from './dto/response/requested-friend-response.dto';
@@ -24,7 +23,6 @@ export class FriendService {
     private readonly friendshipRepository: Repository<Friendship>,
     @InjectRepository(BlockedUser)
     private readonly blockedUserRepository: Repository<BlockedUser>,
-    private readonly userService: UserService,
   ) {}
 
   // SECTION: public
@@ -66,8 +64,6 @@ export class FriendService {
    * @returns
    */
   async requestFriend(senderId: number, receiverId: number): Promise<SuccessResponseDto> {
-    // NOTE: seperate to userId pipe
-    await this.userService.findExistUserById(receiverId);
     if (senderId === receiverId) {
       throw new BadRequestException('당신은 이미 당신의 소중한 친구입니다. ^_^');
     }

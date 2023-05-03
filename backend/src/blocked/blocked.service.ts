@@ -12,7 +12,6 @@ import { BLOCKED_USER_LIMIT } from '../common/constant';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
 import { BlockedUser } from '../entity/blocked-user.entity';
 import { Friendship } from '../entity/friendship.entity';
-import { UserService } from '../user/user.service';
 
 import { BlockedUserResponseDto } from './dto/response/blocked-user-response.dto';
 
@@ -21,12 +20,9 @@ export class BlockedService {
   constructor(
     @InjectRepository(BlockedUser)
     private readonly blockedUserRepository: Repository<BlockedUser>,
-    private readonly userService: UserService,
   ) {}
 
   async blockUser(myId: number, userId: number): Promise<SuccessResponseDto> {
-    // NOTE: seperate to userId pipe
-    await this.userService.findExistUserById(userId);
     if (myId === userId) {
       throw new BadRequestException('스스로를 미워하지 마십시오.');
     }
@@ -64,7 +60,7 @@ export class BlockedService {
    * @param userId 나의 id
    * @param blockedUserId 차단당할 유저의 id
    */
-  async findBlockedUser(userId: number, blockedUserId: number): Promise<BlockedUser | null> {
+  private async findBlockedUser(userId: number, blockedUserId: number): Promise<BlockedUser | null> {
     return this.blockedUserRepository.findOneBy({ userId: userId, blockedUserId: blockedUserId });
   }
 
