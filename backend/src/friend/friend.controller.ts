@@ -1,15 +1,4 @@
-import {
-  Controller,
-  Delete,
-  Get,
-  Headers,
-  HttpCode,
-  HttpStatus,
-  Param,
-  ParseIntPipe,
-  Post,
-  Query,
-} from '@nestjs/common';
+import { Controller, Delete, Get, Headers, HttpCode, HttpStatus, Param, Post, Query } from '@nestjs/common';
 import {
   ApiConflictResponse,
   ApiForbiddenResponse,
@@ -45,7 +34,7 @@ export class FriendController {
 
   @ApiOperation({ summary: '친구 신청하기 (닉네임)' })
   @ApiForbiddenResponse({ type: ErrorResponseDto, description: '친구 신청 정원 초과, 친구 정원 초과' })
-  @ApiNotFoundResponse({ type: ErrorResponseDto, description: '유저 없음' })
+  @ApiNotFoundResponse({ type: ErrorResponseDto, description: '존재하지 않는 유저' })
   @ApiConflictResponse({ type: ErrorResponseDto, description: '이미 친구 상태, 이미 친구 신청 상태' })
   @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
   @ApiQuery({ type: String, name: 'nickname', description: '친구 신청할 유저의 닉네임' })
