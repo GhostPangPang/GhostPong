@@ -1,12 +1,11 @@
-import Iron from '@/svgs/iron.svg';
-import Bronze from '@/svgs/bronze.svg';
-import Silver from '@/svgs/silver.svg';
-import Gold from '@/svgs/gold.svg';
-import Platinum from '@/svgs/platinum.svg';
-import Diamond from '@/svgs/diamond.svg';
+import { ReactComponent as Iron } from '@/svgs/iron.svg';
+import { ReactComponent as Bronze } from '@/svgs/bronze.svg';
+import { ReactComponent as Silver } from '@/svgs/silver.svg';
+import { ReactComponent as Gold } from '@/svgs/gold.svg';
+import { ReactComponent as Platinum } from '@/svgs/platinum.svg';
+import { ReactComponent as Diamond } from '@/svgs/diamond.svg';
 import { ProgressBar } from '../ProgressBar';
 import { useMemo } from 'react';
-import styled from 'styled-components';
 import { Grid } from '@/layout/Grid';
 
 const IRON_MAX = 22;
@@ -53,23 +52,18 @@ const getRankRange = (rank: Rank): [number, number] => {
   }
 };
 
-const Badge = styled.img`
-  position: relative;
-  left: 1rem;
-`;
-
-interface RankPrgressBarProps {
+export interface RankProgressBarProps {
   exp: number;
 }
 
-export const RankProgressBar = ({ exp = 0 }: RankPrgressBarProps) => {
+export const RankProgressBar = ({ exp = 0 }: RankProgressBarProps) => {
   const rank = useMemo(() => getRank(exp), [exp]);
   const [minExp, maxExp] = useMemo(() => getRankRange(rank), [rank]);
   const percentage = useMemo(() => {
     return Math.floor(((exp - minExp) / (maxExp - minExp)) * 100);
   }, [rank]);
 
-  const badges: Record<Rank, string> = {
+  const badges: Record<Rank, React.ElementType> = {
     iron: Iron,
     bronze: Bronze,
     silver: Silver,
@@ -78,9 +72,10 @@ export const RankProgressBar = ({ exp = 0 }: RankPrgressBarProps) => {
     diamond: Diamond,
   };
 
+  const Badge = badges[rank];
   return (
     <Grid container="flex" alignItems="center">
-      <Badge src={badges[rank]} />
+      <Badge style={{ position: 'relative', left: '1rem' }} />
       <ProgressBar percentage={percentage} msg={rank} />
     </Grid>
   );
