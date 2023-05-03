@@ -35,7 +35,7 @@ export class MessageService {
     return {
       messages: await this.messageRepository.find({
         select: ['id', 'senderId', 'content', 'createdAt'],
-        where: { friendId, id: isNaN(offset) ? undefined : LessThan(offset) },
+        where: { friendId, id: offset === 0 ? undefined : LessThan(offset) },
         order: { createdAt: 'DESC' },
         take: MESSAGE_SIZE_PER_PAGE, // max limit of entities that should be taken
       }),

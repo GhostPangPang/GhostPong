@@ -25,6 +25,7 @@ import { ErrorResponseDto } from '../common/dto/error-response.dto';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
 import { CheckUserIdPipe } from '../common/pipe/check-user-id.pipe';
 import { NicknameToIdPipe } from '../common/pipe/nickname-to-id.pipe';
+import { NonNegativeIntPipe } from '../common/pipe/non-negative-int.pipe';
 
 import { FriendsResponseDto } from './dto/response/friend-response.dto';
 import { RequestedFriendsResponseDto } from './dto/response/requested-friend-response.dto';
@@ -72,7 +73,7 @@ export class FriendController {
   @HttpCode(HttpStatus.OK)
   @Post(':userId')
   requestFriendById(
-    @Param('userId', ParseIntPipe, CheckUserIdPipe) userId: number,
+    @Param('userId', NonNegativeIntPipe, CheckUserIdPipe) userId: number,
     @Headers('x-my-id') myId: number,
   ): Promise<SuccessResponseDto> {
     return this.friendService.requestFriend(+myId, userId);
@@ -81,7 +82,7 @@ export class FriendController {
   @ApiOperation({ summary: '친구 삭제하기' })
   @Delete(':userId')
   deleteFriend(
-    @Param('userId', ParseIntPipe) userId: number,
+    @Param('userId', NonNegativeIntPipe, CheckUserIdPipe) userId: number,
     @Headers('x-my-id') myId: number,
   ): Promise<SuccessResponseDto> {
     return this.friendService.deleteFriend(+myId, userId);
@@ -94,7 +95,7 @@ export class FriendController {
   @HttpCode(HttpStatus.OK)
   @Post('accept/:userId')
   acceptFriendRequest(
-    @Param('userId', ParseIntPipe) userId: number,
+    @Param('userId', NonNegativeIntPipe, CheckUserIdPipe) userId: number,
     @Headers('x-my-id') myId: number,
   ): Promise<SuccessResponseDto> {
     return this.friendService.acceptFriendRequest(userId, +myId);
@@ -105,7 +106,7 @@ export class FriendController {
   @HttpCode(HttpStatus.OK)
   @Post('reject/:userId')
   rejectFriendRequest(
-    @Param('userId', ParseIntPipe) userId: number,
+    @Param('userId', NonNegativeIntPipe, CheckUserIdPipe) userId: number,
     @Headers('x-my-id') myId: number,
   ): Promise<SuccessResponseDto> {
     // FIXME: myId 임시 헤더라서 + 갈겼습니다...

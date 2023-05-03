@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
   Get,
   Headers,
   HttpCode,
@@ -32,6 +33,7 @@ import { Response } from 'express';
 import { ErrorResponseDto } from '../common/dto/error-response.dto';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
 import { CheckUserIdPipe } from '../common/pipe/check-user-id.pipe';
+import { NonNegativeIntPipe } from '../common/pipe/non-negative-int.pipe';
 
 import { UserImageRequestDto } from './dto/request/user-image-request.dto';
 import { UserNicknameRequestDto } from './dto/request/user-nickname-request.dto';
@@ -114,7 +116,7 @@ export class UserController {
   @ApiOperation({ summary: '유저 프로필 가져오기' })
   @ApiNotFoundResponse({ type: ErrorResponseDto, description: '존재하지 않는 사용자' })
   @Get(':userId/profile')
-  getUserProfile(@Param('userId', ParseIntPipe) userId: number): Promise<UserProfileResponseDto> {
+  getUserProfile(@Param('userId', NonNegativeIntPipe) userId: number): Promise<UserProfileResponseDto> {
     return this.userService.getUserProfile(userId);
   }
 
@@ -124,8 +126,8 @@ export class UserController {
   @ApiParam({ name: 'userId', description: '유저 아이디', example: 1 })
   @Get(':userId/history')
   getUserHistory(
-    @Param('userId', ParseIntPipe, CheckUserIdPipe) userId: number,
-    @Query('cursor', ParseIntPipe) cursor: number,
+    @Param('userId', NonNegativeIntPipe, CheckUserIdPipe) userId: number,
+    @Query('cursor', new DefaultValuePipe(0), NonNegativeIntPipe) cursor: number,
   ): Promise<UserHistoryResponseDto> {
     return this.userService.getUserHistory(userId, cursor);
   }

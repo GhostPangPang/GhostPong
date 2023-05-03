@@ -25,6 +25,7 @@ import { ErrorResponseDto } from '../common/dto/error-response.dto';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
 import { CheckUserIdPipe } from '../common/pipe/check-user-id.pipe';
 import { NicknameToIdPipe } from '../common/pipe/nickname-to-id.pipe';
+import { NonNegativeIntPipe } from '../common/pipe/non-negative-int.pipe';
 
 import { BlockedService } from './blocked.service';
 import { BlockedUserResponseDto } from './dto/response/blocked-user-response.dto';
@@ -42,6 +43,7 @@ export class BlockedController {
 
   @ApiOperation({ summary: 'nickname으로 유저 차단하기(직접 입력)' })
   @ApiForbiddenResponse({ type: ErrorResponseDto, description: '차단 목록 정원 다참' })
+  @ApiNotFoundResponse({ type: ErrorResponseDto, description: '존재하지 않는 유저' })
   @ApiConflictResponse({ type: ErrorResponseDto, description: '이미 차단한 유저' })
   @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
   @ApiQuery({ type: String, name: 'nickname', description: '차단할 유저 닉네임' })
@@ -63,7 +65,7 @@ export class BlockedController {
   @Post(':userId')
   blockUserById(
     @Headers('x-my-id') myId: number,
-    @Param('userId', ParseIntPipe, CheckUserIdPipe) userId: number,
+    @Param('userId', NonNegativeIntPipe, CheckUserIdPipe) userId: number,
   ): Promise<SuccessResponseDto> {
     return this.blockedService.blockUser(+myId, userId);
   }

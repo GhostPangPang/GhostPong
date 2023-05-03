@@ -3,8 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { AUTH_JWT_EXPIREIN, USER_JWT_EXPIREIN } from 'src/common/constant';
-
+import { AUTH_JWT_EXPIREIN, USER_JWT_EXPIREIN } from '../common/constant';
 import { JwtConfigService } from '../config/auth/jwt/configuration.service';
 import { Auth } from '../entity/auth.entity';
 
