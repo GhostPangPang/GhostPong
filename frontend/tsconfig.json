@@ -30,7 +30,8 @@
       "@/layout/*": ["src/layout/*"],
       "@/pages/*": ["src/pages/*"],
       "@/hooks/*": ["src/hooks/*"],
-      "@/utils/*": ["src/utils/*"],
+      "@/stores/*": ["src/stores/*"],
+      "@/libs/*": ["src/libs/*"],
       "@/types/*": ["src/types/*"]
     }
   },
