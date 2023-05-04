@@ -15,16 +15,16 @@ export const Button = styled.button<ButtonProps>`
   font-family: 'ChailceNoggin';
   font-weight: ${(props) => props.theme.fontWeight.bold};
 
-  background-color: ${(props) => props.theme.color.gray};
+  background-color: ${(props) => props.theme.color.gray200};
   color: ${(props) => props.theme.color.foreground};
   text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   border: 3px solid;
 
   &:hover {
-    background: ${(props) => lighten(0.1, props.theme.color.gray)};
+    background: ${(props) => lighten(0.1, props.theme.color.gray200)};
   }
   &:active {
-    background: ${(props) => darken(0.1, props.theme.color.gray)};
+    background: ${(props) => darken(0.1, props.theme.color.gray200)};
   }
 
   border-color: ${(props) => (props.color ? props.theme.color[props.color] : props.theme.color.primary)};
