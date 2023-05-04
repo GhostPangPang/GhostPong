@@ -50,7 +50,6 @@ export class UserService {
       await manager.insert('users', { id: authId, nickname: nickname });
       await manager.update('auth', { id: authId }, { status: AuthStatus.REGISTERD });
     });
-    
     return await this.authService.signIn(authId);
   }
 
@@ -83,7 +82,7 @@ export class UserService {
       where: [{ winner: { id: userId } }, { loser: { id: userId } }],
       order: { createdAt: 'DESC' },
       take: HISTORY_SIZE_PER_PAGE,
-      skip: isNaN(cursor) ? 0 : cursor * HISTORY_SIZE_PER_PAGE,
+      skip: cursor * HISTORY_SIZE_PER_PAGE,
     });
     return { histories };
   }

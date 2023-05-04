@@ -1,7 +1,8 @@
-import { Controller, Get, Param, Query, Headers, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Param, Query, Headers, DefaultValuePipe } from '@nestjs/common';
 import { ApiHeaders, ApiNotFoundResponse, ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 
 import { ErrorResponseDto } from '../common/dto/error-response.dto';
+import { NonNegativeIntPipe } from '../common/pipe/non-negative-int.pipe';
 
 import { MessageResponseDto } from './dto/response/message-response.dto';
 import { MessageService } from './message.service';
@@ -18,8 +19,8 @@ export class MessageController {
   @ApiQuery({ name: 'offset', required: false, description: '마지막으로 가져온 메시지의 id' })
   @Get(':friendId')
   getMessagesList(
-    @Param('friendId', ParseIntPipe) friendId: number,
-    @Query('offset', ParseIntPipe) offset: number,
+    @Param('friendId', NonNegativeIntPipe) friendId: number,
+    @Query('offset', new DefaultValuePipe(0), NonNegativeIntPipe) offset: number,
     @Headers('x-my-id') myId: number,
   ): Promise<MessageResponseDto> {
     return this.messageService.getMessagesList(+myId, friendId, offset);
