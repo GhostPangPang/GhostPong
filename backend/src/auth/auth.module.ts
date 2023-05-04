@@ -8,13 +8,13 @@ import { Auth } from '../entity/auth.entity';
 
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { AuthStrategy } from './strategy/auth.strategy';
-import { FtOAuthStrategy } from './strategy/ft-oauth.strategy';
+import { FtStrategy } from './strategy/ft.strategy';
+import { GuestStrategy } from './strategy/guest.strategy';
 import { UserStrategy } from './strategy/user.strategy';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Auth]), JwtModule.register({}), FtAuthConfigModule, JwtConfigModule],
-  providers: [AuthService, FtOAuthStrategy, AuthStrategy, UserStrategy],
+  providers: [AuthService, FtStrategy, GuestStrategy, UserStrategy],
   controllers: [AuthController],
   exports: [AuthService],
 })
