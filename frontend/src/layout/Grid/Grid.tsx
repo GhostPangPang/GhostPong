@@ -49,10 +49,9 @@ const StyledGrid = styled.div<GridProps>`
       ${props.size.overflow && `overflow: ${props.size.overflow};`}
       ${props.size.overflowX && `overflow-x: ${props.size.overflowX};`}
       ${props.size.overflowY && `overflow-y: ${props.size.overflowY};`}
-      /* ${props.size.padding && `padding: ${props.theme.padding[props.size.padding]};`} */
       ${props.size.padding &&
       (typeof props.size.padding === 'number'
-        ? `padding: ${props.size.padding}px;`
+        ? `padding: ${props.size.padding}rem;`
         : `padding:  ${props.theme.padding[props.size.padding]};`)}
     `}
   ${(props) =>

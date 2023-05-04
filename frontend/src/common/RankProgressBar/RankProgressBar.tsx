@@ -1,56 +1,8 @@
-import { ReactComponent as Iron } from '@/svgs/iron.svg';
-import { ReactComponent as Bronze } from '@/svgs/bronze.svg';
-import { ReactComponent as Silver } from '@/svgs/silver.svg';
-import { ReactComponent as Gold } from '@/svgs/gold.svg';
-import { ReactComponent as Platinum } from '@/svgs/platinum.svg';
-import { ReactComponent as Diamond } from '@/svgs/diamond.svg';
 import { ProgressBar } from '../ProgressBar';
 import { useMemo } from 'react';
 import { Grid } from '@/layout/Grid';
-
-const IRON_MAX = 22;
-const BRONZE_MAX = 42;
-const SILVER_MAX = 84;
-const GOLD_MAX = 126;
-const PLATINUM_MAX = 168;
-const DIAMOND_MAX = 210;
-
-const IRON = 'iron';
-const BRONZE = 'bronze';
-const SILVER = 'silver';
-const GOLD = 'gold';
-const PLATINUM = 'platinum';
-const DIAMOND = 'diamond';
-
-type Rank = typeof IRON | typeof BRONZE | typeof SILVER | typeof GOLD | typeof PLATINUM | typeof DIAMOND;
-
-const getRank = (exp: number): Rank => {
-  if (exp >= PLATINUM_MAX) return DIAMOND;
-  else if (exp >= GOLD_MAX) return PLATINUM;
-  else if (exp >= SILVER_MAX) return GOLD;
-  else if (exp >= BRONZE_MAX) return SILVER;
-  else if (exp >= IRON_MAX) return BRONZE;
-  else return IRON;
-};
-
-const getRankRange = (rank: Rank): [number, number] => {
-  switch (rank) {
-    case IRON:
-      return [0, IRON_MAX];
-    case BRONZE:
-      return [IRON_MAX, BRONZE_MAX];
-    case SILVER:
-      return [BRONZE_MAX, SILVER_MAX];
-    case GOLD:
-      return [SILVER_MAX, GOLD_MAX];
-    case PLATINUM:
-      return [GOLD_MAX, PLATINUM_MAX];
-    case DIAMOND:
-      return [PLATINUM_MAX, DIAMOND_MAX];
-    default:
-      return [0, 0];
-  }
-};
+import { RankBadge } from '@/common/RankBadge';
+import { getRank, getRankRange } from '@/libs/utils/rank';
 
 export interface RankProgressBarProps {
   exp: number;
@@ -63,19 +15,9 @@ export const RankProgressBar = ({ exp = 0 }: RankProgressBarProps) => {
     return Math.floor(((exp - minExp) / (maxExp - minExp)) * 100);
   }, [rank]);
 
-  const badges: Record<Rank, React.ElementType> = {
-    iron: Iron,
-    bronze: Bronze,
-    silver: Silver,
-    gold: Gold,
-    platinum: Platinum,
-    diamond: Diamond,
-  };
-
-  const Badge = badges[rank];
   return (
     <Grid container="flex" alignItems="center">
-      <Badge style={{ position: 'relative', left: '1rem' }} />
+      <RankBadge rank={rank} size="md" style={{ left: '1rem' }} />
       <ProgressBar percentage={percentage} msg={rank} />
     </Grid>
   );
