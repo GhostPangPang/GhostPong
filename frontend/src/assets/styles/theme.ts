@@ -3,9 +3,11 @@ const color = {
   secondary: '#61FFE3',
   background: '#2F2F2F',
   foreground: '#FFFFFF',
-  gray100: '#D9D9D9',
-  gray: '#4A4A4A',
+  gray100: '#D4D4D4',
+  gray200: '#4A4A4A',
+  gray300: '#3D3D3D',
   surface: 'rgba(161, 161, 161, 0.28)',
+  surfaceDark: 'rgba(16, 16, 16, 0.28)',
   online: '#2FD240',
   gradient: 'linear-gradient(268.76deg, #7875ff, #61ffe3)',
 };
