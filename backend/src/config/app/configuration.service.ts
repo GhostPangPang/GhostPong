@@ -16,4 +16,8 @@ export class AppConfigService {
   get port() {
     return Number(this.configService.get<number>('app.port'));
   }
+
+  get clientUrl() {
+    return this.configService.get<string>('app.clientUrl');
+  }
 }
