@@ -4,7 +4,7 @@ import { Grid } from '@/layout/Grid';
 import { RankBadge } from '@/common/RankBadge';
 import { getRank, getRankRange } from '@/libs/utils/rank';
 
-interface RankProgressBarProps {
+export interface RankProgressBarProps {
   exp: number;
 }
 
