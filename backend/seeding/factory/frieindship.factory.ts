@@ -4,12 +4,11 @@ import { faker } from '@faker-js/faker';
 
 import { User } from '../../src/entity/user.entity';
 
-export default (user1: User, user2: User) => {
-  const accept = faker.datatype.boolean();
+export default (user1: User, user2: User, accept: boolean, lastMessegeTime?: Date) => {
   return {
     sender: user1,
     receiver: user2,
     accept,
-    lastMessegeTime: accept && faker.datatype.boolean() ? faker.date.past() : undefined,
+    lastMessegeTime: lastMessegeTime || (accept && faker.datatype.boolean()) ? faker.date.past() : undefined,
   };
 };

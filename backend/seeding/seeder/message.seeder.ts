@@ -4,7 +4,7 @@ import * as path from 'path';
 import { faker } from '@faker-js/faker';
 import { DataSource, Repository } from 'typeorm';
 
-import { Auth } from '../../src/entity/auth.entity';
+import { Auth, AuthStatus } from '../../src/entity/auth.entity';
 import { Friendship } from '../../src/entity/friendship.entity';
 import { GameHistory } from '../../src/entity/game-history.entity';
 import { Message } from '../../src/entity/message.entity';
@@ -20,7 +20,12 @@ export default async (dataSource: DataSource) => {
   const resultDir = path.join(__dirname, '../results');
 
   const authRepository: Repository<Auth> = dataSource.getRepository(Auth);
-  const auths = await authRepository.save(Array(Number(process.argv[2])).fill(null).map(authFactory));
+  const authSeeds = Array(Number(process.argv[2])).fill(null).map(authFactory);
+  authSeeds[0].status = AuthStatus.REGISTERD;
+  authSeeds[1].status = AuthStatus.REGISTERD;
+  authSeeds[2].status = AuthStatus.REGISTERD;
+
+  const auths = await authRepository.save(authSeeds);
   console.log('auth ' + auths.length + ' rows created.');
   fs.mkdir(resultDir, () => {
     fs.writeFile(path.join(resultDir, 'auths.json'), JSON.stringify(auths), (err) => {
@@ -51,9 +56,19 @@ export default async (dataSource: DataSource) => {
   const friendsSeed = [];
   for (let i = 0; i < users.length; i++) {
     for (let j: number = i + 1; j < users.length; j++) {
+      if (i == 0 && j == 1) {
+        friendsSeed.push(frieindshipFactory(users[i], users[j], true, faker.date.past()));
+        continue;
+      } else if (i == 0 && j == 2) {
+        friendsSeed.push(frieindshipFactory(users[i], users[j], false));
+        continue;
+      }
+
       const isFirstUserI = faker.datatype.boolean();
       Math.random() <= 0.1 &&
-        friendsSeed.push(frieindshipFactory(users[isFirstUserI ? i : j], users[isFirstUserI ? j : i]));
+        friendsSeed.push(
+          frieindshipFactory(users[isFirstUserI ? i : j], users[isFirstUserI ? j : i], faker.datatype.boolean()),
+        );
     }
   }
 
@@ -75,8 +90,11 @@ export default async (dataSource: DataSource) => {
     .filter((friend) => friend.lastMessegeTime !== undefined && friend.accept === true)
     .map((friend) => {
       const random = Math.floor(Math.random() * 200);
+      let prevDate: Date | undefined = undefined;
       for (let i = 0; i < random; i++) {
-        messageSeed.push(messageFactory(friend));
+        const message = messageFactory(friend, prevDate);
+        messageSeed.push(message);
+        prevDate = new Date(message.createdAt);
       }
     });
 
