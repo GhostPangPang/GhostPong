@@ -24,6 +24,7 @@ export type GridProps<T extends ContainerType = 'item'> = {
   (T extends 'flex' ? FlexContainerProps & ResponsiveProps : T extends 'grid' ? GridContainerProps : void);
 
 const StyledGrid = styled.div<GridProps>`
+  flex-grow: 1;
   width: 100%;
   height: auto;
   ${(props) => css`
@@ -41,8 +42,8 @@ const StyledGrid = styled.div<GridProps>`
   ${(props) =>
     props.size &&
     css`
-      ${props.size.width ? `width: ${props.size.width};` : 'width: 100%;'}
-      ${props.size.height ? `height: ${props.size.height};` : 'height: auto;'}
+      ${props.size.width && `width: ${props.size.width};`}
+      ${props.size.height && `height: ${props.size.height};`}
       ${props.size.minWidth && `min-width: ${props.size.minWidth};`}
       ${props.size.minHeight && `min-height: ${props.size.minHeight};`}
       ${props.size.maxWidth && `max-width: ${props.size.maxWidth};`}
