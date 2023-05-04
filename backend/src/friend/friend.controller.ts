@@ -1,4 +1,15 @@
-import { Controller, Delete, Get, Headers, HttpCode, HttpStatus, Param, Post, Query } from '@nestjs/common';
+import {
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  ParseIntPipe,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiConflictResponse,
   ApiForbiddenResponse,
@@ -10,6 +21,8 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
+import { UserGuard } from '../auth/guard/user.guard';
+import { ExtractUserId } from '../common/decorator/extract-user-id.decorator';
 import { ErrorResponseDto } from '../common/dto/error-response.dto';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
 import { CheckUserIdPipe } from '../common/pipe/check-user-id.pipe';
@@ -22,14 +35,15 @@ import { FriendService } from './friend.service';
 
 @ApiTags('friend')
 @Controller('friend')
+@UseGuards(UserGuard)
 export class FriendController {
   constructor(private readonly friendService: FriendService) {}
 
   @ApiOperation({ summary: '친구 리스트 가져오기' })
   @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
   @Get()
-  getFriendsList(@Headers('x-my-id') myId: number): Promise<FriendsResponseDto> {
-    return this.friendService.getFriendsList(+myId);
+  getFriendsList(@ExtractUserId() myId: number): Promise<FriendsResponseDto> {
+    return this.friendService.getFriendsList(myId);
   }
 
   @ApiOperation({ summary: '친구 신청하기 (닉네임)' })
@@ -42,16 +56,16 @@ export class FriendController {
   @Post()
   requestFriendByNickname(
     @Query('nickname', NicknameToIdPipe) userId: number,
-    @Headers('x-my-id') myId: number,
+    @ExtractUserId() myId: number,
   ): Promise<SuccessResponseDto> {
-    return this.friendService.requestFriend(+myId, userId);
+    return this.friendService.requestFriend(myId, userId);
   }
 
   @ApiOperation({ summary: '친구 신청받은 리스트 가져오기' })
   @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
   @Get('request')
-  getFriendRequestsList(@Headers('x-my-id') myId: number): Promise<RequestedFriendsResponseDto> {
-    return this.friendService.getFriendRequestsList(+myId);
+  getFriendRequestsList(@ExtractUserId() myId: number): Promise<RequestedFriendsResponseDto> {
+    return this.friendService.getFriendRequestsList(myId);
   }
 
   @ApiOperation({ summary: '친구 신청하기 (id)' })
@@ -62,19 +76,19 @@ export class FriendController {
   @HttpCode(HttpStatus.OK)
   @Post(':userId')
   requestFriendById(
+    @ExtractUserId() myId: number,
     @Param('userId', NonNegativeIntPipe, CheckUserIdPipe) userId: number,
-    @Headers('x-my-id') myId: number,
   ): Promise<SuccessResponseDto> {
-    return this.friendService.requestFriend(+myId, userId);
+    return this.friendService.requestFriend(myId, userId);
   }
 
   @ApiOperation({ summary: '친구 삭제하기' })
   @Delete(':userId')
   deleteFriend(
+    @ExtractUserId() myId: number,
     @Param('userId', NonNegativeIntPipe, CheckUserIdPipe) userId: number,
-    @Headers('x-my-id') myId: number,
   ): Promise<SuccessResponseDto> {
-    return this.friendService.deleteFriend(+myId, userId);
+    return this.friendService.deleteFriend(myId, userId);
   }
 
   @ApiOperation({ summary: '친구 신청 수락하기' })
@@ -84,10 +98,10 @@ export class FriendController {
   @HttpCode(HttpStatus.OK)
   @Post('accept/:userId')
   acceptFriendRequest(
+    @ExtractUserId() myId: number,
     @Param('userId', NonNegativeIntPipe, CheckUserIdPipe) userId: number,
-    @Headers('x-my-id') myId: number,
   ): Promise<SuccessResponseDto> {
-    return this.friendService.acceptFriendRequest(userId, +myId);
+    return this.friendService.acceptFriendRequest(userId, myId);
   }
 
   @ApiOperation({ summary: '친구 신청 거절하기' })
@@ -95,10 +109,10 @@ export class FriendController {
   @HttpCode(HttpStatus.OK)
   @Post('reject/:userId')
   rejectFriendRequest(
+    @ExtractUserId() myId: number,
     @Param('userId', NonNegativeIntPipe, CheckUserIdPipe) userId: number,
-    @Headers('x-my-id') myId: number,
   ): Promise<SuccessResponseDto> {
     // FIXME: myId 임시 헤더라서 + 갈겼습니다...
-    return this.friendService.rejectFriendRequest(userId, +myId);
+    return this.friendService.rejectFriendRequest(userId, myId);
   }
 }

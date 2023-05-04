@@ -2,13 +2,13 @@ import {
   Controller,
   Delete,
   Get,
-  Headers,
   HttpCode,
   HttpStatus,
   Param,
   ParseIntPipe,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiConflictResponse,
@@ -21,6 +21,8 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
+import { UserGuard } from '../auth/guard/user.guard';
+import { ExtractUserId } from '../common/decorator/extract-user-id.decorator';
 import { ErrorResponseDto } from '../common/dto/error-response.dto';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
 import { CheckUserIdPipe } from '../common/pipe/check-user-id.pipe';
@@ -32,13 +34,14 @@ import { BlockedUserResponseDto } from './dto/response/blocked-user-response.dto
 
 @ApiTags('blocked')
 @Controller('blocked')
+@UseGuards(UserGuard)
 export class BlockedController {
   constructor(private readonly blockedService: BlockedService) {}
   @ApiOperation({ summary: '차단한 유저 목록(정보 포함) 가져오기' })
   @Get()
   @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
-  getBlockedUserList(@Headers('x-my-id') myId: number): Promise<BlockedUserResponseDto> {
-    return this.blockedService.getBlockedUserList(+myId);
+  getBlockedUserList(@ExtractUserId() myId: number): Promise<BlockedUserResponseDto> {
+    return this.blockedService.getBlockedUserList(myId);
   }
 
   @ApiOperation({ summary: 'nickname으로 유저 차단하기(직접 입력)' })
@@ -50,10 +53,10 @@ export class BlockedController {
   @HttpCode(HttpStatus.OK)
   @Post()
   blockUserByNickname(
-    @Headers('x-my-id') myId: number,
+    @ExtractUserId() myId: number,
     @Query('nickname', NicknameToIdPipe) userId: number,
   ): Promise<SuccessResponseDto> {
-    return this.blockedService.blockUser(+myId, userId);
+    return this.blockedService.blockUser(myId, userId);
   }
 
   @ApiOperation({ summary: 'id로 유저 차단하기(토글->마우스 이용)' })
@@ -64,10 +67,10 @@ export class BlockedController {
   @HttpCode(HttpStatus.OK)
   @Post(':userId')
   blockUserById(
-    @Headers('x-my-id') myId: number,
+    @ExtractUserId() myId: number,
     @Param('userId', NonNegativeIntPipe, CheckUserIdPipe) userId: number,
   ): Promise<SuccessResponseDto> {
-    return this.blockedService.blockUser(+myId, userId);
+    return this.blockedService.blockUser(myId, userId);
   }
 
   @ApiOperation({ summary: '유저 차단 해제' })
@@ -76,9 +79,9 @@ export class BlockedController {
   @ApiParam({ name: 'userId', description: '차단 해제할 사람 아이디' })
   @Delete(':userId')
   deleteBlockedUser(
-    @Headers('x-my-id') myId: number,
+    @ExtractUserId() myId: number,
     @Param('userId', ParseIntPipe) userId: number,
   ): Promise<SuccessResponseDto> {
-    return this.blockedService.deleteBlockedUser(+myId, userId);
+    return this.blockedService.deleteBlockedUser(myId, userId);
   }
 }

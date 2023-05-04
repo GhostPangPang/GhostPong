@@ -3,7 +3,6 @@ import {
   Controller,
   DefaultValuePipe,
   Get,
-  Headers,
   HttpCode,
   HttpStatus,
   Param,
@@ -13,6 +12,7 @@ import {
   Query,
   Res,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import {
@@ -30,6 +30,8 @@ import {
 } from '@nestjs/swagger';
 import { Response } from 'express';
 
+import { UserGuard } from '../auth/guard/user.guard';
+import { ExtractUserId } from '../common/decorator/extract-user-id.decorator';
 import { ErrorResponseDto } from '../common/dto/error-response.dto';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
 import { CheckUserIdPipe } from '../common/pipe/check-user-id.pipe';
@@ -46,6 +48,7 @@ import { UserService } from './user.service';
 
 @ApiTags('user')
 @Controller('user')
+@UseGuards(UserGuard)
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
@@ -53,7 +56,7 @@ export class UserController {
   @ApiNotFoundResponse({ type: ErrorResponseDto, description: '유저 없음' })
   @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
   @Get()
-  getUserInfo(@Headers('x-my-id') myId: number): Promise<UserInfoResponseDto> {
+  getUserInfo(@ExtractUserId() myId: number): Promise<UserInfoResponseDto> {
     return this.userService.getUserInfo(myId);
   }
 
@@ -67,7 +70,7 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   @Post()
   async createUser(
-    @Headers('x-auth-id') authId: number,
+    @ExtractUserId('x-auth-id') authId: number,
     @Body() { nickname }: UserNicknameRequestDto,
     @Res() res: Response,
   ): Promise<void> {
@@ -96,7 +99,7 @@ export class UserController {
   @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
   @Patch('image')
   updateUserProfileImage(
-    @Headers('x-my-id') myId: number,
+    @ExtractUserId() myId: number,
     @Body() updateImageRequestDto: UserImageRequestDto,
   ): Promise<SuccessResponseDto> {
     return this.userService.updateUserImage(myId, updateImageRequestDto.image);
@@ -107,7 +110,7 @@ export class UserController {
   @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
   @Patch('nickname')
   updateUserNickname(
-    @Headers('x-my-id') myId: number,
+    @ExtractUserId() myId: number,
     @Body() updateNicknameDto: UserNicknameRequestDto,
   ): Promise<UserNicknameResponseDto> {
     return this.userService.updateUserNickname(myId, updateNicknameDto.nickname);
