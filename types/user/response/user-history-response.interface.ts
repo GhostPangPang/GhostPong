@@ -7,6 +7,6 @@ export interface UserHistoryResponse {
     loser: UserInfo;
     winnerScore: number;
     loserScore: number;
-    createdAt: Date;
+    createdAt: Date | string;
   }[];
 }
