@@ -31,6 +31,12 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   const appConfig: AppConfigService = app.get(AppConfigService);
+  app.enableCors({
+    origin: appConfig.clientUrl,
+    credentials: true,
+    allowedHeaders: ['Authorization', 'x-my-id'],
+    exposedHeaders: ['Location'],
+  });
   await app.listen(appConfig.port);
 }
 bootstrap();
