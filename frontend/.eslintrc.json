@@ -8,7 +8,12 @@
   "settings": {
     "import/external-module-folders": [".yarn"],
     "import/resolver": {
-      "typescript": {},
+      "typescript": {
+        "alwaysTryTypes": true,
+        "paths": {
+          "@/types/*": ["src/types/*", "../types/*"]
+        }
+      },
       "node": {
         "extensions": [".js", ".jsx", ".ts", ".tsx"]
       }

@@ -32,9 +32,9 @@
       "@/hooks/*": ["src/hooks/*"],
       "@/stores/*": ["src/stores/*"],
       "@/libs/*": ["src/libs/*"],
-      "@/types/*": ["src/types/*"]
+      "@/types/*": ["src/types/*", "../types/*"]
     }
   },
-  "include": ["src"],
+  "include": ["src", "../types"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
