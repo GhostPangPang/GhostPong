@@ -29,7 +29,7 @@ export class Friendship {
   @Column({
     default: () => "'-infinity'",
   })
-  lastMessegeTime: Date;
+  lastMessageTime: Date;
 
   @OneToMany(() => MessageView, (messageView) => messageView.friend)
   messageView: MessageView[];

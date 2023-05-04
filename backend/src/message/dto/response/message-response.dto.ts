@@ -23,7 +23,7 @@ class MessageInfo {
    * 메세지 보낸 시간
    * @example '2021-08-01T00:00:00.000Z'
    */
-  createdAt: Date;
+  createdAt: Date | string;
 }
 
 export class MessageResponseDto implements MessageResponse {

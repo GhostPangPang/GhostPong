@@ -35,7 +35,7 @@ class History {
    * 게임 생성 시간
    * @example '2021-01-01T00:00:00.000Z'
    */
-  createdAt: Date;
+  createdAt: Date | string;
 }
 
 export class UserHistoryResponseDto implements UserHistoryResponse {

@@ -3,6 +3,6 @@ export interface MessageResponse {
     id: number;
     senderId: number;
     content: string;
-    createdAt: Date;
+    createdAt: Date | string;
   }[];
 }

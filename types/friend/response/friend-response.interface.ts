@@ -1,10 +1,10 @@
-import { UserInfo } from "../../user/user-info.interface";
+import { UserInfo } from '../../user/user-info.interface';
 
 export interface FriendResponse {
   friends: {
     id: number;
-    lastMessegeTime: Date | null;
-    lastViewTime: Date | null;
+    lastMessageTime: Date | string | null;
+    lastViewTime: Date | string | null;
     user: UserInfo;
   }[];
 }

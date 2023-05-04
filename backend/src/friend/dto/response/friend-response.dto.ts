@@ -13,13 +13,13 @@ class FriendInformation {
    * 마지막으로 메세지를 주고 받은 시간
    * @example '2021-08-01T00:00:00.000Z'
    */
-  lastMessegeTime: Date | null;
+  lastMessageTime: Date | string | null;
 
   /**
    * 마지막으로 메세지를 읽은 시간 (나)
    * @example '2021-08-01T00:00:00.000Z'
    */
-  lastViewTime: Date | null;
+  lastViewTime: Date | string | null;
 
   /**
    * 친구의 유저 정보

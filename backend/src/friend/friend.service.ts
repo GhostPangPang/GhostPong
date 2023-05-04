@@ -41,15 +41,15 @@ export class FriendService {
             { senderId: userId, accept: true },
             { receiverId: userId, accept: true },
           ],
-          order: { lastMessegeTime: 'DESC' },
+          order: { lastMessageTime: 'DESC' },
         })
-      ).map(({ id, sender, receiver, lastMessegeTime, messageView }) => {
+      ).map(({ id, sender, receiver, lastMessageTime, messageView }) => {
         // messgeView 가 없으면 (find() 가 undefined 이면) null
         const lastViewTime = messageView.find((view) => view.user.id === userId)?.lastViewTime || null;
         return {
           id,
           user: sender.id === userId ? receiver : sender,
-          lastMessegeTime,
+          lastMessageTime,
           lastViewTime,
         };
       }),
