@@ -32,13 +32,45 @@ export const GlobalStyle = createGlobalStyle<{ theme: typeof theme }>`
     background-repeat: repeat;
   }
 
-  * {
+  /* Box sizing rules */
+  *,
+  *::before,
+  *::after {
     box-sizing: border-box;
+  }
+
+  /* Remove default margin */
+  body,
+  h1,
+  h2,
+  h3,
+  h4,
+  p,
+  ul,
+  ol,
+  li,
+  blockquote,
+  dl,
+  dd {
+    margin: 0;
+  }
+
+  /* Remove default padding */
+  ul,
+  ol {
+    padding: 0;
+  }
+
+  /* Remove list styles */
+  ul,
+  ol {
+    list-style: none;
   }
 
   a[href], input[type='submit'], input[type='image'], label[for], select, button {
     cursor: pointer;
   }
+
   a:link {
     text-decoration: none;
   }
