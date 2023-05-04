@@ -10,6 +10,6 @@ export default (friendship: Friendship, prevDate?: Date) => {
     senderId: faker.datatype.boolean() ? friendship.sender.id : friendship.receiver.id,
     friendId: friendship.id,
     content: faker.lorem.sentence(),
-    createdAt: prevDate || faker.date.past(2, friendship.lastMessegeTime),
+    createdAt: prevDate || faker.date.past(2, friendship.lastMessageTime),
   };
 };

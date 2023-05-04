@@ -91,7 +91,7 @@ CREATE TABLE public.blocked_user (
 CREATE TABLE public.friendship (
     id integer NOT NULL,
     accept boolean DEFAULT false NOT NULL,
-    last_messege_time timestamp without time zone DEFAULT '-infinity'::timestamp without time zone NOT NULL,
+    last_message_time timestamp without time zone DEFAULT '-infinity'::timestamp without time zone NOT NULL,
     sender_id integer,
     receiver_id integer
 );
@@ -280,7 +280,7 @@ COPY public.blocked_user (user_id, blocked_user_id) FROM stdin;
 -- Data for Name: friendship; Type: TABLE DATA; Schema: public;
 --
 
-COPY public.friendship (id, accept, last_messege_time, sender_id, receiver_id) FROM stdin;
+COPY public.friendship (id, accept, last_message_time, sender_id, receiver_id) FROM stdin;
 \.
 
 

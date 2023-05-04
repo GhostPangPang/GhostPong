@@ -87,7 +87,7 @@ export default async (dataSource: DataSource) => {
 
   const messageSeed: Partial<Message>[] = [];
   friends
-    .filter((friend) => friend.lastMessegeTime !== undefined && friend.accept === true)
+    .filter((friend) => friend.lastMessageTime !== undefined && friend.accept === true)
     .map((friend) => {
       const random = Math.floor(Math.random() * 200);
       let prevDate: Date | undefined = undefined;
