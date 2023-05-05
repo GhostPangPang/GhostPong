@@ -70,12 +70,13 @@ export class FriendController {
   }
 
   @ApiOperation({ summary: '친구 삭제하기' })
-  @Delete(':userId')
+  @ApiNotFoundResponse({ type: ErrorResponseDto, description: '존재하지 않는 친구' })
+  @Delete(':friendId')
   deleteFriend(
-    @Param('userId', NonNegativeIntPipe, CheckUserIdPipe) userId: number,
+    @Param('friendId', NonNegativeIntPipe) friendId: number,
     @Headers('x-my-id') myId: number,
   ): Promise<SuccessResponseDto> {
-    return this.friendService.deleteFriend(+myId, userId);
+    return this.friendService.deleteFriend(friendId, +myId);
   }
 
   @ApiOperation({ summary: '친구 신청 수락하기' })
@@ -88,7 +89,7 @@ export class FriendController {
     @Param('friendId', NonNegativeIntPipe) friendId: number,
     @Headers('x-my-id') myId: number,
   ): Promise<SuccessResponseDto> {
-    return this.friendService.acceptFriendRequest(+myId, friendId);
+    return this.friendService.acceptFriendRequest(friendId, +myId);
   }
 
   @ApiOperation({ summary: '친구 신청 거절하기' })
