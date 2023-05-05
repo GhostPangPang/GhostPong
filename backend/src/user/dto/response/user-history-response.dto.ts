@@ -40,6 +40,12 @@ class History {
 
 export class UserHistoryResponseDto implements UserHistoryResponse {
   /**
+   * 유저의 게임 기록 총 개수
+   * cursor 가 0일 때만 존재한다.
+   * @example 100
+   */
+  total?: number;
+  /**
    * 유저의 게임 기록 리스트 (10개)
    */
   histories: History[];
