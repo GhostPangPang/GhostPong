@@ -107,13 +107,21 @@ export class FriendService {
    */
   async getFriendRequestsList(userId: number): Promise<RequestedFriendsResponseDto> {
     return {
-      requests: (
-        await this.friendshipRepository.find({
-          relations: ['sender'],
-          where: { receiverId: userId, accept: false },
-        })
-      ).map((friendship) => friendship.sender),
+      requests: await this.friendshipRepository.find({
+        select: ['id', 'sender'],
+        relations: ['sender'],
+        where: { receiverId: userId, accept: false },
+      }),
     };
+
+    //return {
+    //  requests: (
+    //    await this.friendshipRepository.find({
+    //      relations: ['sender'],
+    //      where: { receiverId: userId, accept: false },
+    //    })
+    //  ).map((friendship) => friendship.sender),
+    //};
   }
 
   /**
