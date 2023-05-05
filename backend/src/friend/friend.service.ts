@@ -113,15 +113,6 @@ export class FriendService {
         where: { receiverId: userId, accept: false },
       }),
     };
-
-    //return {
-    //  requests: (
-    //    await this.friendshipRepository.find({
-    //      relations: ['sender'],
-    //      where: { receiverId: userId, accept: false },
-    //    })
-    //  ).map((friendship) => friendship.sender),
-    //};
   }
 
   /**
@@ -155,15 +146,17 @@ export class FriendService {
    * @param receiverId 신청을 받은 유저 : 나
    * @returns
    */
-  async acceptFriendRequest(senderId: number, receiverId: number): Promise<SuccessResponseDto> {
-    // FIXME : pipe 로 로직 바꾸기
-    if (senderId === receiverId) {
-      throw new BadRequestException('당신은 이미 당신의 소중한 친구입니다. ^_^');
+  async acceptFriendRequest(myId: number, friendId: number): Promise<SuccessResponseDto> {
+    const { accept, senderId, receiverId } = await this.findExistFriendship(friendId);
+    if (receiverId !== myId) {
+      throw new ForbiddenException('친구 신청을 받은 유저만 수락할 수 있습니다.');
     }
-    const friendship = await this.findExistFriendRequest(senderId, receiverId);
+    if (accept === true) {
+      throw new ConflictException('이미 친구인 유저입니다.');
+    }
     await this.checkFriendLimit(receiverId, '나');
     await this.checkFriendLimit(senderId, '상대방');
-    await this.friendshipRepository.update({ id: friendship.id }, { accept: true });
+    await this.friendshipRepository.update({ id: friendId }, { accept: true });
     return { message: '친구 추가 되었습니다.' };
   }
 
@@ -175,11 +168,7 @@ export class FriendService {
    * @returns
    */
   async rejectFriendRequest(senderId: number, receiverId: number): Promise<SuccessResponseDto> {
-    // FIXME : pipe 로 로직 바꾸기
-    if (senderId === receiverId) {
-      throw new BadRequestException('스스로를 거부하지 마십시오...');
-    }
-    await this.friendshipRepository.delete((await this.findExistFriendRequest(senderId, receiverId)).id);
+    //await this.friendshipRepository.delete((await this.findExistFriendRequest(senderId, receiverId)).id);
     return { message: '친구 신청을 거절했습니다.' };
   }
   // !SECTION public
@@ -213,20 +202,10 @@ export class FriendService {
     }
   }
 
-  /**
-   * sender -> receiver 로 보낸 친구 신청이 있는지 확인하고 반환.
-   *
-   * @param senderId 보낸 사람
-   * @param receiverId 받은 사람
-   * @returns sender 가 receiver 에게 보낸 친구 신청 정보
-   */
-  private async findExistFriendRequest(senderId: number, receiverId: number): Promise<Friendship> {
-    const friendship = await this.friendshipRepository.findOneBy({ senderId, receiverId });
+  private async findExistFriendship(friendId: number): Promise<Friendship> {
+    const friendship = await this.friendshipRepository.findOneBy({ id: friendId });
     if (friendship === null) {
-      throw new NotFoundException('존재하지 않는 친구 신청입니다.');
-    }
-    if (friendship.accept === true) {
-      throw new ConflictException('이미 친구인 유저입니다.');
+      throw new NotFoundException('존재하지 않는 친구 관계 입니다.');
     }
     return friendship;
   }

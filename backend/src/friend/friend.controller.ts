@@ -81,14 +81,14 @@ export class FriendController {
   @ApiOperation({ summary: '친구 신청 수락하기' })
   @ApiForbiddenResponse({ type: ErrorResponseDto, description: '친구 정원 초과' })
   @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
-  @ApiParam({ name: 'userId', description: '친구 신청 수락할 유저의 아이디' })
+  @ApiParam({ name: 'friendId', description: '수락할 친구 신청의 아이디' })
   @HttpCode(HttpStatus.OK)
-  @Post('accept/:userId')
+  @Post('accept/:friendId')
   acceptFriendRequest(
-    @Param('userId', NonNegativeIntPipe, CheckUserIdPipe) userId: number,
+    @Param('friendId', NonNegativeIntPipe) friendId: number,
     @Headers('x-my-id') myId: number,
   ): Promise<SuccessResponseDto> {
-    return this.friendService.acceptFriendRequest(userId, +myId);
+    return this.friendService.acceptFriendRequest(+myId, friendId);
   }
 
   @ApiOperation({ summary: '친구 신청 거절하기' })
