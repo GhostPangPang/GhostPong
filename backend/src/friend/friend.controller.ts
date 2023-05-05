@@ -93,13 +93,14 @@ export class FriendController {
 
   @ApiOperation({ summary: '친구 신청 거절하기' })
   @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
+  @ApiParam({ name: 'friendId', description: '거절할 친구 신청의 아이디' })
   @HttpCode(HttpStatus.OK)
-  @Post('reject/:userId')
+  @Post('reject/:friendId')
   rejectFriendRequest(
-    @Param('userId', NonNegativeIntPipe, CheckUserIdPipe) userId: number,
+    @Param('friendId', NonNegativeIntPipe) friendId: number,
     @Headers('x-my-id') myId: number,
   ): Promise<SuccessResponseDto> {
     // FIXME: myId 임시 헤더라서 + 갈겼습니다...
-    return this.friendService.rejectFriendRequest(userId, +myId);
+    return this.friendService.rejectFriendRequest(friendId, +myId);
   }
 }

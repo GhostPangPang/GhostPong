@@ -142,11 +142,11 @@ export class FriendService {
   /**
    * 친구 신청 수락
    *
-   * @param senderId 신청을 보내놓은 유저 : 상대방
-   * @param receiverId 신청을 받은 유저 : 나
+   * @param friendId 받은 친구 신청의 id
+   * @param myId 신청을 받은 유저 : 나
    * @returns
    */
-  async acceptFriendRequest(myId: number, friendId: number): Promise<SuccessResponseDto> {
+  async acceptFriendRequest(friendId: number, myId: number): Promise<SuccessResponseDto> {
     const { accept, senderId, receiverId } = await this.findExistFriendship(friendId);
     if (receiverId !== myId) {
       throw new ForbiddenException('친구 신청을 받은 유저만 수락할 수 있습니다.');
@@ -161,14 +161,21 @@ export class FriendService {
   }
 
   /**
-   * 친구 신청 거절
+   * 친구 신청 수락
    *
-   * @param senderId 신청을 보내놓은 유저 : 상대방
-   * @param receiverId 신청을 받은 유저 : 나
+   * @param friendId 받은 친구 신청의 id
+   * @param myId 신청을 받은 유저 : 나
    * @returns
    */
-  async rejectFriendRequest(senderId: number, receiverId: number): Promise<SuccessResponseDto> {
-    //await this.friendshipRepository.delete((await this.findExistFriendRequest(senderId, receiverId)).id);
+  async rejectFriendRequest(friendId: number, myId: number): Promise<SuccessResponseDto> {
+    const { accept, receiverId } = await this.findExistFriendship(friendId);
+    if (receiverId !== myId) {
+      throw new ForbiddenException('친구 신청을 받은 유저만 거절할 수 있습니다.');
+    }
+    if (accept === true) {
+      throw new ConflictException('이미 친구인 유저입니다.');
+    }
+    await this.friendshipRepository.delete(friendId);
     return { message: '친구 신청을 거절했습니다.' };
   }
   // !SECTION public
