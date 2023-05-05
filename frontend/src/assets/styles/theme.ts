@@ -29,6 +29,8 @@ const fontSize = {
   md: '1.8rem', // 18px
   lg: '2rem', // 20px
   xl: '2.4rem', // 24px
+  xxl: '3.2rem', // 32px
+  xxxl: '4.8rem', // 48px
 };
 
 const borderRadius = {

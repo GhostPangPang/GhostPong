@@ -20,6 +20,7 @@ export const GlobalStyle = createGlobalStyle<{ theme: typeof theme }>`
     display: flex;
     flex-direction: column;
     height: 100%;
+    align-items: center;
   }
 
   html,
@@ -28,7 +29,7 @@ export const GlobalStyle = createGlobalStyle<{ theme: typeof theme }>`
 
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     background-image: url(${bg});
-    background-repeat: repeat-x;
+    background-repeat: repeat;
   }
 
   * {
