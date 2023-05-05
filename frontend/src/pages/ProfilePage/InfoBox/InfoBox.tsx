@@ -3,12 +3,12 @@ import { Text } from '@/common/Text';
 import { Grid } from '@/layout/Grid';
 import { Box } from '@/common/Box';
 
-type InfoBoxProps = {
+export interface InfoBoxProps {
   title: string;
   desc: string;
   subDesc?: string;
   component?: React.ReactNode;
-};
+}
 
 export const InfoBox = ({ title, desc, subDesc, component }: InfoBoxProps) => {
   return (
