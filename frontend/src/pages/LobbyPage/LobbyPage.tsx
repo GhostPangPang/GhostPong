@@ -1,4 +1,4 @@
-import { Button } from '@/common/Button';
+import { GameButton } from '@/common/GameButton';
 import { Grid } from '@/layout/Grid';
 import Rive from '@rive-app/react-canvas';
 
@@ -9,11 +9,11 @@ export const LobbyPage = () => {
         <Rive src="/riv/ghost.riv" />
       </Grid>
       <Grid gridColumn="1" gridRow="2" alignSelf="end">
-        <Button size="md">Message</Button>
+        <GameButton size="md">Message</GameButton>
       </Grid>
       <Grid container="flex" justifyContent="end" alignItems="end" gridColumn="2/4" gridRow="2" columnGap={1}>
-        <Button size="md">Normal</Button>
-        <Button size="md">Random</Button>
+        <GameButton size="md">Normal</GameButton>
+        <GameButton size="md">Random</GameButton>
       </Grid>
     </Grid>
   );
