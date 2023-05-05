@@ -29,11 +29,14 @@ import {
 } from '@nestjs/swagger';
 import { Response } from 'express';
 
+import { SkipUserGuard } from '../auth/decorator/skip-user-guard.decorator';
+import { GuestGuard } from '../auth/guard/guest.guard';
 import { ExtractUserId } from '../common/decorator/extract-user-id.decorator';
 import { ErrorResponseDto } from '../common/dto/error-response.dto';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
 import { CheckUserIdPipe } from '../common/pipe/check-user-id.pipe';
 import { NonNegativeIntPipe } from '../common/pipe/non-negative-int.pipe';
+import { AppConfigService } from '../config/app/configuration.service';
 
 import { UserImageRequestDto } from './dto/request/user-image-request.dto';
 import { UserNicknameRequestDto } from './dto/request/user-nickname-request.dto';
@@ -43,9 +46,6 @@ import { UserNicknameResponseDto } from './dto/response/user-nickname-response.d
 import { UserProfileResponseDto } from './dto/response/user-profile-response.dto';
 import { FileUploadInterceptor } from './interceptor/file-upload.interceptor';
 import { UserService } from './user.service';
-import { SkipUserGuard } from '../auth/decorator/skip-user-guard.decorator';
-import { GuestGuard } from '../auth/guard/guest.guard';
-import { AppConfigService } from '../config/app/configuration.service';
 
 @ApiTags('user')
 @Controller('user')
@@ -66,17 +66,17 @@ export class UserController {
     description: '중복된 nickname 또는 이미 생성된 user(중복된 auth-id), 이미 registered인 유저',
   })
   @ApiNotFoundResponse({ type: ErrorResponseDto, description: 'Invalid한 auth-id' })
-  @ApiHeaders([{ name: 'x-auth-id', description: '내 auth 아이디 (임시값)' }])
+  @ApiHeaders([{ name: 'x-my-id', description: '내 auth 아이디 (임시값)' }])
   @HttpCode(HttpStatus.OK)
   @SkipUserGuard()
   @UseGuards(GuestGuard)
   @Post()
   async createUser(
-    @ExtractUserId() authId: number,
+    @ExtractUserId() myId: number,
     @Body() { nickname }: UserNicknameRequestDto,
     @Res() res: Response,
   ): Promise<void> {
-    const token = await this.userService.createUser(authId, nickname);
+    const token = await this.userService.createUser(myId, nickname);
     const clientUrl = this.appConfigService.clientUrl;
 
     res.clearCookie('jwt-for-unregistered').redirect(`${clientUrl}/auth?token=${token}`);

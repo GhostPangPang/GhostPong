@@ -11,10 +11,9 @@ export const ExtractUserId = createParamDecorator((data: unknown, ctx: Execution
   const request = ctx.switchToHttp().getRequest();
 
   // 개발 환경에서는 headers에 있는 x-my-id를 userId로 사용
-  // const appConfigService = new AppConfigService();
-  // if (process.env.NODE_ENV === 'development') {
-  //   return request.headers['x-my-id'];
-  // }
+  if (process.env.NODE_ENV === 'development') {
+    return request.headers['x-my-id'];
+  }
 
   // TODO undefined error 처리
   return request.user.userId;
