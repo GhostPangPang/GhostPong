@@ -15,6 +15,7 @@ export const CommonButton = styled.button<CommonButtonProps>`
   border-radius: 0.375rem;
   padding-top: 1rem;
   padding-bottom: 1rem;
+  color: ${(props) => props.theme.color.gray300};
   ${(props) => {
     const bgColor = props.backgroundColor ? props.theme.color[props.backgroundColor] : props.theme.color.gray100;
     return `
