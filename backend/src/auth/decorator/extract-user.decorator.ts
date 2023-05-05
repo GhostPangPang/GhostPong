@@ -8,5 +8,6 @@ import { createParamDecorator, ExecutionContext } from '@nestjs/common';
  */
 export const ExtractUser = createParamDecorator((data: unknown, ctx: ExecutionContext) => {
   const request = ctx.switchToHttp().getRequest();
+  // TODO undefined error 처리
   return request.user;
 });

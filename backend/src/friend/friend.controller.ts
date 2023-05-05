@@ -1,15 +1,4 @@
-import {
-  Controller,
-  Delete,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Param,
-  ParseIntPipe,
-  Post,
-  Query,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Query, UseGuards } from '@nestjs/common';
 import {
   ApiConflictResponse,
   ApiForbiddenResponse,
@@ -35,7 +24,6 @@ import { FriendService } from './friend.service';
 
 @ApiTags('friend')
 @Controller('friend')
-@UseGuards(UserGuard)
 export class FriendController {
   constructor(private readonly friendService: FriendService) {}
 

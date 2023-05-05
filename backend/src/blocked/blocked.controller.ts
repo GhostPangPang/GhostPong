@@ -34,7 +34,6 @@ import { BlockedUserResponseDto } from './dto/response/blocked-user-response.dto
 
 @ApiTags('blocked')
 @Controller('blocked')
-@UseGuards(UserGuard)
 export class BlockedController {
   constructor(private readonly blockedService: BlockedService) {}
   @ApiOperation({ summary: '차단한 유저 목록(정보 포함) 가져오기' })

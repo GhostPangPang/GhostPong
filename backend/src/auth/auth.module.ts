@@ -11,10 +11,18 @@ import { AuthService } from './auth.service';
 import { FtStrategy } from './strategy/ft.strategy';
 import { GuestStrategy } from './strategy/guest.strategy';
 import { UserStrategy } from './strategy/user.strategy';
+import { AppConfigModule } from 'src/config/app/configuration.module';
+import { UserGuard } from './guard/user.guard';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Auth]), JwtModule.register({}), FtAuthConfigModule, JwtConfigModule],
-  providers: [AuthService, FtStrategy, GuestStrategy, UserStrategy],
+  imports: [
+    TypeOrmModule.forFeature([Auth]),
+    JwtModule.register({}),
+    FtAuthConfigModule,
+    JwtConfigModule,
+    AppConfigModule,
+  ],
+  providers: [AuthService, FtStrategy, GuestStrategy, UserStrategy, UserGuard],
   controllers: [AuthController],
   exports: [AuthService],
 })

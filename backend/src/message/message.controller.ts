@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query, Headers, DefaultValuePipe, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Query, DefaultValuePipe, UseGuards } from '@nestjs/common';
 import { ApiHeaders, ApiNotFoundResponse, ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 
 import { UserGuard } from '../auth/guard/user.guard';
@@ -11,7 +11,6 @@ import { MessageService } from './message.service';
 
 @ApiTags('message')
 @Controller('message')
-@UseGuards(UserGuard)
 export class MessageController {
   constructor(private readonly messageService: MessageService) {}
 

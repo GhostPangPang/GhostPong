@@ -20,7 +20,7 @@ export class GuestStrategy extends PassportStrategy(Strategy, 'guest') {
   }
 
   async validate(payload: JwtPayload) {
-    // console.log("auth strategy's validate");
+    console.log("Guest strategy's validate");
     const token = {
       // email: payload.email,
       userId: payload.userId,

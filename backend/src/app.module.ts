@@ -14,6 +14,8 @@ import { DatabaseConfigService } from './config/database/configuration.service';
 import { FriendModule } from './friend/friend.module';
 import { MessageModule } from './message/message.module';
 import { UserModule } from './user/user.module';
+import { APP_GUARD } from '@nestjs/core';
+import { UserGuard } from './auth/guard/user.guard';
 
 @Module({
   imports: [
@@ -36,6 +38,6 @@ import { UserModule } from './user/user.module';
     UserModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, { provide: APP_GUARD, useClass: UserGuard }],
 })
 export class AppModule {}

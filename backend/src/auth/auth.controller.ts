@@ -8,13 +8,14 @@ import { AuthService } from './auth.service';
 import { ExtractUser } from './decorator/extract-user.decorator';
 import { LoginInfoDto } from './dto/login-info.dto';
 import { FtGuard } from './guard/ft.guard';
+import { SkipUserGuard } from './decorator/skip-user-guard.decorator';
+import { AppConfigService } from 'src/config/app/configuration.service';
 import { GuestGuard } from './guard/guest.guard';
-import { UserGuard } from './guard/user.guard';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService, private readonly appConfigService: AppConfigService) {}
 
   /*
   @Post('2fa')
@@ -23,6 +24,7 @@ export class AuthController {
 
   @ApiOperation({ summary: '42 로그인' })
   @UseGuards(FtGuard) // strategy.constructor
+  @SkipUserGuard()
   @Get('42login')
   login() {
     return;
@@ -30,12 +32,15 @@ export class AuthController {
 
   @ApiOperation({ summary: '42 로그인 callback' })
   @UseGuards(FtGuard) // strategy.validate() -> return 값 기반으로 request 객체 담아줌
+  @SkipUserGuard()
   @Get('42login/callback')
   async callbackLogin(@ExtractUser() user: LoginInfoDto, @Res() res: Response) {
     // 또는 @ReqUser('email') email: string console.log('42 Login Callback!');
+    const clientUrl = this.appConfigService.clientUrl;
 
     if (user.id === null) {
       // UNREGSIETERED -> JOIN (sign up)
+      console.log('UNREGISTERED');
       const token = await this.authService.signUp(user);
       res
         .cookie('jwt-for-unregistered', token, {
@@ -44,11 +49,12 @@ export class AuthController {
           secure: true,
           sameSite: 'lax',
         })
-        .redirect(`/auth/register`);
+        .redirect(`${clientUrl}/auth/register`);
     } else {
       // REGISTERED -> LOGIN (sign in)
       const token = await this.authService.signIn(user.id);
-      res.redirect(`/auth?token=${token}`);
+      console.log(token);
+      res.redirect(`${clientUrl}/auth?token=${token}`);
     }
   }
 
@@ -63,7 +69,7 @@ export class AuthController {
 
   // FIXME : delete it (tmp for test)
   // 최종적으로 redirect할 lobby page라고 가정
-  @UseGuards(UserGuard)
+  // @UseGuards(UserGuard)
   @Get()
   test() {
     // test(@Query('token') token: string) {
@@ -75,9 +81,10 @@ export class AuthController {
   // FIXME test
   @ApiOperation({ summary: 'token test' })
   @ApiHeaders([{ name: 'Authorization', description: 'jwt token' }])
-  @UseGuards(UserGuard)
+  // @UseGuards(UserGuard)
+  @SkipUserGuard()
   @Get('test')
   tokenTest() {
-    console.log('success token test');
+    console.log('====================');
   }
 }
