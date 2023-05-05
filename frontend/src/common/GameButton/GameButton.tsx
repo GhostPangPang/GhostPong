@@ -2,12 +2,12 @@ import styled from 'styled-components';
 import { Color } from '@/types/style';
 import { darken, lighten } from 'polished';
 
-export interface ButtonProps {
+export interface GameButtonProps {
   size: 'sm' | 'md' | 'lg';
   color?: Color;
 }
 
-export const Button = styled.button<ButtonProps>`
+export const GameButton = styled.button<GameButtonProps>`
   display: flex;
   align-items: center;
   justify-content: center;

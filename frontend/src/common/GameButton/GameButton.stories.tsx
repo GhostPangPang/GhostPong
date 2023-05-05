@@ -1,9 +1,9 @@
 import type { StoryObj } from '@storybook/react';
-import { Button } from './Button';
+import { GameButton } from './GameButton';
 
 const meta = {
-  title: 'Common/Button',
-  component: Button,
+  title: 'Common/GameButton',
+  component: GameButton,
   argTypes: {},
   decorators: [],
 };
