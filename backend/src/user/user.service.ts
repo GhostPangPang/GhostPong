@@ -77,14 +77,21 @@ export class UserService {
   }
 
   async getUserHistory(userId: number, cursor: number): Promise<UserHistoryResponseDto> {
-    const histories = await this.gameHistoryRepository.find({
-      relations: ['winner', 'loser'],
-      where: [{ winner: { id: userId } }, { loser: { id: userId } }],
-      order: { createdAt: 'DESC' },
-      take: HISTORY_SIZE_PER_PAGE,
-      skip: cursor * HISTORY_SIZE_PER_PAGE,
-    });
-    return { histories };
+    const histories: UserHistoryResponseDto = {
+      histories: await this.gameHistoryRepository.find({
+        relations: ['winner', 'loser'],
+        where: [{ winner: { id: userId } }, { loser: { id: userId } }],
+        order: { createdAt: 'DESC' },
+        take: HISTORY_SIZE_PER_PAGE,
+        skip: cursor * HISTORY_SIZE_PER_PAGE,
+      }),
+    };
+    if (cursor === 0) {
+      histories['total'] = await this.gameHistoryRepository.count({
+        where: [{ winner: { id: userId } }, { loser: { id: userId } }],
+      });
+    }
+    return histories;
   }
 
   /*
