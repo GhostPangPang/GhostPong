@@ -24,7 +24,6 @@ export type GridProps<T extends ContainerType = 'item'> = {
   (T extends 'flex' ? FlexContainerProps & ResponsiveProps : T extends 'grid' ? GridContainerProps : void);
 
 const StyledGrid = styled.div<GridProps>`
-  flex-grow: 1;
   width: 100%;
   height: auto;
   ${(props) => css`
