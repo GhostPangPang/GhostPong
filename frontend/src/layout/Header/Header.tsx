@@ -20,8 +20,8 @@ export const Header = ({ nickname, image, exp, items }: HeaderProps) => {
       container="flex"
       justifyContent="space-between"
       alignItems="center"
-      size={{ padding: 'header' }}
-      xs={0}
+      flexGrow={0}
+      size={{ height: '10rem', padding: 'layout' }}
     >
       <Grid container="flex" justifyContent="start" alignItems="center" xs={2}>
         <Link to="/">
