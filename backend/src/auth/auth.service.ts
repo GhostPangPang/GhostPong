@@ -32,7 +32,7 @@ export class AuthService {
       secret: this.jwtConfigService.authSecretKey,
       expiresIn: AUTH_JWT_EXPIREIN,
     };
-    return await this.jwtService.sign(payload, signOptions);
+    return this.jwtService.sign(payload, signOptions);
   }
 
   // REGISTERD -> SIGN IN (Login)
@@ -46,6 +46,6 @@ export class AuthService {
       secret: this.jwtConfigService.userSecretKey,
       expiresIn: USER_JWT_EXPIREIN,
     };
-    return await this.jwtService.sign(payload, signOptions);
+    return this.jwtService.sign(payload, signOptions);
   }
 }

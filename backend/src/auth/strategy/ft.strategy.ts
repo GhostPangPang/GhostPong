@@ -9,7 +9,7 @@ import { Auth, AuthStatus } from '../../entity/auth.entity';
 import { LoginInfoDto } from '../dto/login-info.dto';
 
 @Injectable()
-export class FtOAuthStrategy extends PassportStrategy(Strategy, '42') {
+export class FtStrategy extends PassportStrategy(Strategy, 'ft') {
   constructor(
     private readonly ftAuthConfigService: FtAuthConfigService,
     @InjectRepository(Auth)

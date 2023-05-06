@@ -1,8 +1,8 @@
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import * as cookieParser from 'cookie-parser';
 import { ValidationError } from 'class-validator';
+import * as cookieParser from 'cookie-parser';
 
 import { AppModule } from './app.module';
 import { AppConfigService } from './config/app/configuration.service';
