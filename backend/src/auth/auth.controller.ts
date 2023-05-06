@@ -40,7 +40,6 @@ export class AuthController {
 
     if (user.id === null) {
       // UNREGSIETERED -> JOIN (sign up)
-      console.log('UNREGISTERED');
       const token = await this.authService.signUp(user);
       res
         .cookie('jwt-for-unregistered', token, {
@@ -53,7 +52,6 @@ export class AuthController {
     } else {
       // REGISTERED -> LOGIN (sign in)
       const token = await this.authService.signIn(user.id);
-      console.log(token);
       res.redirect(`${clientUrl}/auth?token=${token}`);
     }
   }

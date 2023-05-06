@@ -1,4 +1,5 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
+import { LoginInfoDto } from '../dto/login-info.dto';
 
 /**
  * @description Request 객체에서 user 정보를 추출
@@ -6,7 +7,7 @@ import { createParamDecorator, ExecutionContext } from '@nestjs/common';
  * @return user : LoginInfoDto
  * @ExtractUser() user: LoginInfoDto 로 사용
  */
-export const ExtractUser = createParamDecorator((data: unknown, ctx: ExecutionContext) => {
+export const ExtractUser = createParamDecorator((data: unknown, ctx: ExecutionContext): LoginInfoDto => {
   const request = ctx.switchToHttp().getRequest();
   // TODO undefined error 처리
   return request.user;

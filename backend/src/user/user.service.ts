@@ -43,7 +43,6 @@ export class UserService {
   }
 
   async createUser(myId: number, nickname: string): Promise<string> {
-    // await this.authService.checkExistAuthId(myId); // FIXME : guard
     await this.checkAlreadyExistUser(myId); // user 이미 있으면 에러
     await this.checkDuplicatedNickname(nickname);
     await this.userRepository.manager.transaction(async (manager: EntityManager) => {

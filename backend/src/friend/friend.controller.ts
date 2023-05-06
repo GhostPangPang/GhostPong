@@ -99,7 +99,6 @@ export class FriendController {
     @ExtractUserId() myId: number,
     @Param('userId', NonNegativeIntPipe, CheckUserIdPipe) userId: number,
   ): Promise<SuccessResponseDto> {
-    // FIXME: myId 임시 헤더라서 + 갈겼습니다...
     return this.friendService.rejectFriendRequest(userId, myId);
   }
 }
