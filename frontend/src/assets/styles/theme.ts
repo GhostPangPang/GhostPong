@@ -48,6 +48,7 @@ const padding = {
   sm: '0.8rem',
   md: '1.6rem',
   lg: '2.4rem',
+  layout: '0 2.4rem',
   header: '4rem',
   content: '0 4rem 4rem 4rem',
 };
