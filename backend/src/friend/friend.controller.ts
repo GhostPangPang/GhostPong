@@ -69,7 +69,7 @@ export class FriendController {
   }
 
   @ApiOperation({ summary: '친구 삭제하기' })
-  @ApiNotFoundResponse({ type: ErrorResponseDto, description: '존재하지 않는 친구' })
+  @ApiNotFoundResponse({ type: ErrorResponseDto, description: '존재하지 않는 친구 관계' })
   @Delete(':friendId')
   deleteFriend(
     @Param('friendId', NonNegativeIntPipe) friendId: number,
