@@ -70,35 +70,37 @@ export class FriendController {
   }
 
   @ApiOperation({ summary: '친구 삭제하기' })
-  @Delete(':userId')
+  @ApiNotFoundResponse({ type: ErrorResponseDto, description: '존재하지 않는 친구 관계' })
+  @Delete(':friendId')
   deleteFriend(
     @ExtractUserId() myId: number,
-    @Param('userId', NonNegativeIntPipe, CheckUserIdPipe) userId: number,
+    @Param('friendId', NonNegativeIntPipe) friendId: number,
   ): Promise<SuccessResponseDto> {
-    return this.friendService.deleteFriend(myId, userId);
+    return this.friendService.deleteFriend(friendId, myId);
   }
 
   @ApiOperation({ summary: '친구 신청 수락하기' })
   @ApiForbiddenResponse({ type: ErrorResponseDto, description: '친구 정원 초과' })
   @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
-  @ApiParam({ name: 'userId', description: '친구 신청 수락할 유저의 아이디' })
+  @ApiParam({ name: 'friendId', description: '수락할 친구 신청의 아이디' })
   @HttpCode(HttpStatus.OK)
-  @Post('accept/:userId')
+  @Post('accept/:friendId')
   acceptFriendRequest(
     @ExtractUserId() myId: number,
-    @Param('userId', NonNegativeIntPipe, CheckUserIdPipe) userId: number,
+    @Param('friendId', NonNegativeIntPipe) friendId: number,
   ): Promise<SuccessResponseDto> {
-    return this.friendService.acceptFriendRequest(userId, myId);
+    return this.friendService.acceptFriendRequest(friendId, myId);
   }
 
   @ApiOperation({ summary: '친구 신청 거절하기' })
   @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
+  @ApiParam({ name: 'friendId', description: '거절할 친구 신청의 아이디' })
   @HttpCode(HttpStatus.OK)
-  @Post('reject/:userId')
+  @Post('reject/:friendId')
   rejectFriendRequest(
     @ExtractUserId() myId: number,
-    @Param('userId', NonNegativeIntPipe, CheckUserIdPipe) userId: number,
+    @Param('friendId', NonNegativeIntPipe) friendId: number,
   ): Promise<SuccessResponseDto> {
-    return this.friendService.rejectFriendRequest(userId, myId);
+    return this.friendService.rejectFriendRequest(friendId, myId);
   }
 }
