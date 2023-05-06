@@ -24,13 +24,14 @@ export type GridProps<T extends ContainerType = 'item'> = {
   (T extends 'flex' ? FlexContainerProps & ResponsiveProps : T extends 'grid' ? GridContainerProps : void);
 
 const StyledGrid = styled.div<GridProps>`
-  flex-grow: 1;
+  width: 100%;
+  height: auto;
   ${(props) => css`
     display: block;
     ${props.order && `order: ${props.order};`}
     ${props.alignSelf && `align-self: ${props.alignSelf};`}
     ${props.justifySelf && `justify-self: ${props.justifySelf};`}
-    ${props.flexGrow && `flex-grow: ${props.flexGrow};`}
+    ${props.flexGrow !== undefined && `flex-grow: ${props.flexGrow};`}
     ${props.flexShrink && `flex-shrink: ${props.flexShrink};`}
     ${props.flexBasis && `flex-basis: ${props.flexBasis};`}
     ${props.gridColumn && `grid-column: ${props.gridColumn};`}

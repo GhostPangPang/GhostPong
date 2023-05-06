@@ -4,7 +4,7 @@ import Rive from '@rive-app/react-canvas';
 
 export const LobbyPage = () => {
   return (
-    <Grid container="grid" rows={2} columns={3} rowsSize={[1, 0]} columnsSize={[1, 2, 1]}>
+    <Grid container="grid" rows={2} columns={3} rowsSize={[1, 0]} columnsSize={[1, 2, 1]} size={{ height: '100%' }}>
       <Grid gridColumn="2" alignSelf="center" justifySelf="center" size={{ height: '360px', width: '360px' }}>
         <Rive src="/riv/ghost.riv" />
       </Grid>
