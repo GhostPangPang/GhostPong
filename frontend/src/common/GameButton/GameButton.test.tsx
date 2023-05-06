@@ -1,14 +1,14 @@
 import { describe, test, expect, vi } from 'vitest';
 import { render, screen, userEvent } from '@/test';
-import { Button } from './Button';
+import { GameButton } from './GameButton';
 
 describe('Button', () => {
   test('should render successfully', () => {
     render(
       <>
-        <Button size="sm">Small</Button>
-        <Button size="md">Medium</Button>
-        <Button size="lg">Large</Button>
+        <GameButton size="sm">Small</GameButton>
+        <GameButton size="md">Medium</GameButton>
+        <GameButton size="lg">Large</GameButton>
       </>,
     );
     screen.debug();
@@ -19,12 +19,12 @@ describe('Button', () => {
   test('should render with color props', () => {
     render(
       <>
-        <Button size="sm" color="primary">
+        <GameButton size="sm" color="primary">
           Primary
-        </Button>
-        <Button size="md" color="secondary">
+        </GameButton>
+        <GameButton size="md" color="secondary">
           Secondary
-        </Button>
+        </GameButton>
       </>,
     );
     expect(screen.getByText('Primary')).toBeTruthy();
@@ -33,12 +33,12 @@ describe('Button', () => {
   test('should render with as props', () => {
     render(
       <>
-        <Button size="sm" as="a" href="https://naver.com">
+        <GameButton size="sm" as="a" href="https://naver.com">
           Naver
-        </Button>
-        <Button size="md" as="a" href="https://google.com">
+        </GameButton>
+        <GameButton size="md" as="a" href="https://google.com">
           Google
-        </Button>
+        </GameButton>
       </>,
     );
     expect(screen.getByText('Naver')).toBeTruthy();
@@ -48,9 +48,9 @@ describe('Button', () => {
     const onClick = vi.fn(() => 0);
     render(
       <>
-        <Button size="sm" onClick={onClick}>
+        <GameButton size="sm" onClick={onClick}>
           Click
-        </Button>
+        </GameButton>
       </>,
     );
     const button = screen.getByRole('button');

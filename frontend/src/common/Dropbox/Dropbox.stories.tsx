@@ -1,7 +1,7 @@
 import type { StoryObj } from '@storybook/react';
 import { Dropbox } from './Dropbox';
 import { Avatar } from '../Avatar';
-import { Button } from '../Button';
+import { GameButton } from '../GameButton';
 
 const meta = {
   title: 'Common/Dropbox',
@@ -63,11 +63,11 @@ export const SomeDiv: Story = {
   },
 };
 
-export const OurButtonCheck: Story = {
+export const OurGameButtonCheck: Story = {
   args: {
     items: items,
     placement: 'bottomright',
-    children: <Button size="sm">Button</Button>,
+    children: <GameButton size="sm">GameButton</GameButton>,
   },
 };
 

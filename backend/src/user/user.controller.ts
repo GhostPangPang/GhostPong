@@ -3,7 +3,6 @@ import {
   Controller,
   DefaultValuePipe,
   Get,
-  Headers,
   HttpCode,
   HttpStatus,
   Param,
@@ -12,6 +11,7 @@ import {
   Query,
   Res,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import {
@@ -29,10 +29,14 @@ import {
 } from '@nestjs/swagger';
 import { Response } from 'express';
 
+import { SkipUserGuard } from '../auth/decorator/skip-user-guard.decorator';
+import { GuestGuard } from '../auth/guard/guest.guard';
+import { ExtractUserId } from '../common/decorator/extract-user-id.decorator';
 import { ErrorResponseDto } from '../common/dto/error-response.dto';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
 import { CheckUserIdPipe } from '../common/pipe/check-user-id.pipe';
 import { NonNegativeIntPipe } from '../common/pipe/non-negative-int.pipe';
+import { AppConfigService } from '../config/app/configuration.service';
 
 import { UserImageRequestDto } from './dto/request/user-image-request.dto';
 import { UserNicknameRequestDto } from './dto/request/user-nickname-request.dto';
@@ -46,13 +50,13 @@ import { UserService } from './user.service';
 @ApiTags('user')
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService, private readonly appConfigService: AppConfigService) {}
 
   @ApiOperation({ summary: '유저 메타 정보 가져오기' })
   @ApiNotFoundResponse({ type: ErrorResponseDto, description: '유저 없음' })
   @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
   @Get()
-  getUserInfo(@Headers('x-my-id') myId: number): Promise<UserInfoResponseDto> {
+  getUserInfo(@ExtractUserId() myId: number): Promise<UserInfoResponseDto> {
     return this.userService.getUserInfo(myId);
   }
 
@@ -62,17 +66,20 @@ export class UserController {
     description: '중복된 nickname 또는 이미 생성된 user(중복된 auth-id), 이미 registered인 유저',
   })
   @ApiNotFoundResponse({ type: ErrorResponseDto, description: 'Invalid한 auth-id' })
-  @ApiHeaders([{ name: 'x-auth-id', description: '내 auth 아이디 (임시값)' }])
+  @ApiHeaders([{ name: 'x-my-id', description: '내 auth 아이디 (임시값)' }])
   @HttpCode(HttpStatus.OK)
+  @SkipUserGuard()
+  @UseGuards(GuestGuard)
   @Post()
   async createUser(
-    @Headers('x-auth-id') authId: number,
+    @ExtractUserId() myId: number,
     @Body() { nickname }: UserNicknameRequestDto,
     @Res() res: Response,
   ): Promise<void> {
-    const token = await this.userService.createUser(authId, nickname);
+    const token = await this.userService.createUser(myId, nickname);
+    const clientUrl = this.appConfigService.clientUrl;
 
-    res.clearCookie('jwt-for-unregistered').redirect(`/auth?token=${token}`);
+    res.clearCookie('jwt-for-unregistered').redirect(`${clientUrl}/auth?token=${token}`);
   }
 
   @ApiOperation({ summary: '이미지 업로드' })
@@ -95,7 +102,7 @@ export class UserController {
   @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
   @Patch('image')
   updateUserProfileImage(
-    @Headers('x-my-id') myId: number,
+    @ExtractUserId() myId: number,
     @Body() updateImageRequestDto: UserImageRequestDto,
   ): Promise<SuccessResponseDto> {
     return this.userService.updateUserImage(myId, updateImageRequestDto.image);
@@ -106,7 +113,7 @@ export class UserController {
   @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
   @Patch('nickname')
   updateUserNickname(
-    @Headers('x-my-id') myId: number,
+    @ExtractUserId() myId: number,
     @Body() updateNicknameDto: UserNicknameRequestDto,
   ): Promise<UserNicknameResponseDto> {
     return this.userService.updateUserNickname(myId, updateNicknameDto.nickname);

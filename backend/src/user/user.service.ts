@@ -42,15 +42,14 @@ export class UserService {
     };
   }
 
-  async createUser(authId: number, nickname: string): Promise<string> {
-    // await this.authService.checkExistAuthId(authId); // FIXME : guard
-    await this.checkAlreadyExistUser(authId); // user 이미 있으면 에러
+  async createUser(myId: number, nickname: string): Promise<string> {
+    await this.checkAlreadyExistUser(myId); // user 이미 있으면 에러
     await this.checkDuplicatedNickname(nickname);
     await this.userRepository.manager.transaction(async (manager: EntityManager) => {
-      await manager.insert('users', { id: authId, nickname: nickname });
-      await manager.update('auth', { id: authId }, { status: AuthStatus.REGISTERD });
+      await manager.insert('users', { id: myId, nickname: nickname });
+      await manager.update('auth', { id: myId }, { status: AuthStatus.REGISTERD });
     });
-    return await this.authService.signIn(authId);
+    return await this.authService.signIn(myId);
   }
 
   async updateUserImage(myId: number, imageUrl: string): Promise<SuccessResponseDto> {
@@ -77,14 +76,21 @@ export class UserService {
   }
 
   async getUserHistory(userId: number, cursor: number): Promise<UserHistoryResponseDto> {
-    const histories = await this.gameHistoryRepository.find({
-      relations: ['winner', 'loser'],
-      where: [{ winner: { id: userId } }, { loser: { id: userId } }],
-      order: { createdAt: 'DESC' },
-      take: HISTORY_SIZE_PER_PAGE,
-      skip: cursor * HISTORY_SIZE_PER_PAGE,
-    });
-    return { histories };
+    const histories: UserHistoryResponseDto = {
+      histories: await this.gameHistoryRepository.find({
+        relations: ['winner', 'loser'],
+        where: [{ winner: { id: userId } }, { loser: { id: userId } }],
+        order: { createdAt: 'DESC' },
+        take: HISTORY_SIZE_PER_PAGE,
+        skip: cursor * HISTORY_SIZE_PER_PAGE,
+      }),
+    };
+    if (cursor === 0) {
+      histories['total'] = await this.gameHistoryRepository.count({
+        where: [{ winner: { id: userId } }, { loser: { id: userId } }],
+      });
+    }
+    return histories;
   }
 
   /*
