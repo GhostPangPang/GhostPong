@@ -110,7 +110,6 @@ const HistoryItem = ({ color, winner, loser, winnerScore, loserScore, createdAt 
 
 export const HistroyBox = () => {
   const userId = 1;
-  console.log('userId', userId);
   const { status, data, error, fetchNextPage, hasNextPage, isFetchingNextPage } = useHistoryData(userId);
 
   if (status === 'loading') return <div>loading...</div>;
