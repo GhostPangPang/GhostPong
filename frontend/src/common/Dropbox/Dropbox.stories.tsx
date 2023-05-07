@@ -1,7 +1,7 @@
 import type { StoryObj } from '@storybook/react';
 import { Dropbox } from './Dropbox';
 import { Avatar } from '../Avatar';
-import { GameButton } from '../GameButton';
+import { GameButton } from '../Button/GameButton';
 
 const meta = {
   title: 'Common/Dropbox',
