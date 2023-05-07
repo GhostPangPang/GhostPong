@@ -62,6 +62,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@vitest/ui", "npm:0.30.1"],\
             ["axios", "npm:1.3.6"],\
             ["chromatic", "npm:6.17.3"],\
+            ["date-fns", "npm:2.30.0"],\
             ["eslint", "npm:8.37.0"],\
             ["eslint-config-prettier", "virtual:cc38defef59748d3ec79a388cfcde85b4d057fb9455e5e4bd72ab8fd3f3043f27f94cf2740f0669e3145517dcdf50bac7d684be6bedfd5353b3e00e9ee55b388#npm:8.8.0"],\
             ["eslint-import-resolver-typescript", "virtual:cc38defef59748d3ec79a388cfcde85b4d057fb9455e5e4bd72ab8fd3f3043f27f94cf2740f0669e3145517dcdf50bac7d684be6bedfd5353b3e00e9ee55b388#npm:3.5.4"],\
@@ -2494,6 +2495,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/@babel-runtime-npm-7.21.0-c4ef698c89-7b33e25bfa.zip/node_modules/@babel/runtime/",\
           "packageDependencies": [\
             ["@babel/runtime", "npm:7.21.0"],\
+            ["regenerator-runtime", "npm:0.13.11"]\
+          ],\
+          "linkType": "HARD"\
+        }],\
+        ["npm:7.21.5", {\
+          "packageLocation": "./.yarn/cache/@babel-runtime-npm-7.21.5-7d058028a3-358f2779d3.zip/node_modules/@babel/runtime/",\
+          "packageDependencies": [\
+            ["@babel/runtime", "npm:7.21.5"],\
             ["regenerator-runtime", "npm:0.13.11"]\
           ],\
           "linkType": "HARD"\
@@ -8514,6 +8523,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["date-fns", [\
+        ["npm:2.30.0", {\
+          "packageLocation": "./.yarn/cache/date-fns-npm-2.30.0-895c790e0f-f7be015232.zip/node_modules/date-fns/",\
+          "packageDependencies": [\
+            ["date-fns", "npm:2.30.0"],\
+            ["@babel/runtime", "npm:7.21.5"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["date-time", [\
         ["npm:3.1.0", {\
           "packageLocation": "./.yarn/cache/date-time-npm-3.1.0-50f6af7aef-f9cfcd1b15.zip/node_modules/date-time/",\
@@ -10411,6 +10430,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@vitest/ui", "npm:0.30.1"],\
             ["axios", "npm:1.3.6"],\
             ["chromatic", "npm:6.17.3"],\
+            ["date-fns", "npm:2.30.0"],\
             ["eslint", "npm:8.37.0"],\
             ["eslint-config-prettier", "virtual:cc38defef59748d3ec79a388cfcde85b4d057fb9455e5e4bd72ab8fd3f3043f27f94cf2740f0669e3145517dcdf50bac7d684be6bedfd5353b3e00e9ee55b388#npm:8.8.0"],\
             ["eslint-import-resolver-typescript", "virtual:cc38defef59748d3ec79a388cfcde85b4d057fb9455e5e4bd72ab8fd3f3043f27f94cf2740f0669e3145517dcdf50bac7d684be6bedfd5353b3e00e9ee55b388#npm:3.5.4"],\
