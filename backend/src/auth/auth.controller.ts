@@ -2,8 +2,8 @@ import { Controller, Get, Res, UseGuards } from '@nestjs/common';
 import { ApiHeaders, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 
-import { AUTH_COOKIE_EXPIREIN } from 'src/common/constant';
-import { AppConfigService } from 'src/config/app/configuration.service';
+import { AUTH_COOKIE_EXPIREIN } from '../common/constant';
+import { AppConfigService } from '../config/app/configuration.service';
 
 import { AuthService } from './auth.service';
 import { ExtractUser } from './decorator/extract-user.decorator';
@@ -11,6 +11,7 @@ import { SkipUserGuard } from './decorator/skip-user-guard.decorator';
 import { LoginInfoDto } from './dto/login-info.dto';
 import { FtGuard } from './guard/ft.guard';
 import { GuestGuard } from './guard/guest.guard';
+import { SkipLoggedInUserGuard } from './guard/skip-logged-in-user.guard';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -23,7 +24,7 @@ export class AuthController {
   */
 
   @ApiOperation({ summary: '42 로그인' })
-  @UseGuards(FtGuard) // strategy.constructor
+  @UseGuards(SkipLoggedInUserGuard, FtGuard) // strategy.constructor
   @SkipUserGuard()
   @Get('42login')
   login() {
@@ -58,6 +59,7 @@ export class AuthController {
 
   // FIXME : delete it (tmp for test)
   // 닉네임 설정하는 페이지로 redirect
+  @SkipUserGuard()
   @UseGuards(GuestGuard)
   @Get('register')
   test2() {
