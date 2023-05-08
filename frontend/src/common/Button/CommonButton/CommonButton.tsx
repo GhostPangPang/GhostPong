@@ -4,6 +4,7 @@ import { darken, lighten } from 'polished';
 
 export interface CommonButtonProps {
   size: 'sm' | 'md' | 'lg';
+  color?: Color;
   backgroundColor?: Color;
 }
 
@@ -15,12 +16,12 @@ export const CommonButton = styled.button<CommonButtonProps>`
   border-radius: 0.375rem;
   padding-top: 1rem;
   padding-bottom: 1rem;
-  color: ${(props) => props.theme.color.gray300};
+  font-weight: bold;
+  color: ${(props) => (props.color ? props.theme.color[props.color] : props.theme.color.gray300)};
   ${(props) => {
     const bgColor = props.backgroundColor ? props.theme.color[props.backgroundColor] : props.theme.color.gray100;
     return `
       background-color: ${bgColor};
-      border-color: ${bgColor};
       &:hover {
         background: ${lighten(0.1, bgColor)};
       }
@@ -34,20 +35,20 @@ export const CommonButton = styled.button<CommonButtonProps>`
       case 'sm':
         return `
           width: 8rem;
-          height: 3rem;
-          font-size: 1.3rem;
+          height: 4rem;
+          font-size: 1.4rem;
         `;
       case 'md':
         return `
-          width: 12rem;
-          height: 3rem;
-          font-size: 1.3rem;
+          width: 14rem;
+          height: 4rem;
+          font-size: 1.4rem;
         `;
       case 'lg':
         return `
           width: 24rem;
-          height: 3rem;
-          font-size: 1.3rem;
+          height: 4rem;
+          font-size: 1.4rem;
         `;
     }
   }}
