@@ -6,7 +6,7 @@ import { Avatar } from '@/common/Avatar';
 import { RankBadge } from '@/common/RankBadge';
 import { getRank } from '@/libs/utils/rank';
 import { useHistoryData, UserHistoryResponse, UserInfo } from '@/hooks/useHistroyData';
-import { formatDistance } from 'date-fns';
+import { formatRelativeDate } from '@/libs/utils/date';
 
 type HistoryItem = UserHistoryResponse['histories'][number];
 export interface HistoryItemProps extends HistoryItem {
@@ -61,7 +61,7 @@ const HistoryItem = ({ color, winner, loser, winnerScore, loserScore, createdAt 
   return (
     <HistoryItemStyled color={color}>
       <Grid container="flex" direction="column" height="100%" size={{ height: '100%', padding: 'md' }}>
-        <Text size="sm">{formatDistance(new Date(createdAt), new Date(), { addSuffix: true })}</Text>
+        <Text size="sm">{formatRelativeDate(createdAt)}</Text>
         <Grid
           container="flex"
           direction="row"

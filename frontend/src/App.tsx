@@ -4,6 +4,7 @@ import { MainLayout } from '@/layout/MainLayout';
 import { LobbyPage } from '@/pages/LobbyPage';
 import { PrePage } from '@/pages/PrePage';
 import { MessagePage } from '@/pages/MessagePage';
+import { ProfilePage } from './pages/ProfilePage';
 
 function App() {
   return (
@@ -13,7 +14,7 @@ function App() {
           <Route path="/auth" element={<div>auth</div>} />
           <Route path="/pre" element={<PrePage />} />
           <Route element={<MainLayout />}>
-            <Route path="/" element={<LobbyPage />} />
+            <Route path="/" element={<ProfilePage />} />
             <Route path="/message" element={<MessagePage />} />
             {/* <Route path="/profile/:userId" element={<ProfilePage />} /> */}
           </Route>
