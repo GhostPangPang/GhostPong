@@ -2,7 +2,7 @@ import type { StoryObj } from '@storybook/react';
 import { RankProgressBar } from './RankProgressBar';
 
 const meta = {
-  title: 'Common/RankProgressBar',
+  title: 'Common/ProgressBar/RankProgressBar',
   component: RankProgressBar,
   argTypes: {},
   parameters: {},

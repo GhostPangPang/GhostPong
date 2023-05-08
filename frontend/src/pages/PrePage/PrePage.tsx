@@ -1,4 +1,4 @@
-import { GameButton } from '@/common/GameButton';
+import { GameButton } from '@/common/Button/GameButton';
 import { Grid } from '@/layout/Grid';
 import { ReactComponent as Logo } from '@/svgs/logo-lg.svg';
 

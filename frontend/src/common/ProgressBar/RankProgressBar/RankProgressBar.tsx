@@ -1,4 +1,4 @@
-import { ProgressBar } from '../ProgressBar';
+import { ProgressBar } from '..';
 import { useMemo } from 'react';
 import { Grid } from '@/layout/Grid';
 import { RankBadge } from '@/common/RankBadge';

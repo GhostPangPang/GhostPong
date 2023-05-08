@@ -2,7 +2,7 @@ import type { StoryObj } from '@storybook/react';
 import { CommonButton } from './CommonButton';
 
 const meta = {
-  title: 'Common/CommonButton',
+  title: 'Common/Button/CommonButton',
   component: CommonButton,
   argTypes: {},
   decorators: [],

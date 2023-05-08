@@ -1,4 +1,4 @@
-import { GameButton } from '@/common/GameButton';
+import { GameButton } from '@/common/Button/GameButton';
 import { Grid } from '@/layout/Grid';
 import Rive from '@rive-app/react-canvas';
 

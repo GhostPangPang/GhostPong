@@ -3,7 +3,7 @@ import { Grid } from '../Grid';
 import { Avatar, AvatarProps } from '@/common/Avatar';
 import { Dropbox, DropboxProps } from '@/common/Dropbox';
 import { Text } from '@/common/Text';
-import { RankProgressBar, RankProgressBarProps } from '@/common/RankProgressBar';
+import { RankProgressBar, RankProgressBarProps } from '@/common/ProgressBar/RankProgressBar';
 import { Link } from 'react-router-dom';
 
 interface HeaderProps {
