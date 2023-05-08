@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import styled from 'styled-components';
 import { Grid } from '@/layout/Grid';
 import { Box } from '@/common/Box';
@@ -6,45 +5,13 @@ import { Text } from '@/common/Text';
 import { Avatar } from '@/common/Avatar';
 import { RankBadge } from '@/common/RankBadge';
 import { getRank } from '@/libs/utils/rank';
-import { darken, lighten } from 'polished';
-import { historyMockData, HistoryProps, Player } from './history-mock-data';
-const { histories, histories_fetch } = historyMockData;
+import { useHistoryData, UserHistoryResponse, UserInfo } from '@/hooks/useHistroyData';
+import { formatRelativeDate } from '@/libs/utils/date';
 
-export interface HistoryItemProps extends HistoryProps {
+type HistoryItem = UserHistoryResponse['histories'][number];
+export interface HistoryItemProps extends HistoryItem {
   color?: string;
 }
-
-export interface VersusBoxProps {
-  winner: Player;
-  loser: Player;
-}
-
-export interface PlayerInfoProps {
-  player: Player;
-}
-
-// button으로 하면 이상하게 렌더링 됨
-// 따라서 수정 예정
-const MoreButton = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 4rem;
-  align-items: end;
-  background-color: rgb(74, 74, 74);
-  color: rgb(255, 255, 255);
-  width: 100%;
-  height: 4.8rem;
-  padding: 0.8rem 1.6rem;
-  cursor: pointer;
-  &:hover {
-    background: ${(props) => lighten(0.1, props.theme.color.surface)};
-  }
-  &:active {
-    background: ${(props) => darken(0.1, props.theme.color.surface)};
-  }
-`;
 
 const HistoryItemStyled = styled.article`
   background-color: ${({ color }) => color};
@@ -52,7 +19,7 @@ const HistoryItemStyled = styled.article`
   width: 100%;
 `;
 
-const RightPlayerInfo = ({ player }: PlayerInfoProps) => {
+const RightPlayerInfo = ({ player }: { player: UserInfo }) => {
   const Rank = getRank(player.exp);
   return (
     <Grid container="flex" direction="column" justifyContent="center" alignItems="end">
@@ -65,7 +32,7 @@ const RightPlayerInfo = ({ player }: PlayerInfoProps) => {
   );
 };
 
-const LeftPlayerInfo = ({ player }: PlayerInfoProps) => {
+const LeftPlayerInfo = ({ player }: { player: UserInfo }) => {
   const Rank = getRank(player.exp);
   return (
     <Grid container="flex" direction="column" justifyContent="center" alignItems="start">
@@ -78,7 +45,7 @@ const LeftPlayerInfo = ({ player }: PlayerInfoProps) => {
   );
 };
 
-const VersusBox = ({ winner, loser }: VersusBoxProps) => {
+const VersusBox = ({ winner, loser }: { winner: UserInfo; loser: UserInfo }) => {
   return (
     <Grid container="flex" direction="row" justifyContent="center" alignItems="center" columnGap={3}>
       <RightPlayerInfo player={winner} />
@@ -94,7 +61,7 @@ const HistoryItem = ({ color, winner, loser, winnerScore, loserScore, createdAt 
   return (
     <HistoryItemStyled color={color}>
       <Grid container="flex" direction="column" height="100%" size={{ height: '100%', padding: 'md' }}>
-        <Text size="sm">3 days ago</Text>
+        <Text size="sm">{formatRelativeDate(createdAt)}</Text>
         <Grid
           container="flex"
           direction="row"
@@ -117,12 +84,10 @@ const HistoryItem = ({ color, winner, loser, winnerScore, loserScore, createdAt 
 };
 
 export const HistroyBox = () => {
-  const [history, setHistory] = useState<HistoryProps[]>(histories);
-  const handleMoreButtonClick = () => {
-    // fetch additional 5 histories here...
-    const newHistories: HistoryProps[] = histories_fetch;
-    setHistory((prevHistories: HistoryProps[]) => prevHistories.concat(newHistories));
-  };
+  const userId = 1;
+  console.log(userId);
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useHistoryData(userId);
+
   return (
     <Box as="section" height="100%" width="100%">
       <Grid container="flex" direction="column" justifyContent="start" alignItems="start">
@@ -134,36 +99,40 @@ export const HistroyBox = () => {
         >
           <Text size="lg">히스토리</Text>
         </Grid>
-        {history.map((history: HistoryProps, index: number) => {
-          if (index % 2 !== 0) {
-            return (
-              <HistoryItem
-                key={history.id}
-                id={history.id}
-                winner={history.winner}
-                loser={history.loser}
-                winnerScore={history.winnerScore}
-                loserScore={history.loserScore}
-                createdAt={history.createdAt}
-              />
-            );
-          } else {
-            return (
-              <HistoryItem
-                key={history.id}
-                id={history.id}
-                color="#3d3d3d"
-                winner={history.winner}
-                loser={history.loser}
-                winnerScore={history.winnerScore}
-                loserScore={history.loserScore}
-                createdAt={history.createdAt}
-              />
-            );
-          }
-        })}
+        {data.pages.map((page) =>
+          page.histories.map((history, index) => {
+            if (index % 2 !== 0) {
+              return (
+                <HistoryItem
+                  key={history.id}
+                  id={history.id}
+                  winner={history.winner}
+                  loser={history.loser}
+                  winnerScore={history.winnerScore}
+                  loserScore={history.loserScore}
+                  createdAt={history.createdAt}
+                />
+              );
+            } else {
+              return (
+                <HistoryItem
+                  key={history.id}
+                  id={history.id}
+                  color="#3d3d3d"
+                  winner={history.winner}
+                  loser={history.loser}
+                  winnerScore={history.winnerScore}
+                  loserScore={history.loserScore}
+                  createdAt={history.createdAt}
+                />
+              );
+            }
+          }),
+        )}
       </Grid>
-      <MoreButton onClick={handleMoreButtonClick}>. . .</MoreButton>
+      <button onClick={() => fetchNextPage()} disabled={!hasNextPage || isFetchingNextPage}>
+        {isFetchingNextPage ? 'Loading more...' : hasNextPage ? 'Load More' : 'Nothing more to load'}
+      </button>
     </Box>
   );
 };

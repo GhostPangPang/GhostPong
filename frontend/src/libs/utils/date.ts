@@ -1,4 +1,4 @@
-export const formatRelativeDate = (date: string | null) => {
+export const formatRelativeDate = (date: string | Date | null) => {
   if (!date) return '';
   const d = new Date(date);
   const now = new Date();
