@@ -12,7 +12,9 @@ export const LobbyPage = () => {
         <Rive src="/riv/ghost.riv" />
       </Grid>
       <Grid gridColumn="1" gridRow="2" alignSelf="end">
-        <GameButton size="md">Message</GameButton>
+        <GameButton size="md" onClick={() => navigate('/message')}>
+          Message
+        </GameButton>
       </Grid>
       <Grid container="flex" justifyContent="end" alignItems="end" gridColumn="2/4" gridRow="2" columnGap={1}>
         <GameButton size="md">Normal</GameButton>
