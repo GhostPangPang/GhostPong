@@ -3,13 +3,13 @@
  */
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 
 import { AppConfigService } from '../../config/app/configuration.service';
 import { JwtConfigService } from '../../config/auth/jwt/configuration.service';
 
 @Injectable()
-export class BlockLoggedInGuard implements CanActivate {
+export class SkipLoggedInUserGuard implements CanActivate {
   constructor(
     private readonly jwtService: JwtService,
     private readonly appConfigService: AppConfigService,
@@ -17,7 +17,7 @@ export class BlockLoggedInGuard implements CanActivate {
   ) {}
 
   canActivate(context: ExecutionContext): boolean {
-    const request = context.switchToHttp().getRequest();
+    const request: Request = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);
     if (!token) {
       return true;
@@ -30,7 +30,7 @@ export class BlockLoggedInGuard implements CanActivate {
       return true;
     }
     // 이미 valid한 토큰이 있는 경우
-    const response = context.switchToHttp().getResponse();
+    const response: Response = context.switchToHttp().getResponse();
     const clientUrl = this.appConfigService.clientUrl;
     response.redirect(`${clientUrl}/`);
     return false;
