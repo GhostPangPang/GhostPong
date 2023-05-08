@@ -1,4 +1,4 @@
-import { ConflictException, Inject, Injectable, NotFoundException, forwardRef } from '@nestjs/common';
+import { ConflictException, Inject, Injectable, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
 
@@ -116,10 +116,7 @@ export class UserService {
       .select(['user', 'blockedUser.blockedUserId'])
       .where('user.id = :id', { id: userId })
       .getOne();
-    if (user === null) {
-      throw new NotFoundException('존재하지 않는 유저입니다.');
-    }
-    return user;
+    return user!;
   }
 
   private async findExistUserProfile(userId: number): Promise<User> {
@@ -130,9 +127,6 @@ export class UserService {
       .select(['user', 'userRecord', 'achievement'])
       .where('user.id = :userId', { userId: userId })
       .getOne();
-    if (user === null) {
-      throw new NotFoundException('존재하지 않는 유저입니다.');
-    }
-    return user;
+    return user!;
   }
 }
