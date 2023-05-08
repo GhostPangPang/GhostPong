@@ -16,6 +16,7 @@ const color = {
   surfaceMix: mix(0.4, surface, surfaceDark),
   online: '#2FD240',
   gradient: 'linear-gradient(268.76deg, #7875ff, #61ffe3)',
+  transparent: 'transparent',
 };
 
 const backgroundColor = color;
