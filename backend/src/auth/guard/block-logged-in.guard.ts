@@ -9,7 +9,7 @@ import { AppConfigService } from '../../config/app/configuration.service';
 import { JwtConfigService } from '../../config/auth/jwt/configuration.service';
 
 @Injectable()
-export class ReissueGuard implements CanActivate {
+export class BlockLoggedInGuard implements CanActivate {
   constructor(
     private readonly jwtService: JwtService,
     private readonly appConfigService: AppConfigService,

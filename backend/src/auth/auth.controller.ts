@@ -9,7 +9,7 @@ import { AuthService } from './auth.service';
 import { ExtractUser } from './decorator/extract-user.decorator';
 import { SkipUserGuard } from './decorator/skip-user-guard.decorator';
 import { LoginInfoDto } from './dto/login-info.dto';
-import { ReissueGuard } from './guard/Reissue.guard';
+import { BlockLoggedInGuard } from './guard/block-logged-in.guard';
 import { FtGuard } from './guard/ft.guard';
 import { GuestGuard } from './guard/guest.guard';
 
@@ -24,7 +24,7 @@ export class AuthController {
   */
 
   @ApiOperation({ summary: '42 로그인' })
-  @UseGuards(ReissueGuard, FtGuard) // strategy.constructor
+  @UseGuards(BlockLoggedInGuard, FtGuard) // strategy.constructor
   @SkipUserGuard()
   @Get('42login')
   login() {
