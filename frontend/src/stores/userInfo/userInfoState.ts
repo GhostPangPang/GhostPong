@@ -5,6 +5,7 @@ export const STATE = {
 };
 
 export type UserInfo = {
+  id: number;
   nickname: string;
   image: string | null;
   exp: number;
@@ -14,6 +15,7 @@ export type UserInfo = {
 export const UserInfoState = atom<UserInfo>({
   key: STATE.USER_INFO,
   default: {
+    id: -1,
     nickname: '',
     image: null,
     exp: 0,

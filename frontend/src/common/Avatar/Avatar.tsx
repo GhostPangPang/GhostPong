@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import profile from '@/svgs/default-profile.svg';
 import { Color } from '@/types/style';
 
@@ -15,28 +15,28 @@ const StyledAvatar = styled.img<AvatarProps>`
   ${(props) => {
     switch (props.size) {
       case 'sm':
-        return `
-        ${props.borderColor && 'border-width: 0.15rem; border-style: solid;'}
-        width: 2.4rem;
-        height: 2.4rem;
+        return css`
+          ${props.borderColor && 'border-width: 0.15rem; border-style: solid;'}
+          width: 2.4rem;
+          height: 2.4rem;
         `;
       case 'md':
-        return `
-        ${props.borderColor && 'border-width: 0.2rem; border-style: solid;'}
-        width: 4rem;
-        height: 4rem;
+        return css`
+          ${props.borderColor && 'border-width: 0.2rem; border-style: solid;'}
+          width: 4rem;
+          height: 4rem;
         `;
       case 'lg':
-        return `
-        ${props.borderColor && 'border-width: 0.3rem; border-style: solid;'}
-        width: 6.4rem;
-        height: 6.4rem;
+        return css`
+          ${props.borderColor && 'border-width: 0.3rem; border-style: solid;'}
+          width: 6.4rem;
+          height: 6.4rem;
         `;
       case 'xl':
-        return `
-        ${props.borderColor && 'border-width: 0.5rem; border-style: solid;'}
-        width: 16rem;
-        height: 16rem;
+        return css`
+          ${props.borderColor && 'border-width: 0.5rem; border-style: solid;'}
+          width: 16rem;
+          height: 16rem;
         `;
     }
   }}
@@ -54,6 +54,6 @@ const StyledAvatar = styled.img<AvatarProps>`
   }}
 `;
 
-export const Avatar = ({ size = 'md', src = profile, onClick, ...props }: AvatarProps) => {
-  return <StyledAvatar as="img" size={size} src={src} onClick={onClick} {...props} />;
+export const Avatar = ({ size = 'md', src = profile, onClick, borderColor, ...props }: AvatarProps) => {
+  return <StyledAvatar as="img" size={size} src={src} onClick={onClick} borderColor={borderColor} {...props} />;
 };

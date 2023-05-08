@@ -32,14 +32,73 @@ export const GlobalStyle = createGlobalStyle<{ theme: typeof theme }>`
     background-repeat: repeat;
   }
 
-  * {
+  /* Box sizing rules */
+  *,
+  *::before,
+  *::after {
     box-sizing: border-box;
+  }
+
+  /* Remove default margin */
+  body,
+  h1,
+  h2,
+  h3,
+  h4,
+  p,
+  ul,
+  ol,
+  li,
+  blockquote,
+  dl,
+  dd {
+    margin: 0;
+  }
+
+  /* Remove default padding */
+  ul,
+  ol {
+    padding: 0;
+  }
+
+  /* Remove list styles */
+  ul,
+  ol {
+    list-style: none;
+  }
+
+  /* Remove input styles */
+  input,
+  button,
+  textarea,
+  select {
+    appearance: none;
+    border: none;
+    background: none;
+    outline: none;
+    resize: none;
+    border-radius: 0;
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+    line-height: inherit;
   }
 
   a[href], input[type='submit'], input[type='image'], label[for], select, button {
     cursor: pointer;
   }
+
   a:link {
     text-decoration: none;
+  }
+
+  /* Scroll bar */
+  ::-webkit-scrollbar {
+    width: 0.7rem;
+    background-color: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: ${(props) => props.theme.color.surfaceDark};
+    border-radius: 0.5rem;
   }
 `;
