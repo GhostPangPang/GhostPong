@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { Repository } from './repository';
 import { nanoid } from 'nanoid';
 
 import { Chat } from './model/chat';
+import { Repository } from './repository.interface';
 
 @Injectable()
 export class ChatRepository implements Repository<Chat, string> {
