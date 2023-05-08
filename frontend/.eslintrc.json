@@ -8,12 +8,7 @@
   "settings": {
     "import/external-module-folders": [".yarn"],
     "import/resolver": {
-      "typescript": {
-        "alwaysTryTypes": true,
-        "paths": {
-          "@/types/*": ["src/types/*", "../types/*"]
-        }
-      },
+      "typescript": {},
       "node": {
         "extensions": [".js", ".jsx", ".ts", ".tsx"]
       }
@@ -32,7 +27,6 @@
     "eslint-config-prettier"
   ],
   "rules": {
-    // "indent": ["error", 2],
     "linebreak-style": ["error", "unix"],
     "quotes": ["error", "single"],
     "semi": ["error", "always"],
