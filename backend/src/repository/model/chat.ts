@@ -7,7 +7,7 @@ export class Chat {
     id: number;
     nickname: string;
     image: string;
-    isAdmin: boolean;
+    role: ChatRole;
     isMuted: boolean;
     isPlayer: boolean;
   }[];
