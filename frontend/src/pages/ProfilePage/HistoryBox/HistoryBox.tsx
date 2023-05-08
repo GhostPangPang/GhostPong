@@ -5,38 +5,13 @@ import { Text } from '@/common/Text';
 import { Avatar } from '@/common/Avatar';
 import { RankBadge } from '@/common/RankBadge';
 import { getRank } from '@/libs/utils/rank';
-// import { darken, lighten } from 'polished';
-import { useHistoryData, UserInfo, UserHistoryResponse } from '@/hooks/useHistroyData';
+import { useHistoryData, UserHistoryResponse, UserInfo } from '@/hooks/useHistroyData';
 import { formatDistance } from 'date-fns';
-
-// import { historyMockData, HistoryProps, Player } from './history-mock-data';
-// const { histories, histories_fetch } = historyMockData;
 
 type HistoryItem = UserHistoryResponse['histories'][number];
 export interface HistoryItemProps extends HistoryItem {
   color?: string;
 }
-
-// const MoreButton = styled.div`
-//   display: flex;
-//   align-items: center;
-//   justify-content: center;
-//   font-weight: 700;
-//   font-size: 4rem;
-//   align-items: end;
-//   background-color: rgb(74, 74, 74);
-//   color: rgb(255, 255, 255);
-//   width: 100%;
-//   height: 4.8rem;
-//   padding: 0.8rem 1.6rem;
-//   cursor: pointer;
-//   &:hover {
-//     background: ${(props) => lighten(0.1, props.theme.color.surface)};
-//   }
-//   &:active {
-//     background: ${(props) => darken(0.1, props.theme.color.surface)};
-//   }
-// `;
 
 const HistoryItemStyled = styled.article`
   background-color: ${({ color }) => color};
@@ -110,11 +85,9 @@ const HistoryItem = ({ color, winner, loser, winnerScore, loserScore, createdAt 
 
 export const HistroyBox = () => {
   const userId = 1;
-  const { status, data, error, fetchNextPage, hasNextPage, isFetchingNextPage } = useHistoryData(userId);
+  console.log(userId);
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useHistoryData(userId);
 
-  if (status === 'loading') return <div>loading...</div>;
-  if (error === 'error') return <div>error...</div>;
-  if (!data) return <div>data is undefined</div>;
   return (
     <Box as="section" height="100%" width="100%">
       <Grid container="flex" direction="column" justifyContent="start" alignItems="start">

@@ -1,7 +1,7 @@
 import { get } from '@/libs/api';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { UserInfo } from '@/dtos/user/user-info.interface';
-import { UserHistoryResponse } from '@/dtos/user/response/user-history-response.interface';
+import { UserInfo } from '@/dto/user';
+import { UserHistoryResponse } from '@/dto/user/response';
 
 export type { UserInfo, UserHistoryResponse };
 
@@ -15,8 +15,17 @@ const getHistory = async (userId: number, cursor: number) => {
   return { total, histories };
 };
 
+const initialData = {
+  pages: [{ total: 0, histories: [] }],
+};
+
 export const useHistoryData = (userId: number) => {
-  const { status, data, error, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
+  const {
+    data = initialData,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
     queryKey: [userId, 'history'],
     queryFn: ({ pageParam = 0 }) => getHistory(userId, pageParam),
     refetchOnMount: true,
@@ -24,11 +33,12 @@ export const useHistoryData = (userId: number) => {
     suspense: true,
     staleTime: Infinity,
     getNextPageParam: (lastPage, allPages) => {
+      console.log(allPages);
       const { total } = lastPage;
       const currentPage = allPages.length;
       const nextPage = currentPage;
       return nextPage < Math.ceil(total / 10) ? nextPage : undefined;
     },
   });
-  return { status, data, error, fetchNextPage, hasNextPage, isFetchingNextPage };
+  return { status, data, fetchNextPage, hasNextPage, isFetchingNextPage };
 };
