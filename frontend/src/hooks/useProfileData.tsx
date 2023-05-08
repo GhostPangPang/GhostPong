@@ -1,6 +1,6 @@
 import { get } from '@/libs/api';
 import { useQuery } from '@tanstack/react-query';
-import { UserProfileResponse } from '@/dtos/user/response/user-profile-response.interface';
+import { UserProfileResponse } from '@/dto/user/response';
 
 const getProfile = async (userId: number) => {
   return await get<UserProfileResponse>(`/user/${userId}/profile`);
