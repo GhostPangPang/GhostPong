@@ -132,7 +132,7 @@ export const HistroyBox = () => {
       </Grid>
       <button onClick={() => fetchNextPage()} disabled={!hasNextPage || isFetchingNextPage}>
         {isFetchingNextPage ? 'Loading more...' : hasNextPage ? 'Load More' : 'Nothing more to load'}
-      </button>{' '}
+      </button>
     </Box>
   );
 };

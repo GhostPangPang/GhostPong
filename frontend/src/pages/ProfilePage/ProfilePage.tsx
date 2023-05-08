@@ -17,11 +17,7 @@ export const ProfilePage = () => {
   const userId = 1;
 
   // useQuery는 컴포넌트가 마운트될 때 자동으로 데이터를 조회하므로 따로 useEffect를 사용하여 데이터를 조회할 필요는 없습니다.
-  const { status, data, error } = useProfileData(userId);
-
-  if (status === 'loading') return <div>loading...</div>;
-  if (status === 'error') return <div>error...</div>;
-  if (!data) return <div>data is undefined{error}</div>;
+  const data = useProfileData(userId);
 
   const rank = useMemo(() => getRank(data.exp), [data.exp]);
   const winRate = useMemo(
@@ -39,7 +35,7 @@ export const ProfilePage = () => {
       <Grid container="flex" direction="row" justifyContent="space-between" alignItems="center" columnGap={2}>
         <InfoBox title="랭크" desc={rank} component={<RankBadge rank={rank} size="xl" />} />
         <InfoBox title="승률" desc={`${winRate}%`} subDesc={`${data.winCount}승 ${data.loseCount}패`} />
-        <InfoBox title="경험치" desc={data.exp.toString()} subDesc="exp" />
+        <InfoBox title="경험치" desc={(data.exp * 100).toString()} subDesc="exp" />
       </Grid>
       <Grid container="flex" direction="row" justifyContent="start" alignItems="center">
         <AchievementBox>
