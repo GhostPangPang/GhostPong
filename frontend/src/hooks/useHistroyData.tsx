@@ -28,7 +28,6 @@ export const useHistoryData = (userId: number) => {
   } = useInfiniteQuery({
     queryKey: [userId, 'history'],
     queryFn: ({ pageParam = 0 }) => getHistory(userId, pageParam),
-    refetchOnMount: true,
     retryOnMount: true,
     suspense: true,
     staleTime: Infinity,
