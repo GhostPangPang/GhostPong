@@ -12,4 +12,5 @@ export const Text = styled.span<TextProps>`
   font-size: ${(props) => props.theme.fontSize[props.size || 'md']};
   color: ${(props) => props.theme.color[props.color || 'foreground']};
   font-weight: ${(props) => props.theme.fontWeight[props.weight || 'regular']};
+  line-height: 1.5;
 `;
