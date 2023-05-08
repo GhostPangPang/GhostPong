@@ -1,3 +1,8 @@
+import { mix } from 'polished';
+
+const surface = 'rgba(161, 161, 161, 0.28)';
+const surfaceDark = 'rgba(16, 16, 16, 0.28)';
+
 const color = {
   primary: '#7875FF',
   secondary: '#61FFE3',
@@ -6,8 +11,9 @@ const color = {
   gray100: '#D4D4D4',
   gray200: '#4A4A4A',
   gray300: '#3D3D3D',
-  surface: 'rgba(161, 161, 161, 0.28)',
-  surfaceDark: 'rgba(16, 16, 16, 0.28)',
+  surface,
+  surfaceDark,
+  surfaceMix: mix(0.4, surface, surfaceDark),
   online: '#2FD240',
   gradient: 'linear-gradient(268.76deg, #7875ff, #61ffe3)',
 };
@@ -48,7 +54,7 @@ const padding = {
   sm: '0.8rem',
   md: '1.6rem',
   lg: '2.4rem',
-  layout: '0 2.4rem',
+  layout: '0 2.5rem',
   header: '4rem',
   content: '0 4rem 4rem 4rem',
 };

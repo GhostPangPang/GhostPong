@@ -67,11 +67,38 @@ export const GlobalStyle = createGlobalStyle<{ theme: typeof theme }>`
     list-style: none;
   }
 
+  /* Remove input styles */
+  input,
+  button,
+  textarea,
+  select {
+    appearance: none;
+    border: none;
+    background: none;
+    outline: none;
+    resize: none;
+    border-radius: 0;
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+    line-height: inherit;
+  }
+
   a[href], input[type='submit'], input[type='image'], label[for], select, button {
     cursor: pointer;
   }
 
   a:link {
     text-decoration: none;
+  }
+
+  /* Scroll bar */
+  ::-webkit-scrollbar {
+    width: 0.7rem;
+    background-color: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: ${(props) => props.theme.color.surfaceDark};
+    border-radius: 0.5rem;
   }
 `;
