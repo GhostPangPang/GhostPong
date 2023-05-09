@@ -34,11 +34,11 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect {
     console.log('connected socket id is   ', socket.id);
     console.log('connected socket-s user id is   ', myId);
     socket.data.userId = myId;
-    // this.socketRepository.insert({ userId: myId, socketId: socket.id });
+    this.socketRepository.insert({ userId: myId, socketId: socket.id });
   }
 
   handleDisconnect(@ConnectedSocket() socket: Socket): void {
-    // this.socketRepository.delete(socket.data.userId);
+    this.socketRepository.delete(socket.data.userId);
     console.log('WebSocketServer Disconnect');
     console.log(socket.data.userId, 'is disconnected');
   }
