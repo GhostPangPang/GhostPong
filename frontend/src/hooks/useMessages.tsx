@@ -27,12 +27,9 @@ export const useMessages = (friendId: number, offset = 0) => {
     queryKey: ['messages', friendId.toString(), offset.toString()],
     queryFn: ({ pageParam = 0 }) => getMessages(friendId, pageParam),
     enabled: friendId !== -1,
-    getNextPageParam: (lastPage, pages) => {
+    getNextPageParam: (lastPage) => {
       if (lastPage.messages.length < MESSAGE_SIZE) return undefined;
-      console.log('pages', pages);
-      const lastId = lastPage.messages[lastPage.messages.length - 1].id;
-      console.log('lastId', lastId);
-      return lastId;
+      return lastPage.messages[lastPage.messages.length - 1].id;
     },
   });
 
