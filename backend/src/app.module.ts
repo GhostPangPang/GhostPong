@@ -15,6 +15,7 @@ import { DatabaseConfigModule } from './config/database/configuration.module';
 import { DatabaseConfigService } from './config/database/configuration.service';
 import { FriendModule } from './friend/friend.module';
 import { MessageModule } from './message/message.module';
+import { RepositoryModule } from './repository/repository.module';
 import { UserModule } from './user/user.module';
 
 @Module({
@@ -36,6 +37,7 @@ import { UserModule } from './user/user.module';
     FriendModule,
     MessageModule,
     UserModule,
+    RepositoryModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: UserGuard }],

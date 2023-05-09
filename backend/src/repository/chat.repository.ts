@@ -6,7 +6,7 @@ import { Repository } from './repository.interface';
 
 @Injectable()
 export class ChatRepository implements Repository<string, Chat> {
-  private readonly chatList: Map<string, Chat>;
+  private readonly chatList: Map<string, Chat> = new Map<string, Chat>();
 
   insert(chat: Chat): string {
     const id = nanoid();

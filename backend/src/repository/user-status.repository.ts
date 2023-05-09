@@ -9,7 +9,7 @@ import { Repository } from './repository.interface';
  */
 @Injectable()
 export class UserStatusRepository implements Repository<number, UserStatus> {
-  private readonly userStatusList: Map<number, UserStatus>;
+  private readonly userStatusList: Map<number, UserStatus> = new Map<number, UserStatus>();
 
   insert(userStatus: UserStatus): number {
     this.userStatusList.set(userStatus.userId, userStatus);
