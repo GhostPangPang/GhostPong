@@ -1,11 +1,11 @@
 /**
  * in-memory repository interface
- * @template T type of entity
- * @template U type of id
+ * @template V type of entity
+ * @template K type of id
  */
-export interface Repository<T, U> {
-  insert(item: T): U;
-  update(id: U, partialItem: Partial<T>): T | undefined;
-  delete(id: U): boolean;
-  find(id: U): T | undefined;
+export interface Repository<K, V> {
+  insert(item: V): K;
+  update(id: K, partialItem: Partial<V>): V | undefined;
+  delete(id: K): boolean;
+  find(id: K): V | undefined;
 }

@@ -5,7 +5,7 @@ import { Chat } from './model/chat';
 import { Repository } from './repository.interface';
 
 @Injectable()
-export class ChatRepository implements Repository<Chat, string> {
+export class ChatRepository implements Repository<string, Chat> {
   private readonly chatList: Map<string, Chat>;
 
   insert(chat: Chat): string {
