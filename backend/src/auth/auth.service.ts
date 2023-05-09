@@ -58,4 +58,10 @@ export class AuthService {
     const value = await this.cacheManager.get('hello');
     console.log(value);
   }
+  // setUp2FA(myId: number, secondaryEmail: string) {}
+
+  // async verify2FA(myId: number) {
+  //   // TODO 검증 로직 추가
+  //   // NOTE 2차 인증 완료되었다고 가정
+  // }
 }
