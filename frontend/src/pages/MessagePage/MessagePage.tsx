@@ -3,8 +3,6 @@ import { MessageList } from './MessageList';
 import { Message } from './Message';
 import { useFriends } from '@/hooks/useFriends';
 import { Suspense, useState } from 'react';
-import { useMessages } from '@/hooks/useMessages';
-import { useIntersect } from '@/hooks/useIntersect';
 
 export const MessagePage = () => {
   const [selectedFriendId, setSelectedFriendId] = useState(-1);
