@@ -13,7 +13,7 @@ export const formatRelativeDate = (date: string | Date | null) => {
   } else if (diffDays === 1) {
     return 'Yesterday';
   } else if (diffDays < 7) {
-    return `${diffDays}days ago`;
+    return `${diffDays} days ago`;
   } else {
     return `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()}`;
   }
