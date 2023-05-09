@@ -12,6 +12,7 @@ import { FRIEND_LIMIT } from '../common/constant';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
 import { BlockedUser } from '../entity/blocked-user.entity';
 import { Friendship } from '../entity/friendship.entity';
+import { UserStatusRepository } from '../repository/user-status.repository';
 
 import { FriendsResponseDto } from './dto/response/friend-response.dto';
 import { RequestedFriendsResponseDto } from './dto/response/requested-friend-response.dto';
@@ -23,6 +24,7 @@ export class FriendService {
     private readonly friendshipRepository: Repository<Friendship>,
     @InjectRepository(BlockedUser)
     private readonly blockedUserRepository: Repository<BlockedUser>,
+    private readonly userStatusRepository: UserStatusRepository,
   ) {}
 
   // SECTION: public
@@ -34,25 +36,21 @@ export class FriendService {
    */
   async getFriendsList(userId: number): Promise<FriendsResponseDto> {
     return {
-      friends: (
-        await this.friendshipRepository.find({
-          relations: ['sender', 'receiver', 'messageView'],
-          where: [
-            { senderId: userId, accept: true },
-            { receiverId: userId, accept: true },
-          ],
-          order: { lastMessageTime: 'DESC' },
-        })
-      ).map(({ id, sender, receiver, lastMessageTime, messageView }) => {
-        // messgeView 가 없으면 (find() 가 undefined 이면) null
-        const lastViewTime = messageView.find((view) => view.user.id === userId)?.lastViewTime || null;
-        return {
-          id,
-          user: sender.id === userId ? receiver : sender,
-          lastMessageTime,
-          lastViewTime,
-        };
-      }),
+      friends: (await this.findFriendsByUserId(userId)).map(
+        ({ id, sender, receiver, lastMessageTime, messageView }) => {
+          // messgeView 가 없으면 (find() 가 undefined 이면) null
+          const lastViewTime = messageView.find((view) => view.user.id === userId)?.lastViewTime || null;
+          const friend = sender.id === userId ? receiver : sender;
+          const status = this.userStatusRepository.find(friend.id)?.status || 'offline';
+          return {
+            id,
+            status,
+            user: friend,
+            lastMessageTime,
+            lastViewTime,
+          };
+        },
+      ),
     };
   }
 
@@ -193,6 +191,17 @@ export class FriendService {
     if ((await this.friendshipRepository.countBy({ receiver: { id: userId }, accept: false })) >= FRIEND_LIMIT) {
       throw new ForbiddenException('친구 신청 정원이 꽉 찬 유저입니다.');
     }
+  }
+
+  private async findFriendsByUserId(userId: number): Promise<Friendship[]> {
+    return this.friendshipRepository.find({
+      relations: ['sender', 'receiver', 'messageView'],
+      where: [
+        { senderId: userId, accept: true },
+        { receiverId: userId, accept: true },
+      ],
+      order: { lastMessageTime: 'DESC' },
+    });
   }
 
   /**
