@@ -1,6 +1,6 @@
 import { Content } from '../Content';
 import { Header } from '../Header';
-import { useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Outlet } from 'react-router-dom';
 
@@ -22,7 +22,9 @@ export const MainLayout = () => {
     <>
       <Header nickname={userInfo.nickname} image={userInfo.image} exp={userInfo.exp} items={items} />
       <Content alignSelf="stretch">
-        <Outlet />
+        <Suspense fallback={<h1>Loading</h1>}>
+          <Outlet />
+        </Suspense>
       </Content>
     </>
   );
