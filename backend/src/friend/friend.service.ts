@@ -40,11 +40,12 @@ export class FriendService {
         ({ id, sender, receiver, lastMessageTime, messageView }) => {
           // messgeView 가 없으면 (find() 가 undefined 이면) null
           const lastViewTime = messageView.find((view) => view.user.id === userId)?.lastViewTime || null;
-          const status = this.userStatusRepository.find(receiver.id)?.status || 'offline';
+          const friend = sender.id === userId ? receiver : sender;
+          const status = this.userStatusRepository.find(friend.id)?.status || 'offline';
           return {
             id,
             status,
-            user: sender.id === userId ? receiver : sender,
+            user: friend,
             lastMessageTime,
             lastViewTime,
           };
