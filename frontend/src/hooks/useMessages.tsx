@@ -2,8 +2,6 @@ import { InfiniteData, useInfiniteQuery } from '@tanstack/react-query';
 import { MessageResponse } from '@/dto/message/response';
 import { get } from '@/libs/api';
 
-export type { MessageResponse };
-
 const getMessages = async (friendId: number, offset: number) => {
   return await get<MessageResponse>(`/message/${friendId}?offset=${offset}`);
 };

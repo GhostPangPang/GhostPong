@@ -19,6 +19,7 @@ export const MessageList = ({ friends, selected, setSelected }: MessageListProps
             key={item.id}
             isDark={item.id == selected}
             setSelected={setSelected}
+            status={item.status}
             lastMessageTime={item.lastMessageTime?.toString() ?? null}
             image={item.user.image}
             nickname={item.user.nickname}

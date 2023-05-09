@@ -6,11 +6,13 @@ import { Fragment } from 'react';
 import { useUserInfo } from '@/stores/userInfo';
 import { useMessages } from '@/hooks/useMessages';
 import { useIntersectObserver } from '@/hooks/useIntersectObserver';
+import { Message } from '@/types/entity';
+import { formatTime } from '@/libs/utils';
 
 interface MessageContentItemProps {
   side: 'right' | 'left';
-  content: string;
-  createdAt?: string;
+  content: Message['content'];
+  createdAt?: Message['createdAt'];
 }
 
 export const MessageContentItem = ({ side, content, createdAt = '' }: MessageContentItemProps) => {
@@ -22,8 +24,8 @@ export const MessageContentItem = ({ side, content, createdAt = '' }: MessageCon
           {content}
         </Text>
       </Box>
-      <Text size="xxs" weight="light" color="gray200" style={{ order: side === 'right' ? 0 : -2 }}>
-        {createdAt}
+      <Text size="xxxs" weight="light" color="gray100" style={{ order: side === 'right' ? 0 : -2 }}>
+        {formatTime(createdAt)}
       </Text>
     </Grid>
   );
@@ -61,6 +63,7 @@ export const MessageContent = ({ friendId }: { friendId: number }) => {
                 key={item.id}
                 side={item.senderId == userInfo.id ? 'right' : 'left'}
                 content={item.content}
+                createdAt={item.createdAt}
               />
             );
           })}

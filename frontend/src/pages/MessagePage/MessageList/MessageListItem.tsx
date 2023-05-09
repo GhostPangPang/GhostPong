@@ -6,12 +6,14 @@ import { ReactComponent as More } from '@/svgs/more.svg';
 import { Text } from '@/common/Text';
 import { Avatar } from '@/common/Avatar';
 import { formatRelativeDate } from '@/libs/utils';
-import { UserEntity } from '@/types/entity';
+import { User } from '@/types/entity';
+import { UserStatus } from '@/dto/friend/response';
 
 export interface MessageListItemProps {
-  id: UserEntity['id'];
-  image: UserEntity['image'];
-  nickname: UserEntity['nickname'];
+  id: User['id'];
+  image: User['image'];
+  nickname: User['nickname'];
+  status?: UserStatus;
   lastMessageTime: string | null;
   isDark: boolean;
   setSelected: (id: number) => void;
@@ -21,6 +23,7 @@ export const MessageListItem = ({
   id = -1,
   image,
   nickname,
+  status,
   lastMessageTime,
   isDark,
   setSelected,
@@ -38,7 +41,7 @@ export const MessageListItem = ({
               {nickname}
             </Text>
             <Text size="xxs" weight="light" color="gray100">
-              Online
+              {status ?? 'Offline'}
             </Text>
           </Grid>
         </Grid>
