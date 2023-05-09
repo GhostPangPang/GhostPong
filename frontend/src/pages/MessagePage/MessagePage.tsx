@@ -11,21 +11,6 @@ export const MessagePage = () => {
   const {
     data: { friends },
   } = useFriends();
-  const {
-    data: { pages },
-    hasNextPage,
-    isFetching,
-    fetchNextPage,
-  } = useMessages(selectedFriendId);
-  const messageRef = useIntersect(
-    async (entry, observer) => {
-      observer.unobserve(entry.target);
-      if (hasNextPage && !isFetching) {
-        fetchNextPage();
-      }
-    },
-    { rootMargin: '0px 0px 100px 0px' },
-  );
 
   console.log('selected', selectedFriendId);
   return (
@@ -42,7 +27,7 @@ export const MessagePage = () => {
       </Grid>
       <Grid container="flex" direction="column" xs={2}>
         <Suspense fallback={<div>loading...</div>}>
-          <Message ref={messageRef} messages={pages} />
+          <Message friendId={selectedFriendId} />
         </Suspense>
       </Grid>
     </Grid>
