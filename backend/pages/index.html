@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Websocket Chatting</title>
+
+    <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+
+    <script>
+      const socket = io.connect({
+        extraHeaders: {
+          Authorization:
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMyLCJpYXQiOjE2ODM2MzgxODcsImV4cCI6MTY4Mzk4Mzc4N30.wsSjt44lael8lDstPXvD_9q0BFBtwipc3sN1mGOVGlM',
+        },
+      });
+
+      let friendId;
+      function joinRoom() {
+        const id = document.getElementById('id').value;
+        console.log(typeof id);
+        frienId = Number(id);
+        socket.emit('join_room', friendId);
+      }
+
+      // 메세지 전송
+      function sendMessage() {
+        const senderId = Number(document.getElementById('sender').value);
+        const message = document.getElementById('message').value;
+        const fullMessage = `${senderId}: ${message}`;
+
+        socket.emit('message', { senderId, friendId, content: fullMessage });
+      }
+
+      // 메세지 수신
+      socket.on('message', function (message) {
+        // alert('메세지 수신');
+        const messagesList = document.getElementById('messages');
+        const messageItem = document.createElement('div');
+        messageItem.textContent = message;
+        messagesList.appendChild(messageItem);
+      });
+    </script>
+  </head>
+  <body>
+    <h1>San Chat</h1>
+    <div>
+      <input type="number" id="id" placeholder="친구관계id" style="width: 50px" />
+      <button onClick="joinRoom()">가입</button>
+
+      <input type="number" id="sender" placeholder="유저" style="width: 50px" />
+      <input type="text" id="message" placeholder="메세지" style="width: 200px" />
+      <button onClick="sendMessage()">전송</button>
+    </div>
+
+    <div id="chat-log">
+      <div id="messages"></div>
+    </div>
+  </body>
+</html>
