@@ -30,6 +30,7 @@ const fontWeight = {
 };
 
 const fontSize = {
+  xxxs: '1rem', // 10px
   xxs: '1.2rem', // 12px
   xs: '1.4rem', // 14px
   sm: '1.6rem', // 16px
