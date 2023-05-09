@@ -1,0 +1,68 @@
+import { Grid } from '@/layout/Grid';
+import { darken } from 'polished';
+import styled from 'styled-components';
+import newSvg from '@/svgs/circle-sm.svg';
+import { ReactComponent as More } from '@/svgs/more.svg';
+import { Text } from '@/common/Text';
+import { Avatar } from '@/common/Avatar';
+import { formatRelativeDate } from '@/libs/utils';
+import { UserEntity } from '@/types/entity';
+
+export interface MessageListItemProps {
+  id: UserEntity['id'];
+  image: UserEntity['image'];
+  nickname: UserEntity['nickname'];
+  lastMessageTime: string | null;
+  isDark: boolean;
+  setSelected: (id: number) => void;
+}
+
+export const MessageListItem = ({
+  id = -1,
+  image,
+  nickname,
+  lastMessageTime,
+  isDark,
+  setSelected,
+}: MessageListItemProps) => {
+  return (
+    <StyledMessageItemWrapper isDark={isDark} onClick={() => setSelected(id)}>
+      <Grid container="flex" alignItems="center">
+        <Grid container="flex" direction="column" alignItems="center" size={{ width: '3rem' }}>
+          <img src={newSvg} alt="new" />
+        </Grid>
+        <Grid container="flex" alignItems="center" gap={1}>
+          <Avatar size="md" src={image} />
+          <Grid container="flex" direction="column" gap={0.5}>
+            <Text size="xs" weight="light" color="gray100">
+              {nickname}
+            </Text>
+            <Text size="xxs" weight="light" color="gray100">
+              Online
+            </Text>
+          </Grid>
+        </Grid>
+      </Grid>
+      <Grid container="flex" justifyContent="end" alignItems="center" gap={1.5}>
+        <Text size="xxs" weight="light" color="gray100">
+          {formatRelativeDate(lastMessageTime)}
+        </Text>
+        <More />
+      </Grid>
+    </StyledMessageItemWrapper>
+  );
+};
+
+const StyledMessageItemWrapper = styled.li<{ isDark?: MessageListItemProps['isDark'] }>`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 1.5rem 1.5rem 0;
+
+  ${(props) => props.isDark && `background-color: ${props.theme.color.surfaceDark};`}
+
+  &:hover {
+    cursor: pointer;
+    background-color: ${(props) => darken(0.5, props.theme.color.surface)};
+  }
+`;
