@@ -59,7 +59,7 @@ describe('FriendService', () => {
   describe('test requestFriend', () => {
     it('normal request', async () => {
       // test normal request
-      expect(await service.requestFriendById(1, 2)).toEqual({
+      expect(await service.requestFriend(1, 2)).toEqual({
         id: 1,
         sender: { id: 1 },
         receiver: { id: 2 },
@@ -69,12 +69,12 @@ describe('FriendService', () => {
 
     it('self friend request', async () => {
       // test throw error when senderId and receiverId are same
-      await expect(service.requestFriendById(1, 1)).rejects.toThrowError(ConflictException);
+      await expect(service.requestFriend(1, 1)).rejects.toThrowError(ConflictException);
     });
 
     it('check friend count limit', async () => {
       // test throw error when friend count is over limit
-      await expect(service.requestFriendById(1, 2)).rejects.toThrowError(ConflictException);
+      await expect(service.requestFriend(1, 2)).rejects.toThrowError(ConflictException);
     });
   });
 });

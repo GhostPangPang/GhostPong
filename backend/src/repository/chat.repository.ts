@@ -5,7 +5,7 @@ import { Chat } from './model/chat';
 import { Repository } from './repository.interface';
 
 @Injectable()
-export class ChatRepository implements Repository<Chat, string> {
+export class ChatRepository implements Repository<string, Chat> {
   private readonly chatList: Map<string, Chat>;
 
   insert(chat: Chat): string {
@@ -19,8 +19,9 @@ export class ChatRepository implements Repository<Chat, string> {
     if (chat === undefined) {
       return undefined;
     }
-    this.chatList.set(id, { ...chat, ...partialChat });
-    return chat;
+    const updatedChat = { ...chat, ...partialChat };
+    this.chatList.set(id, updatedChat);
+    return updatedChat;
   }
 
   delete(id: string): boolean {
