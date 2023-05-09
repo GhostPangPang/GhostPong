@@ -94,11 +94,11 @@ export const GlobalStyle = createGlobalStyle<{ theme: typeof theme }>`
 
   /* Scroll bar */
   ::-webkit-scrollbar {
-    width: 0.7rem;
+    width: 0.5rem;
     background-color: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background-color: ${(props) => props.theme.color.surfaceDark};
+    background-color: ${(props) => props.theme.color.gray100};
     border-radius: 0.5rem;
   }
 `;
