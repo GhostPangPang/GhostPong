@@ -20,8 +20,23 @@ export const MainLayout = () => {
 
   return (
     <>
-      <Header nickname={userInfo.nickname} image={userInfo.image} exp={userInfo.exp} items={items} />
-      <Content alignSelf="stretch">
+      <Header
+        nickname={userInfo.nickname}
+        image={userInfo.image}
+        exp={userInfo.exp}
+        items={items}
+        height="10rem"
+        padding="header"
+        flexGrow={0}
+      />
+      <Content
+        direction="column"
+        alignSelf="stretch"
+        justifyContent="center"
+        alignItems="center"
+        padding="content"
+        height="calc(100% - 10rem)"
+      >
         <Suspense fallback={<h1>Loading</h1>}>
           <Outlet />
         </Suspense>

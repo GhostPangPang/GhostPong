@@ -1,5 +1,5 @@
-import { ScrollableContent } from './ScrollableContent';
-import { ScrollableHeader } from './ScrollableHeader';
+import { Content } from '@/layout/Content';
+import { Header } from '@/layout/Header';
 import { useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Outlet } from 'react-router-dom';
@@ -21,10 +21,17 @@ export const ScollableLayout = () => {
 
   return (
     <>
-      <ScrollableHeader nickname={userInfo.nickname} image={userInfo.image} exp={userInfo.exp} items={items} />
-      <ScrollableContent alignSelf="stretch">
+      <Header
+        nickname={userInfo.nickname}
+        image={userInfo.image}
+        exp={userInfo.exp}
+        items={items}
+        padding="header"
+        xs={0}
+      />
+      <Content alignSelf="stretch" direction="column" alignItems="center" padding="content">
         <Outlet />
-      </ScrollableContent>
+      </Content>
       <Footer />
     </>
   );
