@@ -19,8 +19,9 @@ export class ChatRepository implements Repository<string, Chat> {
     if (chat === undefined) {
       return undefined;
     }
-    this.chatList.set(id, { ...chat, ...partialChat });
-    return chat;
+    const updatedChat = { ...chat, ...partialChat };
+    this.chatList.set(id, updatedChat);
+    return updatedChat;
   }
 
   delete(id: string): boolean {
