@@ -10,6 +10,12 @@ class FriendInformation {
   id: number;
 
   /**
+   * 친구의 접속 상태
+   * @example 'online'
+   */
+  status: 'online' | 'offline' | 'game';
+
+  /**
    * 마지막으로 메세지를 주고 받은 시간
    * @example '2021-08-01T00:00:00.000Z'
    */
