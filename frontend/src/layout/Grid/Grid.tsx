@@ -6,6 +6,7 @@ import {
   PositionProps,
   ResponsiveProps,
 } from '@/types/style';
+import { forwardRef } from 'react';
 import styled, { css } from 'styled-components';
 
 type ContainerType = 'flex' | 'grid' | 'item';
@@ -13,6 +14,7 @@ type ContainerType = 'flex' | 'grid' | 'item';
 export type GridItemProps = ItemProps & ResponsiveProps;
 export type GridProps<T extends ContainerType = 'item'> = {
   as?: React.ElementType;
+  ref?: React.RefObject<HTMLElement>;
   children?: React.ReactNode;
   container?: T;
   size?: LayoutProps;
@@ -129,125 +131,135 @@ const StyledGridContainer = styled(StyledGrid)<GridProps<'grid'>>`
   `}
 `;
 
-export const Grid = <T extends ContainerType>({
-  children,
-  container,
-  justifySelf,
-  alignSelf,
-  order,
-  flexGrow,
-  flexShrink,
-  flexBasis,
-  gridColumn,
-  gridRow,
-  gridArea,
-  xs,
-  sm,
-  md,
-  lg,
-  ...props
-}: GridProps<T>) => {
-  if (container === 'grid') {
-    const {
-      gap,
-      rowGap,
-      columnGap,
-      justifyContent,
-      alignItems,
-      alignContent,
-      columns,
-      rows,
-      areas,
-      autoFlow,
-      autoRows,
-      autoColumns,
-      justifyItems,
-      ...rest
-    } = props as GridProps<'grid'>;
-    return (
-      <StyledGridContainer
-        justifySelf={justifySelf}
-        alignSelf={alignSelf}
-        order={order}
-        flexGrow={flexGrow}
-        flexShrink={flexShrink}
-        flexBasis={flexBasis}
-        gridColumn={gridColumn}
-        gridRow={gridRow}
-        gridArea={gridArea}
-        xs={xs}
-        sm={sm}
-        md={md}
-        lg={lg}
-        gap={gap}
-        rowGap={rowGap}
-        columnGap={columnGap}
-        justifyContent={justifyContent}
-        alignItems={alignItems}
-        alignContent={alignContent}
-        columns={columns}
-        rows={rows}
-        areas={areas}
-        autoFlow={autoFlow}
-        autoRows={autoRows}
-        autoColumns={autoColumns}
-        justifyItems={justifyItems}
-        {...rest}
-      >
-        {children}
-      </StyledGridContainer>
-    );
-  } else if (container === 'flex') {
-    const { gap, rowGap, columnGap, justifyContent, alignItems, alignContent, direction, wrap, ...rest } =
-      props as GridProps<'flex'>;
-    return (
-      <StyledFlexContainer
-        justifySelf={justifySelf}
-        alignSelf={alignSelf}
-        order={order}
-        flexGrow={flexGrow}
-        flexShrink={flexShrink}
-        flexBasis={flexBasis}
-        gridColumn={gridColumn}
-        gridRow={gridRow}
-        gridArea={gridArea}
-        xs={xs}
-        sm={sm}
-        md={md}
-        lg={lg}
-        gap={gap}
-        rowGap={rowGap}
-        columnGap={columnGap}
-        justifyContent={justifyContent}
-        alignItems={alignItems}
-        alignContent={alignContent}
-        direction={direction}
-        wrap={wrap}
-        {...rest}
-      >
-        {children}
-      </StyledFlexContainer>
-    );
-  } else {
-    return (
-      <StyledGrid
-        justifySelf={justifySelf}
-        alignSelf={alignSelf}
-        order={order}
-        flexGrow={flexGrow}
-        flexShrink={flexShrink}
-        flexBasis={flexBasis}
-        gridColumn={gridColumn}
-        gridRow={gridRow}
-        gridArea={gridArea}
-        xs={xs}
-        sm={sm}
-        md={md}
-        lg={lg}
-        {...props}
-      >
-        {children}
-      </StyledGrid>
-    );
-  }
-};
+export const Grid = forwardRef(
+  <T extends ContainerType>(
+    {
+      children,
+      container,
+      justifySelf,
+      alignSelf,
+      order,
+      flexGrow,
+      flexShrink,
+      flexBasis,
+      gridColumn,
+      gridRow,
+      gridArea,
+      xs,
+      sm,
+      md,
+      lg,
+      ...props
+    }: GridProps<T>,
+    ref: React.Ref<HTMLElement>,
+  ) => {
+    if (container === 'grid') {
+      const {
+        gap,
+        rowGap,
+        columnGap,
+        justifyContent,
+        alignItems,
+        alignContent,
+        columns,
+        rows,
+        areas,
+        autoFlow,
+        autoRows,
+        autoColumns,
+        justifyItems,
+        ...rest
+      } = props as GridProps<'grid'>;
+      return (
+        <StyledGridContainer
+          ref={ref}
+          justifySelf={justifySelf}
+          alignSelf={alignSelf}
+          order={order}
+          flexGrow={flexGrow}
+          flexShrink={flexShrink}
+          flexBasis={flexBasis}
+          gridColumn={gridColumn}
+          gridRow={gridRow}
+          gridArea={gridArea}
+          xs={xs}
+          sm={sm}
+          md={md}
+          lg={lg}
+          gap={gap}
+          rowGap={rowGap}
+          columnGap={columnGap}
+          justifyContent={justifyContent}
+          alignItems={alignItems}
+          alignContent={alignContent}
+          columns={columns}
+          rows={rows}
+          areas={areas}
+          autoFlow={autoFlow}
+          autoRows={autoRows}
+          autoColumns={autoColumns}
+          justifyItems={justifyItems}
+          {...rest}
+        >
+          {children}
+        </StyledGridContainer>
+      );
+    } else if (container === 'flex') {
+      const { gap, rowGap, columnGap, justifyContent, alignItems, alignContent, direction, wrap, ...rest } =
+        props as GridProps<'flex'>;
+      return (
+        <StyledFlexContainer
+          ref={ref}
+          justifySelf={justifySelf}
+          alignSelf={alignSelf}
+          order={order}
+          flexGrow={flexGrow}
+          flexShrink={flexShrink}
+          flexBasis={flexBasis}
+          gridColumn={gridColumn}
+          gridRow={gridRow}
+          gridArea={gridArea}
+          xs={xs}
+          sm={sm}
+          md={md}
+          lg={lg}
+          gap={gap}
+          rowGap={rowGap}
+          columnGap={columnGap}
+          justifyContent={justifyContent}
+          alignItems={alignItems}
+          alignContent={alignContent}
+          direction={direction}
+          wrap={wrap}
+          {...rest}
+        >
+          {children}
+        </StyledFlexContainer>
+      );
+    } else {
+      return (
+        <StyledGrid
+          ref={ref}
+          justifySelf={justifySelf}
+          alignSelf={alignSelf}
+          order={order}
+          flexGrow={flexGrow}
+          flexShrink={flexShrink}
+          flexBasis={flexBasis}
+          gridColumn={gridColumn}
+          gridRow={gridRow}
+          gridArea={gridArea}
+          xs={xs}
+          sm={sm}
+          md={md}
+          lg={lg}
+          {...props}
+        >
+          {children}
+        </StyledGrid>
+      );
+    }
+  },
+);
+
+Grid.displayName = 'Grid';
