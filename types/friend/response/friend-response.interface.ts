@@ -1,6 +1,6 @@
 import { UserInfo } from '../../user/user-info.interface';
 
-type UserStatus = 'online' | 'offline' | 'game';
+export type UserStatus = 'online' | 'offline' | 'game';
 
 export interface FriendResponse {
   friends: {
