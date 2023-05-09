@@ -27,12 +27,13 @@ export const ProfilePage = () => {
 
   // 자신의 id인지 확인하는 절차가 필요함
   return (
+    // media query 100rem 이하일 때
     <Grid container="flex" direction="column" rowGap={1.5} size={{ maxWidth: '100rem' }}>
       <Grid container="flex" justifyContent="start" alignItems="end">
         <Avatar size="xl" src={data.image} borderColor="gradient" />
         <Text size="xxl">{data.nickname}</Text>
       </Grid>
-      <Grid container="flex" direction="row" justifyContent="space-between" alignItems="center" columnGap={2}>
+      <Grid container="flex" direction="row" justifyContent="space-between" alignItems="center" gap={2}>
         <InfoBox title="랭크" desc={rank} component={<RankBadge rank={rank} size="xl" />} />
         <InfoBox title="승률" desc={`${winRate}%`} subDesc={`${data.winCount}승 ${data.loseCount}패`} />
         <InfoBox title="경험치" desc={(data.exp * 100).toString()} subDesc="exp" />

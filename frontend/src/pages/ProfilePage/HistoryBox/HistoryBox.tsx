@@ -24,7 +24,7 @@ const RightPlayerInfo = ({ player }: { player: UserInfo }) => {
   return (
     <Grid container="flex" direction="column" justifyContent="center" alignItems="end">
       <Text size="md">{player.nickname}</Text>
-      <Grid container="flex" direction="row" alignItems="center">
+      <Grid container="flex" direction="row" justifyContent="end" alignItems="center">
         <RankBadge rank={Rank} height="24" width="24" />
         <Text size="xs">{Rank}</Text>
       </Grid>
@@ -89,7 +89,7 @@ export const HistroyBox = () => {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useHistoryData(userId);
 
   return (
-    <Box as="section" height="100%" width="100%">
+    <Box as="section" height="100%" width="100rem">
       <Grid container="flex" direction="column" justifyContent="start" alignItems="start">
         <Grid
           container="flex"
