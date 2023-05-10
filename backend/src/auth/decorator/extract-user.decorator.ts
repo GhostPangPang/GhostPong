@@ -1,4 +1,4 @@
-import { createParamDecorator, ExecutionContext } from '@nestjs/common';
+import { BadRequestException, createParamDecorator, ExecutionContext } from '@nestjs/common';
 
 import { LoginInfoDto } from '../dto/login-info.dto';
 
@@ -10,6 +10,9 @@ import { LoginInfoDto } from '../dto/login-info.dto';
  */
 export const ExtractUser = createParamDecorator((data: unknown, ctx: ExecutionContext): LoginInfoDto => {
   const request = ctx.switchToHttp().getRequest();
-  // TODO undefined error 처리
+
+  if (request.user === undefined) {
+    throw new BadRequestException('request.user is undefined');
+  }
   return request.user;
 });

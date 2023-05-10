@@ -1,5 +1,4 @@
-import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-// import { AppConfigService } from 'src/config/app/configuration.service';
+import { BadRequestException, createParamDecorator, ExecutionContext } from '@nestjs/common';
 
 /**
  * @description token의 userId 추출
@@ -10,11 +9,8 @@ import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 export const ExtractUserId = createParamDecorator((data: unknown, ctx: ExecutionContext): number => {
   const request = ctx.switchToHttp().getRequest();
 
-  // 개발 환경에서는 headers에 있는 x-my-id를 userId로 사용
-  if (process.env.NODE_ENV === 'development') {
-    return +request.headers['x-my-id'];
+  if (request.user?.userId === undefined) {
+    throw new BadRequestException('request.user or request.user.userId is undefined');
   }
-
-  // TODO undefined error 처리
   return request.user.userId;
 });
