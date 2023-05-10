@@ -7,6 +7,7 @@ import { PrePage } from '@/pages/PrePage';
 import { MessagePage } from '@/pages/MessagePage';
 import { ProfilePage } from './pages/ProfilePage';
 import { ErrorBoundary } from 'react-error-boundary';
+import { EditProfilePage } from './pages/EditProfilePage';
 
 function App() {
   return (
@@ -22,7 +23,7 @@ function App() {
               <Route path="/message" element={<MessagePage />} />
             </Route>
             <Route element={<ScollableLayout />}>
-              <Route path="/profile/edit" element={<ProfilePage />} />
+              <Route path="/profile/edit" element={<EditProfilePage />} />
               <Route path="/profile/:userId" element={<ProfilePage />} />
             </Route>
           </Routes>
