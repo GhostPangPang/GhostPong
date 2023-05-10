@@ -10,7 +10,9 @@ const createAxiosInstance = () => {
 };
 
 const responseInterceptor = (res: AxiosResponse) => {
-  if (res.status >= 200 && res.status < 300) {
+  if (res.status === 201) {
+    return res;
+  } else if (res.status >= 200 && res.status < 300) {
     return res.data;
   }
   return Promise.reject(res);
