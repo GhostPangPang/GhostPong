@@ -12,6 +12,7 @@ import { FRIEND_LIMIT } from '../common/constant';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
 import { BlockedUser } from '../entity/blocked-user.entity';
 import { Friendship } from '../entity/friendship.entity';
+import { MessageGateway } from '../message/message.gateway';
 import { UserStatusRepository } from '../repository/user-status.repository';
 
 import { FriendsResponseDto } from './dto/response/friend-response.dto';
@@ -25,6 +26,7 @@ export class FriendService {
     @InjectRepository(BlockedUser)
     private readonly blockedUserRepository: Repository<BlockedUser>,
     private readonly userStatusRepository: UserStatusRepository,
+    private readonly messageGateway: MessageGateway,
   ) {}
 
   // SECTION: public
@@ -42,6 +44,7 @@ export class FriendService {
           const lastViewTime = messageView.find((view) => view.user.id === userId)?.lastViewTime || null;
           const friend = sender.id === userId ? receiver : sender;
           const status = this.userStatusRepository.find(friend.id)?.status || 'offline';
+          this.messageGateway.joinMessageRoom(userId, friend.id);
           return {
             id,
             status,
