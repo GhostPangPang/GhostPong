@@ -5,6 +5,7 @@ import { ValidationError } from 'class-validator';
 import * as cookieParser from 'cookie-parser';
 
 import { AppModule } from './app.module';
+import { corsOption } from './common/option/cors.option';
 import { AppConfigService } from './config/app/configuration.service';
 
 async function bootstrap() {
@@ -31,12 +32,7 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   const appConfig: AppConfigService = app.get(AppConfigService);
-  app.enableCors({
-    origin: appConfig.clientUrl,
-    credentials: true,
-    allowedHeaders: ['Authorization', 'x-my-id'],
-    exposedHeaders: ['Location'],
-  });
+  app.enableCors(corsOption);
   await app.listen(appConfig.port);
 }
 bootstrap();
