@@ -1,5 +1,4 @@
-import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-// import { AppConfigService } from 'src/config/app/configuration.service';
+import { BadRequestException, createParamDecorator, ExecutionContext } from '@nestjs/common';
 
 /**
  * @description token의 userId 추출
@@ -10,5 +9,8 @@ import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 export const ExtractUserId = createParamDecorator((data: unknown, ctx: ExecutionContext): number => {
   const request = ctx.switchToHttp().getRequest();
 
+  if (request.user === undefined || request.user.userId === undefined) {
+    throw new BadRequestException('request.user or request.user.userId is undefined');
+  }
   return request.user.userId;
 });

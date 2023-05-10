@@ -1,4 +1,4 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext, BadRequestException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import { Observable } from 'rxjs';
@@ -15,10 +15,12 @@ export class UserGuard extends AuthGuard('user') implements CanActivate {
     // 개발 환경에서는 토큰 검증을 하지 않음
     if (this.appConfigService.env === 'development') {
       const request = context.switchToHttp().getRequest();
-      const userId = +request.headers['x-my-id'];
-
+      const userId = request.headers['x-my-id'];
+      if (userId === undefined) {
+        throw new BadRequestException('x-my-id is undefined');
+      }
       request.user = {
-        userId: userId,
+        userId: +userId,
       };
       return true;
     }
