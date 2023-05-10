@@ -1,5 +1,5 @@
 import { GameButton } from '@/common/Button/GameButton';
-import { Grid } from '@/layout/Grid';
+import { Grid } from '@/common/Grid';
 import Rive from '@rive-app/react-canvas';
 import { useNavigate } from 'react-router-dom';
 

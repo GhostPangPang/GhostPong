@@ -1,6 +1,6 @@
 import { GameButton } from '@/common/Button/GameButton';
 import { Text } from '@/common/Text';
-import { Grid } from '@/layout/Grid';
+import { Grid } from '@/common/Grid';
 import { post } from '@/libs/api';
 import { Color } from '@/types/style';
 import { useState } from 'react';

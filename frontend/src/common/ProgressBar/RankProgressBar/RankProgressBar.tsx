@@ -1,6 +1,6 @@
 import { ProgressBar } from '..';
 import { useMemo } from 'react';
-import { Grid } from '@/layout/Grid';
+import { Grid } from '@/common/Grid';
 import { RankBadge } from '@/common/RankBadge';
 import { getRank, getRankRange } from '@/libs/utils/rank';
 

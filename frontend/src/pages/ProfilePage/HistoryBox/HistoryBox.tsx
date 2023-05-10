@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Grid } from '@/layout/Grid';
+import { Grid } from '@/common/Grid';
 import { Box } from '@/common/Box';
 import { Text } from '@/common/Text';
 import { Avatar } from '@/common/Avatar';

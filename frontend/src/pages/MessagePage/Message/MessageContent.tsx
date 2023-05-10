@@ -1,6 +1,6 @@
 import { Avatar } from '@/common/Avatar';
 import { Box } from '@/common/Box';
-import { Grid } from '@/layout/Grid';
+import { Grid } from '@/common/Grid';
 import { Text } from '@/common/Text';
 import { Fragment } from 'react';
 import { useUserInfo } from '@/stores/userInfo';

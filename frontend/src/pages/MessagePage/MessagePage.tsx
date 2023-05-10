@@ -1,4 +1,4 @@
-import { Grid } from '@/layout/Grid';
+import { Grid } from '@/common/Grid';
 import { MessageList } from './MessageList';
 import { Message } from './Message';
 import { useFriends } from '@/hooks/useFriends';

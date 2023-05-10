@@ -1,5 +1,5 @@
 import { GameButton } from '@/common/Button/GameButton';
-import { Grid } from '@/layout/Grid';
+import { Grid } from '@/common/Grid';
 import { ReactComponent as Logo } from '@/svgs/logo-lg.svg';
 
 export const PrePage = () => {
