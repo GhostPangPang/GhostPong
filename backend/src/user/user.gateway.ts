@@ -26,7 +26,6 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (token === undefined) {
       throw new UnauthorizedException('토큰이 존재하지 않습니다.');
     }
-    console.log(token);
     const myId = this.jwtService.verify(token, { secret: process.env.USER_JWT_SECRETKEY }).userId;
     if (token === undefined) {
       throw new UnauthorizedException('유효하지 않은 토큰입니다.');

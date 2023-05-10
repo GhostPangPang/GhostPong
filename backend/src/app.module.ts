@@ -30,9 +30,6 @@ import { UserModule } from './user/user.module';
       renderPath: '/asset',
       serveStaticOptions: { index: false, redirect: false },
     }),
-    // ServeStaticModule.forRoot({
-    //   rootPath: '/Users/ansohyeon/Work/SAN/ft_trans/backend/pages',
-    // }),
     FriendModule,
     UserModule,
     AuthModule,
