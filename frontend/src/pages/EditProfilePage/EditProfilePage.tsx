@@ -56,15 +56,17 @@ const EditForm = ({ desc, label, value, children }: EditFormProps) => {
 export const EditProfilePage = () => {
   return (
     <Grid container="flex" direction="column" justifyContent="center" size={{ maxWidth: '100rem' }}>
-      <EditForm desc="Account Information" label="UserName" value="Save">
-        <InputBox sizes="sm" value="ghostking" placeholder="your nickname" />
-      </EditForm>
-      <StyledLine />
       <EditForm desc="Profile" label="Avatar" value="Upload & Save">
         <Grid container="flex" alignItems="center" gap={3}>
           <Avatar size="lg" />
-          <CommonButton size="md">Upload</CommonButton>
+          <CommonButton size="md" backgroundColor="gray200" color="gray100">
+            Upload
+          </CommonButton>
         </Grid>
+      </EditForm>
+      <StyledLine />
+      <EditForm desc="Account Information" label="UserName" value="Save">
+        <InputBox sizes="sm" value="ghostking" placeholder="your nickname" />
       </EditForm>
       <StyledLine />
       <EditForm desc="Two-factor authentication" label="Email" value="Verify">
