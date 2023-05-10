@@ -4,6 +4,7 @@ import { Color } from '@/types/style';
 export interface InputBoxProps {
   sizes: 'default' | 'sm' | 'md' | 'lg';
   backGroundColor?: Color;
+  display?: string;
 }
 
 // input tag에 size속성이 있어서 size를 다른 이름으로 지정
@@ -21,6 +22,7 @@ export const InputBox = styled.input<InputBoxProps>`
   // gray100 or foreground
   color: ${(props) => props.theme.color.gray100};
   font-weight: ${(props) => props.theme.fontWeight.regular};
+  display: ${(props) => props.display};
   ${(props) => {
     switch (props.sizes) {
       case 'sm':

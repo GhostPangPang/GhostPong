@@ -5,6 +5,7 @@ import { darken, lighten } from 'polished';
 export interface CommonButtonProps {
   size: 'sm' | 'md' | 'lg';
   color?: Color;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
   backgroundColor?: Color;
 }
 
