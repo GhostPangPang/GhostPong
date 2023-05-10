@@ -1,6 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Cache } from 'cache-manager';
 import { Repository } from 'typeorm';
 
 import { AUTH_JWT_EXPIREIN, USER_JWT_EXPIREIN } from '../common/constant';
@@ -16,6 +18,7 @@ export class AuthService {
     private readonly authRepository: Repository<Auth>,
     private readonly jwtService: JwtService,
     private readonly jwtConfigService: JwtConfigService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   // UNREGISTERD -> SIGN UP (Register)
@@ -47,5 +50,12 @@ export class AuthService {
       expiresIn: USER_JWT_EXPIREIN,
     };
     return this.jwtService.sign(payload, signOptions);
+  }
+
+  // FIXME : delete it (tmp for test)
+  async cacheTest() {
+    await this.cacheManager.set('hello', 'world');
+    const value = await this.cacheManager.get('hello');
+    console.log(value);
   }
 }
