@@ -122,7 +122,9 @@ export class UserController {
   @ApiOperation({ summary: '유저 프로필 가져오기' })
   @ApiNotFoundResponse({ type: ErrorResponseDto, description: '존재하지 않는 사용자' })
   @Get(':userId/profile')
-  getUserProfile(@Param('userId', NonNegativeIntPipe) userId: number): Promise<UserProfileResponseDto> {
+  getUserProfile(
+    @Param('userId', NonNegativeIntPipe, CheckUserIdPipe) userId: number,
+  ): Promise<UserProfileResponseDto> {
     return this.userService.getUserProfile(userId);
   }
 
