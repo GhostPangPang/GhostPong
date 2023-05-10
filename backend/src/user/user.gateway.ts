@@ -43,7 +43,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect {
       }
 
       myId = this.jwtService.verify(token, { secret: process.env.USER_JWT_SECRETKEY }).userId;
-      if (token === undefined) {
+      if (myId === undefined) {
         socket.disconnect();
         return;
         //throw new UnauthorizedException('유효하지 않은 토큰입니다.');
