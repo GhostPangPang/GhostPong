@@ -1,10 +1,11 @@
-import { Content } from '../Content';
-import { Header } from '../Header';
-import { Suspense, useEffect } from 'react';
+import { Content } from '@/layout/Content';
+import { Header } from '@/layout/Header';
+import { useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Outlet } from 'react-router-dom';
+import { Footer } from '../Footer';
 
-export const MainLayout = () => {
+export const ScollableLayout = () => {
   const { userInfo } = useAuth();
 
   const items = [
@@ -25,22 +26,13 @@ export const MainLayout = () => {
         image={userInfo.image}
         exp={userInfo.exp}
         items={items}
-        height="10rem"
         padding="header"
-        flexGrow={0}
+        xs={0}
       />
-      <Content
-        direction="column"
-        alignSelf="stretch"
-        justifyContent="center"
-        alignItems="center"
-        padding="content"
-        height="calc(100% - 10rem)"
-      >
-        <Suspense fallback={<h1>Loading</h1>}>
-          <Outlet />
-        </Suspense>
+      <Content alignSelf="stretch" direction="column" alignItems="center" padding="content">
+        <Outlet />
       </Content>
+      <Footer />
     </>
   );
 };

@@ -18,12 +18,19 @@ export const InfoBox = ({ title, desc, subDesc, component }: InfoBoxProps) => {
         justifyContent="space-between"
         alignItems="center"
         gap={1.5}
-        size={{ height: '100%', padding: 3.6 }}
+        size={{ padding: 3.6, width: '32rem' }}
       >
         {component}
-        <Grid container="flex" direction="column" justifyContent="start" alignItems="start" rowGap={1.5}>
+        <Grid
+          container="flex"
+          direction="column"
+          justifyContent="center"
+          alignItems="start"
+          rowGap={1.5}
+          size={{ height: '12rem' }}
+        >
           <Text size="lg">{title}</Text>
-          <Grid container="flex" direction="row" justifyContent="center" alignItems="end" columnGap={2.5}>
+          <Grid container="flex" direction="row" justifyContent="start" alignItems="end" columnGap={2.5}>
             <Text size="xxl">{desc}</Text>
             {subDesc && <Text size="xxs">{subDesc}</Text>}
           </Grid>

@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Suspense } from 'react';
 import { MainLayout } from '@/layout/MainLayout';
+import { ScollableLayout } from './layout/ScrollableLayout';
 import { LobbyPage } from '@/pages/LobbyPage';
 import { PrePage } from '@/pages/PrePage';
 import { MessagePage } from '@/pages/MessagePage';
@@ -19,7 +20,10 @@ function App() {
             <Route element={<MainLayout />}>
               <Route path="/" element={<LobbyPage />} />
               <Route path="/message" element={<MessagePage />} />
-              {/* <Route path="/profile/:userId" element={<ProfilePage />} /> */}
+            </Route>
+            <Route element={<ScollableLayout />}>
+              <Route path="/profile/edit" element={<ProfilePage />} />
+              <Route path="/profile/:userId" element={<ProfilePage />} />
             </Route>
           </Routes>
         </ErrorBoundary>
