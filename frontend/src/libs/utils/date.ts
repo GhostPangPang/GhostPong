@@ -18,3 +18,13 @@ export const formatRelativeDate = (date: string | Date | null) => {
     return `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()}`;
   }
 };
+
+// format time
+export const formatTime = (date: string | Date | null) => {
+  if (!date) return '';
+  const d = new Date(date);
+  const hour = d.getHours() > 12 ? d.getHours() - 12 : d.getHours() === 0 ? 12 : d.getHours();
+  const minute = d.getMinutes() < 10 ? `0${d.getMinutes()}` : d.getMinutes();
+  const ampm = d.getHours() >= 12 ? 'PM' : 'AM';
+  return `${hour}:${minute} ${ampm}`;
+};

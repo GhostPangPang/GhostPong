@@ -5,20 +5,24 @@ import { LobbyPage } from '@/pages/LobbyPage';
 import { PrePage } from '@/pages/PrePage';
 import { MessagePage } from '@/pages/MessagePage';
 import { ProfilePage } from './pages/ProfilePage';
+import { ErrorBoundary } from 'react-error-boundary';
 
 function App() {
   return (
     <BrowserRouter>
       <Suspense fallback={<h1>Loading</h1>}>
-        <Routes>
-          <Route path="/auth" element={<div>auth</div>} />
-          <Route path="/pre" element={<PrePage />} />
-          <Route element={<MainLayout />}>
-            <Route path="/" element={<ProfilePage />} />
-            <Route path="/message" element={<MessagePage />} />
-            {/* <Route path="/profile/:userId" element={<ProfilePage />} /> */}
-          </Route>
-        </Routes>
+        <ErrorBoundary fallback={<h1>Error</h1>}>
+          <Routes>
+            <Route path="/auth" element={<div>auth</div>} />
+            <Route path="/register" element={<div>register</div>} />
+            <Route path="/pre" element={<PrePage />} />
+            <Route element={<MainLayout />}>
+              <Route path="/" element={<LobbyPage />} />
+              <Route path="/message" element={<MessagePage />} />
+              {/* <Route path="/profile/:userId" element={<ProfilePage />} /> */}
+            </Route>
+          </Routes>
+        </ErrorBoundary>
       </Suspense>
     </BrowserRouter>
   );

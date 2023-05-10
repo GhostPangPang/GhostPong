@@ -3,24 +3,18 @@ import { UserInfo, useUserInfo } from '@/stores/userInfo';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 
-export const API = {
-  USER: {
-    INFO: '/user',
-  },
-};
+const API = '/user';
 
 const getUserInfo = async () => {
-  return await get<UserInfo>(API.USER.INFO);
+  return await get<UserInfo>(API);
 };
 
 export const useAuth = () => {
   const { userInfo, setUserInfo } = useUserInfo();
   const { data, isLoading, refetch } = useQuery<UserInfo>({
-    queryKey: [API.USER.INFO],
+    queryKey: [API],
     queryFn: getUserInfo,
-    refetchOnMount: true,
     retryOnMount: true,
-    suspense: true,
     staleTime: Infinity,
   });
 
