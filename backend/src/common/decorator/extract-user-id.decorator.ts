@@ -9,7 +9,7 @@ import { BadRequestException, createParamDecorator, ExecutionContext } from '@ne
 export const ExtractUserId = createParamDecorator((data: unknown, ctx: ExecutionContext): number => {
   const request = ctx.switchToHttp().getRequest();
 
-  if (request.user === undefined || request.user.userId === undefined) {
+  if (request.user?.userId === undefined) {
     throw new BadRequestException('request.user or request.user.userId is undefined');
   }
   return request.user.userId;
