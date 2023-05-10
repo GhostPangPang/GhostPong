@@ -22,6 +22,7 @@ export default ({ mode }) => {
         '@/assets': path.resolve(__dirname, './src/assets'),
         '@/test': path.resolve(__dirname, './src/test'),
         '@/common': path.resolve(__dirname, './src/common'),
+        '@/constants': path.resolve(__dirname, './src/constants'),
         '@/error': path.resolve(__dirname, './src/error'),
         '@/layout': path.resolve(__dirname, './src/layout'),
         '@/pages': path.resolve(__dirname, './src/pages'),

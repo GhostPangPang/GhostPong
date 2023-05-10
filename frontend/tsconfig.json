@@ -26,6 +26,7 @@
       "@/assets/*": ["src/assets/*"],
       "@/test/*": ["src/test/*"],
       "@/common/*": ["src/common/*"],
+      "@/constants/*": ["src/constants/*"],
       "@/error/*": ["src/error/*"],
       "@/layout/*": ["src/layout/*"],
       "@/pages/*": ["src/pages/*"],
