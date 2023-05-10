@@ -42,13 +42,7 @@ export class FriendService {
           const lastViewTime = messageView.find((view) => view.user.id === userId)?.lastViewTime || null;
           const friend = sender.id === userId ? receiver : sender;
           const status = this.userStatusRepository.find(friend.id)?.status || 'offline';
-          return {
-            id,
-            status,
-            user: friend,
-            lastMessageTime,
-            lastViewTime,
-          };
+          return { id, status, user: friend, lastMessageTime, lastViewTime };
         },
       ),
     };
