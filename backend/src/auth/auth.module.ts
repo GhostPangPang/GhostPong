@@ -1,9 +1,9 @@
-import { Module } from '@nestjs/common';
+import { CacheModule, Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { AppConfigModule } from 'src/config/app/configuration.module';
-
+import { TWO_FACTOR_AUTH_EXPIREIN, TWO_FACTOR_AUTH_MAX } from '../common/constant';
+import { AppConfigModule } from '../config/app/configuration.module';
 import { FtAuthConfigModule } from '../config/auth/ft/configuration.module';
 import { JwtConfigModule } from '../config/auth/jwt/configuration.module';
 import { Auth } from '../entity/auth.entity';
@@ -22,6 +22,11 @@ import { UserStrategy } from './strategy/user.strategy';
     FtAuthConfigModule,
     JwtConfigModule,
     AppConfigModule,
+    CacheModule.register({
+      store: 'memory',
+      ttl: TWO_FACTOR_AUTH_EXPIREIN,
+      max: TWO_FACTOR_AUTH_MAX,
+    }),
   ],
   providers: [AuthService, FtStrategy, GuestStrategy, UserStrategy, UserGuard],
   controllers: [AuthController],
