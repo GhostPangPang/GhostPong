@@ -54,6 +54,13 @@ export class MessageGateway {
     @ConnectedSocket() socket: Socket,
     @MessageBody() data: LeaveMessageRoomDto,
   ): Promise<void> {
+    const friendship = await this.friendshipRepository.findOneBy([
+      { id: data.friendId, senderId: socket.data.userId, accept: true },
+      { id: data.friendId, receiverId: socket.data.userId, accept: true },
+    ]);
+    if (friendship === null) {
+      throw new Error('존재하지 않는 친구관계입니다.');
+    }
     await this.messageViewRepository.query(
       `
       INSERT INTO message_view (user_id, friend_id, last_view_time)
@@ -72,6 +79,21 @@ export class MessageGateway {
     console.log('after leave ', socket.rooms);
   }
 
+  @SubscribeMessage('join-message-room')
+  async handleJoinMessageRoom(@ConnectedSocket() socket: Socket): Promise<void> {
+    (
+      await this.friendshipRepository.find({
+        select: ['id'],
+        where: [
+          { senderId: socket.data.userId, accept: true },
+          { receiverId: socket.data.userId, accept: true },
+        ],
+      })
+    ).map(({ id }) => {
+      this.joinMessageRoom(socket.data.userId, id);
+    });
+  }
+
   /**
    * methods
    */
@@ -87,37 +109,5 @@ export class MessageGateway {
     }
     socket.emit(`message`, { id: 0, content: `socket is joined in messageRoom${friendId}` });
     socket.join(`friend-${friendId}`);
-  }
-
-  /**
-   * @description joinMessageRoom 디버깅용입니다. 클라이언트랑 확인해서 joinMessageRoom 잘 동작하면 이 이벤트 지울 예정
-   * @param socket
-   * @param friendId
-   */
-  @SubscribeMessage('join-room')
-  async joinRoom(@ConnectedSocket() socket: Socket, @MessageBody() friendId: number): Promise<void> {
-    console.log(friendId);
-    console.log(socket.data.userId);
-    const friendship = await this.friendshipRepository.findOneBy([
-      { id: friendId, senderId: socket.data.userId, accept: true },
-      { id: friendId, receiverId: socket.data.userId, accept: true },
-    ]);
-    if (friendship === null) {
-      throw new Error('친구 관계가 존재하지 않습니다.');
-    } //  근데 이 로직 필요하지 않을수도?
-
-    const socketId = this.socketIdRepository.find(socket.data.userId);
-    console.log(socketId);
-    if (socketId === undefined) {
-      throw new Error('socketId is undefined');
-    }
-    const socketf = this.server.sockets.sockets.get(socketId.socketId);
-    if (socketf === undefined) {
-      throw new Error('socket is undefined');
-    }
-    socketf.emit(`message`, { id: 0, content: `socket is joined in messageRoom${friendId}` });
-    console.log('join ', socket.rooms);
-    socket.join(`friend-${friendId}`);
-    console.log('after join ', socket.rooms);
   }
 }

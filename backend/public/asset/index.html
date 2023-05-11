@@ -10,7 +10,7 @@
 
     <script>
       let socket;
-
+      let userId;
       function mytoken() {
         const token = document.getElementById('token').value;
         console.log(token);
@@ -23,6 +23,7 @@
         if (socket) {
           console.log('socket connect');
         }
+        userId = Number(token);
         socket.on('message', function (data) {
           const messagesList = document.getElementById('messages');
           const messageItem = document.createElement('div');
@@ -32,24 +33,22 @@
         });
       }
 
-      let friendId;
+      // let friendId;
       function joinRoom() {
-        const id = document.getElementById('id').value;
-        friendId = +id;
-        console.log(typeof Number(friendId));
-        console.log(friendId);
-        socket.emit('join-room', friendId);
+        socket.emit('join-message-room');
       }
 
       // 메세지 전송
       function sendMessage() {
-        const senderId = Number(document.getElementById('sender').value);
+        const friendId = Number(document.getElementById('friendId').value);
         const message = document.getElementById('message').value;
-        const fullMessage = `${senderId}: ${message}`;
+        const fullMessage = `${userId}: ${message}`;
         socket.emit('message', { id: friendId, content: fullMessage });
       }
 
       function leaveRoom() {
+        const friendId = Number(document.getElementById('friendIdforleave').value);
+        console.log(friendId);
         socket.emit('leave-message-room', { friendId, lastViewTime: new Date() });
       }
 
@@ -76,10 +75,9 @@
     </div>
 
     <div>
-      <input type="number" id="id" placeholder="친구관계id" style="width: 50px" />
       <button onClick="joinRoom()">가입</button>
 
-      <input type="number" id="sender" placeholder="유저" style="width: 50px" />
+      <input type="number" id="friendId" placeholder="친구" style="width: 50px" />
       <input type="text" id="message" placeholder="메세지" style="width: 200px" />
       <button onClick="sendMessage()">전송</button>
     </div>
@@ -89,6 +87,7 @@
     </div>
 
     <div>
+      <input type="number" id="friendIdforleave" placeholder="친구" style="width: 50px" />
       <button onclick="leaveRoom()">나가기</button>
     </div>
   </body>
