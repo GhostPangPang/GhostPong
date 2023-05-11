@@ -56,12 +56,12 @@ export class AuthService {
 
   async twoFactorAuth(myId: number, email: string) {
     console.log(myId, email);
+    const code = String(Math.floor(Math.random() * 1000000)).padStart(6, '0');
+
     await this.mailerService.sendMail({
-      to: 'skqkdldhf98@gmail.com', // list of receivers
-      from: 'noreply@nestjs.com', // sender address
-      subject: 'Testing Nest MailerModule ✔', // Subject line
-      text: 'welcome', // plaintext body
-      html: '<b>welcome</b>', // HTML body content
+      to: email,
+      subject: 'GhostPhong 인증번호입니다 ✔',
+      html: this.getEmailTemplate(code),
     });
   }
 
@@ -69,4 +69,66 @@ export class AuthService {
   //   // TODO 검증 로직 추가
   //   // NOTE 2차 인증 완료되었다고 가정
   // }
+
+  private getEmailTemplate(code: string) {
+    return `
+    <!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Authentication Code Email</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+      background-color: #f0f0f0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #fff;
+      border-radius: 5px;
+      padding: 40px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    p {
+      margin-bottom: 20px;
+    }
+
+    .code {
+      font-size: 28px;
+      font-weight: bold;
+      background-color: #eee;
+      padding: 10px 20px;
+      border-radius: 5px;
+      display: inline-block;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>GhostPhong Authentication Code</h1>
+    <p>Your authentication code is:</p>
+    <div class="code">${code}</div>
+    <p>Please enter this code in the application to complete the authentication process.</p>
+  </div>
+</body>
+
+</html>
+    `;
+  }
 }

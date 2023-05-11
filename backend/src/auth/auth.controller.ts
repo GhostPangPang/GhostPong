@@ -11,6 +11,7 @@ import { AuthService } from './auth.service';
 import { ExtractUser } from './decorator/extract-user.decorator';
 import { SkipUserGuard } from './decorator/skip-user-guard.decorator';
 import { LoginInfoDto } from './dto/login-info.dto';
+import { TwoFactorAuthRequestDto } from './dto/request/two-factor-auth-request.dto';
 import { FtGuard } from './guard/ft.guard';
 import { GuestGuard } from './guard/guest.guard';
 import { SkipLoggedInUserGuard } from './guard/skip-logged-in-user.guard';
@@ -65,7 +66,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(UserGuard)
   @Post('2fa')
-  twoFactorAuth(@ExtractUserId() myId: number, @Body('email') email: string) {
+  twoFactorAuth(@ExtractUserId() myId: number, @Body() { email }: TwoFactorAuthRequestDto) {
     return this.authService.twoFactorAuth(myId, email);
   }
 
