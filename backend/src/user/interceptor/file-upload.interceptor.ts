@@ -21,14 +21,14 @@ export class FileUploadInterceptor implements NestInterceptor<void, void> {
     const multerOptions: multer.Options = {
       fileFilter: (_req, file: Express.Multer.File, cb: FileFilterCallback) => {
         if (!file.mimetype.match(/image\/(gif|jpeg|png)/)) {
-          cb(new UnsupportedMediaTypeException('gif, jpeg, png 형식의 파일만 업로드 가능합니다.'));
+          return cb(new UnsupportedMediaTypeException('gif, jpeg, png 형식의 파일만 업로드 가능합니다.'));
         }
         cb(null, true);
       },
       storage: diskStorage({
         destination: 'public/asset',
         filename: (req, file, cb) => {
-          const myId = req.headers['x-my-id'];
+          const myId: number = ctx.getRequest().user.userId;
           const extArray = file.mimetype.split('/');
           cb(null, 'profile-' + myId + '.' + extArray[extArray.length - 1]);
         },
