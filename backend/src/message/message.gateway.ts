@@ -1,3 +1,4 @@
+import { UsePipes, ValidationPipe } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
@@ -36,8 +37,9 @@ export class MessageGateway {
    * @param socket
    * @param data
    */
+  @UsePipes(new ValidationPipe())
   @SubscribeMessage('message')
-  handleMessage(@ConnectedSocket() socket: Socket, @MessageBody() data: MesssageDto): void {
+  async handleMessage(@ConnectedSocket() socket: Socket, @MessageBody() data: MesssageDto): Promise<void> {
     console.log(data.content);
     console.log(data.id);
     this.messageRepository.insert({ senderId: socket.data.userId, friendId: data.id, content: data.content });
@@ -49,6 +51,7 @@ export class MessageGateway {
    * @param socket
    * @param data
    */
+  @UsePipes(new ValidationPipe())
   @SubscribeMessage('leave-message-room')
   async handleLeaveMessageRoom(
     @ConnectedSocket() socket: Socket,
