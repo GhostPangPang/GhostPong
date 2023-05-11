@@ -58,7 +58,7 @@ const padding = {
   md: '1.6rem',
   lg: '2.4rem',
   layout: '0 2.5rem',
-  header: '4rem',
+  header: '0 2.5rem',
   content: '0 4rem 4rem 4rem',
 };
 
