@@ -101,7 +101,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect {
    * @param userId
    * @returns
    */
-  private async findFriendList(userId: number): Promise<Friendship[]> {
+  private findFriendList(userId: number): Promise<Friendship[]> {
     return this.friendshipRepository.find({
       select: ['senderId', 'receiverId'],
       where: [
@@ -138,7 +138,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect {
    * @param userId user id
    * @param status online | offline | game
    */
-  private async emitUserStatusToFriends(userId: number, status: Status) {
+  private emitUserStatusToFriends(userId: number, status: Status) {
     this.server.to(`user-${userId}`).emit('user-status', { id: userId, status });
   }
   // !SECTION
