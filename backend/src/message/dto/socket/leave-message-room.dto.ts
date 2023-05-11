@@ -7,8 +7,8 @@ export class LeaveMessageRoomDto implements LeaveMessageRoom {
    * @description 친구 관계 아이디
    * @example 1
    */
-  @IsNumber()
   @IsNotEmpty()
+  @IsNumber()
   @Min(1)
   @Max(2147483647)
   friendId: number;
