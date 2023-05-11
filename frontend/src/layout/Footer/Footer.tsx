@@ -1,8 +1,6 @@
 import { ReactComponent as GithubIcon } from '@/svgs/Github.svg';
 import { ReactComponent as GhostIcon } from '@/svgs/GhostIcon.svg';
-import { Grid } from '../Grid';
-import { Text } from '@/common/Text';
-import { Box } from '@/common/Box';
+import { Grid, Text, Box } from '@/common';
 
 export const Footer = () => {
   return (

@@ -1,4 +1,4 @@
-import { Grid } from '@/layout/Grid';
+import { Grid } from '@/common/Grid';
 import { darken } from 'polished';
 import styled from 'styled-components';
 import newSvg from '@/svgs/circle-sm.svg';
