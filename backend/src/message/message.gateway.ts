@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { corsOption } from '../common/option/cors.option';
 import { Friendship } from '../entity/friendship.entity';
 import { MessageView } from '../entity/message-view.entity';
+import { Message } from '../entity/message.entity';
 import { SocketIdRepository } from '../repository/socket-id.repository';
 
 import { LeaveMessageRoomDto } from './dto/socket/leave-message-room.dto';
@@ -20,9 +21,12 @@ export class MessageGateway {
     private readonly socketIdRepository: SocketIdRepository,
     @InjectRepository(Friendship)
     private readonly friendshipRepository: Repository<Friendship>,
+    @InjectRepository(Message)
+    private readonly messageRepository: Repository<Message>,
     @InjectRepository(MessageView)
     private readonly messageViewRepository: Repository<MessageView>,
   ) {}
+
   /**
    * events
    */
@@ -35,6 +39,8 @@ export class MessageGateway {
   @SubscribeMessage('message')
   handleMessage(@ConnectedSocket() socket: Socket, @MessageBody() data: MesssageDto): void {
     console.log(data.content);
+    console.log(data.id);
+    this.messageRepository.insert({ senderId: socket.data.userId, friendId: data.id, content: data.content });
     socket.to(`friend-${data.id}`).emit('message', data);
   }
 
@@ -48,16 +54,17 @@ export class MessageGateway {
     @ConnectedSocket() socket: Socket,
     @MessageBody() data: LeaveMessageRoomDto,
   ): Promise<void> {
-    // const userId = this.socketIdRepository.findBySocketId(socket.id);
-    // if (userId === undefined) {
-    //   throw new Error('userId is undefined');
-    // }a
-    await this.messageViewRepository.insert({
-      user: { id: socket.data.myId }, // 사용자 ID를 MessageView의 user 필드에 저장
+    await this.messageViewRepository.save({
+      user: { id: socket.data.userId }, // 사용자 ID를 MessageView의 user 필드에 저장
       friend: { id: data.friendId }, // 친구 ID를 MessageView의 friend 필드에 저장
       lastViewTime: data.lastViewTime,
     });
+    console.log('data.friendId : ', data.friendId);
+    console.log('data lastViewTime : ', data.lastViewTime);
+
+    console.log('before leave ', socket.rooms);
     socket.leave(`friend-${data.friendId}`);
+    console.log('after leave ', socket.rooms);
   }
 
   /**
@@ -65,11 +72,6 @@ export class MessageGateway {
    */
 
   async joinMessageRoom(userId: number, friendId: number): Promise<void> {
-    const friendship = await this.friendshipRepository.findOneBy({ id: friendId, accept: true });
-    if (friendship === null) {
-      throw new Error('친구 관계가 존재하지 않습니다.');
-    } //  근데 이 로직 필요하지 않을수도?
-
     const socketId = this.socketIdRepository.find(userId);
     if (socketId === undefined) {
       throw new Error('socketId is undefined');
@@ -78,7 +80,39 @@ export class MessageGateway {
     if (socket === undefined) {
       throw new Error('socket is undefined');
     }
-    socket.emit(`message`, `socket is joined in messageRoom${friendId}}`);
+    socket.emit(`message`, { id: 0, content: `socket is joined in messageRoom${friendId}` });
     socket.join(`friend-${friendId}`);
+  }
+
+  /**
+   * @description joinMessageRoom 디버깅용입니다. 클라이언트랑 확인해서 joinMessageRoom 잘 동작하면 이 이벤트 지울 예정
+   * @param socket
+   * @param friendId
+   */
+  @SubscribeMessage('join-room')
+  async joinRoom(@ConnectedSocket() socket: Socket, @MessageBody() friendId: number): Promise<void> {
+    console.log(friendId);
+    console.log(socket.data.userId);
+    const friendship = await this.friendshipRepository.findOneBy([
+      { id: friendId, senderId: socket.data.userId, accept: true },
+      { id: friendId, receiverId: socket.data.userId, accept: true },
+    ]);
+    if (friendship === null) {
+      throw new Error('친구 관계가 존재하지 않습니다.');
+    } //  근데 이 로직 필요하지 않을수도?
+
+    const socketId = this.socketIdRepository.find(socket.data.userId);
+    console.log(socketId);
+    if (socketId === undefined) {
+      throw new Error('socketId is undefined');
+    }
+    const socketf = this.server.sockets.sockets.get(socketId.socketId);
+    if (socketf === undefined) {
+      throw new Error('socket is undefined');
+    }
+    socketf.emit(`message`, { id: 0, content: `socket is joined in messageRoom${friendId}` });
+    console.log('join ', socket.rooms);
+    socket.join(`friend-${friendId}`);
+    console.log('after join ', socket.rooms);
   }
 }

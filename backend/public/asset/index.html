@@ -6,20 +6,39 @@
     <title>Websocket Chatting</title>
 
     <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+    <!-- <script src="../../src/message/dto/socket/"></script> -->
 
     <script>
-      const socket = io.connect({
-        extraHeaders: {
-          Authorization: '내 토큰 넣을 자리',
-        },
-      });
+      let socket;
+
+      function mytoken() {
+        const token = document.getElementById('token').value;
+        console.log(token);
+        socket = io.connect({
+          extraHeaders: {
+            // Authorization: token,
+            'x-my-id': Number(token),
+          },
+        });
+        if (socket) {
+          console.log('socket connect');
+        }
+        socket.on('message', function (data) {
+          const messagesList = document.getElementById('messages');
+          const messageItem = document.createElement('div');
+          const fullMessage = `${data.id}: ${data.content}`;
+          messageItem.textContent = fullMessage;
+          messagesList.appendChild(messageItem);
+        });
+      }
 
       let friendId;
       function joinRoom() {
         const id = document.getElementById('id').value;
-        console.log(typeof id);
-        frienId = Number(id);
-        socket.emit('join_room', friendId);
+        friendId = +id;
+        console.log(typeof Number(friendId));
+        console.log(friendId);
+        socket.emit('join-room', friendId);
       }
 
       // 메세지 전송
@@ -27,22 +46,35 @@
         const senderId = Number(document.getElementById('sender').value);
         const message = document.getElementById('message').value;
         const fullMessage = `${senderId}: ${message}`;
-
-        socket.emit('message', { senderId, friendId, content: fullMessage });
+        socket.emit('message', { id: friendId, content: fullMessage });
       }
 
-      // 메세지 수신
-      socket.on('message', function (message) {
-        // alert('메세지 수신');
+      function leaveRoom() {
+        socket.emit('leave-message-room', { friendId, lastViewTime: new Date() });
+      }
+
+      class MessageDto {
+        id;
+        content;
+      }
+
+      socket.on('message', function (data) {
         const messagesList = document.getElementById('messages');
         const messageItem = document.createElement('div');
-        messageItem.textContent = message;
+        const fullMessage = `${data.id}: ${data.content}`;
+        messageItem.textContent = fullMessage;
         messagesList.appendChild(messageItem);
       });
+      // 메세지 수신
     </script>
   </head>
   <body>
     <h1>San Chat</h1>
+    <div>
+      <input type="text" id="token" placeholder="내 토큰" style="width: 200px" />
+      <button onclick="mytoken()">내 토큰</button>
+    </div>
+
     <div>
       <input type="number" id="id" placeholder="친구관계id" style="width: 50px" />
       <button onClick="joinRoom()">가입</button>
@@ -54,6 +86,10 @@
 
     <div id="chat-log">
       <div id="messages"></div>
+    </div>
+
+    <div>
+      <button onclick="leaveRoom()">나가기</button>
     </div>
   </body>
 </html>
