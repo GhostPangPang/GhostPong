@@ -4,8 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "prod": "vite --mode production",
+    "dev": "vite --debug",
+    "prod": "vite --mode production --debug",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "postinstall": "cd .. && husky install frontend/.husky",
