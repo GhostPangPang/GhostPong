@@ -1,5 +1,5 @@
 import { Body, Controller, Get, HttpCode, HttpStatus, Post, Res, UseGuards } from '@nestjs/common';
-import { ApiHeaders, ApiNotFoundResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiConflictResponse, ApiHeaders, ApiNotFoundResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 
 import { AUTH_COOKIE_EXPIREIN } from '../common/constant';
@@ -56,20 +56,21 @@ export class AuthController {
   }
 
   /**
-   * @description 2차 인증 설정하기
+   * @description 2단계 인증 설정하기
    */
-  @ApiOperation({ summary: '2차 인증 설정하기' })
+  @ApiOperation({ summary: '2단계 인증 설정하기' })
   @ApiNotFoundResponse({ type: ErrorResponseDto, description: '유저 없음' })
+  @ApiConflictResponse({ type: ErrorResponseDto, description: '중복된 이메일 혹은 이미 인증 완료한 유저' })
   @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
   @HttpCode(HttpStatus.OK)
   @UseGuards(UserGuard)
   @Post('2fa')
-  setUp2FA(@ExtractUserId() myId: number, @Body('2fa') secondaryEmail: string) {
-    return this.authService.setUp2FA(myId, secondaryEmail);
+  twoFactorAuth(@ExtractUserId() myId: number, @Body('email') email: string) {
+    return this.authService.twoFactorAuth(myId, email);
   }
 
   /**
-   * @description 2차 인증 코드 검증하기
+   * @description 2단계 인증 코드 검증하기
       @ApiOperation({ summary: '2차 인증 코드 검증하기' })
       @ApiNotFoundResponse({ type: ErrorResponseDto, description: '유저 없음' })
       @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])

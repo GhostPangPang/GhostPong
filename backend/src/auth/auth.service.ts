@@ -2,6 +2,7 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
+import { MailerService } from '@nestjs-modules/mailer';
 import { Cache } from 'cache-manager';
 import { Repository } from 'typeorm';
 
@@ -19,6 +20,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly jwtConfigService: JwtConfigService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    private readonly mailerService: MailerService,
   ) {}
 
   // UNREGISTERD -> SIGN UP (Register)
@@ -52,13 +54,16 @@ export class AuthService {
     return this.jwtService.sign(payload, signOptions);
   }
 
-  // FIXME : delete it (tmp for test)
-  async cacheTest() {
-    await this.cacheManager.set('hello', 'world');
-    const value = await this.cacheManager.get('hello');
-    console.log(value);
+  async twoFactorAuth(myId: number, email: string) {
+    console.log(myId, email);
+    await this.mailerService.sendMail({
+      to: 'skqkdldhf98@gmail.com', // list of receivers
+      from: 'noreply@nestjs.com', // sender address
+      subject: 'Testing Nest MailerModule ✔', // Subject line
+      text: 'welcome', // plaintext body
+      html: '<b>welcome</b>', // HTML body content
+    });
   }
-  // setUp2FA(myId: number, secondaryEmail: string) {}
 
   // async verify2FA(myId: number) {
   //   // TODO 검증 로직 추가
