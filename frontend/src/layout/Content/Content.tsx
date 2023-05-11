@@ -3,29 +3,16 @@ import { Grid, GridItemProps } from '@/common/Grid';
 
 type ContentProps = {
   children?: React.ReactNode;
-} & GridItemProps &
-  Pick<ContainerProps, 'justifyContent' | 'alignItems'> &
-  Pick<LayoutProps, 'padding' | 'height'> &
-  Pick<FlexContainerProps, 'direction'>;
+};
 
-export const Content = ({
-  children,
-  direction,
-  justifyContent,
-  alignItems,
-  padding,
-  height,
-  ...props
-}: ContentProps) => {
+export const Content = ({ children }: ContentProps) => {
   return (
     <Grid
       as="main"
       container="flex"
-      direction={direction}
-      justifyContent={justifyContent}
-      alignItems={alignItems}
-      size={{ padding, height }}
-      {...props}
+      direction="column"
+      alignItems="center"
+      size={{ padding: 'content', height: 'calc(100% - 10rem)' }}
     >
       {children}
     </Grid>
