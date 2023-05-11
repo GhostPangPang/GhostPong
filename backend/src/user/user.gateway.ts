@@ -54,6 +54,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.userStatusRepository.delete(userId);
     this.socketIdRepository.delete(socket.data.userId);
     this.emitUserStatusToFriends(userId, 'offline');
+    this.server.socketsLeave(`user-${userId}`);
 
     console.log('WebSocketServer Disconnect');
     console.log(userId, 'is disconnected');
