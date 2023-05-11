@@ -54,11 +54,16 @@ export class MessageGateway {
     @ConnectedSocket() socket: Socket,
     @MessageBody() data: LeaveMessageRoomDto,
   ): Promise<void> {
-    await this.messageViewRepository.save({
-      user: { id: socket.data.userId }, // 사용자 ID를 MessageView의 user 필드에 저장
-      friend: { id: data.friendId }, // 친구 ID를 MessageView의 friend 필드에 저장
-      lastViewTime: data.lastViewTime,
-    });
+    await this.messageViewRepository.query(
+      `
+      INSERT INTO message_view (user_id, friend_id, last_view_time)
+      VALUES ($1, $2, $3)
+      ON CONFLICT (user_id, friend_id)
+      DO UPDATE SET last_view_time = EXCLUDED.last_view_time
+      `,
+      [socket.data.userId, data.friendId, data.lastViewTime],
+    );
+
     console.log('data.friendId : ', data.friendId);
     console.log('data lastViewTime : ', data.lastViewTime);
 
