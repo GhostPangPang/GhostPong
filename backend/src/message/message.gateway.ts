@@ -71,7 +71,7 @@ export class MessageGateway {
    * methods
    */
 
-  async joinMessageRoom(userId: number, friendId: number): Promise<void> {
+  joinMessageRoom(userId: number, friendId: number): void {
     const socketId = this.socketIdRepository.find(userId);
     if (socketId === undefined) {
       throw new Error('socketId is undefined');
