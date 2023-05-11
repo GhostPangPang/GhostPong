@@ -9,6 +9,7 @@ import { ProfilePage } from '@/pages/ProfilePage';
 import { EditProfilePage } from '@/pages/EditProfilePage';
 import { RegisterPage } from '@/pages/RegisterPage';
 import { ErrorBoundary } from 'react-error-boundary';
+import { GameListPage } from './pages/GameListPage';
 import { AuthHandler } from './AuthHandler';
 import { Loading } from './common/Loading/Loading';
 
