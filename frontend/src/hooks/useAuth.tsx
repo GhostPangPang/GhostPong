@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 const API = '/user';
 
 const getUserInfo = async () => {
-  const data = await get<UserInfoResponse>(API.USER.INFO);
+  return await get<UserInfoResponse>(API);
 };
 
 const initialData: UserInfoResponse = {
@@ -25,20 +25,20 @@ export const useAuth = () => {
   const {
     data = initialData,
     isLoading,
+    isFetching,
     refetch,
   } = useQuery<UserInfoResponse>({
-    queryKey: [API.USER.INFO],
+    queryKey: [API],
     queryFn: getUserInfo,
     retryOnMount: true,
     staleTime: Infinity,
     onError: (error) => {
-      console.log('useAuth error', error);
+      console.log('I can catch now', error);
     },
   });
 
   useEffect(() => {
-    console.log('useAuth data', data);
-    if (data) setUserInfo(data);
+    if (!isFetching && data) setUserInfo(data);
     else navigate('/pre');
   }, [data]);
 
