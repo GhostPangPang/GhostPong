@@ -33,6 +33,7 @@
     "react-router-dom": "^6.10.0",
     "recoil": "^0.7.7",
     "resize-observer-polyfill": "^1.5.1",
+    "socket.io-client": "^4.6.1",
     "styled-components": "^5.3.9",
     "styled-normalize": "^8.0.7"
   },
