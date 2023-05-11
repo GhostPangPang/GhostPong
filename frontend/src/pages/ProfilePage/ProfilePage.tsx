@@ -1,5 +1,5 @@
 import { getRank } from '@/libs/utils/rank';
-import { Grid } from '@/layout/Grid';
+import { Grid } from '@/common/Grid';
 import { Text } from '@/common/Text';
 import { RankBadge } from '@/common/RankBadge';
 import { Avatar } from '@/common/Avatar';

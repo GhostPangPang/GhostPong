@@ -22,6 +22,7 @@ const color = {
 const backgroundColor = color;
 
 const fontWeight = {
+  black: 900,
   bold: 700,
   medium: 500,
   regular: 400,

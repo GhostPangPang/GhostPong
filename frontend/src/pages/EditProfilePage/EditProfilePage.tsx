@@ -1,11 +1,5 @@
-import { Grid } from '@/layout/Grid';
-import { Text } from '@/common/Text';
-import { Box } from '@/common/Box';
+import { Grid, Text, Box, Avatar, CommonButton, InputBox, Toggle } from '@/common';
 import styled from 'styled-components';
-import { Avatar } from '@/common/Avatar';
-import { CommonButton } from '@/common/Button/CommonButton';
-import { InputBox } from '@/common/InputBox';
-import { Toggle } from '@/common/Toggle';
 
 interface EditFormProps {
   desc: string;

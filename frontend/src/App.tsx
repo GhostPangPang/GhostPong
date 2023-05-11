@@ -5,9 +5,11 @@ import { ScollableLayout } from './layout/ScrollableLayout';
 import { LobbyPage } from '@/pages/LobbyPage';
 import { PrePage } from '@/pages/PrePage';
 import { MessagePage } from '@/pages/MessagePage';
-import { ProfilePage } from './pages/ProfilePage';
+import { ProfilePage } from '@/pages/ProfilePage';
+import { EditProfilePage } from '@/pages/EditProfilePage';
+import { RegisterPage } from '@/pages/RegisterPage';
 import { ErrorBoundary } from 'react-error-boundary';
-import { EditProfilePage } from './pages/EditProfilePage';
+import { AuthHandler } from './AuthHandler';
 
 function App() {
   return (
@@ -15,17 +17,19 @@ function App() {
       <Suspense fallback={<h1>Loading</h1>}>
         <ErrorBoundary fallback={<h1>Error</h1>}>
           <Routes>
-            <Route path="/auth" element={<div>auth</div>} />
-            <Route path="/register" element={<div>register</div>} />
-            <Route path="/pre" element={<PrePage />} />
             <Route element={<MainLayout />}>
               <Route path="/" element={<LobbyPage />} />
               <Route path="/message" element={<MessagePage />} />
+              <Route path="/profile/:userId" element={<ProfilePage />} />
             </Route>
             <Route element={<ScollableLayout />}>
               <Route path="/profile/edit" element={<EditProfilePage />} />
               <Route path="/profile/:userId" element={<ProfilePage />} />
             </Route>
+            <Route path="/auth?/" element={<AuthHandler />} />
+            <Route path="/auth/register" element={<RegisterPage />} />
+            <Route path="/auth/2fa" element={<h1>2fa</h1>} />
+            <Route path="/pre" element={<PrePage />} />
           </Routes>
         </ErrorBoundary>
       </Suspense>

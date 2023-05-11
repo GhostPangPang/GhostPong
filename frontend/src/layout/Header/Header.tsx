@@ -1,6 +1,6 @@
 import { ReactComponent as Logo } from '@/svgs/logo-sm.svg';
 import { LayoutProps, ItemProps, ResponsiveProps } from '@/types/style';
-import { Grid } from '../Grid';
+import { Grid } from '@/common/Grid';
 import { Avatar, AvatarProps } from '@/common/Avatar';
 import { Dropbox, DropboxProps } from '@/common/Dropbox';
 import { Text } from '@/common/Text';

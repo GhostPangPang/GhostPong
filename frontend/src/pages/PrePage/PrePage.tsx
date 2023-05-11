@@ -1,8 +1,12 @@
 import { GameButton } from '@/common/Button/GameButton';
-import { Grid } from '@/layout/Grid';
+import { Grid } from '@/common/Grid';
 import { ReactComponent as Logo } from '@/svgs/logo-lg.svg';
 
 export const PrePage = () => {
+  const handleLogin = () => {
+    location.href = `${import.meta.env.VITE_API_URL}/auth/42login`;
+  };
+
   return (
     <Grid
       as="section"
@@ -15,7 +19,7 @@ export const PrePage = () => {
     >
       <Logo style={{ margin: '1.5rem' }} />
       <GameButton size="lg">GAME START</GameButton>
-      <GameButton size="lg" color="secondary">
+      <GameButton size="lg" color="secondary" onClick={handleLogin}>
         LOGIN
       </GameButton>
     </Grid>
