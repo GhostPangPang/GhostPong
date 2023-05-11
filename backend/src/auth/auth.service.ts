@@ -1,12 +1,12 @@
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Inject, Injectable } from '@nestjs/common';
+import { ConflictException, Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MailerService } from '@nestjs-modules/mailer';
 import { Cache } from 'cache-manager';
 import { Repository } from 'typeorm';
 
-import { AUTH_JWT_EXPIREIN, USER_JWT_EXPIREIN } from '../common/constant';
+import { AUTH_JWT_EXPIREIN, TWO_FACTOR_AUTH_EXPIREIN, USER_JWT_EXPIREIN } from '../common/constant';
 import { JwtConfigService } from '../config/auth/jwt/configuration.service';
 import { Auth } from '../entity/auth.entity';
 
@@ -55,7 +55,13 @@ export class AuthService {
   }
 
   async twoFactorAuth(myId: number, email: string) {
-    console.log(myId, email);
+    const myTwoFa = await this.authRepository.findOne({ where: { id: myId }, select: ['twoFa'] });
+    if (myTwoFa !== null) {
+      throw new ConflictException('이미 인증이 완료된 유저입니다.');
+    }
+    if ((await this.authRepository.findOneBy({ twoFa: email })) !== null) {
+      throw new ConflictException('이미 인증이 완료된 이메일입니다.');
+    }
     const code = String(Math.floor(Math.random() * 1000000)).padStart(6, '0');
 
     await this.mailerService.sendMail({
@@ -63,6 +69,8 @@ export class AuthService {
       subject: 'GhostPhong 인증번호입니다 ✔',
       html: this.getEmailTemplate(code),
     });
+
+    await this.cacheManager.set(`${myId}`, { email, code }, TWO_FACTOR_AUTH_EXPIREIN);
   }
 
   // async verify2FA(myId: number) {
