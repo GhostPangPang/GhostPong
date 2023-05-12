@@ -44,7 +44,7 @@ export const RegisterPage = () => {
 };
 
 const GameText = styled(Text)`
-  font-family: 'CookieRun', 'ChailceNoggin';
+  font-family: 'normal', 'game';
 `;
 
 export interface GameInputProps {
@@ -57,7 +57,7 @@ const GameInput = styled.input<GameInputProps>`
   border-radius: 0.8rem;
   padding: 0.8rem 1.6rem;
 
-  font-family: 'ChailceNoggin';
+  font-family: 'game';
   color: ${(props) => props.theme.color.foreground};
   font-weight: ${(props) => props.theme.fontWeight.bold};
   font-size: 2rem;
