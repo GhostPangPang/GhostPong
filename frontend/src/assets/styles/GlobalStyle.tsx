@@ -10,6 +10,10 @@ export const GlobalStyle = createGlobalStyle<{ theme: typeof theme }>`
     font-family: 'ChailceNoggin';
     src: url('/font/ChailceNoggin.ttf');
   }
+  @font-face {
+    font-family: 'CookieRun';
+    src: url('/font/CookieRun.ttf');
+  }
 
   /* 결과 → 16px × 62.5% = 10px */
   html {

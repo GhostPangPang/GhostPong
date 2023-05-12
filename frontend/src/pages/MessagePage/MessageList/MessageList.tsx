@@ -1,4 +1,4 @@
-import { Grid } from '@/layout/Grid';
+import { Grid } from '@/common/Grid';
 import { Box } from '@/common/Box';
 import { FriendResponse } from '@/dto/friend/response';
 import { MessageListItem, MessageListItemProps } from './MessageListItem';

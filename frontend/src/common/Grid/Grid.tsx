@@ -19,6 +19,7 @@ export type GridProps<T extends ContainerType = 'item'> = {
   container?: T;
   size?: LayoutProps;
   position?: PositionProps;
+  style?: React.CSSProperties;
   responsive?: ResponsiveProps;
 } & GridItemProps &
   LayoutProps &

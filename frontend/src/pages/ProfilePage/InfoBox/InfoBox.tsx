@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text } from '@/common/Text';
-import { Grid } from '@/layout/Grid';
+import { Grid } from '@/common/Grid';
 import { Box } from '@/common/Box';
 
 export interface InfoBoxProps {

@@ -5,6 +5,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  InternalServerErrorException,
   Param,
   Patch,
   Post,
@@ -91,6 +92,9 @@ export class UserController {
   @UseInterceptors(FileUploadInterceptor)
   @Post('image')
   uploadUserImage(@UploadedFile() file: Express.Multer.File, @Res() res: Response): void {
+    if (file === undefined) {
+      throw new InternalServerErrorException('이미지 업로드에 실패했습니다.');
+    }
     res.set('Location', file.path.slice(6));
     res.status(HttpStatus.CREATED).send({
       message: '이미지 업로드 완료되었습니다.',
