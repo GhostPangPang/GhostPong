@@ -8,4 +8,5 @@ export default () => ({
   //auth.id is auto generated
   status: faker.datatype.boolean() && faker.datatype.boolean() ? AuthStatus.UNREGISTERD : AuthStatus.REGISTERD,
   email: faker.internet.email(),
+  twoFa: faker.datatype.boolean() && faker.datatype.boolean() ? faker.internet.email() : undefined,
 });
