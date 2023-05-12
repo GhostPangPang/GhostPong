@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString, Max, Min, ValidateIf } from 'class-validator';
+import { IsDateString, IsNotEmpty, IsNumber, Max, Min } from 'class-validator';
 
 import { LastMessageView } from '@/types/message/socket/last-message-view.interface';
 
@@ -17,7 +17,6 @@ export class LastMessageViewDto implements LastMessageView {
    * @description 마지막으로 읽은 메세지의 sendingTime
    * @example 2020-12-12T12:12:12
    */
-  @ValidateIf((object, value) => typeof value === 'string' || value instanceof Date)
-  @IsString({ message: 'lastViewTime must be a string or a Date' })
+  @IsDateString()
   lastViewTime: Date | string;
 }
