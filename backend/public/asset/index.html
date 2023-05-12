@@ -49,7 +49,8 @@
       function leaveRoom() {
         const friendId = Number(document.getElementById('friendIdforleave').value);
         console.log(friendId);
-        socket.emit('leave-message-room', { friendId, lastViewTime: new Date() });
+        socket.emit('last-message-view', { friendId, lastViewTime: new Date() });
+        // socket.emit('last-message-view', { friendId, lastViewTime: new Number });
       }
 
       class MessageDto {
