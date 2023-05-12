@@ -101,10 +101,10 @@ export class AuthService {
   // SECTION private
   async deleteTwoFactorAuth(myId: number) {
     const auth = await this.authRepository.findOne({ where: { id: myId }, select: ['twoFa'] });
-    if (auth === null || auth.twoFa === '') {
+    if (auth === null) {
       throw new ConflictException('2단계 인증 이메일이 없습니다.');
     }
-    await this.authRepository.update({ id: myId }, { twoFa: '' });
+    await this.authRepository.update({ id: myId }, { twoFa: null });
     return { message: '2단계 인증 이메일이 삭제되었습니다.' };
   }
 
