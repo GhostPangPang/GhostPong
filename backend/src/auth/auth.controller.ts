@@ -1,27 +1,26 @@
-import { Controller, Get, Res, UseGuards } from '@nestjs/common';
-import { ApiHeaders, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Res, UseGuards } from '@nestjs/common';
+import { ApiConflictResponse, ApiHeaders, ApiNotFoundResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 
 import { AUTH_COOKIE_EXPIREIN } from '../common/constant';
+import { ExtractUserId } from '../common/decorator/extract-user-id.decorator';
+import { ErrorResponseDto } from '../common/dto/error-response.dto';
 import { AppConfigService } from '../config/app/configuration.service';
 
 import { AuthService } from './auth.service';
 import { ExtractUser } from './decorator/extract-user.decorator';
 import { SkipUserGuard } from './decorator/skip-user-guard.decorator';
 import { LoginInfoDto } from './dto/login-info.dto';
+import { TwoFactorAuthRequestDto } from './dto/request/two-factor-auth-request.dto';
 import { FtGuard } from './guard/ft.guard';
 import { GuestGuard } from './guard/guest.guard';
 import { SkipLoggedInUserGuard } from './guard/skip-logged-in-user.guard';
+import { UserGuard } from './guard/user.guard';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService, private readonly appConfigService: AppConfigService) {}
-
-  /*
-  @Post('2fa')
-  updateTwoFactorAuthentication() {}
-  */
 
   @ApiOperation({ summary: '42 로그인' })
   @UseGuards(SkipLoggedInUserGuard, FtGuard) // strategy.constructor
@@ -56,6 +55,33 @@ export class AuthController {
       res.redirect(`${clientUrl}/auth?token=${token}`);
     }
   }
+
+  /**
+   * @description 2단계 인증 설정하기
+   */
+  @ApiOperation({ summary: '2단계 인증 설정하기' })
+  @ApiNotFoundResponse({ type: ErrorResponseDto, description: '유저 없음' })
+  @ApiConflictResponse({ type: ErrorResponseDto, description: '중복된 이메일 혹은 이미 인증 완료한 유저' })
+  @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(UserGuard)
+  @Post('2fa')
+  twoFactorAuth(@ExtractUserId() myId: number, @Body() { email }: TwoFactorAuthRequestDto) {
+    return this.authService.twoFactorAuth(myId, email);
+  }
+
+  /**
+   * @description 2단계 인증 코드 검증하기
+      @ApiOperation({ summary: '2차 인증 코드 검증하기' })
+      @ApiNotFoundResponse({ type: ErrorResponseDto, description: '유저 없음' })
+      @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
+      @HttpCode(HttpStatus.OK)
+      @UseGuards(UserGuard)
+      @Post('2fa/verify')
+      verify2FA(@ExtractUserId() myId: number) {
+        return this.authService.verify2FA(myId);
+      }
+   */
 
   // FIXME : delete it (tmp for test)
   // 닉네임 설정하는 페이지로 redirect

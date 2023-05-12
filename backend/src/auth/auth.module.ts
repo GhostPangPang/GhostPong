@@ -1,11 +1,14 @@
 import { CacheModule, Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { MailerModule } from '@nestjs-modules/mailer';
 
 import { TWO_FACTOR_AUTH_EXPIREIN, TWO_FACTOR_AUTH_MAX } from '../common/constant';
 import { AppConfigModule } from '../config/app/configuration.module';
 import { FtAuthConfigModule } from '../config/auth/ft/configuration.module';
 import { JwtConfigModule } from '../config/auth/jwt/configuration.module';
+import { MailerConfigModule } from '../config/auth/mailer/configuration.module';
+import { MailerConfigService } from '../config/auth/mailer/configuration.service';
 import { Auth } from '../entity/auth.entity';
 
 import { AuthController } from './auth.controller';
@@ -21,11 +24,17 @@ import { UserStrategy } from './strategy/user.strategy';
     JwtModule.register({}),
     FtAuthConfigModule,
     JwtConfigModule,
+    MailerConfigModule,
     AppConfigModule,
     CacheModule.register({
       store: 'memory',
       ttl: TWO_FACTOR_AUTH_EXPIREIN,
       max: TWO_FACTOR_AUTH_MAX,
+    }),
+    MailerModule.forRootAsync({
+      imports: [MailerConfigModule],
+      useFactory: (mailerConfigService: MailerConfigService) => mailerConfigService.mailerOptions,
+      inject: [MailerConfigService],
     }),
   ],
   providers: [AuthService, FtStrategy, GuestStrategy, UserStrategy, UserGuard],
