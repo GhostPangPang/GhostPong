@@ -57,7 +57,7 @@ export class AuthService {
 
   async twoFactorAuth(myId: number, email: string) {
     const myTwoFa = await this.authRepository.findOne({ where: { id: myId }, select: ['twoFa'] });
-    if (myTwoFa !== null && myTwoFa.twoFa !== '') {
+    if (myTwoFa !== null) {
       throw new ConflictException('이미 인증이 완료된 유저입니다.');
     }
     if ((await this.authRepository.findOneBy({ twoFa: email })) !== null) {
@@ -77,7 +77,7 @@ export class AuthService {
 
   async verifyTwoFactorAuth(myId: number, code: string) {
     const auth = await this.authRepository.findOneBy({ id: myId });
-    if (auth !== null && auth.twoFa !== '') {
+    if (auth !== null) {
       throw new ConflictException('이미 2단계 인증이 완료된 유저입니다.');
     }
 
