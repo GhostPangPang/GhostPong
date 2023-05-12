@@ -34,7 +34,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect {
   /**
    * events
    */
-  handleConnection(@ConnectedSocket() socket: Socket): void {
+  async handleConnection(@ConnectedSocket() socket: Socket): Promise<void> {
     const myId = this.getUserIdFromHeader(socket);
     if (myId === undefined) {
       // TODO: error handling
@@ -45,7 +45,8 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect {
     console.log(`connected socket's user id is `, myId);
     socket.data.userId = myId;
     this.socketIdRepository.insert({ userId: myId, socketId: socket.id });
-    this.addUserToRooms(socket, myId);
+    this.userStatusRepository.insert({ userId: myId, status: 'online' });
+    await this.addUserToRooms(socket, myId);
     this.emitUserStatusToFriends(myId, 'online');
   }
 
@@ -109,7 +110,8 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect {
     friendList.map(({ senderId, receiverId }) => {
       const friendId = senderId === userId ? receiverId : senderId;
       if (this.userStatusRepository.find(friendId)?.status === 'online') {
-        const socketId = this.socketIdRepository.find(userId)?.socketId; // find socket id by user id
+        // 접속 중인 친구의 socketId 를 찾는다.
+        const socketId = this.socketIdRepository.find(friendId)?.socketId;
         if (socketId !== undefined) {
           this.server.in(socketId).socketsJoin(userRoom); // join my socket to friend's room
           socket.join(`user-${friendId}`); // join friend's socket to my room
