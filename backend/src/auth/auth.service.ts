@@ -1,5 +1,5 @@
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { ConflictException, ForbiddenException, Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, ConflictException, ForbiddenException, Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MailerService } from '@nestjs-modules/mailer';
@@ -57,7 +57,7 @@ export class AuthService {
 
   async twoFactorAuth(myId: number, email: string) {
     const myTwoFa = await this.authRepository.findOne({ where: { id: myId }, select: ['twoFa'] });
-    if (myTwoFa !== null) {
+    if (myTwoFa !== null && myTwoFa.twoFa !== '') {
       throw new ConflictException('이미 인증이 완료된 유저입니다.');
     }
     if ((await this.authRepository.findOneBy({ twoFa: email })) !== null) {
@@ -77,7 +77,7 @@ export class AuthService {
 
   async verifyTwoFactorAuth(myId: number, code: string) {
     const auth = await this.authRepository.findOneBy({ id: myId });
-    if (auth !== null) {
+    if (auth !== null && auth.twoFa !== '') {
       throw new ConflictException('이미 2단계 인증이 완료된 유저입니다.');
     }
 
@@ -89,7 +89,7 @@ export class AuthService {
       throw new ConflictException('이미 2단계 인증이 완료된 이메일입니다.');
     }
     if (value.code !== code) {
-      throw new ForbiddenException('잘못된 인증 코드입니다.');
+      throw new BadRequestException('잘못된 인증 코드입니다.');
     }
 
     await this.authRepository.update({ id: myId }, { twoFa: value.email });
