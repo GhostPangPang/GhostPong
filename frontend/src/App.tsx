@@ -23,6 +23,7 @@ function App() {
             <Route element={<MainLayout />}>
               <Route path="/" element={<LobbyPage />} />
               <Route path="/message" element={<MessagePage />} />
+              <Route path="/game/list" element={<GameListPage />} />
               <Route element={<FooterLayout />}>
                 <Route path="/profile/:userId" element={<ProfilePage />} />
                 <Route path="/profile/edit" element={<EditProfilePage />} />
