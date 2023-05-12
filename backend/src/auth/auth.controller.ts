@@ -1,5 +1,12 @@
 import { Body, Controller, Get, HttpCode, HttpStatus, Post, Res, UseGuards } from '@nestjs/common';
-import { ApiConflictResponse, ApiHeaders, ApiNotFoundResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiConflictResponse,
+  ApiForbiddenResponse,
+  ApiHeaders,
+  ApiNotFoundResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Response } from 'express';
 
 import { AUTH_COOKIE_EXPIREIN } from '../common/constant';
@@ -10,12 +17,12 @@ import { AppConfigService } from '../config/app/configuration.service';
 import { AuthService } from './auth.service';
 import { ExtractUser } from './decorator/extract-user.decorator';
 import { SkipUserGuard } from './decorator/skip-user-guard.decorator';
-import { LoginInfoDto } from './dto/login-info.dto';
+import { CodeVerificationRequestDto } from './dto/request/code-verification-request.dto';
 import { TwoFactorAuthRequestDto } from './dto/request/two-factor-auth-request.dto';
 import { FtGuard } from './guard/ft.guard';
-import { GuestGuard } from './guard/guest.guard';
 import { SkipLoggedInUserGuard } from './guard/skip-logged-in-user.guard';
 import { UserGuard } from './guard/user.guard';
+import { LoginInfo } from './type/login-info';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -34,7 +41,7 @@ export class AuthController {
   @UseGuards(FtGuard) // strategy.validate() -> return 값 기반으로 request 객체 담아줌
   @SkipUserGuard()
   @Get('42login/callback')
-  async callbackLogin(@ExtractUser() user: LoginInfoDto, @Res() res: Response) {
+  async callbackLogin(@ExtractUser() user: LoginInfo, @Res() res: Response) {
     // 또는 @ReqUser('email') email: string console.log('42 Login Callback!');
     const clientUrl = this.appConfigService.clientUrl;
 
@@ -72,45 +79,16 @@ export class AuthController {
 
   /**
    * @description 2단계 인증 코드 검증하기
-      @ApiOperation({ summary: '2차 인증 코드 검증하기' })
-      @ApiNotFoundResponse({ type: ErrorResponseDto, description: '유저 없음' })
-      @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
-      @HttpCode(HttpStatus.OK)
-      @UseGuards(UserGuard)
-      @Post('2fa/verify')
-      verify2FA(@ExtractUserId() myId: number) {
-        return this.authService.verify2FA(myId);
-      }
    */
-
-  // FIXME : delete it (tmp for test)
-  // 닉네임 설정하는 페이지로 redirect
-  @SkipUserGuard()
-  @UseGuards(GuestGuard)
-  @Get('register')
-  test2() {
-    console.log('Redirect : Guest Guard success!');
-    return 'Redirect to NICKNAME SETTING page!';
-  }
-
-  // FIXME : delete it (tmp for test)
-  // 최종적으로 redirect할 lobby page라고 가정
-  // @UseGuards(UserGuard)
-  @Get()
-  test() {
-    // test(@Query('token') token: string) {
-    console.log('Redirect : User Guard success!');
-    // console.log(token);
-    return 'Redirect to LOBBY page!';
-  }
-
-  // FIXME test
-  @ApiOperation({ summary: 'token test' })
-  @ApiHeaders([{ name: 'Authorization', description: 'jwt token' }])
-  // @UseGuards(UserGuard)
-  @SkipUserGuard()
-  @Get('test')
-  tokenTest() {
-    console.log('====================');
+  @ApiOperation({ summary: '2단계 인증 코드 검증하기' })
+  @ApiNotFoundResponse({ type: ErrorResponseDto, description: '유저 없음' })
+  @ApiConflictResponse({ type: ErrorResponseDto, description: '중복된 이메일 혹은 이미 인증 완료한 유저' })
+  @ApiForbiddenResponse({ type: ErrorResponseDto, description: '2단계 인증 코드가 일치하지 않음' })
+  @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(UserGuard)
+  @Post('2fa/verify')
+  verifyTwoFactorAuth(@ExtractUserId() myId: number, @Body() { code }: CodeVerificationRequestDto) {
+    return this.authService.verifyTwoFactorAuth(myId, code);
   }
 }

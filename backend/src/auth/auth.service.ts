@@ -1,5 +1,5 @@
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { ConflictException, Inject, Injectable } from '@nestjs/common';
+import { ConflictException, ForbiddenException, Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MailerService } from '@nestjs-modules/mailer';
@@ -10,7 +10,8 @@ import { AUTH_JWT_EXPIREIN, TWO_FACTOR_AUTH_EXPIREIN, USER_JWT_EXPIREIN } from '
 import { JwtConfigService } from '../config/auth/jwt/configuration.service';
 import { Auth } from '../entity/auth.entity';
 
-import { LoginInfoDto } from './dto/login-info.dto';
+import { LoginInfo } from './type/login-info';
+import { TwoFactorAuth } from './type/two-factor-auth';
 
 @Injectable()
 export class AuthService {
@@ -24,7 +25,7 @@ export class AuthService {
   ) {}
 
   // UNREGISTERD -> SIGN UP (Register)
-  async signUp(user: LoginInfoDto): Promise<string> {
+  async signUp(user: LoginInfo): Promise<string> {
     const auth = await this.authRepository.findOneBy({ email: user.email });
 
     if (auth === null) {
@@ -71,13 +72,33 @@ export class AuthService {
     });
 
     await this.cacheManager.set(`${myId}`, { email, code }, TWO_FACTOR_AUTH_EXPIREIN);
+    return { message: '2단계 인증 이메일이 전송되었습니다.' };
   }
 
-  // async verify2FA(myId: number) {
-  //   // TODO 검증 로직 추가
-  //   // NOTE 2차 인증 완료되었다고 가정
-  // }
+  async verifyTwoFactorAuth(myId: number, code: string) {
+    const auth = await this.authRepository.findOneBy({ id: myId });
+    if (auth?.twoFa !== null) {
+      throw new ConflictException('이미 2단계 인증이 완료된 유저입니다.');
+    }
 
+    const value: TwoFactorAuth | undefined = await this.cacheManager.get(`${myId}`);
+    if (value === undefined) {
+      throw new ForbiddenException('유효하지 않은 인증 코드입니다.');
+    }
+    if ((await this.authRepository.findOneBy({ email: value.email })) !== null) {
+      throw new ConflictException('이미 2단계 인증이 완료된 이메일입니다.');
+    }
+    if (value.code !== code) {
+      throw new ForbiddenException('잘못된 인증 코드입니다.');
+    }
+
+    await this.authRepository.update({ id: myId }, { twoFa: value.email });
+    await this.cacheManager.del(`${myId}`);
+
+    return { message: '2단계 인증이 완료되었습니다.' };
+  }
+
+  // SECTION private
   private getEmailTemplate(code: string) {
     return `
     <!DOCTYPE html>
