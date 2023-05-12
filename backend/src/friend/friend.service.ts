@@ -133,13 +133,14 @@ export class FriendService {
    * @returns
    */
   async acceptFriendRequest(friendId: number, myId: number): Promise<SuccessResponseDto> {
-    const { senderId, receiverId } = await this.findExistFriendship(friendId, false);
-    if (receiverId !== myId) {
+    const friendship = await this.findExistFriendRequestWithUser(friendId);
+    if (friendship.receiver.id !== myId) {
       throw new ForbiddenException('친구 신청을 받은 유저만 수락할 수 있습니다.');
     }
-    await this.checkFriendLimit(receiverId, '나');
-    await this.checkFriendLimit(senderId, '상대방');
+    await this.checkFriendLimit(friendship.receiver.id, '나');
+    await this.checkFriendLimit(friendship.senderId, '상대방');
     await this.friendshipRepository.update({ id: friendId }, { accept: true });
+    this.friendGateway.emitFriendAccepted(friendship);
     return { message: '친구 추가 되었습니다.' };
   }
 
@@ -209,6 +210,23 @@ export class FriendService {
    */
   private async findExistFriendship(friendId: number, accept?: boolean): Promise<Friendship> {
     const friendship = await this.friendshipRepository.findOneBy({ id: friendId, accept });
+    if (friendship === null) {
+      throw new NotFoundException('친구 관계가 존재하지 않습니다.');
+    }
+    return friendship;
+  }
+
+  /**
+   * friendId 로 유효한 친구관계를 찾아서 receiver 정보(나)와 함께 반환.
+   *
+   * @param friendId 찾을 친구관계의 id
+   * @returns
+   */
+  private async findExistFriendRequestWithUser(friendId: number): Promise<Friendship> {
+    const friendship = await this.friendshipRepository.findOne({
+      relations: ['receiver'],
+      where: { id: friendId, accept: false },
+    });
     if (friendship === null) {
       throw new NotFoundException('친구 관계가 존재하지 않습니다.');
     }

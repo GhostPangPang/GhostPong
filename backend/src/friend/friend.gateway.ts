@@ -41,6 +41,26 @@ export class FriendGateway {
     });
   }
 
+  /**
+   * 친구 요청이 수락되었을 때 친구 요청을 보낸 유저에게 이벤트를 보낸다.
+   *
+   * @param friendId 친구 관계 id
+   * @param senderId 친구신청을 보낸 유저의 id
+   */
+  emitFriendAccepted(friendship: Friendship): void {
+    const socketId = this.socketIdRepository.find(friendship.senderId)?.socketId;
+    if (socketId === undefined) {
+      return;
+    }
+    this.server.to(socketId).emit('friend-accepted', {
+      id: friendship.id,
+      lastMessageTime: null,
+      lastViewTime: null,
+      user: friendship.receiver,
+      status: 'online',
+    });
+  }
+
   // SECTION: private
   private findFriendsId(userId: number): Promise<Friendship[]> {
     return this.friendshipRepository.find({
