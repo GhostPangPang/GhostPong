@@ -3,7 +3,7 @@ import { Color } from '@/types/style';
 import { darken, lighten } from 'polished';
 
 export interface GameButtonProps {
-  size: 'sm' | 'md' | 'lg';
+  size: 'sm' | 'md' | 'lg' | 'img';
   color?: Color;
 }
 
@@ -12,7 +12,7 @@ export const GameButton = styled.button<GameButtonProps>`
   align-items: center;
   justify-content: center;
 
-  font-family: 'ChailceNoggin';
+  font-family: 'game';
   font-weight: ${(props) => props.theme.fontWeight.bold};
 
   background-color: ${(props) => props.theme.color.gray200};
@@ -53,6 +53,13 @@ export const GameButton = styled.button<GameButtonProps>`
           border-radius: 0.8rem;
           padding: 0.8rem 1.6rem;
           font-size: 1.6rem;
+        `;
+      case 'img':
+        return `
+          width: fit-content;
+          height: fit-content;
+          border-radius: 0.8rem;
+          padding: 0.8rem 0.8rem;
         `;
     }
   }}
