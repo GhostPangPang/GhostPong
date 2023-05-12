@@ -1,4 +1,4 @@
-import { Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, Query } from '@nestjs/common';
+import { Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Query } from '@nestjs/common';
 import {
   ApiConflictResponse,
   ApiForbiddenResponse,
@@ -67,7 +67,7 @@ export class BlockedController {
   @Delete(':userId')
   deleteBlockedUser(
     @ExtractUserId() myId: number,
-    @Param('userId', ParseIntPipe) userId: number,
+    @Param('userId', NonNegativeIntPipe, CheckUserIdPipe) userId: number,
   ): Promise<SuccessResponseDto> {
     return this.blockedService.deleteBlockedUser(myId, userId);
   }

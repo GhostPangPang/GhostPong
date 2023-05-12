@@ -45,13 +45,7 @@ export class FriendService {
           const friend = sender.id === userId ? receiver : sender;
           const status = this.userStatusRepository.find(friend.id)?.status || 'offline';
           this.messageGateway.joinMessageRoom(userId, friend.id);
-          return {
-            id,
-            status,
-            user: friend,
-            lastMessageTime,
-            lastViewTime,
-          };
+          return { id, status, user: friend, lastMessageTime, lastViewTime };
         },
       ),
     };

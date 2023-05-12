@@ -1,4 +1,4 @@
-type Status = 'online' | 'offline' | 'game';
+export type Status = 'online' | 'offline' | 'game';
 
 export class UserStatus {
   userId: number;
