@@ -82,20 +82,6 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   /**
-   * user 의 id 로 socket 을 찾아서 반환한다.
-   *
-   * @param userId user id
-   * @returns user's socket instance
-   */
-  private getSocketByUserId(userId: number): Socket | undefined {
-    const socketId = this.socketIdRepository.find(userId)?.socketId;
-    if (socketId === undefined) {
-      return undefined;
-    }
-    return this.server.sockets.sockets.get(socketId);
-  }
-
-  /**
    * user 의 id 로 친구 목록을 찾아서 반환한다.
    *
    * @param userId
@@ -114,8 +100,8 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect {
   /**
    * user 의 접속 중인 친구 목록을 찾아서 user 의 room 에 친구들을 join, 친구들의 room 에 user 를 join 시킨다.
    *
-   * @param socket
-   * @param userId
+   * @param socket 현재 접속 중인 user socket 객체
+   * @param userId 현재 접속 중인 user 의 user id
    */
   private async addUserToRooms(socket: Socket, userId: number): Promise<void> {
     const userRoom = `user-${userId}`;
@@ -123,9 +109,9 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect {
     friendList.map(({ senderId, receiverId }) => {
       const friendId = senderId === userId ? receiverId : senderId;
       if (this.userStatusRepository.find(friendId)?.status === 'online') {
-        const friendSocket = this.getSocketByUserId(friendId);
-        if (friendSocket !== undefined) {
-          friendSocket.join(userRoom); // join my socket to friend's room
+        const socketId = this.socketIdRepository.find(userId)?.socketId; // find socket id by user id
+        if (socketId !== undefined) {
+          this.server.in(socketId).socketsJoin(userRoom); // join my socket to friend's room
           socket.join(`user-${friendId}`); // join friend's socket to my room
         }
       }
@@ -141,5 +127,5 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect {
   private emitUserStatusToFriends(userId: number, status: Status) {
     this.server.to(`user-${userId}`).emit('user-status', { id: userId, status });
   }
-  // !SECTION
+  // !SECTION: private
 }

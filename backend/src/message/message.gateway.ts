@@ -5,10 +5,8 @@ import { Server, Socket } from 'socket.io';
 import { Repository } from 'typeorm';
 
 import { corsOption } from '../common/option/cors.option';
-import { Friendship } from '../entity/friendship.entity';
 import { MessageView } from '../entity/message-view.entity';
 import { Message } from '../entity/message.entity';
-import { SocketIdRepository } from '../repository/socket-id.repository';
 
 import { LastMessageViewDto } from './dto/socket/last-message-view.dto';
 import { MesssageDto } from './dto/socket/message.dto';
@@ -19,9 +17,6 @@ export class MessageGateway {
   public server: Server;
 
   constructor(
-    private readonly socketIdRepository: SocketIdRepository,
-    @InjectRepository(Friendship)
-    private readonly friendshipRepository: Repository<Friendship>,
     @InjectRepository(Message)
     private readonly messageRepository: Repository<Message>,
     @InjectRepository(MessageView)
@@ -40,8 +35,8 @@ export class MessageGateway {
   @UsePipes(new ValidationPipe())
   @SubscribeMessage('message')
   async handleMessage(@ConnectedSocket() socket: Socket, @MessageBody() data: MesssageDto): Promise<void> {
-    console.log(data.content);
-    console.log(data.id);
+    console.log('friend id is ', data.id);
+    console.log('content is ', data.content);
     this.messageRepository.insert({ senderId: socket.data.userId, friendId: data.id, content: data.content });
     socket.to(`friend-${data.id}`).emit('message', data);
   }
@@ -66,37 +61,5 @@ export class MessageGateway {
     console.log('data.friendId : ', data.friendId);
     console.log('data lastViewTime : ', data.lastViewTime);
     // console.log(typeof data.lastViewTime);
-  }
-
-  @SubscribeMessage('join-message-room')
-  async handleJoinMessageRoom(@ConnectedSocket() socket: Socket): Promise<void> {
-    (
-      await this.friendshipRepository.find({
-        select: ['id'],
-        where: [
-          { senderId: socket.data.userId, accept: true },
-          { receiverId: socket.data.userId, accept: true },
-        ],
-      })
-    ).map(({ id }) => {
-      this.joinMessageRoom(socket.data.userId, id);
-    });
-  }
-
-  /**
-   * methods
-   */
-
-  joinMessageRoom(userId: number, friendId: number): void {
-    const socketId = this.socketIdRepository.find(userId);
-    if (socketId === undefined) {
-      throw new Error('socketId is undefined');
-    }
-    const socket = this.server.sockets.sockets.get(socketId.socketId);
-    if (socket === undefined) {
-      throw new Error('socket is undefined');
-    }
-    socket.emit(`message`, { id: 0, content: `socket is joined in messageRoom${friendId}` });
-    socket.join(`friend-${friendId}`);
   }
 }
