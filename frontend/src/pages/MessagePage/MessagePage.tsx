@@ -3,7 +3,6 @@ import { MessageList } from './MessageList';
 import { Message } from './Message';
 import { useFriends } from '@/hooks/useFriends';
 import { Suspense, useState } from 'react';
-import { CommonButton } from '@/common/Button/CommonButton';
 import { GameButton } from '@/common/Button/GameButton';
 
 export const MessagePage = () => {
@@ -12,7 +11,6 @@ export const MessagePage = () => {
     data: { friends },
   } = useFriends();
 
-  console.log('selected', selectedFriendId);
   return (
     <Grid
       container="grid"

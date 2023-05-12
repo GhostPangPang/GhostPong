@@ -25,6 +25,7 @@ export const GlobalStyle = createGlobalStyle<{ theme: typeof theme }>`
     flex-direction: column;
     height: 100%;
     align-items: center;
+    justify-content: center;
   }
 
   html,

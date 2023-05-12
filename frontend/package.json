@@ -4,8 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --debug",
-    "prod": "vite --mode production --debug",
+    "dev": "vite",
+    "prod": "vite --mode production",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "postinstall": "cd .. && husky install frontend/.husky",
@@ -33,6 +33,7 @@
     "react-router-dom": "^6.10.0",
     "recoil": "^0.7.7",
     "resize-observer-polyfill": "^1.5.1",
+    "socket.io-client": "^4.6.1",
     "styled-components": "^5.3.9",
     "styled-normalize": "^8.0.7"
   },
@@ -78,6 +79,7 @@
     "lint-staged": ">=10",
     "prettier": "^2.8.7",
     "prop-types": "^15.8.1",
+    "rollup-plugin-visualizer": "^5.9.0",
     "storybook": "^7.0.2",
     "typescript": "^5.0.3",
     "vite": "^4.2.0",

@@ -4,6 +4,7 @@
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import svgr from 'vite-plugin-svgr';
+import { visualizer } from 'rollup-plugin-visualizer';
 
 import path from 'path';
 
@@ -11,7 +12,17 @@ import path from 'path';
 export default ({ mode }) => {
   process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
   return defineConfig({
-    plugins: [react(), svgr()],
+    plugins: [
+      react(),
+      svgr(),
+      visualizer({
+        template: 'treemap', // or sunburst
+        open: true,
+        gzipSize: true,
+        brotliSize: true,
+        filename: 'analyse.html',
+      }),
+    ],
     resolve: {
       extensions: ['.ts', '.tsx', '.js', '.jsx', '.json', '.wasm'],
       alias: {

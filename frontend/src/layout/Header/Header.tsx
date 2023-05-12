@@ -1,31 +1,45 @@
 import { ReactComponent as Logo } from '@/svgs/logo-sm.svg';
-import { LayoutProps, ItemProps, ResponsiveProps } from '@/types/style';
+import { ResponsiveProps } from '@/types/style';
 import { Grid } from '@/common/Grid';
-import { Avatar, AvatarProps } from '@/common/Avatar';
-import { Dropbox, DropboxProps } from '@/common/Dropbox';
+import { Avatar } from '@/common/Avatar';
+import { Dropbox } from '@/common/Dropbox';
 import { Text } from '@/common/Text';
-import { RankProgressBar, RankProgressBarProps } from '@/common/ProgressBar/RankProgressBar';
-import { Link } from 'react-router-dom';
+import { RankProgressBar } from '@/common/ProgressBar/RankProgressBar';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
+import { removeAccessToken } from '@/libs/api/auth';
 
-type HeaderProps = {
-  nickname: string;
-  exp: RankProgressBarProps['exp'];
-  image: AvatarProps['src'] | null;
-  items: DropboxProps['items'];
-} & Pick<LayoutProps, 'padding' | 'height'> &
-  Pick<ItemProps, 'flexGrow'> &
-  Pick<ResponsiveProps, 'xs'>;
+type HeaderProps = Pick<ResponsiveProps, 'xs' | 'md' | 'lg'>;
 
-export const Header = ({ nickname, image, exp, items, padding, height, flexGrow, xs }: HeaderProps) => {
+export const Header = ({ xs, md, lg }: HeaderProps) => {
+  const { userInfo } = useAuth();
+  const navigate = useNavigate();
+  const { id, nickname, exp, image } = userInfo;
+
+  const items = [
+    { label: '프로필', onClick: () => navigate(`/profile/${id}`) },
+    { label: '메세지', onClick: () => navigate('/message') },
+    { label: '내 정보 수정', onClick: () => navigate('/profile/edit') },
+    {
+      label: '로그아웃',
+      onClick: () => {
+        removeAccessToken();
+        navigate('/pre');
+      },
+    },
+  ];
+
   return (
     <Grid
       as="header"
       container="flex"
       justifyContent="space-between"
       alignItems="center"
-      size={{ height, padding }}
-      flexGrow={flexGrow}
+      size={{ height: '10rem', padding: 'header' }}
+      flexGrow={0}
       xs={xs}
+      md={md}
+      lg={lg}
     >
       <Grid container="flex" justifyContent="start" alignItems="center" xs={2}>
         <Link to="/">
