@@ -10,7 +10,7 @@ import { MessageView } from '../entity/message-view.entity';
 import { Message } from '../entity/message.entity';
 import { SocketIdRepository } from '../repository/socket-id.repository';
 
-import { LeaveMessageRoomDto } from './dto/socket/leave-message-room.dto';
+import { LastMessageViewDto } from './dto/socket/last-message-view.dto';
 import { MesssageDto } from './dto/socket/message.dto';
 
 @WebSocketGateway({ cors: corsOption })
@@ -52,10 +52,10 @@ export class MessageGateway {
    * @param data
    */
   @UsePipes(new ValidationPipe())
-  @SubscribeMessage('leave-message-room')
+  @SubscribeMessage('last-message-view')
   async handleLeaveMessageRoom(
     @ConnectedSocket() socket: Socket,
-    @MessageBody() data: LeaveMessageRoomDto,
+    @MessageBody() data: LastMessageViewDto,
   ): Promise<void> {
     await this.messageViewRepository.save({
       user: { id: socket.data.userId }, // 사용자 ID를 MessageView의 user 필드에 저장
@@ -65,10 +65,7 @@ export class MessageGateway {
 
     console.log('data.friendId : ', data.friendId);
     console.log('data lastViewTime : ', data.lastViewTime);
-
-    console.log('before leave ', socket.rooms);
-    socket.leave(`friend-${data.friendId}`);
-    console.log('after leave ', socket.rooms);
+    // console.log(typeof data.lastViewTime);
   }
 
   @SubscribeMessage('join-message-room')
