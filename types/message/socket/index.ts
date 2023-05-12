@@ -1,2 +1,2 @@
 export { Message } from "./message.interface";
-export { LeaveMessageRoom } from "./leave-message-room.interface";
+export { LastMessageView } from "./last-message-view.interface";

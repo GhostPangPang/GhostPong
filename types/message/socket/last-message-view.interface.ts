@@ -1,4 +1,4 @@
-export interface LeaveMessageRoom {
+export interface LastMessageView {
   friendId: number;
   lastViewTime: Date | string;
 }
