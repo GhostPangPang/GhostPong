@@ -1,5 +1,6 @@
 import { Body, Controller, Get, HttpCode, HttpStatus, Post, Res, UseGuards } from '@nestjs/common';
 import {
+  ApiBadRequestResponse,
   ApiConflictResponse,
   ApiForbiddenResponse,
   ApiHeaders,
@@ -83,7 +84,8 @@ export class AuthController {
   @ApiOperation({ summary: '2단계 인증 코드 검증하기' })
   @ApiNotFoundResponse({ type: ErrorResponseDto, description: '유저 없음' })
   @ApiConflictResponse({ type: ErrorResponseDto, description: '중복된 이메일 혹은 이미 인증 완료한 유저' })
-  @ApiForbiddenResponse({ type: ErrorResponseDto, description: '2단계 인증 코드가 일치하지 않음' })
+  @ApiForbiddenResponse({ type: ErrorResponseDto, description: '유효하지 않은 인증 코드' })
+  @ApiBadRequestResponse({ type: ErrorResponseDto, description: '잘못된 2단계 인증 코드' })
   @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
   @HttpCode(HttpStatus.OK)
   @UseGuards(UserGuard)
