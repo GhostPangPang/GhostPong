@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Post, Res, UseGuards } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiConflictResponse,
@@ -92,5 +92,14 @@ export class AuthController {
   @Post('2fa/verify')
   verifyTwoFactorAuth(@ExtractUserId() myId: number, @Body() { code }: CodeVerificationRequestDto) {
     return this.authService.verifyTwoFactorAuth(myId, code);
+  }
+
+  @ApiOperation({ summary: '2단계 인증 삭제하기' })
+  @ApiConflictResponse({ type: ErrorResponseDto, description: '2단계 인증하지 않은 유저' })
+  @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
+  @UseGuards(UserGuard)
+  @Delete('2fa')
+  deleteTwoFactorAuth(@ExtractUserId() myId: number) {
+    return this.authService.deleteTwoFactorAuth(myId);
   }
 }
