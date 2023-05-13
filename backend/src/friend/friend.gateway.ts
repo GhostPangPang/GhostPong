@@ -3,10 +3,11 @@ import { ConnectedSocket, SubscribeMessage, WebSocketGateway, WebSocketServer } 
 import { Server, Socket } from 'socket.io';
 import { Repository } from 'typeorm';
 
+import { corsOption } from '../common/option/cors.option';
 import { Friendship } from '../entity/friendship.entity';
 import { SocketIdRepository } from '../repository/socket-id.repository';
 
-@WebSocketGateway()
+@WebSocketGateway({ cors: corsOption })
 export class FriendGateway {
   @WebSocketServer()
   public server: Server;
