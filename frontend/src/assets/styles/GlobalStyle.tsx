@@ -7,11 +7,11 @@ export const GlobalStyle = createGlobalStyle<{ theme: typeof theme }>`
   ${normalize}
 
   @font-face {
-    font-family: 'ChailceNoggin';
+    font-family: 'game';
     src: url('/font/ChailceNoggin.ttf');
   }
   @font-face {
-    font-family: 'CookieRun';
+    font-family: 'normal';
     src: url('/font/CookieRun.ttf');
   }
 
@@ -32,7 +32,7 @@ export const GlobalStyle = createGlobalStyle<{ theme: typeof theme }>`
   body {
     height: 100%;
 
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    font-family: 'normal', 'game', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     background-image: url(${bg});
     background-repeat: repeat;
   }

@@ -9,6 +9,7 @@ import { ProfilePage } from '@/pages/ProfilePage';
 import { EditProfilePage } from '@/pages/EditProfilePage';
 import { RegisterPage } from '@/pages/RegisterPage';
 import { ErrorBoundary } from 'react-error-boundary';
+import { GameListPage } from './pages/GameListPage';
 import { AuthHandler } from './AuthHandler';
 import { Loading } from './common/Loading/Loading';
 
@@ -22,6 +23,7 @@ function App() {
             <Route element={<MainLayout />}>
               <Route path="/" element={<LobbyPage />} />
               <Route path="/message" element={<MessagePage />} />
+              <Route path="/game/list" element={<GameListPage />} />
               <Route element={<FooterLayout />}>
                 <Route path="/profile/:userId" element={<ProfilePage />} />
                 <Route path="/profile/edit" element={<EditProfilePage />} />

@@ -2,12 +2,16 @@ import { mix } from 'polished';
 
 const surface = 'rgba(161, 161, 161, 0.28)';
 const surfaceDark = 'rgba(16, 16, 16, 0.28)';
+const gray100t = 'rgba(212, 212, 212, 0.85)';
+const foregroundt = 'rgba(255, 255, 255, 0.85)';
 
 const color = {
   primary: '#7875FF',
   secondary: '#61FFE3',
   background: '#2F2F2F',
   foreground: '#FFFFFF',
+  foregroundt,
+  gray100t,
   gray100: '#D4D4D4',
   gray200: '#4A4A4A',
   gray300: '#3D3D3D',
