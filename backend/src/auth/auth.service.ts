@@ -93,7 +93,7 @@ export class AuthService {
     return this.jwtService.sign(payload, signOptions);
   }
 
-  async verifyTwoFactorAuth(myId: number, code: string): Promise<SuccessResponseDto> {
+  async verifyTwoFactorAuth(myId: number, code: string): Promise<void> {
     const auth = await this.authRepository.findOne({ where: { id: myId }, select: ['twoFa'] });
     if (auth !== null) {
       throw new ConflictException('이미 2단계 인증이 완료된 유저입니다.');
@@ -112,8 +112,6 @@ export class AuthService {
 
     await this.authRepository.update({ id: myId }, { twoFa: value.email });
     await this.cacheManager.del(`${myId}`);
-
-    return { message: '2단계 인증이 완료되었습니다.' };
   }
 
   async deleteTwoFactorAuth(myId: number): Promise<SuccessResponseDto> {

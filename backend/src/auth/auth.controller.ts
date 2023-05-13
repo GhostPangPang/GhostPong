@@ -97,7 +97,7 @@ export class AuthController {
   @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
   @HttpCode(HttpStatus.OK)
   @UseGuards(UserGuard)
-  @Post('2fa/test')
+  @Post('2fa')
   async twoFactorAuth(
     @ExtractUserId() myId: number,
     @Body() { email }: TwoFactorAuthRequestDto,
@@ -127,11 +127,13 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(UserGuard)
   @Post('2fa/verify')
-  verifyTwoFactorAuth(
+  async verifyTwoFactorAuth(
     @ExtractUserId() myId: number,
     @Body() { code }: CodeVerificationRequestDto,
-  ): Promise<SuccessResponseDto> {
-    return this.authService.verifyTwoFactorAuth(myId, code);
+    @Res() res: Response,
+  ): Promise<void> {
+    await this.authService.verifyTwoFactorAuth(myId, code);
+    res.clearCookie('jwt-for-2fa').json({ message: '2단계 인증이 완료되었습니다.' });
   }
 
   /**
