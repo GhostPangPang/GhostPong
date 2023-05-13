@@ -43,7 +43,6 @@ import { UserImageRequestDto } from './dto/request/user-image-request.dto';
 import { UserNicknameRequestDto } from './dto/request/user-nickname-request.dto';
 import { UserHistoryResponseDto } from './dto/response/user-history-response.dto';
 import { UserInfoResponseDto } from './dto/response/user-info-response.dto';
-import { UserNicknameResponseDto } from './dto/response/user-nickname-response.dto';
 import { UserProfileResponseDto } from './dto/response/user-profile-response.dto';
 import { FileUploadInterceptor } from './interceptor/file-upload.interceptor';
 import { UserService } from './user.service';
@@ -119,7 +118,7 @@ export class UserController {
   updateUserNickname(
     @ExtractUserId() myId: number,
     @Body() updateNicknameDto: UserNicknameRequestDto,
-  ): Promise<UserNicknameResponseDto> {
+  ): Promise<SuccessResponseDto> {
     return this.userService.updateUserNickname(myId, updateNicknameDto.nickname);
   }
 

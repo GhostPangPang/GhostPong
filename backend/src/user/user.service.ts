@@ -11,7 +11,6 @@ import { User } from '../entity/user.entity';
 
 import { UserHistoryResponseDto } from './dto/response/user-history-response.dto';
 import { UserInfoResponseDto } from './dto/response/user-info-response.dto';
-import { UserNicknameResponseDto } from './dto/response/user-nickname-response.dto';
 import { UserProfileResponseDto } from './dto/response/user-profile-response.dto';
 
 @Injectable()
@@ -57,10 +56,10 @@ export class UserService {
     return { message: '이미지 변경 완료되었습니다.' };
   }
 
-  async updateUserNickname(myId: number, nickname: string): Promise<UserNicknameResponseDto> {
+  async updateUserNickname(myId: number, nickname: string): Promise<SuccessResponseDto> {
     await this.checkDuplicatedNickname(nickname);
     await this.userRepository.update({ id: myId }, { nickname: nickname });
-    return { nickname };
+    return { message: '닉네임 변경 완료되었습니다.' };
   }
 
   async getUserProfile(userId: number): Promise<UserProfileResponseDto> {
