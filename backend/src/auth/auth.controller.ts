@@ -24,6 +24,7 @@ import { TwoFactorAuthRequestDto } from './dto/request/two-factor-auth-request.d
 import { TwoFactorAuthResponseDto } from './dto/response/two-factor-auth-response.dto';
 import { FtGuard } from './guard/ft.guard';
 import { SkipLoggedInUserGuard } from './guard/skip-logged-in-user.guard';
+import { TwoFaGuard } from './guard/two-fa.guard';
 import { UserGuard } from './guard/user.guard';
 import { LoginInfo } from './type/login-info';
 
@@ -125,7 +126,7 @@ export class AuthController {
   @ApiBadRequestResponse({ type: ErrorResponseDto, description: '잘못된 2단계 인증 코드' })
   @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
   @HttpCode(HttpStatus.OK)
-  @UseGuards(UserGuard)
+  @UseGuards(UserGuard, TwoFaGuard)
   @Post('2fa/verify')
   async verifyTwoFactorAuth(
     @ExtractUserId() myId: number,
