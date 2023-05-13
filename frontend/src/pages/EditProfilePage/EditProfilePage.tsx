@@ -4,6 +4,7 @@ import { UploadFile } from './UploadFile';
 import { useFileUpload } from '@/hooks/useFileUpload';
 import { usePatchNickName } from '@/hooks/usePatchNickName';
 import { useState } from 'react';
+import { useAuth } from '@/hooks/useAuth';
 
 interface EditFormProps {
   desc: string;
@@ -55,15 +56,17 @@ const EditForm = ({ desc, label, value, onClick, children }: EditFormProps) => {
 };
 
 export const EditProfilePage = () => {
-  const { handleFileChange, fileUploadMutation } = useFileUpload();
-  const { handleInputChange, handleSubmit } = usePatchNickName();
+  const { userInfo, refetch } = useAuth();
+
+  const { selectedFile, handleFileChange, handleUpload } = useFileUpload({ onSuccess: refetch });
+
+  const { nickName, handleInputChange, handleSubmit } = usePatchNickName();
   const [email, setEmail] = useState('');
 
-  const handleUpload = () => {
-    fileUploadMutation.mutate();
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
   };
 
-  const onEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value);
   const handleEmail = () => {
     console.log('handleEmail');
   };
@@ -72,18 +75,18 @@ export const EditProfilePage = () => {
     <Grid container="flex" direction="column" justifyContent="center" size={{ maxWidth: '100rem' }}>
       <EditForm desc="Profile" label="Avatar" value="Upload & Save" onClick={handleUpload}>
         <Grid container="flex" alignItems="center" gap={3}>
-          <Avatar size="lg" />
+          <Avatar size="lg" src={selectedFile ? URL.createObjectURL(selectedFile) : userInfo.image ?? undefined} />
           <UploadFile handleFileChange={handleFileChange} />
         </Grid>
       </EditForm>
       <StyledLine />
       <EditForm desc="Account Information" label="UserName" value="Save" onClick={handleSubmit}>
-        <InputBox sizes="sm" placeholder="your nickname" onChange={handleInputChange} />
+        <InputBox sizes="sm" placeholder={userInfo.nickname} onChange={handleInputChange} />
       </EditForm>
       <StyledLine />
       <EditForm desc="Two-factor authentication" label="Email" value="Verify" onClick={handleEmail}>
         <Grid container="flex" justifyContent="space-between" alignItems="center">
-          <InputBox sizes="md" value={email} placeholder="your email" onChange={onEmailChange} />
+          <InputBox sizes="md" value={email} placeholder="your email" onChange={handleEmailChange} />
           <Grid container="flex" justifyContent="end" alignItems="center" gap={2}>
             <Text size="sm" color="gray100" weight="bold">
               2FA

@@ -10,17 +10,17 @@ const patchNickName = async (nickname: string): Promise<AxiosResponse> => {
 };
 
 export const usePatchNickName = () => {
-  const [inputValue, setInputValue] = useState<string>('');
+  const [nickName, setNickName] = useState<string>('');
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setInputValue(event.target.value);
+    setNickName(event.target.value);
   };
 
   const mutation = useMutation(
     () => {
-      if (!inputValue) return Promise.reject(new Error('No nickname selected'));
+      if (!nickName) return Promise.reject(new Error('No nickname selected'));
 
-      return patchNickName(inputValue);
+      return patchNickName(nickName);
     },
     {
       onSuccess: (data) => {
@@ -39,5 +39,5 @@ export const usePatchNickName = () => {
     mutation.mutate();
   };
 
-  return { handleInputChange, handleSubmit };
+  return { nickName, handleInputChange, handleSubmit };
 };
