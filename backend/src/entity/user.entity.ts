@@ -19,7 +19,7 @@ export class User {
   exp: number;
 
   @Column({ type: 'varchar', length: 256, nullable: true })
-  image: string | null;
+  image?: string;
 
   @OneToOne(() => UserRecord, (userRecord) => userRecord.user)
   userRecord: UserRecord;

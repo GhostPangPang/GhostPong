@@ -17,7 +17,7 @@ export class UserInfoDto implements UserInfo {
    * 유저 이미지 url
    * @example '/asset/profile-1.jpg'
    */
-  image: string | null;
+  image?: string;
 
   /**
    * 유저 경험치
