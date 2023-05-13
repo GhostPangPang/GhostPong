@@ -6,7 +6,7 @@ import { Repository } from 'typeorm';
 
 import { FtAuthConfigService } from '../../config/auth/ft/configuration.service';
 import { Auth, AuthStatus } from '../../entity/auth.entity';
-import { LoginInfoDto } from '../dto/login-info.dto';
+import { LoginInfo } from '../type/login-info';
 
 @Injectable()
 export class FtStrategy extends PassportStrategy(Strategy, 'ft') {
@@ -34,7 +34,7 @@ export class FtStrategy extends PassportStrategy(Strategy, 'ft') {
    * @param cb  validate()에서 return한 값이 request 객체에 담김
    * @returns  validate()에서 return한 값
    */
-  async validate(accessToken: string, refreshToken: string, profile: LoginInfoDto) {
+  async validate(accessToken: string, refreshToken: string, profile: LoginInfo) {
     const auth = await this.authRepository.findOneBy({ email: profile.email });
 
     // if (auth === null || (await this.userRepository.findOneBy({ id: auth.id })) === null) {

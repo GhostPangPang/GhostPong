@@ -13,8 +13,8 @@ export class Auth {
   @Column({ length: 320, unique: true })
   email: string;
 
-  @Column({ length: 320, nullable: true })
-  twoFa: string;
+  @Column({ type: 'varchar', length: 320, nullable: true })
+  twoFa: string | null;
 
   @Column({
     type: 'enum',

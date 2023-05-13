@@ -1,6 +1,6 @@
 import { IsEmail, IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
 
-export class LoginInfoDto {
+export class LoginInfo {
   /**
    * 42에서 받아온 email
    */
