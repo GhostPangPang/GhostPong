@@ -10,7 +10,7 @@ import {
 } from '@nestjs/swagger';
 import { Response } from 'express';
 
-import { AUTH_COOKIE_EXPIREIN } from '../common/constant';
+import { COOKIE_EXPIREIN } from '../common/constant';
 import { ExtractUserId } from '../common/decorator/extract-user-id.decorator';
 import { ErrorResponseDto } from '../common/dto/error-response.dto';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
@@ -61,7 +61,7 @@ export class AuthController {
       const token = await this.authService.signUp(user);
       res
         .cookie('jwt-for-unregistered', token, {
-          maxAge: AUTH_COOKIE_EXPIREIN,
+          maxAge: COOKIE_EXPIREIN,
           httpOnly: true,
           secure: true,
           sameSite: 'lax',
@@ -97,12 +97,21 @@ export class AuthController {
   @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
   @HttpCode(HttpStatus.OK)
   @UseGuards(UserGuard)
-  @Post('2fa')
-  twoFactorAuth(
+  @Post('2fa/test')
+  async twoFactorAuth(
     @ExtractUserId() myId: number,
     @Body() { email }: TwoFactorAuthRequestDto,
-  ): Promise<SuccessResponseDto> {
-    return this.authService.twoFactorAuth(myId, email);
+    @Res() res: Response,
+  ): Promise<void> {
+    const token = await this.authService.twoFactorAuth(myId, email);
+    res
+      .cookie('jwt-for-2fa', token, {
+        maxAge: COOKIE_EXPIREIN,
+        httpOnly: true,
+        secure: true,
+        sameSite: 'lax',
+      })
+      .json({ message: '2단계 인증 이메일이 전송되었습니다.' });
   }
 
   /**

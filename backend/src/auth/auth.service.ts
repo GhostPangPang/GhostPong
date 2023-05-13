@@ -6,7 +6,7 @@ import { MailerService } from '@nestjs-modules/mailer';
 import { Cache } from 'cache-manager';
 import { Repository } from 'typeorm';
 
-import { AUTH_JWT_EXPIREIN, TWO_FACTOR_AUTH_EXPIREIN, USER_JWT_EXPIREIN } from '../common/constant';
+import { AUTH_JWT_EXPIREIN, TWO_FA_EXPIREIN, USER_JWT_EXPIREIN } from '../common/constant';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
 import { JwtConfigService } from '../config/auth/jwt/configuration.service';
 import { Auth } from '../entity/auth.entity';
@@ -66,7 +66,7 @@ export class AuthService {
     return { twoFa: auth.twoFa };
   }
 
-  async twoFactorAuth(myId: number, email: string): Promise<SuccessResponseDto> {
+  async twoFactorAuth(myId: number, email: string): Promise<string> {
     const myTwoFa = await this.authRepository.findOne({ where: { id: myId }, select: ['twoFa'] });
     if (myTwoFa !== null) {
       throw new ConflictException('이미 인증이 완료된 유저입니다.');
@@ -82,8 +82,15 @@ export class AuthService {
       html: this.getEmailTemplate(code),
     });
 
-    await this.cacheManager.set(`${myId}`, { email, code }, TWO_FACTOR_AUTH_EXPIREIN);
-    return { message: '2단계 인증 이메일이 전송되었습니다.' };
+    await this.cacheManager.set(`${myId}`, { email, code }, TWO_FA_EXPIREIN);
+    // token
+
+    const payload = { userId: myId };
+    const signOptions = {
+      secret: this.jwtConfigService.twoFaSecretKey,
+      expiresIn: TWO_FA_EXPIREIN,
+    };
+    return this.jwtService.sign(payload, signOptions);
   }
 
   async verifyTwoFactorAuth(myId: number, code: string): Promise<SuccessResponseDto> {
