@@ -18,8 +18,8 @@ export class User {
   @Column({ default: 0 })
   exp: number;
 
-  @Column({ length: 256, nullable: true })
-  image: string;
+  @Column({ type: 'varchar', length: 256, nullable: true })
+  image: string | null;
 
   @OneToOne(() => UserRecord, (userRecord) => userRecord.user)
   userRecord: UserRecord;

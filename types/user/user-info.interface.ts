@@ -1,6 +1,6 @@
 export interface UserInfo {
   id?: number;
   nickname: string;
-  image: string;
+  image: string | null;
   exp: number;
 }

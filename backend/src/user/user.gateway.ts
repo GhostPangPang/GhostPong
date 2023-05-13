@@ -113,8 +113,8 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect {
         // 접속 중인 친구의 socketId 를 찾는다.
         const socketId = this.socketIdRepository.find(friendId)?.socketId;
         if (socketId !== undefined) {
-          this.server.in(socketId).socketsJoin(userRoom); // join my socket to friend's room
-          socket.join(`user-${friendId}`); // join friend's socket to my room
+          socket.join(`user-${friendId}`); //join my socket to friend's room
+          this.server.in(socketId).socketsJoin(userRoom); // join friend's socket to my room
         }
       }
     });

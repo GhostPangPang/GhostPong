@@ -11,7 +11,7 @@ export class UserProfileResponseDto implements UserProfileResponse {
    * 유저 프로필 이미지
    * @example /asset/3-profile.png
    */
-  image: string;
+  image: string | null;
 
   /**
    * 유저 레벨
