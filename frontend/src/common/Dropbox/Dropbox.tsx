@@ -34,21 +34,25 @@ const StyledList = styled.ul<{ placement: Placement }>`
         return `
           bottom: calc(100%);
           right: calc(0%);
+          margin-bottom: 1rem;
           `;
       case 'topleft':
         return `
           bottom: calc(100%);
           left: calc(0%);
+          margin-bottom: 1rem;
           `;
       case 'bottomright':
         return `
           top: calc(100%);
           right: calc(0%);
+          margin-top: 1rem;
           `;
       case 'bottomleft':
         return `
           top: calc(100%);
           left: calc(0%);
+          margin-top: 1rem;
           `;
     }
   }}/* margin: 0.5rem; */
@@ -103,16 +107,11 @@ export const Dropbox = ({ items, placement, children }: DropboxProps) => {
     };
   }, []);
 
-  const clonedChildren = React.Children.map(children, (child) => {
-    if (React.isValidElement(child)) {
-      return React.cloneElement(child, { onClick: handleOnClick } as React.HTMLAttributes<HTMLElement>);
-    }
-    return child;
-  });
-
   return (
     <StyledDropbox onClick={handleOnClick} ref={dropboxRef} width={dimensions.width} height={dimensions.height}>
-      {clonedChildren}
+      {React.isValidElement(children)
+        ? React.cloneElement(children, { onClick: handleOnClick } as React.HTMLAttributes<HTMLElement>)
+        : children}
       {isVisible && (
         <StyledList placement={placement} onMouseLeave={handleOnMouseLeave}>
           {items.map((item, index) => (
