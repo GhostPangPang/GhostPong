@@ -1,6 +1,6 @@
 import { UserInfo } from '@/types/user';
 
-export class UserInfoDto implements UserInfo {
+export class UserInfoDto extends UserInfo {
   /**
    * 유저 id
    * @example 1
@@ -17,7 +17,7 @@ export class UserInfoDto implements UserInfo {
    * 유저 이미지 url
    * @example '/asset/profile-1.jpg'
    */
-  image: string | null;
+  image?: string;
 
   /**
    * 유저 경험치

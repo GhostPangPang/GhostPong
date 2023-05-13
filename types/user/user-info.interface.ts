@@ -1,6 +1,6 @@
-export interface UserInfo {
+export class UserInfo {
   id?: number;
   nickname: string;
-  image: string | null;
+  image?: string;
   exp: number;
 }
