@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 
-import { ChatRepository } from './chat.repository';
+import { ChannelRepository } from './channel.repository';
 import { SocketIdRepository } from './socket-id.repository';
 import { UserStatusRepository } from './user-status.repository';
 
 @Module({
-  providers: [ChatRepository, UserStatusRepository, SocketIdRepository],
-  exports: [ChatRepository, UserStatusRepository, SocketIdRepository],
+  providers: [ChannelRepository, UserStatusRepository, SocketIdRepository],
+  exports: [ChannelRepository, UserStatusRepository, SocketIdRepository],
 })
 export class RepositoryModule {}
