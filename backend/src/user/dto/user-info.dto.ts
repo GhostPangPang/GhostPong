@@ -1,6 +1,6 @@
 import { UserInfo } from '@/types/user';
 
-export class UserInfoDto extends UserInfo {
+export class UserInfoDto implements UserInfo {
   /**
    * 유저 id
    * @example 1

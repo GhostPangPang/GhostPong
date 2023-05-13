@@ -1,4 +1,4 @@
-export class UserInfo {
+export interface UserInfo {
   id?: number;
   nickname: string;
   image?: string;
