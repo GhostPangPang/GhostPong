@@ -12,6 +12,7 @@ import { JwtConfigService } from './configuration.service';
       validationSchema: Joi.object({
         USER_JWT_SECRETKEY: Joi.string(),
         AUTH_JWT_SECRETKEY: Joi.string(),
+        TWOFA_JWT_SECRETKEY: Joi.string(),
       }),
     }),
   ],

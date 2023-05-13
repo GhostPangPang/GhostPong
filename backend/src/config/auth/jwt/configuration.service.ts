@@ -12,4 +12,8 @@ export class JwtConfigService {
   get authSecretKey() {
     return this.configService.get<string>('jwt.authSecretKey');
   }
+
+  get twoFaSecretKey() {
+    return this.configService.get<string>('jwt.twoFaSecretKey');
+  }
 }
