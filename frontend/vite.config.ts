@@ -51,6 +51,10 @@ export default ({ mode }) => {
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api/, ''),
         },
+        '/asset': {
+          target: process.env.VITE_ASSET_URL,
+          changeOrigin: true,
+        },
       },
     },
     test: {
