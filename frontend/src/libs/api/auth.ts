@@ -1,16 +1,19 @@
 import { localStorageKeys } from '@/constants';
 
+const isDev = import.meta.env.MODE === 'development';
+const storage = isDev ? sessionStorage : localStorage;
+
 export const getAccessToken = () => {
   const key = localStorageKeys.accessToken;
-  return localStorage.getItem(key);
+  return storage.getItem(key);
 };
 
 export const setAccessToken = (token: string) => {
   const key = localStorageKeys.accessToken;
-  localStorage.setItem(key, token);
+  storage.setItem(key, token);
 };
 
 export const removeAccessToken = () => {
   const key = localStorageKeys.accessToken;
-  localStorage.removeItem(key);
+  storage.removeItem(key);
 };
