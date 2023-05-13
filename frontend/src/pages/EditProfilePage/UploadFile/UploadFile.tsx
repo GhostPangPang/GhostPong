@@ -1,10 +1,10 @@
 import { CommonButton } from '@/common/Button/CommonButton';
 
 interface UploadFileProps {
-  handleFileChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-export const UploadFile = ({ handleFileChange }: UploadFileProps) => {
+export const UploadFile = ({ onChange: handleFileChange }: UploadFileProps) => {
   return (
     <div>
       <CommonButton as="label" htmlFor="file-upload" size="md" backgroundColor="gray200" color="gray100">

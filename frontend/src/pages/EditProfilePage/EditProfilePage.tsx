@@ -60,7 +60,7 @@ export const EditProfilePage = () => {
 
   const { selectedFile, handleFileChange, handleUpload } = useFileUpload({ onSuccess: refetch });
 
-  const { nickName, handleInputChange, handleSubmit } = usePatchNickName();
+  const { handleInputChange, handleSubmit } = usePatchNickName();
   const [email, setEmail] = useState('');
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -76,7 +76,7 @@ export const EditProfilePage = () => {
       <EditForm desc="Profile" label="Avatar" value="Upload & Save" onClick={handleUpload}>
         <Grid container="flex" alignItems="center" gap={3}>
           <Avatar size="lg" src={selectedFile ? URL.createObjectURL(selectedFile) : userInfo.image} />
-          <UploadFile handleFileChange={handleFileChange} />
+          <UploadFile onChange={handleFileChange} />
         </Grid>
       </EditForm>
       <StyledLine />

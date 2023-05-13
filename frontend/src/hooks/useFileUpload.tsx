@@ -1,17 +1,16 @@
-import { post, patch } from '@/libs/api';
+import { post, patch, ApiResponse, ApiError, LocationResponse } from '@/libs/api';
 import { useMutation } from '@tanstack/react-query';
-import { AxiosResponse } from 'axios';
 
 import { ChangeEvent, useState } from 'react';
 
 const API = '/user/image';
 
-const postFileUpload = async (formData: FormData): Promise<AxiosResponse> => {
-  return await post<AxiosResponse>(API, formData);
+const postFileUpload = async (formData: FormData): Promise<LocationResponse> => {
+  return await post<LocationResponse>(API, formData);
 };
 
-const patchFileUpload = async (location: string): Promise<AxiosResponse> => {
-  return await patch<AxiosResponse>(API, { image: location });
+const patchFileUpload = async (location: LocationResponse): Promise<ApiResponse> => {
+  return await patch<ApiResponse>(API, { image: location });
 };
 
 interface Props {
@@ -32,19 +31,18 @@ export const useFileUpload = ({ onSuccess: refetch }: Props) => {
   };
 
   const { mutate: patchMutate } = useMutation(
-    (location: string) => {
+    (location: LocationResponse) => {
       if (!location) return Promise.reject(new Error('No location selected'));
       return patchFileUpload(location);
     },
     {
-      onSuccess: (data) => {
-        alert('프로필 사진이 변경되었습니다.');
-        console.log(data);
+      onSuccess: (data: ApiResponse) => {
+        alert(data.message);
         refetch();
       },
-      onError: (error) => {
-        alert('프로필 사진 변경에 실패하였습니다.');
-        console.log(error);
+      onError: (error: ApiError) => {
+        alert(error.message);
+        return Promise.reject(new Error(error.message));
       },
     },
   );
@@ -58,13 +56,12 @@ export const useFileUpload = ({ onSuccess: refetch }: Props) => {
       return postFileUpload(formData);
     },
     {
-      onSuccess: (data) => {
-        patchMutate(data.headers.location);
+      onSuccess: (data: LocationResponse) => {
+        patchMutate(data);
       },
-      onError: (error) => {
-        alert('파일 업로드에 실패하였습니다.');
-        console.log(error);
-        // return Promise.reject(new Error('File Upload Failure'));
+      onError: (error: ApiError) => {
+        alert(error.message);
+        return Promise.reject(new Error(error.message));
       },
     },
   );

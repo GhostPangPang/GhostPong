@@ -39,5 +39,5 @@ export const usePatchNickName = () => {
     mutation.mutate();
   };
 
-  return { nickName, handleInputChange, handleSubmit };
+  return { handleInputChange, handleSubmit };
 };
