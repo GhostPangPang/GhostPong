@@ -30,7 +30,7 @@ export const ProfilePage = () => {
     // media query 100rem 이하일 때
     <Grid container="flex" direction="column" rowGap={1.5} size={{ maxWidth: '100rem' }}>
       <Grid container="flex" justifyContent="start" alignItems="end">
-        <Avatar size="xl" src={data.image} borderColor="gradient" />
+        <Avatar size="xl" src={data.image ?? undefined} borderColor="gradient" />
         <Text size="xxl">{data.nickname}</Text>
       </Grid>
       <Grid container="flex" direction="row" justifyContent="space-between" alignItems="center" gap={2}>

@@ -14,8 +14,8 @@ export interface DropboxProps {
 const StyledDropbox = styled.div<{ width: number; height: number }>`
   display: flex;
   position: relative;
-  width: ${({ width }) => width}px;
-  height: ${({ height }) => height}px;
+  width: ${({ width }) => (width ? `${width}px` : 'auto')};
+  height: ${({ height }) => (height ? `${height}px` : 'auto')};
 `;
 
 const StyledList = styled.ul<{ placement: Placement }>`
@@ -34,21 +34,25 @@ const StyledList = styled.ul<{ placement: Placement }>`
         return `
           bottom: calc(100%);
           right: calc(0%);
+          margin-bottom: 1rem;
           `;
       case 'topleft':
         return `
           bottom: calc(100%);
           left: calc(0%);
+          margin-bottom: 1rem;
           `;
       case 'bottomright':
         return `
           top: calc(100%);
           right: calc(0%);
+          margin-top: 1rem;
           `;
       case 'bottomleft':
         return `
           top: calc(100%);
           left: calc(0%);
+          margin-top: 1rem;
           `;
     }
   }}/* margin: 0.5rem; */
@@ -105,7 +109,9 @@ export const Dropbox = ({ items, placement, children }: DropboxProps) => {
 
   return (
     <StyledDropbox onClick={handleOnClick} ref={dropboxRef} width={dimensions.width} height={dimensions.height}>
-      {children}
+      {React.isValidElement(children)
+        ? React.cloneElement(children, { onClick: handleOnClick } as React.HTMLAttributes<HTMLElement>)
+        : children}
       {isVisible && (
         <StyledList placement={placement} onMouseLeave={handleOnMouseLeave}>
           {items.map((item, index) => (
