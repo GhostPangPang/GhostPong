@@ -58,9 +58,9 @@ const EditForm = ({ desc, label, value, onClick, children }: EditFormProps) => {
 export const EditProfilePage = () => {
   const { userInfo, refetch } = useAuth();
 
-  const { selectedFile, handleFileChange, handleUpload } = useFileUpload({ onSuccess: refetch });
+  const { selectedFile, handleFileChange, handleUpload } = useFileUpload();
 
-  const { handleInputChange, handleSubmit } = usePatchNickName();
+  const { handleInputChange, handleSubmit } = usePatchNickName({ onSuccess: refetch });
   const [email, setEmail] = useState('');
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {

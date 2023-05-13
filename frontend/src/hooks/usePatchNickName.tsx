@@ -1,15 +1,18 @@
-import { patch } from '@/libs/api';
+import { patch, ApiResponse, ApiError } from '@/libs/api';
 import { useMutation } from '@tanstack/react-query';
-import { AxiosResponse } from 'axios';
 import { ChangeEvent, useState } from 'react';
 
 const API = '/user/nickname';
 
-const patchNickName = async (nickname: string): Promise<AxiosResponse> => {
-  return await patch<AxiosResponse>(API, { nickname });
+const patchNickName = async (nickname: string): Promise<ApiResponse> => {
+  return await patch<ApiResponse>(API, { nickname });
 };
 
-export const usePatchNickName = () => {
+interface Props {
+  onSuccess: () => void;
+}
+
+export const usePatchNickName = ({ onSuccess: refetch }: Props) => {
   const [nickName, setNickName] = useState<string>('');
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -23,13 +26,13 @@ export const usePatchNickName = () => {
       return patchNickName(nickName);
     },
     {
-      onSuccess: (data) => {
-        alert('닉네임이 설정되었습니다.');
-        console.log(data);
+      onSuccess: (data: ApiResponse) => {
+        alert(data.message);
+        refetch();
       },
-      onError: (error) => {
-        alert('닉네임 설정에 실패하였습니다.');
-        console.log(error);
+      onError: (error: ApiError) => {
+        alert(error.message);
+        Promise.reject(new Error(error.message));
       },
     },
   );

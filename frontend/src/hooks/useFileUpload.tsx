@@ -13,11 +13,7 @@ const patchFileUpload = async (location: LocationResponse): Promise<ApiResponse>
   return await patch<ApiResponse>(API, { image: location });
 };
 
-interface Props {
-  onSuccess: () => void;
-}
-
-export const useFileUpload = ({ onSuccess: refetch }: Props) => {
+export const useFileUpload = () => {
   const [selectedFile, setSelectedFile] = useState<File | undefined>();
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -38,7 +34,7 @@ export const useFileUpload = ({ onSuccess: refetch }: Props) => {
     {
       onSuccess: (data: ApiResponse) => {
         alert(data.message);
-        refetch();
+        location.reload();
       },
       onError: (error: ApiError) => {
         alert(error.message);
