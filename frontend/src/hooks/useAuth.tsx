@@ -27,7 +27,6 @@ export const useAuth = () => {
     isLoading,
     isFetching,
     refetch,
-    remove,
   } = useQuery<UserInfoResponse>({
     queryKey: [API],
     queryFn: getUserInfo,
@@ -43,10 +42,5 @@ export const useAuth = () => {
     else navigate('/pre');
   }, [data]);
 
-  const refetchUserInfo = () => {
-    remove();
-    refetch();
-  };
-
-  return { userInfo, isLoading, refetch: refetchUserInfo };
+  return { userInfo, isLoading, refetch };
 };
