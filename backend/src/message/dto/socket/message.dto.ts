@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString, Max, MaxLength, Min } from 'class-validator';
+import { IsDateString, IsNotEmpty, IsNumber, IsString, Max, MaxLength, Min } from 'class-validator';
 
 import { Message } from '@/types/message/socket';
 
@@ -12,6 +12,23 @@ export class MesssageDto implements Message {
   @Min(1)
   @Max(2147483647)
   id: number;
+
+  /**
+   * @description 메시지 받을 사람 아이디
+   * @example 4
+   */
+  @IsNotEmpty()
+  @IsNumber()
+  @Min(1)
+  @Max(2147483647)
+  receiverId: number;
+
+  /**
+   * @description 메시지 보낸 시간
+   * @example '2021-08-01T00:00:00'
+   */
+  @IsDateString()
+  createdAt: Date | string;
 
   /**
    * @description 메시지 내용

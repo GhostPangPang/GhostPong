@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import { corsOption } from '../common/option/cors.option';
 import { MessageView } from '../entity/message-view.entity';
 import { Message } from '../entity/message.entity';
+import { SocketIdRepository } from '../repository/socket-id.repository';
 
 import { LastMessageViewDto } from './dto/socket/last-message-view.dto';
 import { MesssageDto } from './dto/socket/message.dto';
@@ -21,6 +22,7 @@ export class MessageGateway {
     private readonly messageRepository: Repository<Message>,
     @InjectRepository(MessageView)
     private readonly messageViewRepository: Repository<MessageView>,
+    private readonly socketIdRepository: SocketIdRepository,
   ) {}
 
   /**
@@ -37,8 +39,18 @@ export class MessageGateway {
   async handleMessage(@ConnectedSocket() socket: Socket, @MessageBody() data: MesssageDto): Promise<void> {
     console.log('friend id is ', data.id);
     console.log('content is ', data.content);
-    this.messageRepository.insert({ senderId: socket.data.userId, friendId: data.id, content: data.content });
-    socket.to(`friend-${data.id}`).emit('message', data);
+    console.log('creatdAt is ', data.createdAt);
+    await this.messageRepository.insert({
+      senderId: socket.data.userId,
+      friendId: data.id,
+      content: data.content,
+      createdAt: data.createdAt,
+    });
+    const receiverSocketId = this.socketIdRepository.find(data.receiverId)?.socketId;
+    if (receiverSocketId === undefined) {
+      return; //TODO: exception handling
+    }
+    this.server.to(receiverSocketId).emit('message', data);
   }
 
   /**
