@@ -75,7 +75,7 @@ export const EditProfilePage = () => {
     <Grid container="flex" direction="column" justifyContent="center" size={{ maxWidth: '100rem' }}>
       <EditForm desc="Profile" label="Avatar" value="Upload & Save" onClick={handleUpload}>
         <Grid container="flex" alignItems="center" gap={3}>
-          <Avatar size="lg" src={selectedFile ? URL.createObjectURL(selectedFile) : userInfo.image ?? undefined} />
+          <Avatar size="lg" src={selectedFile ? URL.createObjectURL(selectedFile) : userInfo.image} />
           <UploadFile handleFileChange={handleFileChange} />
         </Grid>
       </EditForm>
