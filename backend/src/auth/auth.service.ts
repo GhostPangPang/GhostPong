@@ -7,9 +7,11 @@ import { Cache } from 'cache-manager';
 import { Repository } from 'typeorm';
 
 import { AUTH_JWT_EXPIREIN, TWO_FACTOR_AUTH_EXPIREIN, USER_JWT_EXPIREIN } from '../common/constant';
+import { SuccessResponseDto } from '../common/dto/success-response.dto';
 import { JwtConfigService } from '../config/auth/jwt/configuration.service';
 import { Auth } from '../entity/auth.entity';
 
+import { TwoFactorAuthResponseDto } from './dto/response/two-factor-auth-response.dto';
 import { LoginInfo } from './type/login-info';
 import { TwoFactorAuth } from './type/two-factor-auth';
 
@@ -55,7 +57,16 @@ export class AuthService {
     return this.jwtService.sign(payload, signOptions);
   }
 
-  async twoFactorAuth(myId: number, email: string) {
+  async getTwoFactorAuthEmail(myId: number): Promise<TwoFactorAuthResponseDto> {
+    const auth = await this.authRepository.findOne({ where: { id: myId }, select: ['twoFa'] });
+
+    if (auth === null) {
+      return { twoFa: null };
+    }
+    return { twoFa: auth.twoFa };
+  }
+
+  async twoFactorAuth(myId: number, email: string): Promise<SuccessResponseDto> {
     const myTwoFa = await this.authRepository.findOne({ where: { id: myId }, select: ['twoFa'] });
     if (myTwoFa !== null) {
       throw new ConflictException('이미 인증이 완료된 유저입니다.');
@@ -75,7 +86,7 @@ export class AuthService {
     return { message: '2단계 인증 이메일이 전송되었습니다.' };
   }
 
-  async verifyTwoFactorAuth(myId: number, code: string) {
+  async verifyTwoFactorAuth(myId: number, code: string): Promise<SuccessResponseDto> {
     const auth = await this.authRepository.findOne({ where: { id: myId }, select: ['twoFa'] });
     if (auth !== null) {
       throw new ConflictException('이미 2단계 인증이 완료된 유저입니다.');
@@ -98,8 +109,7 @@ export class AuthService {
     return { message: '2단계 인증이 완료되었습니다.' };
   }
 
-  // SECTION private
-  async deleteTwoFactorAuth(myId: number) {
+  async deleteTwoFactorAuth(myId: number): Promise<SuccessResponseDto> {
     const auth = await this.authRepository.findOne({ where: { id: myId }, select: ['twoFa'] });
     if (auth === null) {
       throw new ConflictException('2단계 인증 이메일이 없습니다.');
@@ -108,7 +118,8 @@ export class AuthService {
     return { message: '2단계 인증 이메일이 삭제되었습니다.' };
   }
 
-  private getEmailTemplate(code: string) {
+  // SECTION private
+  private getEmailTemplate(code: string): string {
     return `
     <!DOCTYPE html>
 <html>
