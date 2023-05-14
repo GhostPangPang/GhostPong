@@ -1,5 +1,6 @@
 import { BadRequestException, CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { Request } from 'express';
 import { Observable } from 'rxjs';
 
 import { AppConfigService } from '../../config/app/configuration.service';
@@ -16,7 +17,7 @@ export class TwoFaGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
     // 개발 환경에서는 토큰 검증을 하지 않음
     if (this.appConfigService.env === 'development') {
-      const request = context.switchToHttp().getRequest();
+      const request: Request = context.switchToHttp().getRequest<Request>();
       const userId = request.headers['x-my-id'];
       if (userId === undefined) {
         throw new BadRequestException('x-my-id is undefined');
@@ -26,7 +27,7 @@ export class TwoFaGuard implements CanActivate {
       };
       return true;
     }
-    const request = context.switchToHttp().getRequest();
+    const request: Request = context.switchToHttp().getRequest<Request>();
     const token = request.cookies['jwt-for-2fa'];
     try {
       this.jwtService.verify(token, { secret: this.jwtConfigService.twoFaSecretKey });

@@ -4,7 +4,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MailerModule } from '@nestjs-modules/mailer';
 
-import { TWO_FA_EXPIREIN, TWO_FA_MAX } from '../common/constant';
+import { TWO_FA_EXPIRES_IN, TWO_FA_MAX } from '../common/constant';
 import { AppConfigModule } from '../config/app/configuration.module';
 import { FtAuthConfigModule } from '../config/auth/ft/configuration.module';
 import { JwtConfigModule } from '../config/auth/jwt/configuration.module';
@@ -29,7 +29,7 @@ import { UserStrategy } from './strategy/user.strategy';
     AppConfigModule,
     CacheModule.register({
       store: 'memory',
-      ttl: TWO_FA_EXPIREIN,
+      ttl: TWO_FA_EXPIRES_IN,
       max: TWO_FA_MAX,
     }),
     MailerModule.forRootAsync({

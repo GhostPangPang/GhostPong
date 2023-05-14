@@ -10,7 +10,7 @@ import {
 } from '@nestjs/swagger';
 import { Response } from 'express';
 
-import { COOKIE_EXPIREIN } from '../common/constant';
+import { COOKIE_EXPIRES_IN } from '../common/constant';
 import { ExtractUserId } from '../common/decorator/extract-user-id.decorator';
 import { ErrorResponseDto } from '../common/dto/error-response.dto';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
@@ -62,7 +62,7 @@ export class AuthController {
       const token = await this.authService.signUp(user);
       res
         .cookie('jwt-for-unregistered', token, {
-          maxAge: COOKIE_EXPIREIN,
+          maxAge: COOKIE_EXPIRES_IN,
           httpOnly: true,
           secure: true,
           sameSite: 'lax',
@@ -107,7 +107,7 @@ export class AuthController {
     const token = await this.authService.twoFactorAuth(myId, email);
     res
       .cookie('jwt-for-2fa', token, {
-        maxAge: COOKIE_EXPIREIN,
+        maxAge: COOKIE_EXPIRES_IN,
         httpOnly: true,
         secure: true,
         sameSite: 'lax',

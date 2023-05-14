@@ -6,7 +6,7 @@ import { MailerService } from '@nestjs-modules/mailer';
 import { Cache } from 'cache-manager';
 import { Repository } from 'typeorm';
 
-import { AUTH_JWT_EXPIREIN, TWO_FA_EXPIREIN, USER_JWT_EXPIREIN } from '../common/constant';
+import { AUTH_JWT_EXPIRES_IN, TWO_FA_EXPIRES_IN, USER_JWT_EXPIRES_IN } from '../common/constant';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
 import { JwtConfigService } from '../config/auth/jwt/configuration.service';
 import { Auth } from '../entity/auth.entity';
@@ -38,7 +38,7 @@ export class AuthService {
     const payload = { userId: user.id };
     const signOptions = {
       secret: this.jwtConfigService.authSecretKey,
-      expiresIn: AUTH_JWT_EXPIREIN,
+      expiresIn: AUTH_JWT_EXPIRES_IN,
     };
     return this.jwtService.sign(payload, signOptions);
   }
@@ -52,7 +52,7 @@ export class AuthService {
     const payload = { userId };
     const signOptions = {
       secret: this.jwtConfigService.userSecretKey,
-      expiresIn: USER_JWT_EXPIREIN,
+      expiresIn: USER_JWT_EXPIRES_IN,
     };
     return this.jwtService.sign(payload, signOptions);
   }
@@ -82,13 +82,13 @@ export class AuthService {
       html: this.getEmailTemplate(code),
     });
 
-    await this.cacheManager.set(`${myId}`, { email, code }, TWO_FA_EXPIREIN);
+    await this.cacheManager.set(`${myId}`, { email, code }, TWO_FA_EXPIRES_IN);
     // token
 
     const payload = { userId: myId };
     const signOptions = {
       secret: this.jwtConfigService.twoFaSecretKey,
-      expiresIn: TWO_FA_EXPIREIN,
+      expiresIn: TWO_FA_EXPIRES_IN,
     };
     return this.jwtService.sign(payload, signOptions);
   }
