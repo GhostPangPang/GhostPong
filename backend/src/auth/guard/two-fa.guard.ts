@@ -33,7 +33,7 @@ export class TwoFaGuard implements CanActivate {
       this.jwtService.verify(token, { secret: this.jwtConfigService.twoFaSecretKey });
       return true;
     } catch {
-      throw new UnauthorizedException('2FA Token is invalid');
+      throw new UnauthorizedException('2FA 토큰 검증에 실패했습니다.');
     }
   }
 }
