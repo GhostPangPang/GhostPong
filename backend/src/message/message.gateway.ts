@@ -5,8 +5,10 @@ import { Server, Socket } from 'socket.io';
 import { Repository } from 'typeorm';
 
 import { corsOption } from '../common/option/cors.option';
+import { Friendship } from '../entity/friendship.entity';
 import { MessageView } from '../entity/message-view.entity';
 import { Message } from '../entity/message.entity';
+import { SocketIdRepository } from '../repository/socket-id.repository';
 
 import { LastMessageViewDto } from './dto/socket/last-message-view.dto';
 import { MesssageDto } from './dto/socket/message.dto';
@@ -21,6 +23,9 @@ export class MessageGateway {
     private readonly messageRepository: Repository<Message>,
     @InjectRepository(MessageView)
     private readonly messageViewRepository: Repository<MessageView>,
+    private readonly socketIdRepository: SocketIdRepository,
+    @InjectRepository(Friendship)
+    private readonly friendshipRepository: Repository<Friendship>,
   ) {}
 
   /**
@@ -37,8 +42,19 @@ export class MessageGateway {
   async handleMessage(@ConnectedSocket() socket: Socket, @MessageBody() data: MesssageDto): Promise<void> {
     console.log('friend id is ', data.id);
     console.log('content is ', data.content);
-    this.messageRepository.insert({ senderId: socket.data.userId, friendId: data.id, content: data.content });
-    socket.to(`friend-${data.id}`).emit('message', data);
+    console.log('creatdAt is ', data.createdAt);
+    await this.checkExistFriendship(data.id, socket.data.userId, data.receiverId);
+    await this.messageRepository.insert({
+      senderId: socket.data.userId,
+      friendId: data.id,
+      content: data.content,
+      createdAt: data.createdAt,
+    });
+    const receiverSocketId = this.socketIdRepository.find(data.receiverId)?.socketId;
+    if (receiverSocketId === undefined) {
+      return;
+    }
+    this.server.to(receiverSocketId).emit('message', data);
   }
 
   /**
@@ -61,5 +77,22 @@ export class MessageGateway {
     console.log('data.friendId : ', data.friendId);
     console.log('data lastViewTime : ', data.lastViewTime);
     // console.log(typeof data.lastViewTime);
+  }
+
+  /**
+   * private
+   */
+  private async checkExistFriendship(friendId: number, senderId: number, receiverId: number): Promise<void> {
+    const friendship = await this.friendshipRepository.findOneBy({ id: friendId });
+    if (friendship === null) {
+      throw new Error('존재하지 않는 친구 관계입니다.');
+    }
+    if (
+      (friendship.senderId === senderId && friendship.receiverId === receiverId && friendship.accept === true) ||
+      (friendship.senderId === receiverId && friendship.receiverId === senderId && friendship.accept === true)
+    ) {
+      return;
+    }
+    throw new Error('유효하지 않은 친구 관계입니다.');
   }
 }
