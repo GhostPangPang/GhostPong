@@ -1,16 +1,20 @@
-import { Grid, Text, Box, Avatar, CommonButton, InputBox, Toggle } from '@/common';
+import { Grid, Text, Box, Avatar, CommonButton, InputBox, Toggle, IconButton } from '@/common';
+import { ReactComponent as TrashIcon } from '@/svgs/trash.svg';
 import styled from 'styled-components';
 import { UploadFile } from './UploadFile';
 import { useFileUpload } from '@/hooks/useFileUpload';
 import { usePatchNickName } from '@/hooks/usePatchNickName';
 import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { use2FA } from '@/hooks/use2FA';
+import { use2FAMutation, use2FADeleteMutation } from '@/hooks/use2FAMutate';
+import { use2FAVerifyMutation } from '@/hooks/use2FAVerfiyMutate';
 
 interface EditFormProps {
   desc: string;
   label: string;
   value: string;
-  onClick: React.MouseEventHandler<HTMLButtonElement>;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
   children?: React.ReactNode;
 }
 
@@ -42,13 +46,15 @@ const EditForm = ({ desc, label, value, onClick, children }: EditFormProps) => {
               {children}
             </Grid>
           </Box>
-          <Box backgroundColor="gray200" width="64rem">
-            <Grid container="flex" justifyContent="end" alignItems="center" size={{ height: '100%', padding: 'sm' }}>
-              <CommonButton size="md" onClick={onClick}>
-                {value}
-              </CommonButton>
-            </Grid>
-          </Box>
+          {onClick && (
+            <Box backgroundColor="gray200" width="64rem">
+              <Grid container="flex" justifyContent="end" alignItems="center" size={{ height: '100%', padding: 'sm' }}>
+                <CommonButton size="md" onClick={onClick}>
+                  {value}
+                </CommonButton>
+              </Grid>
+            </Box>
+          )}
         </Grid>
       </Grid>
     </Grid>
@@ -56,20 +62,23 @@ const EditForm = ({ desc, label, value, onClick, children }: EditFormProps) => {
 };
 
 export const EditProfilePage = () => {
-  const { userInfo, refetch } = useAuth();
+  const [toggle, setToggle] = useState(false);
+  const handleToggle = () => {
+    setToggle(!toggle);
+  };
+
+  const { userInfo, refetch: refetchAuth } = useAuth();
+  const { data, refetch: refetch2FA } = use2FA();
 
   const { selectedFile, handleFileChange, handleUpload } = useFileUpload();
-
-  const { handleInputChange, handleSubmit } = usePatchNickName({ onSuccess: refetch });
-  const [email, setEmail] = useState('');
-
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value);
-  };
-
-  const handleEmail = () => {
-    console.log('handleEmail');
-  };
+  const { handleInputChange: handleNickNameChange, handleSubmit: handleNickNameSubmit } = usePatchNickName({
+    onSuccess: refetchAuth,
+  });
+  const { handleInputChange: handleEmailChange, handleSubmit: handleEmailSubmit } = use2FAMutation();
+  const { handleInputChange: handleVerifyChange, handleSubmit: handleVerifySubmit } = use2FAVerifyMutation({
+    onSuccess: refetch2FA,
+  });
+  const { handleSubmit: handleDeleteSubmit } = use2FADeleteMutation({ onSuccess: refetch2FA });
 
   return (
     <Grid container="flex" direction="column" justifyContent="center" size={{ maxWidth: '100rem' }}>
@@ -80,20 +89,43 @@ export const EditProfilePage = () => {
         </Grid>
       </EditForm>
       <StyledLine />
-      <EditForm desc="Account Information" label="UserName" value="Save" onClick={handleSubmit}>
-        <InputBox sizes="sm" placeholder={userInfo.nickname} onChange={handleInputChange} />
+      <EditForm desc="Account Information" label="UserName" value="Save" onClick={handleNickNameSubmit}>
+        <InputBox sizes="sm" placeholder={userInfo.nickname} onChange={handleNickNameChange} />
       </EditForm>
       <StyledLine />
-      <EditForm desc="Two-factor authentication" label="Email" value="Verify" onClick={handleEmail}>
-        <Grid container="flex" justifyContent="space-between" alignItems="center">
-          <InputBox sizes="md" value={email} placeholder="your email" onChange={handleEmailChange} />
-          <Grid container="flex" justifyContent="end" alignItems="center" gap={2}>
-            <Text size="sm" color="gray100" weight="bold">
-              2FA
-            </Text>
-            <Toggle />
+      <EditForm desc="Two-factor authentication" label="2FA" value="Verify">
+        {data.twoFa ? (
+          <Grid container="flex" direction="row" justifyContent="space-between" alignItems="center">
+            <InputBox sizes="sm" value={data.twoFa} disabled />
+            <IconButton onClick={handleDeleteSubmit}>
+              <TrashIcon />
+            </IconButton>
           </Grid>
-        </Grid>
+        ) : (
+          <Grid container="flex" direction="column" justifyContent="space-between" alignItems="start" gap={3}>
+            <Toggle toggle={toggle} onChange={handleToggle} />
+            <Grid container="flex" direction="row-reverse" justifyContent="end" alignItems="center" gap={2}>
+              {toggle ? (
+                <Grid container="flex" direction="column" justifyContent="end" alignItems="center" gap={2}>
+                  <Grid container="flex" direction="row-reverse" justifyContent="space-between" alignItems="center">
+                    <CommonButton size="md" onClick={handleEmailSubmit}>
+                      Send Verify Code
+                    </CommonButton>
+                    <InputBox sizes="sm" placeholder="Email" onChange={handleEmailChange} />
+                  </Grid>
+                  <Grid container="flex" direction="row-reverse" justifyContent="space-between" alignItems="center">
+                    <CommonButton size="md" onClick={handleVerifySubmit}>
+                      Verify
+                    </CommonButton>
+                    <InputBox sizes="sm" placeholder="CODE" onChange={handleVerifyChange} />
+                  </Grid>
+                </Grid>
+              ) : (
+                <Text size="md">Disabled</Text>
+              )}
+            </Grid>
+          </Grid>
+        )}
       </EditForm>
     </Grid>
   );
