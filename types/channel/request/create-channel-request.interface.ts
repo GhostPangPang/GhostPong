@@ -1,4 +1,4 @@
-export class CreateChannelRequest {
+export interface CreateChannelRequest {
   name: string;
   mode: 'public' | 'protected' | 'private';
   password?: string;
