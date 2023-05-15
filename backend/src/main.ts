@@ -5,6 +5,7 @@ import { ValidationError } from 'class-validator';
 import * as cookieParser from 'cookie-parser';
 
 import { AppModule } from './app.module';
+import { HttpExceptionFilter } from './common/filter/http-exception.filter';
 import { corsOption } from './common/option/cors.option';
 import { AppConfigService } from './config/app/configuration.service';
 
@@ -20,6 +21,7 @@ async function bootstrap() {
       },
     }),
   );
+  app.useGlobalFilters(new HttpExceptionFilter());
   app.use(cookieParser());
 
   const swaggerConfig = new DocumentBuilder()
