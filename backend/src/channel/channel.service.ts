@@ -30,7 +30,10 @@ export class ChannelService {
     this.checkUserAlreadyInChannel(myId);
 
     const channel = new Channel(mode, name, password);
-    channel.users.set(myId, await this.generateChannelUserById(myId, 'owner'));
+    channel.users.set(myId, await this.generateChannelUser(myId, 'owner'));
+    console.log(channel.users.get(myId));
+
+    this.logger.log(channel.users);
     this.logger.log(`createChannel: ${JSON.stringify(channel)}`);
     if (mode === 'private') {
       return this.privateChannelRepository.insert(channel);
@@ -39,13 +42,13 @@ export class ChannelService {
   }
 
   /**
-   * 채널 참여 시 user의 id를 이용해 channelUser를 생성한다.
+   * 채널 참여 시 user의 id를 이용해 channelUser 를 생성한다.
    *
    * @param myId
    * @param role
    * @returns
    */
-  private async generateChannelUserById(myId: number, role: ChannelRole): Promise<ChannelUser> {
+  private async generateChannelUser(myId: number, role: ChannelRole): Promise<ChannelUser> {
     const user = await this.userRepository.findOne({ select: ['id', 'nickname', 'image'], where: { id: myId } });
     if (user === null) {
       throw new NotFoundException('존재하지 않는 유저입니다.');
@@ -54,15 +57,16 @@ export class ChannelService {
   }
 
   /**
+   * 채널에 있는 유저 목록 중 userId 를 가진 유저가 있는지 확인한다.
    *
    * @param userId
    */
   private checkUserAlreadyInChannel(userId: number): void {
-    const channels = this.channelRepository.findAll();
+    const channels = [...this.channelRepository.findAll(), ...this.privateChannelRepository.findAll()];
 
     channels.forEach((channel) => {
       if (channel.users.has(userId)) {
-        throw new ConflictException('이미 채널에 참여중인 유저입니다.');
+        throw new ConflictException('이미 채널에 참여중입니다.');
       }
     });
   }

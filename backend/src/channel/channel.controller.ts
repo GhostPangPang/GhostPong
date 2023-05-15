@@ -14,12 +14,12 @@ export class ChannelController {
 
   @ApiHeaders([{ name: 'x-my-id', description: '내 auth 아이디 (임시값)' }])
   @Post()
-  createChannel(
+  async createChannel(
     @ExtractUserId() myId: number,
     @Body() createChannelRequestDto: CreateChannelRequestDto,
     @Res() res: Response,
   ) {
-    const channelId = this.channelService.createChannel(myId, createChannelRequestDto);
+    const channelId = await this.channelService.createChannel(myId, createChannelRequestDto);
     res.setHeader('Location', `'/channel/${channelId}`).json({ message: '채널이 생성되었습니다.' });
   }
 }
