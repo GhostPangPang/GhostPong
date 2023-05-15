@@ -1,10 +1,16 @@
 import { Grid, Text, Box, Avatar, CommonButton, InputBox, Toggle } from '@/common';
 import styled from 'styled-components';
+import { UploadFile } from './UploadFile';
+import { useFileUpload } from '@/hooks/useFileUpload';
+import { usePatchNickName } from '@/hooks/usePatchNickName';
+import { useState } from 'react';
+import { useAuth } from '@/hooks/useAuth';
 
 interface EditFormProps {
   desc: string;
   label: string;
   value: string;
+  onClick: React.MouseEventHandler<HTMLButtonElement>;
   children?: React.ReactNode;
 }
 
@@ -14,7 +20,7 @@ const StyledLine = styled.div`
   background-color: ${(props) => props.theme.color.gray200};
 `;
 
-const EditForm = ({ desc, label, value, children }: EditFormProps) => {
+const EditForm = ({ desc, label, value, onClick, children }: EditFormProps) => {
   return (
     <Grid container="grid" rows={1} columns={3}>
       <Grid gridColumn="span 1/span 1" size={{ height: '100%', padding: 'md' }}>
@@ -38,7 +44,9 @@ const EditForm = ({ desc, label, value, children }: EditFormProps) => {
           </Box>
           <Box backgroundColor="gray200" width="64rem">
             <Grid container="flex" justifyContent="end" alignItems="center" size={{ height: '100%', padding: 'sm' }}>
-              <CommonButton size="md">{value}</CommonButton>
+              <CommonButton size="md" onClick={onClick}>
+                {value}
+              </CommonButton>
             </Grid>
           </Box>
         </Grid>
@@ -48,24 +56,37 @@ const EditForm = ({ desc, label, value, children }: EditFormProps) => {
 };
 
 export const EditProfilePage = () => {
+  const { userInfo, refetch } = useAuth();
+
+  const { selectedFile, handleFileChange, handleUpload } = useFileUpload();
+
+  const { handleInputChange, handleSubmit } = usePatchNickName({ onSuccess: refetch });
+  const [email, setEmail] = useState('');
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+  };
+
+  const handleEmail = () => {
+    console.log('handleEmail');
+  };
+
   return (
     <Grid container="flex" direction="column" justifyContent="center" size={{ maxWidth: '100rem' }}>
-      <EditForm desc="Profile" label="Avatar" value="Upload & Save">
+      <EditForm desc="Profile" label="Avatar" value="Upload & Save" onClick={handleUpload}>
         <Grid container="flex" alignItems="center" gap={3}>
-          <Avatar size="lg" />
-          <CommonButton size="md" backgroundColor="gray200" color="gray100">
-            Upload
-          </CommonButton>
+          <Avatar size="lg" src={selectedFile ? URL.createObjectURL(selectedFile) : userInfo.image} />
+          <UploadFile onChange={handleFileChange} />
         </Grid>
       </EditForm>
       <StyledLine />
-      <EditForm desc="Account Information" label="UserName" value="Save">
-        <InputBox sizes="sm" value="ghostking" placeholder="your nickname" />
+      <EditForm desc="Account Information" label="UserName" value="Save" onClick={handleSubmit}>
+        <InputBox sizes="sm" placeholder={userInfo.nickname} onChange={handleInputChange} />
       </EditForm>
       <StyledLine />
-      <EditForm desc="Two-factor authentication" label="Email" value="Verify">
+      <EditForm desc="Two-factor authentication" label="Email" value="Verify" onClick={handleEmail}>
         <Grid container="flex" justifyContent="space-between" alignItems="center">
-          <InputBox sizes="md" value="ghostking@gmail.com" placeholder="your email" />
+          <InputBox sizes="md" value={email} placeholder="your email" onChange={handleEmailChange} />
           <Grid container="flex" justifyContent="end" alignItems="center" gap={2}>
             <Text size="sm" color="gray100" weight="bold">
               2FA

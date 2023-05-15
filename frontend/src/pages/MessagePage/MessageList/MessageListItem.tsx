@@ -35,7 +35,7 @@ export const MessageListItem = ({
           <img src={newSvg} alt="new" />
         </Grid>
         <Grid container="flex" alignItems="center" gap={1}>
-          <Avatar size="md" src={image ?? undefined} />
+          <Avatar size="md" src={image} />
           <Grid container="flex" direction="column" gap={0.5}>
             <Text size="xs" weight="light" color="gray100">
               {nickname}
