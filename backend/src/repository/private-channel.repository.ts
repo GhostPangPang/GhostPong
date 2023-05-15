@@ -34,4 +34,8 @@ export class PrivateChannelRepository implements Repository<string, Channel> {
   find(id: string): Channel | undefined {
     return this.channelList.get(id);
   }
+
+  findAll(): Channel[] {
+    return Array.from(this.channelList.values());
+  }
 }
