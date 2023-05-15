@@ -1,20 +1,7 @@
-import { darken } from 'polished';
 import styled from 'styled-components';
 import { ReactComponent as SendSvg } from '@/svgs/send.svg';
 import { Box } from '@/common/Box';
-
-const StyledInputButton = styled.button`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  padding: 0.5rem;
-
-  border-radius: ${(props) => props.theme.borderRadius.sm};
-  &:hover {
-    background-color: ${(props) => darken(0.5, props.theme.color.surface)};
-  }
-`;
+import { IconButton } from '@/common/Button';
 
 const StyledInput = styled.input`
   font-size: 1.2rem;
@@ -25,9 +12,9 @@ const StyledInput = styled.input`
 
 const SendButton = () => {
   return (
-    <StyledInputButton>
+    <IconButton>
       <SendSvg width="1.2rem" height="1.2rem" stroke="#D4D4D4" style={{ flexGrow: 0 }} />
-    </StyledInputButton>
+    </IconButton>
   );
 };
 
