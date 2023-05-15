@@ -19,7 +19,6 @@ function App() {
       <Suspense fallback={<Loading />}>
         <ErrorBoundary fallback={<h1>Error</h1>}>
           <Routes>
-            {/* <Route path="/loading" element={<Loading />} /> */}
             <Route element={<MainLayout />}>
               <Route path="/" element={<LobbyPage />} />
               <Route path="/message" element={<MessagePage />} />

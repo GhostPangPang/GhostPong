@@ -1,5 +1,4 @@
-import { ContainerProps, LayoutProps, FlexContainerProps } from '@/types/style';
-import { Grid, GridItemProps } from '@/common/Grid';
+import { Grid } from '@/common/Grid';
 
 type ContentProps = {
   children?: React.ReactNode;
