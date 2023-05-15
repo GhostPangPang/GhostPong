@@ -91,8 +91,7 @@ export class AuthController {
     @Body() { code }: CodeVerificationRequestDto,
     @Res() res: Response,
   ): Promise<void> {
-    await this.authService.twoFactorAuthSignIn(myId, code);
-    const token = await this.authService.signIn(myId);
+    const token = await this.authService.twoFactorAuthSignIn(myId, code);
     const clientUrl = this.appConfigService.clientUrl;
     res.redirect(`${clientUrl}/auth?token=${token}`);
   }

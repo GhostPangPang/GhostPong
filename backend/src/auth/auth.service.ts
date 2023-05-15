@@ -55,12 +55,13 @@ export class AuthService {
     return this.jwtService.sign(payload, signOptions);
   }
 
-  async twoFactorAuthSignIn(myId: number, code: string): Promise<void> {
+  async twoFactorAuthSignIn(myId: number, code: string): Promise<string> {
     const value: TwoFactorAuth | undefined = await this.cacheManager.get(`${myId}`);
     if (value === undefined) {
       throw new ForbiddenException('유효하지 않은 인증 코드입니다.');
     }
     await this.verifyTwoFactorAuth(myId, code, value.code);
+    return this.signIn(myId);
   }
 
   async getTwoFactorAuth(myId: number): Promise<TwoFactorAuthResponseDto> {
