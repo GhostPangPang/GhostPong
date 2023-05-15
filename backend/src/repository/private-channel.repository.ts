@@ -5,10 +5,10 @@ import { Channel } from './model/channel';
 import { Repository } from './repository.interface';
 
 /**
- * public, protected 채널을 관리하는 repository.
+ * private 채널만 관리하는 repository.
  */
 @Injectable()
-export class ChannelRepository implements Repository<string, Channel> {
+export class PrivateChannelRepository implements Repository<string, Channel> {
   private readonly channelList: Map<string, Channel> = new Map<string, Channel>();
 
   insert(channel: Channel): string {
@@ -33,13 +33,5 @@ export class ChannelRepository implements Repository<string, Channel> {
 
   find(id: string): Channel | undefined {
     return this.channelList.get(id);
-  }
-
-  count() {
-    return this.channelList.size;
-  }
-
-  findAll(): Channel[] {
-    return Array.from(this.channelList.values());
   }
 }
