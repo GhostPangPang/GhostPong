@@ -10,7 +10,7 @@ import {
 } from '@nestjs/swagger';
 import { Response } from 'express';
 
-import { COOKIE_EXPIRES_IN } from '../common/constant';
+import { COOKIE_OPTIONS } from '../common/constant';
 import { ExtractUserId } from '../common/decorator/extract-user-id.decorator';
 import { ErrorResponseDto } from '../common/dto/error-response.dto';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
@@ -60,27 +60,13 @@ export class AuthController {
     if (user.id === null) {
       // UNREGSIETERED -> JOIN (sign up)
       const token = await this.authService.signUp(user);
-      res
-        .cookie('jwt-for-unregistered', token, {
-          maxAge: COOKIE_EXPIRES_IN,
-          httpOnly: true,
-          secure: true,
-          sameSite: 'lax',
-        })
-        .redirect(`${clientUrl}/auth/register`);
+      res.cookie('jwt-for-unregistered', token, COOKIE_OPTIONS).redirect(`${clientUrl}/auth/register`);
     } else {
       // REGISTERED -> LOGIN (sign in)
       const { twoFa } = await this.authService.getTwoFactorAuthEmail(user.id);
       if (twoFa !== null) {
         const token = await this.authService.twoFactorAuth(user.id, twoFa);
-        res
-          .cookie('jwt-for-2fa', token, {
-            maxAge: COOKIE_EXPIRES_IN,
-            httpOnly: true,
-            secure: true,
-            sameSite: 'lax',
-          })
-          .redirect(`${clientUrl}/auth/2fa`);
+        res.cookie('jwt-for-2fa', token, COOKIE_OPTIONS).redirect(`${clientUrl}/auth/2fa`);
       } else {
         const token = await this.authService.signIn(user.id);
         res.redirect(`${clientUrl}/auth?token=${token}`);
@@ -118,14 +104,7 @@ export class AuthController {
     @Res() res: Response,
   ): Promise<void> {
     const token = await this.authService.twoFactorAuth(myId, email);
-    res
-      .cookie('jwt-for-2fa', token, {
-        maxAge: COOKIE_EXPIRES_IN,
-        httpOnly: true,
-        secure: true,
-        sameSite: 'lax',
-      })
-      .json({ message: '2단계 인증 이메일이 전송되었습니다.' });
+    res.cookie('jwt-for-2fa', token, COOKIE_OPTIONS).json({ message: '2단계 인증 이메일이 전송되었습니다.' });
   }
 
   /**
