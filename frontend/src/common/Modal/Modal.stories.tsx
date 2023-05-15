@@ -47,29 +47,6 @@ export const Scroll = () => {
         <h1>Modal</h1>
         <h1>Modal</h1>
         <h1>Modal</h1>
-        <h1>Modal</h1>
-        <h1>Modal</h1>
-        <h1>Modal</h1>
-        <h1>Modal</h1>
-        <h1>Modal</h1>
-        <h1>Modal</h1>
-        <h1>Modal</h1>
-        <h1>Modal</h1>
-        <h1>Modal</h1>
-        <h1>Modal</h1>
-        <h1>Modal</h1>
-        <h1>Modal</h1>
-        <h1>Modal</h1>
-        <h1>Modal</h1>
-        <h1>Modal</h1>
-        <h1>Modal</h1>
-        <h1>Modal</h1>
-        <h1>Modal</h1>
-        <h1>Modal</h1>
-        <h1>Modal</h1>
-        <h1>Modal</h1>
-        <h1>Modal</h1>
-        <h1>Modal</h1>
       </Modal>
     </>
   );

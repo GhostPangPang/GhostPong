@@ -15,17 +15,8 @@ export const Modal = ({ children, isOpen, onClose }: ModalProps) => {
   return (
     <ModalPortal>
       <ModalOverlay>
-        <Box
-          display="flex"
-          direction="column"
-          alignItems="center"
-          backgroundColor="gray300"
-          padding="sm"
-          maxHeight="80%"
-          minWidth="80rem"
-          overflowY="auto"
-        >
-          <IconButton onClick={onClose} style={{ alignSelf: 'end' }}>
+        <Box position="relative" backgroundColor="gray300" padding="sm" maxHeight="80%" minWidth="80rem">
+          <IconButton onClick={onClose} style={{ position: 'absolute', right: '0.5rem' }}>
             <CloseSvg />
           </IconButton>
           {children}
