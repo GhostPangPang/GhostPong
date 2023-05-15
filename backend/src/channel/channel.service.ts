@@ -44,8 +44,8 @@ export class ChannelService {
   /**
    * 채널 참여 시 user의 id를 이용해 channelUser 를 생성한다.
    *
-   * @param myId
-   * @param role
+   * @param myId user의 id
+   * @param role channelUser의 role - create 시 owner, join 시 general
    * @returns
    */
   private async generateChannelUser(myId: number, role: ChannelRole): Promise<ChannelUser> {

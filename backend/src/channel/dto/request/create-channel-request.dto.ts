@@ -1,9 +1,11 @@
 import { IsIn, Matches } from 'class-validator';
 
+import { CreateChannelRequest } from '@/types/channel/request';
+
 import { ChannelMode } from '../../../repository/model/channel';
 import { IsChannelPassword } from '../decorator/is-password-required.decorator';
 
-export class CreateChannelRequestDto {
+export class CreateChannelRequestDto implements CreateChannelRequest {
   /**
    * printable ascii, 한글 3~19자의 이름
    * @example '아무나 오세요~'
