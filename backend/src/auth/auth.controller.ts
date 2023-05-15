@@ -72,8 +72,15 @@ export class AuthController {
       // REGISTERED -> LOGIN (sign in)
       const { twoFa } = await this.authService.getTwoFactorAuthEmail(user.id);
       if (twoFa !== null) {
-        await this.authService.twoFactorAuth(user.id, twoFa);
-        res.redirect(`${clientUrl}/auth/2fa`);
+        const token = await this.authService.twoFactorAuth(user.id, twoFa);
+        res
+          .cookie('jwt-for-2fa', token, {
+            maxAge: COOKIE_EXPIRES_IN,
+            httpOnly: true,
+            secure: true,
+            sameSite: 'lax',
+          })
+          .redirect(`${clientUrl}/auth/2fa`);
       } else {
         const token = await this.authService.signIn(user.id);
         res.redirect(`${clientUrl}/auth?token=${token}`);
