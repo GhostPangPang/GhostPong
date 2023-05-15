@@ -12,7 +12,7 @@ export const GameButton = styled.button<GameButtonProps>`
   align-items: center;
   justify-content: center;
 
-  font-family: 'game';
+  font-family: 'game', 'normal';
   font-weight: ${(props) => props.theme.fontWeight.bold};
 
   background-color: ${(props) => props.theme.color.gray200};
