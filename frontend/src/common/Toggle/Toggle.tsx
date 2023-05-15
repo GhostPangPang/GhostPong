@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
 const ToggleSwitch = styled.label`
@@ -46,13 +46,14 @@ const ToggleSlider = styled.span`
   }
 `;
 
-export const Toggle = () => {
-  const [toggle, setToggle] = useState(false);
+// export { toggle };
 
-  const handleToggle = () => {
-    setToggle(!toggle);
-  };
+interface ToggleProps {
+  toggle: boolean;
+  onChange: React.ChangeEventHandler<HTMLInputElement>;
+}
 
+export const Toggle = ({ toggle, onChange: handleToggle }: ToggleProps) => {
   return (
     <div>
       <ToggleSwitch>
