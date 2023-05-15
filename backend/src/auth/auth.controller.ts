@@ -70,8 +70,14 @@ export class AuthController {
         .redirect(`${clientUrl}/auth/register`);
     } else {
       // REGISTERED -> LOGIN (sign in)
-      const token = await this.authService.signIn(user.id);
-      res.redirect(`${clientUrl}/auth?token=${token}`);
+      const { twoFa } = await this.authService.getTwoFactorAuthEmail(user.id);
+      if (twoFa !== null) {
+        await this.authService.twoFactorAuth(user.id, twoFa);
+        res.redirect(`${clientUrl}/auth/2fa`);
+      } else {
+        const token = await this.authService.signIn(user.id);
+        res.redirect(`${clientUrl}/auth?token=${token}`);
+      }
     }
   }
 
