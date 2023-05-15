@@ -4,7 +4,7 @@ import { ChangeEvent, useState } from 'react';
 
 const API = '/user/nickname';
 
-const patchNickName = async (nickname: string): Promise<ApiResponse> => {
+const patchNickName = async (nickname: string) => {
   return await patch<ApiResponse>(API, { nickname });
 };
 
@@ -21,8 +21,7 @@ export const usePatchNickName = ({ onSuccess: refetch }: Props) => {
 
   const mutation = useMutation(
     () => {
-      if (!nickName) return Promise.reject(new Error('No nickname selected'));
-
+      if (!nickName) throw new Error('No nickname selected');
       return patchNickName(nickName);
     },
     {
@@ -32,7 +31,7 @@ export const usePatchNickName = ({ onSuccess: refetch }: Props) => {
       },
       onError: (error: ApiError) => {
         alert(error.message);
-        Promise.reject(new Error(error.message));
+        throw new Error(error.message);
       },
     },
   );

@@ -5,11 +5,11 @@ import { ChangeEvent, useState } from 'react';
 
 const API = '/user/image';
 
-const postFileUpload = async (formData: FormData): Promise<LocationResponse> => {
+const postFileUpload = async (formData: FormData) => {
   return await post<LocationResponse>(API, formData);
 };
 
-const patchFileUpload = async (location: LocationResponse): Promise<ApiResponse> => {
+const patchFileUpload = async (location: LocationResponse) => {
   return await patch<ApiResponse>(API, { image: location });
 };
 
@@ -28,7 +28,7 @@ export const useFileUpload = () => {
 
   const { mutate: patchMutate } = useMutation(
     (location: LocationResponse) => {
-      if (!location) return Promise.reject(new Error('No location selected'));
+      if (!location) throw new Error('No location selected');
       return patchFileUpload(location);
     },
     {
@@ -38,14 +38,14 @@ export const useFileUpload = () => {
       },
       onError: (error: ApiError) => {
         alert(error.message);
-        return Promise.reject(new Error(error.message));
+        throw new Error(error.message);
       },
     },
   );
 
   const { mutate: postMutate } = useMutation(
     (selectedFile: File | undefined) => {
-      if (!selectedFile) return Promise.reject(new Error('No file selected'));
+      if (!selectedFile) throw new Error('No file selected');
 
       const formData = new FormData();
       formData.append('image', selectedFile);
@@ -57,7 +57,7 @@ export const useFileUpload = () => {
       },
       onError: (error: ApiError) => {
         alert(error.message);
-        return Promise.reject(new Error(error.message));
+        throw new Error(error.message);
       },
     },
   );
