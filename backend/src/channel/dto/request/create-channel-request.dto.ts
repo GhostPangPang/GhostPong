@@ -1,34 +1,7 @@
-import { Type } from 'class-transformer';
-import { IsIn, IsNumber, IsString, Length, Matches, Max, Min, ValidateNested } from 'class-validator';
+import { IsIn, Matches } from 'class-validator';
 
 import { ChannelMode } from '../../../repository/model/channel';
 import { IsChannelPassword } from '../decorator/is-password-required.decorator';
-
-class ChannelUser {
-  /**
-   * 유저 id
-   * @example 1
-   */
-  @IsNumber()
-  @Min(1)
-  @Max(2147483647)
-  id: number;
-
-  /**
-   * 유저 닉네임
-   * @example '김유저'
-   */
-  @Matches(/^[가-힣a-zA-Z0-9]{1,8}$/, { message: '유효하지 않은 닉네임 입니다.' })
-  nickname: string;
-
-  /**
-   * 유저 이미지 url
-   * @example '/asset/profile-3.png'
-   */
-  @IsString()
-  @Length(1, 256)
-  image: string;
-}
 
 export class CreateChannelRequestDto {
   /**
@@ -51,11 +24,4 @@ export class CreateChannelRequestDto {
    */
   @IsChannelPassword()
   password?: string;
-
-  /**
-   * channel 을 만든 방장의 정보
-   */
-  @Type(() => ChannelUser)
-  @ValidateNested({ message: 'nested error' })
-  user: ChannelUser;
 }
