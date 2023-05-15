@@ -7,10 +7,10 @@ import { IconButton } from '../Button/IconButton';
 export interface ModalProps {
   children: React.ReactNode;
   isOpen: boolean;
-  onClose?: () => void;
+  onClose: () => void;
 }
 
-export const Modal = ({ children, isOpen, onClose = () => !isOpen }: ModalProps) => {
+export const Modal = ({ children, isOpen, onClose }: ModalProps) => {
   if (!isOpen) return null;
   return (
     <ModalPortal>
