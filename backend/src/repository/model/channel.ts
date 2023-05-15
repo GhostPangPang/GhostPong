@@ -23,11 +23,12 @@ export class Channel {
     this.name = name;
     this.password = password;
     this.users = new Map<number, ChannelUser>();
+    this.bannedUserIdList = [];
   }
 
   name: string;
   mode: ChannelMode = 'public';
   password?: string;
   users: Map<number, ChannelUser>;
-  bannedUserIdList?: number[];
+  bannedUserIdList: number[];
 }

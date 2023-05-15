@@ -17,7 +17,6 @@ export class ChannelService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
   ) {}
-
   logger: Logger = new Logger('ChannelService');
 
   /**
@@ -31,9 +30,6 @@ export class ChannelService {
 
     const channel = new Channel(mode, name, password);
     channel.users.set(myId, await this.generateChannelUser(myId, 'owner'));
-    console.log(channel.users.get(myId));
-
-    this.logger.log(channel.users);
     this.logger.log(`createChannel: ${JSON.stringify(channel)}`);
     if (mode === 'private') {
       return this.privateChannelRepository.insert(channel);
@@ -41,6 +37,7 @@ export class ChannelService {
     return this.channelRepository.insert(channel);
   }
 
+  // SECTION: private
   /**
    * 채널 참여 시 user의 id를 이용해 channelUser 를 생성한다.
    *
@@ -70,4 +67,6 @@ export class ChannelService {
       }
     });
   }
+
+  // !SECTION : private
 }
