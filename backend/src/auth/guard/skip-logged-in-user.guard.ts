@@ -17,7 +17,7 @@ export class SkipLoggedInUserGuard implements CanActivate {
   ) {}
 
   canActivate(context: ExecutionContext): boolean {
-    const request: Request = context.switchToHttp().getRequest();
+    const request: Request = context.switchToHttp().getRequest<Request>();
     const token = this.extractTokenFromHeader(request);
     if (!token) {
       return true;
@@ -30,7 +30,7 @@ export class SkipLoggedInUserGuard implements CanActivate {
       return true;
     }
     // 이미 valid한 토큰이 있는 경우
-    const response: Response = context.switchToHttp().getResponse();
+    const response: Response = context.switchToHttp().getResponse<Response>();
     const clientUrl = this.appConfigService.clientUrl;
     response.redirect(`${clientUrl}/`);
     return false;

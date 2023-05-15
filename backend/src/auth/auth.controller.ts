@@ -10,7 +10,7 @@ import {
 } from '@nestjs/swagger';
 import { Response } from 'express';
 
-import { AUTH_COOKIE_EXPIREIN } from '../common/constant';
+import { COOKIE_EXPIRES_IN } from '../common/constant';
 import { ExtractUserId } from '../common/decorator/extract-user-id.decorator';
 import { ErrorResponseDto } from '../common/dto/error-response.dto';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
@@ -24,6 +24,7 @@ import { TwoFactorAuthRequestDto } from './dto/request/two-factor-auth-request.d
 import { TwoFactorAuthResponseDto } from './dto/response/two-factor-auth-response.dto';
 import { FtGuard } from './guard/ft.guard';
 import { SkipLoggedInUserGuard } from './guard/skip-logged-in-user.guard';
+import { TwoFaGuard } from './guard/two-fa.guard';
 import { UserGuard } from './guard/user.guard';
 import { LoginInfo } from './type/login-info';
 
@@ -61,7 +62,7 @@ export class AuthController {
       const token = await this.authService.signUp(user);
       res
         .cookie('jwt-for-unregistered', token, {
-          maxAge: AUTH_COOKIE_EXPIREIN,
+          maxAge: COOKIE_EXPIRES_IN,
           httpOnly: true,
           secure: true,
           sameSite: 'lax',
@@ -98,11 +99,20 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(UserGuard)
   @Post('2fa')
-  twoFactorAuth(
+  async twoFactorAuth(
     @ExtractUserId() myId: number,
     @Body() { email }: TwoFactorAuthRequestDto,
-  ): Promise<SuccessResponseDto> {
-    return this.authService.twoFactorAuth(myId, email);
+    @Res() res: Response,
+  ): Promise<void> {
+    const token = await this.authService.twoFactorAuth(myId, email);
+    res
+      .cookie('jwt-for-2fa', token, {
+        maxAge: COOKIE_EXPIRES_IN,
+        httpOnly: true,
+        secure: true,
+        sameSite: 'lax',
+      })
+      .json({ message: '2단계 인증 이메일이 전송되었습니다.' });
   }
 
   /**
@@ -116,13 +126,15 @@ export class AuthController {
   @ApiBadRequestResponse({ type: ErrorResponseDto, description: '잘못된 2단계 인증 코드' })
   @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
   @HttpCode(HttpStatus.OK)
-  @UseGuards(UserGuard)
+  @UseGuards(UserGuard, TwoFaGuard)
   @Post('2fa/verify')
-  verifyTwoFactorAuth(
+  async verifyTwoFactorAuth(
     @ExtractUserId() myId: number,
     @Body() { code }: CodeVerificationRequestDto,
-  ): Promise<SuccessResponseDto> {
-    return this.authService.verifyTwoFactorAuth(myId, code);
+    @Res() res: Response,
+  ): Promise<void> {
+    await this.authService.verifyTwoFactorAuth(myId, code);
+    res.clearCookie('jwt-for-2fa').json({ message: '2단계 인증이 완료되었습니다.' });
   }
 
   /**
