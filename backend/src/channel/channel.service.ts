@@ -67,6 +67,5 @@ export class ChannelService {
       }
     });
   }
-
   // !SECTION : private
 }
