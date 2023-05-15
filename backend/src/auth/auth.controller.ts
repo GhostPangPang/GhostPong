@@ -86,7 +86,7 @@ export class AuthController {
   @SkipUserGuard()
   @HttpCode(HttpStatus.OK)
   @Post('42login/2fa')
-  async verifyTwoFactorAuth(
+  async twoFactorAuthLogin(
     @ExtractUserId() myId: number,
     @Body() { code }: CodeVerificationRequestDto,
     @Res() res: Response,
