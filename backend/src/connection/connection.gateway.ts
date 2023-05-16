@@ -18,7 +18,7 @@ import { SocketIdRepository } from '../repository/socket-id.repository';
 import { UserStatusRepository } from '../repository/user-status.repository';
 
 @WebSocketGateway({ cors: corsOption })
-export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect {
+export class ConnectionGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   public server: Server;
 
