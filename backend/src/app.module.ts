@@ -10,6 +10,7 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { UserGuard } from './auth/guard/user.guard';
 import { BlockedModule } from './blocked/blocked.module';
+import { ChannelModule } from './channel/channel.module';
 import { AppConfigModule } from './config/app/configuration.module';
 import { DatabaseConfigModule } from './config/database/configuration.module';
 import { DatabaseConfigService } from './config/database/configuration.service';
@@ -35,6 +36,7 @@ import { UserModule } from './user/user.module';
     BlockedModule,
     FriendModule,
     MessageModule,
+    ChannelModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: UserGuard }],
