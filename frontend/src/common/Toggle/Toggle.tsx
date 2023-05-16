@@ -49,15 +49,15 @@ const ToggleSlider = styled.span`
 // export { toggle };
 
 interface ToggleProps {
-  toggle: boolean;
+  isToggle: boolean;
   onChange: React.ChangeEventHandler<HTMLInputElement>;
 }
 
-export const Toggle = ({ toggle, onChange: handleToggle }: ToggleProps) => {
+export const Toggle = ({ isToggle, onChange: handleToggle }: ToggleProps) => {
   return (
     <div>
       <ToggleSwitch>
-        <ToggleInput type="checkbox" checked={toggle} onChange={handleToggle} />
+        <ToggleInput type="checkbox" checked={isToggle} onChange={handleToggle} />
         <ToggleSlider />
       </ToggleSwitch>
     </div>
