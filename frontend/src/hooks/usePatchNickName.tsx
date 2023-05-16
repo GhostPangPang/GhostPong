@@ -4,22 +4,17 @@ import { ChangeEvent, useState } from 'react';
 
 const API = '/user/nickname';
 
+interface Props {
+  nickName: string;
+  onSuccess: () => void;
+}
+
 const patchNickName = async (nickname: string) => {
   return await patch<ApiResponse>(API, { nickname });
 };
 
-interface Props {
-  onSuccess: () => void;
-}
-
-export const usePatchNickName = ({ onSuccess: refetch }: Props) => {
-  const [nickName, setNickName] = useState<string>('');
-
-  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setNickName(event.target.value);
-  };
-
-  const mutation = useMutation(
+export const usePatchNickName = ({ nickName, onSuccess: refetch }: Props) => {
+  const { mutate } = useMutation(
     () => {
       if (!nickName) throw new Error('No nickname selected');
       return patchNickName(nickName);
@@ -38,8 +33,8 @@ export const usePatchNickName = ({ onSuccess: refetch }: Props) => {
 
   const handleSubmit: React.MouseEventHandler<HTMLButtonElement> = (event) => {
     event.preventDefault();
-    mutation.mutate();
+    mutate();
   };
 
-  return { handleInputChange, handleSubmit };
+  return { handleSubmit };
 };

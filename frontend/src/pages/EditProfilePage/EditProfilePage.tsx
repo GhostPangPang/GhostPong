@@ -7,6 +7,7 @@ import { usePatchNickName } from '@/hooks/usePatchNickName';
 import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { use2FA } from '@/hooks/use2FA';
+import { useInput } from '@/hooks/useInput';
 import { use2FAMutation, use2FADeleteMutation } from '@/hooks/use2FAMutate';
 import { use2FAVerifyMutation } from '@/hooks/use2FAVerfiyMutate';
 
@@ -71,13 +72,13 @@ export const EditProfilePage = () => {
   const { data, refetch: refetch2FA } = use2FA();
 
   const { selectedFile, handleFileChange, handleUpload } = useFileUpload();
-  const { handleInputChange: handleNickNameChange, handleSubmit: handleNickNameSubmit } = usePatchNickName({
-    onSuccess: refetchAuth,
-  });
-  const { handleInputChange: handleEmailChange, handleSubmit: handleEmailSubmit } = use2FAMutation();
-  const { handleInputChange: handleVerifyChange, handleSubmit: handleVerifySubmit } = use2FAVerifyMutation({
-    onSuccess: refetch2FA,
-  });
+
+  const { value: nickName, onChange: handleNickName } = useInput(userInfo.nickname);
+  const { value: email, onChange: handleEmail } = useInput(data.twoFa ? data.twoFa : '');
+  const { value: verify, onChange: handleVerify } = useInput('');
+  const { handleSubmit: handleNickNameSubmit } = usePatchNickName({ nickName, onSuccess: refetchAuth });
+  const { handleSubmit: handleEmailSubmit } = use2FAMutation({ twoFAEmail: email });
+  const { handleSubmit: handleVerifySubmit } = use2FAVerifyMutation({ code: verify, onSuccess: refetch2FA });
   const { handleSubmit: handleDeleteSubmit } = use2FADeleteMutation({ onSuccess: refetch2FA });
 
   return (
@@ -90,7 +91,7 @@ export const EditProfilePage = () => {
       </EditForm>
       <StyledLine />
       <EditForm desc="Account Information" label="UserName" value="Save" onClick={handleNickNameSubmit}>
-        <InputBox sizes="sm" placeholder={userInfo.nickname} onChange={handleNickNameChange} />
+        <InputBox sizes="sm" placeholder={userInfo.nickname} onChange={handleNickName} />
       </EditForm>
       <StyledLine />
       <EditForm desc="Two-factor authentication" label="2FA" value="Verify">
@@ -111,13 +112,13 @@ export const EditProfilePage = () => {
                     <CommonButton size="md" onClick={handleEmailSubmit}>
                       Send Verify Code
                     </CommonButton>
-                    <InputBox sizes="sm" placeholder="Email" onChange={handleEmailChange} />
+                    <InputBox sizes="sm" placeholder="Email" onChange={handleEmail} />
                   </Grid>
                   <Grid container="flex" direction="row-reverse" justifyContent="space-between" alignItems="center">
                     <CommonButton size="md" onClick={handleVerifySubmit}>
                       Verify
                     </CommonButton>
-                    <InputBox sizes="sm" placeholder="CODE" onChange={handleVerifyChange} />
+                    <InputBox sizes="sm" placeholder="CODE" onChange={handleVerify} />
                   </Grid>
                 </Grid>
               ) : (

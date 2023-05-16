@@ -14,7 +14,7 @@ const ToggleInput = styled.input`
   height: 0;
 
   &:checked + span {
-    background-color: #2196f3;
+    background-color: ${(props) => props.theme.color.primary};
   }
 
   &:checked + span:before {

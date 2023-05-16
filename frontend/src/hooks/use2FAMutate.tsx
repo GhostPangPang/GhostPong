@@ -1,7 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { post, del, ApiResponse, ApiError } from '@/libs/api';
 import { TwoFactorAuthRequest } from '@/dto/auth/request';
-import { ChangeEvent, useState } from 'react';
 
 const API = '/auth/2fa';
 
@@ -42,13 +41,12 @@ export const use2FADeleteMutation = ({ onSuccess: refetch }: Props) => {
   return { handleSubmit };
 };
 
-export const use2FAMutation = () => {
-  const [twoFAEmail, setTwoFAEmail] = useState<string>('');
+interface TwoFAProps {
+  twoFAEmail: string;
+}
 
-  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setTwoFAEmail(event.target.value);
-  };
-  const mutation = useMutation(
+export const use2FAMutation = ({ twoFAEmail }: TwoFAProps) => {
+  const { mutate } = useMutation(
     () => {
       return post2FA({ email: twoFAEmail });
     },
@@ -65,8 +63,8 @@ export const use2FAMutation = () => {
 
   const handleSubmit: React.MouseEventHandler<HTMLButtonElement> = (event) => {
     event.preventDefault();
-    mutation.mutate();
+    mutate();
   };
 
-  return { handleInputChange, handleSubmit };
+  return { handleSubmit };
 };
