@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
 const ToggleSwitch = styled.label`
@@ -14,7 +14,7 @@ const ToggleInput = styled.input`
   height: 0;
 
   &:checked + span {
-    background-color: #2196f3;
+    background-color: ${(props) => props.theme.color.primary};
   }
 
   &:checked + span:before {
@@ -46,17 +46,18 @@ const ToggleSlider = styled.span`
   }
 `;
 
-export const Toggle = () => {
-  const [toggle, setToggle] = useState(false);
+// export { toggle };
 
-  const handleToggle = () => {
-    setToggle(!toggle);
-  };
+interface ToggleProps {
+  isToggle: boolean;
+  onChange: React.ChangeEventHandler<HTMLInputElement>;
+}
 
+export const Toggle = ({ isToggle, onChange: handleToggle }: ToggleProps) => {
   return (
     <div>
       <ToggleSwitch>
-        <ToggleInput type="checkbox" checked={toggle} onChange={handleToggle} />
+        <ToggleInput type="checkbox" checked={isToggle} onChange={handleToggle} />
         <ToggleSlider />
       </ToggleSwitch>
     </div>

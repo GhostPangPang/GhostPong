@@ -1,23 +1,22 @@
-import { patch, ApiResponse, ApiError } from '@/libs/api';
 import { useMutation } from '@tanstack/react-query';
-import { ChangeEvent, useState } from 'react';
+import { post, ApiResponse, ApiError } from '@/libs/api';
+import { CodeVerificationRequest } from '@/dto/auth/request';
 
-const API = '/user/nickname';
+const API = '/auth/2fa/verify';
+
+const post2FAVerify = async (code: CodeVerificationRequest) => {
+  return await post<ApiResponse>(API, code);
+};
 
 interface Props {
-  nickName: string;
+  code: string;
   onSuccess: () => void;
 }
 
-const patchNickName = async (nickname: string) => {
-  return await patch<ApiResponse>(API, { nickname });
-};
-
-export const usePatchNickName = ({ nickName, onSuccess: refetch }: Props) => {
+export const use2FAVerifyMutation = ({ code, onSuccess: refetch }: Props) => {
   const { mutate } = useMutation(
     () => {
-      if (!nickName) throw new Error('No nickname selected');
-      return patchNickName(nickName);
+      return post2FAVerify({ code: code });
     },
     {
       onSuccess: (data: ApiResponse) => {
