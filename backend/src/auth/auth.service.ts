@@ -26,7 +26,6 @@ export class AuthService {
     private readonly mailerService: MailerService,
   ) {}
 
-  // UNREGISTERD -> SIGN UP (Register)
   async signUp(user: LoginInfo): Promise<string> {
     const auth = await this.authRepository.findOneBy({ email: user.email });
 
@@ -43,7 +42,6 @@ export class AuthService {
     return this.jwtService.sign(payload, signOptions);
   }
 
-  // REGISTERD -> SIGN IN (Login)
   async signIn(userId: number): Promise<string> {
     // CHECK 필요 없을 거 같음 (무조건 user table에 있는 경우에 signIn이 실행됨)
     // if ((await this.userRepository.findOneBy({ id: userId })) === null) {
@@ -57,13 +55,40 @@ export class AuthService {
     return this.jwtService.sign(payload, signOptions);
   }
 
-  async getTwoFactorAuthEmail(myId: number): Promise<TwoFactorAuthResponseDto> {
+  async twoFactorAuthSignIn(myId: number, code: string): Promise<string> {
+    const value: TwoFactorAuth | undefined = await this.cacheManager.get(`${myId}`);
+    if (value === undefined) {
+      throw new ForbiddenException('유효하지 않은 인증 코드입니다.');
+    }
+    await this.verifyTwoFactorAuth(myId, code, value.code);
+    return this.signIn(myId);
+  }
+
+  async getTwoFactorAuth(myId: number): Promise<TwoFactorAuthResponseDto> {
     const auth = await this.authRepository.findOne({ where: { id: myId }, select: ['twoFa'] });
 
     if (auth === null) {
       return { twoFa: null };
     }
     return { twoFa: auth.twoFa };
+  }
+
+  async sendAuthCode(myId: number, email: string): Promise<string> {
+    const code = String(Math.floor(Math.random() * 1000000)).padStart(6, '0');
+
+    await this.mailerService.sendMail({
+      to: email,
+      subject: 'GhostPhong 인증번호입니다 ✔',
+      html: this.getEmailTemplate(code),
+    });
+    await this.cacheManager.set(`${myId}`, { email, code }, TWO_FA_EXPIRES_IN);
+
+    const payload = { userId: myId };
+    const signOptions = {
+      secret: this.jwtConfigService.twoFaSecretKey,
+      expiresIn: TWO_FA_EXPIRES_IN,
+    };
+    return this.jwtService.sign(payload, signOptions);
   }
 
   async twoFactorAuth(myId: number, email: string): Promise<string> {
@@ -74,44 +99,23 @@ export class AuthService {
     if ((await this.authRepository.findOneBy({ twoFa: email })) !== null) {
       throw new ConflictException('이미 인증이 완료된 이메일입니다.');
     }
-    const code = String(Math.floor(Math.random() * 1000000)).padStart(6, '0');
-
-    await this.mailerService.sendMail({
-      to: email,
-      subject: 'GhostPhong 인증번호입니다 ✔',
-      html: this.getEmailTemplate(code),
-    });
-
-    await this.cacheManager.set(`${myId}`, { email, code }, TWO_FA_EXPIRES_IN);
-    // token
-
-    const payload = { userId: myId };
-    const signOptions = {
-      secret: this.jwtConfigService.twoFaSecretKey,
-      expiresIn: TWO_FA_EXPIRES_IN,
-    };
-    return this.jwtService.sign(payload, signOptions);
+    return this.sendAuthCode(myId, email);
   }
 
-  async verifyTwoFactorAuth(myId: number, code: string): Promise<void> {
+  async updateTwoFactorAuth(myId: number, code: string): Promise<void> {
     const auth = await this.authRepository.findOne({ where: { id: myId }, select: ['twoFa'] });
     if (auth !== null) {
       throw new ConflictException('이미 2단계 인증이 완료된 유저입니다.');
     }
-
     const value: TwoFactorAuth | undefined = await this.cacheManager.get(`${myId}`);
     if (value === undefined) {
       throw new ForbiddenException('유효하지 않은 인증 코드입니다.');
     }
     if ((await this.authRepository.findOneBy({ email: value.email })) !== null) {
-      throw new ConflictException('이미 2단계 인증이 완료된 이메일입니다.');
+      throw new ConflictException('이미 사용중인 이메일입니다.');
     }
-    if (value.code !== code) {
-      throw new BadRequestException('잘못된 인증 코드입니다.');
-    }
-
+    await this.verifyTwoFactorAuth(myId, code, value.code);
     await this.authRepository.update({ id: myId }, { twoFa: value.email });
-    await this.cacheManager.del(`${myId}`);
   }
 
   async deleteTwoFactorAuth(myId: number): Promise<SuccessResponseDto> {
@@ -124,6 +128,13 @@ export class AuthService {
   }
 
   // SECTION private
+  private async verifyTwoFactorAuth(myId: number, code: string, successCode: string) {
+    if (code !== successCode) {
+      throw new BadRequestException('잘못된 인증 코드입니다.');
+    }
+    await this.cacheManager.del(`${myId}`);
+  }
+
   private getEmailTemplate(code: string): string {
     return `
     <!DOCTYPE html>

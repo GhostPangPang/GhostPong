@@ -30,7 +30,8 @@ export class TwoFaGuard implements CanActivate {
     const request: Request = context.switchToHttp().getRequest<Request>();
     const token = request.cookies['jwt-for-2fa'];
     try {
-      this.jwtService.verify(token, { secret: this.jwtConfigService.twoFaSecretKey });
+      const { userId } = this.jwtService.verify(token, { secret: this.jwtConfigService.twoFaSecretKey });
+      request.user = { userId: userId };
       return true;
     } catch {
       throw new UnauthorizedException('2FA 토큰 검증에 실패했습니다.');
