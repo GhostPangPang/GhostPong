@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UserGateway } from './user.gateway';
+``;
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Friendship } from '../entity/friendship.entity';
 import { Repository } from 'typeorm';
@@ -8,9 +8,10 @@ import { UserStatusRepository } from '../repository/user-status.repository';
 import { JwtService } from '@nestjs/jwt';
 import { AppConfigService } from '../config/app/configuration.service';
 import { Server, Socket } from 'socket.io';
+import { ConnectionGateway } from './connection.gateway';
 
-describe('UserGateway', () => {
-  let gateway: UserGateway;
+describe('ConnectionGateway', () => {
+  let gateway: ConnectionGateway;
   let server: Server;
   let socket: Socket;
   let friendshipRepository: Repository<Friendship>;
@@ -22,7 +23,7 @@ describe('UserGateway', () => {
   beforeAll(async () => {
     const moduleRef: TestingModule = await Test.createTestingModule({
       providers: [
-        UserGateway,
+        ConnectionGateway,
         {
           provide: getRepositoryToken(Friendship),
           useClass: Repository,
@@ -44,7 +45,7 @@ describe('UserGateway', () => {
       ],
     }).compile();
 
-    gateway = moduleRef.get<UserGateway>(UserGateway);
+    gateway = moduleRef.get<ConnectionGateway>(ConnectionGateway);
     server = gateway.server;
     friendshipRepository = moduleRef.get<Repository<Friendship>>(getRepositoryToken(Friendship));
     socketIdRepository = moduleRef.get<SocketIdRepository>(SocketIdRepository);
@@ -70,6 +71,9 @@ describe('UserGateway', () => {
       },
       to: jest.fn().mockReturnThis(),
       emit: jest.fn(),
+      in: jest.fn().mockReturnThis(),
+      socketsJoin: jest.fn(),
+      socketsLeave: jest.fn(),
     } as any;
 
     jest.spyOn(gateway as any, 'findFriendList').mockImplementation(() => [
@@ -96,11 +100,10 @@ describe('UserGateway', () => {
 
     it('user status repository 에 친구가 있으면 room 에 3명이 join 되어야 한다.', () => {
       gateway.handleConnection(socket);
-      // friendSocket join 3번, socket join 3번
-      expect(socket.join).toBeCalledTimes(6);
-      expect(socket.join).toBeCalledWith('user-1');
+      expect(socket.join).toBeCalledTimes(3);
       expect(socket.join).toBeCalledWith('user-2');
       expect(socket.join).toBeCalledWith('user-3');
+      expect(socket.join).toBeCalledWith('user-4');
     });
   });
 
