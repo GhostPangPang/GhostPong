@@ -14,7 +14,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    toggle: true,
+    isToggle: true,
     onChange: () => {
       // eslint-disable-next-line @typescript-eslint/no-empty-function
     },

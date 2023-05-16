@@ -104,7 +104,7 @@ export const EditProfilePage = () => {
           </Grid>
         ) : (
           <Grid container="flex" direction="column" justifyContent="space-between" alignItems="start" gap={3}>
-            <Toggle toggle={toggle} onChange={handleToggle} />
+            <Toggle isToggle={toggle} onChange={handleToggle} />
             <Grid container="flex" direction="row-reverse" justifyContent="end" alignItems="center" gap={2}>
               {toggle ? (
                 <Grid container="flex" direction="column" justifyContent="end" alignItems="center" gap={2}>
