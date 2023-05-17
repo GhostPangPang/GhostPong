@@ -8,6 +8,7 @@ import { ChannelUser, ChannelRole } from '../repository/model/channel';
 import { PrivateChannelRepository } from '../repository/private-channel.repository';
 
 import { CreateChannelRequestDto } from './dto/request/create-channel-request.dto';
+import { ChannelsListResponseDto } from './dto/response/channels-list-response.dto';
 
 @Injectable()
 export class ChannelService {
@@ -34,6 +35,20 @@ export class ChannelService {
       return this.privateChannelRepository.insert(channel);
     }
     return this.channelRepository.insert(channel);
+  }
+
+  getChannelsList(cursor: number): ChannelsListResponseDto {
+    const channels = this.channelRepository.findByCursor(cursor).map(({ id, name, mode, users }) => {
+      return { id, name, mode, count: users.size };
+    });
+    let total = undefined;
+    if (cursor === 0) {
+      total = this.channelRepository.count();
+    }
+    return {
+      total,
+      channels,
+    };
   }
 
   // SECTION: private

@@ -175,4 +175,10 @@ describe('ChannelService', () => {
       expect(service.createChannel(1, { name: 'test', mode: 'public' })).rejects.toThrowError();
     });
   });
+
+  describe('getChannelsList', () => {
+    it('채널이 없는 경우', () => {
+      expect(service.getChannelsList(0)).toEqual({ total: 0, channels: [] });
+    });
+  });
 });
