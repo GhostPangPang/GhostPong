@@ -5,7 +5,7 @@ import { Color } from '@/types/style';
 export type AvatarProps = {
   size?: 'sm' | 'md' | 'lg' | 'xl';
   borderColor?: Color;
-  onClick?: () => void;
+  onClick?: React.MouseEventHandler;
 } & React.ComponentPropsWithoutRef<'img'>;
 
 const StyledAvatar = styled.img<AvatarProps>`
