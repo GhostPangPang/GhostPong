@@ -1,7 +1,7 @@
 import { Grid } from '@/common/Grid';
 import { MessageList } from './MessageList';
 import { Message } from './Message';
-import { useFriends } from '@/hooks/useFriends';
+import { useFriend } from '@/hooks/useFriend';
 import { Suspense, useEffect, useState } from 'react';
 import { GameButton } from '@/common/Button/GameButton';
 import { useMessagesEvent } from '@/hooks/useMessagesEvent';
@@ -12,9 +12,7 @@ export const MessagePage = () => {
   const [friendIsOpen, setFriendIsOpen] = useState(false);
   const [blockIsOpen, setBlockIsOpen] = useState(false);
   const { currentId, setCurrentId } = useMessagesEvent();
-  const {
-    data: { friends },
-  } = useFriends();
+  const { friends } = useFriend();
 
   useEffect(() => {
     if (friends && currentId == -1) setCurrentId(friends[0].id);

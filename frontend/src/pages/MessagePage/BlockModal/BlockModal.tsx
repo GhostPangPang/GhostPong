@@ -1,24 +1,10 @@
-import { Avatar, Box, CommonButton, GameButton, GameInput, Grid, Text } from '@/common';
-import { Modal, ModalProps } from '@/common/Modal/Modal';
-import { useBlockedList } from '@/hooks/useBlockedList';
-import { useBlockedMutate } from '@/hooks/useBlockedMutate';
-import { useInput } from '@/hooks/useInput';
-import { ApiError } from '@/libs/api';
+import { Avatar, Box, CommonButton, GameButton, GameInput, Grid, Text, Modal, ModalProps } from '@/common';
+import { useBlocked, useInput } from '@/hooks';
 import { User } from '@/types/entity';
 
 const BlockFriendItem = ({ blocked }: { blocked: User }) => {
   const { id, nickname, image } = blocked;
-  const { unblockedMutation } = useBlockedMutate();
-
-  const handleUnblock = async () => {
-    if (!id) return;
-    try {
-      await unblockedMutation.mutateAsync(id);
-    } catch (error) {
-      const { message } = error as ApiError;
-      alert(message);
-    }
-  };
+  const { deleteBlocked } = useBlocked();
 
   return (
     <Box as="li" display="flex" justifyContent="space-between" alignItems="center" padding="sm" width="100%" gap={0.5}>
@@ -29,7 +15,7 @@ const BlockFriendItem = ({ blocked }: { blocked: User }) => {
         </Text>
       </Grid>
       <Grid container="flex" justifyContent="end" flexGrow={0} gap={0.5}>
-        <CommonButton size="sm" onClick={handleUnblock}>
+        <CommonButton size="sm" onClick={() => deleteBlocked(id)}>
           차단해제
         </CommonButton>
       </Grid>
@@ -38,26 +24,8 @@ const BlockFriendItem = ({ blocked }: { blocked: User }) => {
 };
 
 export const BlockModal = ({ isOpen, onClose }: Omit<ModalProps, 'children'>) => {
-  const {
-    data: { blocked },
-    refetch,
-  } = useBlockedList();
+  const { blocked, updateBlocked } = useBlocked();
   const { value: nickname, onChange: handleNicknameChange } = useInput('');
-  const { blockedMutation } = useBlockedMutate();
-
-  const handleBlockUser = async () => {
-    if (!nickname) return;
-    try {
-      await blockedMutation.mutateAsync(nickname, {
-        onSuccess: () => {
-          refetch();
-        },
-      });
-    } catch (error) {
-      const { message } = error as ApiError;
-      alert(message);
-    }
-  };
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -74,7 +42,7 @@ export const BlockModal = ({ isOpen, onClose }: Omit<ModalProps, 'children'>) =>
             placeholder="플레이어 닉네임"
             style={{ flexGrow: 1 }}
           />
-          <GameButton size="sm" style={{ flexGrow: 0 }} onClick={handleBlockUser}>
+          <GameButton size="sm" style={{ flexGrow: 0 }} onClick={() => updateBlocked(nickname)}>
             차단하기
           </GameButton>
         </Grid>
