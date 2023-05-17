@@ -8,31 +8,40 @@ import { Avatar } from '@/common/Avatar';
 import { formatRelativeDate } from '@/libs/utils';
 import { User } from '@/types/entity';
 import { UserStatus } from '@/dto/friend/response';
+import { Dropbox, IconButton } from '@/common';
 
 export interface MessageListItemProps {
-  id: User['id'];
   image: User['image'];
   nickname: User['nickname'];
   status?: UserStatus;
   lastMessageTime: string | null;
   isDark: boolean;
-  setSelected: (id: number) => void;
+  setSelected: () => void;
+  isNewMessage?: boolean;
 }
 
 export const MessageListItem = ({
-  id = -1,
   image,
   nickname,
   status,
   lastMessageTime,
   isDark,
   setSelected,
+  isNewMessage,
 }: MessageListItemProps) => {
+  // const { requestMutation } = useFriendMutate();
+  // const { blockedMutation } = useBlockedMutate();
+
+  const items = [
+    { label: '친구추가', onClick: () => console.log('친구추가') },
+    { label: '차단', onClick: () => console.log('차단') },
+    { label: '프로필', onClick: () => console.log('프로필') },
+  ];
   return (
-    <StyledMessageItemWrapper isDark={isDark} onClick={() => setSelected(id)}>
+    <StyledMessageItemWrapper isDark={isDark} onClick={setSelected}>
       <Grid container="flex" alignItems="center">
         <Grid container="flex" direction="column" alignItems="center" size={{ width: '3rem' }}>
-          <img src={newSvg} alt="new" />
+          {isNewMessage && <img src={newSvg} alt="new" />}
         </Grid>
         <Grid container="flex" alignItems="center" gap={1}>
           <Avatar size="md" src={image} />
@@ -50,7 +59,11 @@ export const MessageListItem = ({
         <Text size="xxs" weight="light" color="gray100">
           {formatRelativeDate(lastMessageTime)}
         </Text>
-        <More />
+        <Dropbox items={items} placement="bottomright">
+          <IconButton>
+            <More />
+          </IconButton>
+        </Dropbox>
       </Grid>
     </StyledMessageItemWrapper>
   );

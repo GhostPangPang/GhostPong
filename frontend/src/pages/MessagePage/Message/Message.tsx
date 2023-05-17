@@ -1,13 +1,12 @@
 import { Box } from '@/common/Box';
 import { MessageContent } from './MessageContent';
 import { MessageInput } from './MessageInput';
-import { Fragment, Suspense, useEffect, useRef } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
+import { useMessagesEvent } from '@/hooks/useMessagesEvent';
 
-interface MessageProps {
-  friendId: number;
-}
-
-export const Message = ({ friendId }: MessageProps) => {
+export const Message = () => {
+  const { currentId: friendId, sendMessage } = useMessagesEvent();
+  const [content, setContent] = useState<string>('');
   const messageBoxRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -15,6 +14,14 @@ export const Message = ({ friendId }: MessageProps) => {
       messageBoxRef.current.scrollTop = messageBoxRef.current.scrollHeight;
     }
   }, [friendId]);
+
+  const handleContentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setContent(e.target.value);
+  };
+
+  const handleSend = () => {
+    if (content) sendMessage(content);
+  };
 
   return (
     <>
@@ -28,10 +35,10 @@ export const Message = ({ friendId }: MessageProps) => {
         style={{ direction: 'ltr' }}
       >
         <Suspense fallback={<></>}>
-          <MessageContent friendId={friendId} />
+          <MessageContent />
         </Suspense>
       </Box>
-      <MessageInput />
+      <MessageInput value={content} onChange={handleContentChange} onClick={handleSend} />
     </>
   );
 };

@@ -3,11 +3,13 @@ import { Box } from '@/common/Box';
 import { Grid } from '@/common/Grid';
 import { Text } from '@/common/Text';
 import { Fragment } from 'react';
-import { useUserInfo } from '@/stores/userInfo';
+import { useUserInfo } from '@/hooks/useUserInfo';
 import { useMessages } from '@/hooks/useMessages';
 import { useIntersectObserver } from '@/hooks/useIntersectObserver';
 import { Message } from '@/types/entity';
 import { formatTime } from '@/libs/utils';
+import { useMessagesEvent } from '@/hooks/useMessagesEvent';
+import { nanoid } from 'nanoid';
 
 interface MessageContentItemProps {
   side: 'right' | 'left';
@@ -31,14 +33,15 @@ export const MessageContentItem = ({ side, content, createdAt = '' }: MessageCon
   );
 };
 
-export const MessageContent = ({ friendId }: { friendId: number }) => {
+export const MessageContent = () => {
   const { userInfo } = useUserInfo();
+  const { currentId, receivedMessageList, sendMessageList } = useMessagesEvent();
   const {
     data: { pages },
     hasNextPage,
     isFetching,
     fetchNextPage,
-  } = useMessages(friendId);
+  } = useMessages(currentId);
   const messageRef = useIntersectObserver(
     async (entry, observer) => {
       console.log('Intersect');
@@ -67,6 +70,12 @@ export const MessageContent = ({ friendId }: { friendId: number }) => {
               />
             );
           })}
+          {receivedMessageList.map((data) => (
+            <MessageContentItem key={nanoid()} side={'left'} content={data.content} createdAt={new Date()} />
+          ))}
+          {sendMessageList.map((data) => (
+            <MessageContentItem key={nanoid()} side={'right'} content={data.content} createdAt={new Date()} />
+          ))}
         </Fragment>
       ))}
     </Grid>
