@@ -39,9 +39,9 @@ export class ConnectionGateway implements OnGatewayConnection, OnGatewayDisconne
    * events
    */
   async handleConnection(@ConnectedSocket() socket: Socket): Promise<void> {
-    const myId = this.getUserIdFromHeader(socket);
+    const myId = this.getUserId(socket);
     if (myId === undefined) {
-      // TODO: error handling
+      socket.emit('exception', { status: 'connect_error', message: 'invalid token' });
       socket.disconnect();
       return;
     }
@@ -69,7 +69,7 @@ export class ConnectionGateway implements OnGatewayConnection, OnGatewayDisconne
   }
 
   // SECTION: private
-  private getUserIdFromHeader(socket: Socket): number | undefined {
+  private getUserId(socket: Socket): number | undefined {
     let myId: number;
     if (this.appConfigService.env === 'development') {
       myId = Math.floor(Number(socket.handshake.headers['x-my-id']));
@@ -77,12 +77,10 @@ export class ConnectionGateway implements OnGatewayConnection, OnGatewayDisconne
         return;
       }
     } else {
-      const token = socket.handshake.headers.authorization;
-      if (token === undefined) {
-        return;
-      }
-      myId = this.jwtService.verify(token, { secret: process.env.USER_JWT_SECRETKEY }).userId;
-      if (myId === undefined) {
+      const token = socket.handshake.auth.token;
+      try {
+        myId = this.jwtService.verify(token, { secret: process.env.USER_JWT_SECRETKEY }).userId;
+      } catch {
         return;
       }
     }
