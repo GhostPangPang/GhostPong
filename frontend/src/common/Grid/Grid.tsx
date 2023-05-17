@@ -57,6 +57,10 @@ const StyledGrid = styled.div<GridProps>`
       (typeof props.size.padding === 'number'
         ? `padding: ${props.size.padding}rem;`
         : `padding:  ${props.theme.padding[props.size.padding]};`)}
+        ${props.size.paddingLR &&
+      `padding-left: ${props.size.paddingLR}rem; padding-right: ${props.size.paddingLR}rem;`}
+        ${props.size.paddingTB &&
+      `padding-top: ${props.size.paddingTB}rem; padding-bottom: ${props.size.paddingTB}rem;`}
     `}
   ${(props) =>
     props.position &&

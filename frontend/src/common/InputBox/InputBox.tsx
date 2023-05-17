@@ -49,13 +49,13 @@ export const InputBox = styled.input<InputBoxProps>`
         `;
     }
   }}
-  &:focus {
+  /* &:focus {
     outline: none;
     border-color: transparent;
     transition: border-color 0.5s ease-in-out;
-  }
+  } */
 
   &:focus {
-    border-color: ${(props) => props.theme.color.online};
+    /* border-color: ${(props) => props.theme.color.primary}; */
   }
 `;
