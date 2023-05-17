@@ -82,7 +82,7 @@ export class BlockedService {
    * @param blockedUserId 차단당할 사람의 id (상대방)
    */
   private async blockUserAndDeleteFriendships(userId: number, blockedUserId: number): Promise<void> {
-    this.blockedUserRepository.manager.transaction(async (manager) => {
+    return this.blockedUserRepository.manager.transaction(async (manager) => {
       await manager
         .createQueryBuilder(Friendship, 'friendship')
         .delete()
