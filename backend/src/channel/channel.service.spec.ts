@@ -182,63 +182,52 @@ describe('ChannelService', () => {
       expect(service.getChannelsList(0)).toEqual({ total: 0, channels: [] });
     });
 
-    it('채널이 20개 인 경우의 cursor = 0', () => {
-      for (let i = 0; i < 20; ++i) {
-        const channel: Channel = {
-          id: `aaa${i}`,
-          mode: 'public',
-          name: 'test',
-          users: new Map(),
-          bannedUserIdList: [],
-        };
-        channelRepository.insert(channel);
-      }
+    describe('채널이 20개인 경우', () => {
+      beforeEach(() => {
+        for (let i = 0; i < 20; ++i) {
+          const channel: Channel = {
+            id: `aaa${i}`,
+            mode: 'public',
+            name: 'test',
+            users: new Map(),
+            bannedUserIdList: [],
+          };
+          channelRepository.insert(channel);
+        }
+      });
 
-      const channels = service.getChannelsList(0);
-      expect(channels.total).toBe(20);
-      expect(channels.channels).toHaveLength(9);
-      for (let i = 0; i < 9; ++i) {
-        expect(channels.channels[i].id).toBe(`aaa${19 - i}`);
-      }
-    });
+      it('채널이 20개 인 경우의 cursor = 0', () => {
+        const channels = service.getChannelsList(0);
+        expect(channels.total).toBe(20);
+        expect(channels.channels).toHaveLength(9);
+        for (let i = 0; i < 9; ++i) {
+          expect(channels.channels[i].id).toBe(`aaa${19 - i}`);
+        }
+      });
 
-    it('채널이 20개 인 경우의 cursor = 1', () => {
-      for (let i = 0; i < 20; ++i) {
-        const channel: Channel = {
-          id: `aaa${i}`,
-          mode: 'public',
-          name: 'test',
-          users: new Map(),
-          bannedUserIdList: [],
-        };
-        channelRepository.insert(channel);
-      }
+      it('채널이 20개 인 경우의 cursor = 1', () => {
+        const channels = service.getChannelsList(1);
+        expect(channels.total).toBeUndefined();
+        expect(channels.channels).toHaveLength(9);
+        for (let i = 0; i < 9; ++i) {
+          expect(channels.channels[i].id).toBe(`aaa${19 - i - 9}`);
+        }
+      });
 
-      const channels = service.getChannelsList(1);
-      expect(channels.total).toBeUndefined();
-      expect(channels.channels).toHaveLength(9);
-      for (let i = 0; i < 9; ++i) {
-        expect(channels.channels[i].id).toBe(`aaa${19 - i - 9}`);
-      }
-    });
-    it('채널이 20개 인 경우의 cursor = 2', () => {
-      for (let i = 0; i < 20; ++i) {
-        const channel: Channel = {
-          id: `aaa${i}`,
-          mode: 'public',
-          name: 'test',
-          users: new Map(),
-          bannedUserIdList: [],
-        };
-        channelRepository.insert(channel);
-      }
+      it('채널이 20개 인 경우의 cursor = 2', () => {
+        const channels = service.getChannelsList(2);
+        expect(channels.total).toBeUndefined();
+        expect(channels.channels).toHaveLength(2);
+        for (let i = 0; i < 2; ++i) {
+          expect(channels.channels[i].id).toBe(`aaa${19 - i - 18}`);
+        }
+      });
 
-      const channels = service.getChannelsList(2);
-      expect(channels.total).toBeUndefined();
-      expect(channels.channels).toHaveLength(2);
-      for (let i = 0; i < 2; ++i) {
-        expect(channels.channels[i].id).toBe(`aaa${19 - i - 18}`);
-      }
+      it('채널이 20개 인 경우의 cursor = 3', () => {
+        const channels = service.getChannelsList(3);
+        expect(channels.total).toBeUndefined();
+        expect(channels.channels).toHaveLength(0);
+      });
     });
   });
 });
