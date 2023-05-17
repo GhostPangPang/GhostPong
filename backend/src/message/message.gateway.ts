@@ -8,6 +8,7 @@ import {
   WebSocketServer,
   WsException,
 } from '@nestjs/websockets';
+import { ValidationError } from 'class-validator';
 import { Server, Socket } from 'socket.io';
 import { Repository } from 'typeorm';
 
@@ -44,7 +45,12 @@ export class MessageGateway {
    * @param socket
    * @param data
    */
-  @UsePipes(new ValidationPipe({ exceptionFactory: () => new WsException('Bad Request') }))
+  @UsePipes(
+    new ValidationPipe({
+      exceptionFactory: (validationErrors: ValidationError[] = []) =>
+        new WsException(Object.values(validationErrors[0]?.constraints || {})[0]),
+    }),
+  )
   @SubscribeMessage('message')
   async handleMessage(@ConnectedSocket() socket: Socket, @MessageBody() data: MesssageDto): Promise<void> {
     console.log('friend id is ', data.id);
