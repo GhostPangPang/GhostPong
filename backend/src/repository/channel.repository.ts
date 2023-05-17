@@ -11,10 +11,18 @@ import { Repository } from './repository.interface';
 export class ChannelRepository implements Repository<string, Channel> {
   private readonly channelList: Map<string, Channel> = new Map<string, Channel>();
 
+  create(omitChannel: Omit<Channel, 'id'>): Channel {
+    return {
+      id: nanoid(),
+      ...omitChannel,
+    };
+  }
+
   insert(channel: Channel): string {
-    const id = nanoid();
-    this.channelList.set(id, channel);
-    return id;
+    //const id = nanoid();
+
+    this.channelList.set(channel.id, channel);
+    return channel.id;
   }
 
   update(id: string, partialChannel: Partial<Channel>): Channel | undefined {
@@ -41,5 +49,9 @@ export class ChannelRepository implements Repository<string, Channel> {
 
   findAll(): Channel[] {
     return Array.from(this.channelList.values());
+  }
+
+  findByCursor(cursor: number): Channel[] {
+    return Array.from(this.channelList.values()).slice(cursor, cursor + 9);
   }
 }
