@@ -8,6 +8,7 @@ import { CreateChannelRequestDto } from './dto/request/create-channel-request.dt
 import { Repository } from 'typeorm';
 import { NotFoundException } from '@nestjs/common';
 import { Channel, ChannelUser } from '../repository/model/channel';
+import { before } from 'node:test';
 
 describe('ChannelService', () => {
   let service: ChannelService;
@@ -179,6 +180,65 @@ describe('ChannelService', () => {
   describe('getChannelsList', () => {
     it('채널이 없는 경우', () => {
       expect(service.getChannelsList(0)).toEqual({ total: 0, channels: [] });
+    });
+
+    it('채널이 20개 인 경우의 cursor = 0', () => {
+      for (let i = 0; i < 20; ++i) {
+        const channel: Channel = {
+          id: `aaa${i}`,
+          mode: 'public',
+          name: 'test',
+          users: new Map(),
+          bannedUserIdList: [],
+        };
+        channelRepository.insert(channel);
+      }
+
+      const channels = service.getChannelsList(0);
+      expect(channels.total).toBe(20);
+      expect(channels.channels).toHaveLength(9);
+      for (let i = 0; i < 9; ++i) {
+        expect(channels.channels[i].id).toBe(`aaa${19 - i}`);
+      }
+    });
+
+    it('채널이 20개 인 경우의 cursor = 1', () => {
+      for (let i = 0; i < 20; ++i) {
+        const channel: Channel = {
+          id: `aaa${i}`,
+          mode: 'public',
+          name: 'test',
+          users: new Map(),
+          bannedUserIdList: [],
+        };
+        channelRepository.insert(channel);
+      }
+
+      const channels = service.getChannelsList(1);
+      expect(channels.total).toBeUndefined();
+      expect(channels.channels).toHaveLength(9);
+      for (let i = 0; i < 9; ++i) {
+        expect(channels.channels[i].id).toBe(`aaa${19 - i - 9}`);
+      }
+    });
+    it('채널이 20개 인 경우의 cursor = 2', () => {
+      for (let i = 0; i < 20; ++i) {
+        const channel: Channel = {
+          id: `aaa${i}`,
+          mode: 'public',
+          name: 'test',
+          users: new Map(),
+          bannedUserIdList: [],
+        };
+        channelRepository.insert(channel);
+      }
+
+      const channels = service.getChannelsList(2);
+      expect(channels.total).toBeUndefined();
+      expect(channels.channels).toHaveLength(2);
+      for (let i = 0; i < 2; ++i) {
+        expect(channels.channels[i].id).toBe(`aaa${19 - i - 18}`);
+      }
     });
   });
 });
