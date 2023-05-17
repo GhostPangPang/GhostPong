@@ -2,11 +2,10 @@ import { Grid, Text } from '@/common';
 import { ReactComponent as Lock } from '@/svgs/lock.svg';
 
 interface RoomInfoProps {
-  id: number;
   name: string;
 }
 
-export const RoomInfo = ({ id, name }: RoomInfoProps) => {
+export const RoomInfo = ({ name }: RoomInfoProps) => {
   return (
     <Grid
       container="flex"
@@ -15,7 +14,7 @@ export const RoomInfo = ({ id, name }: RoomInfoProps) => {
       justifyContent="end"
       size={{ height: '100%', padding: 'md' }}
     >
-      <Text id={id}>{name}</Text>
+      <Text>{name}</Text>
       <Lock />
     </Grid>
   );

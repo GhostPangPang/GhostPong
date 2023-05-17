@@ -4,7 +4,7 @@ import { Footer } from './Footer';
 import { Grid } from '@/common';
 import { chnnelInfoMockData, CurrentUserId } from './mock-data';
 
-const { id, name, players, observers } = chnnelInfoMockData;
+const { name, players, observers } = chnnelInfoMockData;
 
 const getCurrentInfo = (id: number) => {
   const player = players.find((player) => player.id === id);
@@ -76,7 +76,7 @@ export const GameReadyPage = () => {
   return (
     <>
       <Grid container="flex" direction="row" alignItems="center" justifyContent="center" flexGrow={1}>
-        <RoomInfo id={id} name={name} />
+        <RoomInfo name={name} />
       </Grid>
       <Grid container="flex" direction="row" alignItems="center" justifyContent="center" flexGrow={1}>
         <Versus players={players} currentUserId={CurrentUserId} items={items} />
