@@ -47,6 +47,9 @@ export class ChannelRepository implements Repository<string, Channel> {
   }
 
   findByCursor(cursor: number): Channel[] {
-    return Array.from(this.channelList.values()).slice(cursor, cursor + 9);
+    const channelArray = Array.from(this.channelList.values());
+    const endIndex = channelArray.length > cursor * 9 ? channelArray.length - cursor * 9 : 0;
+    const startIndex = endIndex > 9 ? endIndex - 9 : 0;
+    return channelArray.slice(startIndex, endIndex).reverse();
   }
 }
