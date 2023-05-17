@@ -143,6 +143,7 @@ describe('ChannelService', () => {
         isPlayer: true,
       };
       const channel: Channel = {
+        id: 'aaa',
         mode: 'public',
         name: 'test',
         users: new Map([[1, user]]),
@@ -163,6 +164,7 @@ describe('ChannelService', () => {
         isPlayer: true,
       };
       const channel: Channel = {
+        id: 'aaa',
         mode: 'private',
         name: 'test',
         users: new Map([[1, user]]),

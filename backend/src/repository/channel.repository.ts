@@ -11,16 +11,11 @@ import { Repository } from './repository.interface';
 export class ChannelRepository implements Repository<string, Channel> {
   private readonly channelList: Map<string, Channel> = new Map<string, Channel>();
 
-  create(omitChannel: Omit<Channel, 'id'>): Channel {
-    return {
-      id: nanoid(),
-      ...omitChannel,
-    };
+  create(channelOptions: Pick<Channel, 'mode' | 'name' | 'password'>): Channel {
+    return new Channel(nanoid(), channelOptions.mode, channelOptions.name, channelOptions.password);
   }
 
   insert(channel: Channel): string {
-    //const id = nanoid();
-
     this.channelList.set(channel.id, channel);
     return channel.id;
   }

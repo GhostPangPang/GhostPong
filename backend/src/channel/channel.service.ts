@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 
 import { User } from '../entity/user.entity';
 import { ChannelRepository } from '../repository/channel.repository';
-import { Channel, ChannelUser, ChannelRole } from '../repository/model/channel';
+import { ChannelUser, ChannelRole } from '../repository/model/channel';
 import { PrivateChannelRepository } from '../repository/private-channel.repository';
 
 import { CreateChannelRequestDto } from './dto/request/create-channel-request.dto';
@@ -25,13 +25,12 @@ export class ChannelService {
    * @param createChannelRequestDto 생성할 채널의 정보가 담긴 dto
    * @returns 새로 생성된 채널의 id
    */
-  async createChannel(myId: number, { mode, name, password }: CreateChannelRequestDto): Promise<string> {
+  async createChannel(myId: number, channelOptions: CreateChannelRequestDto): Promise<string> {
     this.checkUserAlreadyInChannel(myId);
-
-    const channel = new Channel(mode, name, password);
+    const channel = this.channelRepository.create(channelOptions);
     channel.users.set(myId, await this.generateChannelUser(myId, 'owner'));
     this.logger.log(`createChannel: ${JSON.stringify(channel)}`);
-    if (mode === 'private') {
+    if (channel.mode === 'private') {
       return this.privateChannelRepository.insert(channel);
     }
     return this.channelRepository.insert(channel);

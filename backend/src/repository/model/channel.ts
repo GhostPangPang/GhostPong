@@ -29,7 +29,7 @@ export class Channel {
 
   id: string;
   name: string;
-  mode: ChannelMode = 'public';
+  mode: ChannelMode;
   password?: string;
   users: Map<number, ChannelUser>;
   bannedUserIdList: number[];
