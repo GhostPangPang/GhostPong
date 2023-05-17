@@ -15,11 +15,6 @@ export const GlobalStyle = createGlobalStyle<{ theme: typeof theme }>`
     src: url('/font/CookieRun.ttf');
   }
 
-  /* 결과 → 16px × 62.5% = 10px */
-  html {
-    font-size: 62.5%;
-  }
-
   #root {
     display: flex;
     flex-direction: column;
@@ -33,6 +28,8 @@ export const GlobalStyle = createGlobalStyle<{ theme: typeof theme }>`
     height: 100%;
 
     font-family: 'normal', 'game', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    font-size: 62.5%;
+
     background-image: url(${bg});
     background-repeat: repeat;
   }

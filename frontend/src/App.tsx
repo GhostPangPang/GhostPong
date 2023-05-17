@@ -33,10 +33,10 @@ function App() {
             <Route element={<GameLayout />}>
               <Route path="/game/:gameId" element={<GameReadyPage />} />
             </Route>
+            <Route path="/pre" element={<PrePage />} />
             <Route path="/auth?/" element={<AuthHandler />} />
             <Route path="/auth/register" element={<RegisterPage />} />
             <Route path="/auth/2fa" element={<h1>2fa</h1>} />
-            <Route path="/pre" element={<PrePage />} />
           </Routes>
         </ErrorBoundary>
       </Suspense>
