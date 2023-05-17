@@ -1,6 +1,13 @@
 import { UsePipes, ValidationPipe } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import {
+  ConnectedSocket,
+  MessageBody,
+  SubscribeMessage,
+  WebSocketGateway,
+  WebSocketServer,
+  WsException,
+} from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { Repository } from 'typeorm';
 
@@ -37,7 +44,7 @@ export class MessageGateway {
    * @param socket
    * @param data
    */
-  @UsePipes(new ValidationPipe())
+  @UsePipes(new ValidationPipe({ exceptionFactory: () => new WsException('Bad Request') }))
   @SubscribeMessage('message')
   async handleMessage(@ConnectedSocket() socket: Socket, @MessageBody() data: MesssageDto): Promise<void> {
     console.log('friend id is ', data.id);
@@ -62,7 +69,7 @@ export class MessageGateway {
    * @param socket
    * @param data
    */
-  @UsePipes(new ValidationPipe())
+  @UsePipes(new ValidationPipe({ exceptionFactory: () => new WsException('Bad Request') }))
   @SubscribeMessage('last-message-view')
   async handleLeaveMessageRoom(
     @ConnectedSocket() socket: Socket,
@@ -85,7 +92,7 @@ export class MessageGateway {
   private async checkExistFriendship(friendId: number, senderId: number, receiverId: number): Promise<void> {
     const friendship = await this.friendshipRepository.findOneBy({ id: friendId });
     if (friendship === null) {
-      throw new Error('존재하지 않는 친구 관계입니다.');
+      throw new WsException('존재하지 않는 친구 관계입니다.');
     }
     if (
       (friendship.senderId === senderId && friendship.receiverId === receiverId && friendship.accept === true) ||
@@ -93,6 +100,6 @@ export class MessageGateway {
     ) {
       return;
     }
-    throw new Error('유효하지 않은 친구 관계입니다.');
+    throw new WsException('유효하지 않은 친구 관계입니다.');
   }
 }
