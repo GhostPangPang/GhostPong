@@ -2,10 +2,10 @@ import { useQuery } from '@tanstack/react-query';
 import { get } from '@/libs/api';
 import { FriendResponse } from '@/dto/friend/response';
 
-const API = '/friend';
+export const FRIEND = '/friend';
 
 const getFriends = async () => {
-  return await get<FriendResponse>(API);
+  return await get<FriendResponse>(FRIEND);
 };
 
 const initialData: FriendResponse = {
@@ -16,15 +16,16 @@ export const useFriends = () => {
   const {
     data = initialData,
     isLoading,
+    isFetching,
     isError,
     refetch,
   } = useQuery<FriendResponse>({
-    queryKey: [API],
+    queryKey: [FRIEND],
     queryFn: getFriends,
     onError: (error) => {
       throw error;
     },
   });
 
-  return { data, isLoading, isError, refetch };
+  return { data, isLoading, isFetching, isError, refetch };
 };
