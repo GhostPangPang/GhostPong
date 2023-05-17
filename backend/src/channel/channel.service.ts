@@ -41,12 +41,8 @@ export class ChannelService {
     const channels = this.channelRepository.findByCursor(cursor).map(({ id, name, mode, users }) => {
       return { id, name, mode, count: users.size };
     });
-    let total = undefined;
-    if (cursor === 0) {
-      total = this.channelRepository.count();
-    }
     return {
-      total,
+      total: cursor === 0 ? this.channelRepository.count() : undefined,
       channels,
     };
   }
