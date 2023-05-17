@@ -7,6 +7,7 @@ type Placement = 'topright' | 'topleft' | 'bottomright' | 'bottomleft';
 
 export interface DropboxProps {
   items: { label: React.ReactNode; onClick?: () => void }[];
+  desc?: string;
   placement: Placement;
   children: React.ReactNode;
 }
@@ -28,6 +29,7 @@ const StyledList = styled.ul<{ placement: Placement }>`
   font-size: 1.5rem;
   padding: 0rem;
   position: absolute;
+  z-index: 100;
   ${({ placement }) => {
     switch (placement) {
       case 'topright':
@@ -70,7 +72,15 @@ const StyledItem = styled.li`
   white-space: nowrap;
 `;
 
-export const Dropbox = ({ items, placement, children }: DropboxProps) => {
+const StyledDesc = styled.li`
+  padding: 1.3rem 2.6rem 1.3rem 1.3rem;
+  background: ${(props) => props.theme.color.surface};
+  color: ${(props) => props.theme.color.foreground};
+  font-size: 1.3rem; // 일부로 크기 조절했음
+  white-space: nowrap;
+`;
+
+export const Dropbox = ({ items, placement, desc, children }: DropboxProps) => {
   const [isVisible, setIsVisible] = useState(false);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const dropboxRef = useRef<HTMLDivElement>(null);
@@ -114,6 +124,7 @@ export const Dropbox = ({ items, placement, children }: DropboxProps) => {
         : children}
       {isVisible && (
         <StyledList placement={placement} onMouseLeave={handleOnMouseLeave}>
+          {desc ? <StyledDesc>{desc}</StyledDesc> : null /* desc가 있으면 표시 */}
           {items.map((item, index) => (
             <StyledItem key={index} onClick={item.onClick}>
               {item.label}
