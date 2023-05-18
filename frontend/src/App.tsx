@@ -2,12 +2,14 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Suspense } from 'react';
 import { MainLayout } from '@/layout/MainLayout';
 import { FooterLayout } from './layout/FooterLayout';
+import { GameLayout } from './layout/GameLayout';
 import { LobbyPage } from '@/pages/LobbyPage';
 import { PrePage } from '@/pages/PrePage';
 import { MessagePage } from '@/pages/MessagePage';
 import { ProfilePage } from '@/pages/ProfilePage';
 import { EditProfilePage } from '@/pages/EditProfilePage';
 import { RegisterPage } from '@/pages/RegisterPage';
+import { GameReadyPage } from './pages/GameReadyPage/GameReadyPage';
 import { ErrorBoundary } from 'react-error-boundary';
 import { GameListPage } from './pages/GameListPage';
 import { AuthHandler } from './AuthHandler';
@@ -27,6 +29,9 @@ function App() {
                 <Route path="/profile/:userId" element={<ProfilePage />} />
                 <Route path="/profile/edit" element={<EditProfilePage />} />
               </Route>
+            </Route>
+            <Route element={<GameLayout />}>
+              <Route path="/game/:gameId" element={<GameReadyPage />} />
             </Route>
             <Route path="/auth?/" element={<AuthHandler />} />
             <Route path="/auth/register" element={<RegisterPage />} />
