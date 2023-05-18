@@ -74,14 +74,14 @@ export class ChannelService {
     }
     if (channel.mode === 'protected') {
       if (channel.password !== joinChannelRequestDto.password) {
-        throw new BadRequestException('비밀번호가 일치하지 않습니다.');
+        throw new ForbiddenException('비밀번호가 일치하지 않습니다.');
       }
     }
     if (channel.bannedUserIdList.find((elem) => elem === myId) !== undefined) {
-      throw new ForbiddenException('채널에 들어갈 권한이 없습니다.');
+      throw new ForbiddenException('차단되어 입장이 불가능한 채널입니다.');
     }
     if (channel.users.size >= PARTICIPANT_LIMIT) {
-      throw new ConflictException('채널 정원이 초과되었습니다.');
+      throw new ForbiddenException('채널 정원이 초과되었습니다.');
     }
     this.channelRepository.update(channel.id, {
       users: channel.users.set(myId, await this.generateChannelUser(myId, 'member')),

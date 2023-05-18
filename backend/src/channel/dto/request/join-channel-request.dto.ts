@@ -14,5 +14,5 @@ export class JoinChannelRequestDto implements JoinChannelRequest {
    * @example '1234'
    */
   @IsChannelPassword()
-  password?: string | undefined;
+  password?: string;
 }

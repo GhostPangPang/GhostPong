@@ -244,12 +244,12 @@ describe('ChannelService', () => {
       try {
         await service.joinChannel(1, { mode: 'protected', password: '4321' }, channel);
       } catch (e) {
-        expect(e).toBeInstanceOf(BadRequestException);
+        expect(e).toBeInstanceOf(ForbiddenException);
         expect(e.message).toEqual('비밀번호가 일치하지 않습니다.');
       }
     });
 
-    it('채널에 들어갈 권한 없을 경우', async () => {
+    it('채널에 차단되어 입장 불가능한 경우', async () => {
       const channel: Channel = {
         id: 'aaa',
         mode: 'public',
@@ -262,7 +262,7 @@ describe('ChannelService', () => {
         await service.joinChannel(1, { mode: 'public' }, channel);
       } catch (e) {
         expect(e).toBeInstanceOf(ForbiddenException);
-        expect(e.message).toEqual('채널에 들어갈 권한이 없습니다.');
+        expect(e.message).toEqual('차단되어 입장이 불가능한 채널입니다.');
       }
     });
 
@@ -288,7 +288,7 @@ describe('ChannelService', () => {
       try {
         await service.joinChannel(11, { mode: 'public' }, channel);
       } catch (e) {
-        expect(e).toBeInstanceOf(ConflictException);
+        expect(e).toBeInstanceOf(ForbiddenException);
         expect(e.message).toEqual('채널 정원이 초과되었습니다.');
       }
     });
