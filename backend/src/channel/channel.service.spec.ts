@@ -8,7 +8,6 @@ import { CreateChannelRequestDto } from './dto/request/create-channel-request.dt
 import { Repository } from 'typeorm';
 import { BadRequestException, ConflictException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { Channel, ChannelUser } from '../repository/model/channel';
-import { before } from 'node:test';
 import { PARTICIPANT_LIMIT } from '../common/constant';
 
 describe('ChannelService', () => {
@@ -233,10 +232,6 @@ describe('ChannelService', () => {
   });
 
   describe('joinChannel', () => {
-    it('채널이 없을 경우', () => {
-      expect(service.joinChannel(1, { mode: 'public' }, 'channel id')).rejects.toThrowError(NotFoundException);
-    });
-
     it('비밀번호가 일치하지 않을 경우', async () => {
       const channel: Channel = {
         id: 'aaa',
@@ -246,9 +241,8 @@ describe('ChannelService', () => {
         users: new Map([]),
         bannedUserIdList: [1],
       };
-      const channelId = channelRepository.insert(channel);
       try {
-        await service.joinChannel(1, { mode: 'protected', password: '4321' }, channelId);
+        await service.joinChannel(1, { mode: 'protected', password: '4321' }, channel);
       } catch (e) {
         expect(e).toBeInstanceOf(BadRequestException);
         expect(e.message).toEqual('비밀번호가 일치하지 않습니다.');
@@ -263,10 +257,9 @@ describe('ChannelService', () => {
         users: new Map([]),
         bannedUserIdList: [1],
       };
-      const channelId = channelRepository.insert(channel);
 
       try {
-        await service.joinChannel(1, { mode: 'public' }, channelId);
+        await service.joinChannel(1, { mode: 'public' }, channel);
       } catch (e) {
         expect(e).toBeInstanceOf(ForbiddenException);
         expect(e.message).toEqual('채널에 들어갈 권한이 없습니다.');
@@ -292,9 +285,8 @@ describe('ChannelService', () => {
       for (let i = 2; i <= PARTICIPANT_LIMIT; i++) {
         channel.users.set(i, user);
       }
-      const channelId = channelRepository.insert(channel);
       try {
-        await service.joinChannel(11, { mode: 'public' }, channelId);
+        await service.joinChannel(11, { mode: 'public' }, channel);
       } catch (e) {
         expect(e).toBeInstanceOf(ConflictException);
         expect(e.message).toEqual('채널 정원이 초과되었습니다.');
