@@ -8,6 +8,8 @@ import { JwtService } from '@nestjs/jwt';
 import { AppConfigService } from '../config/app/configuration.service';
 import { Server, Socket } from 'socket.io';
 import { ConnectionGateway } from './connection.gateway';
+import { PrivateChannelRepository } from '../repository/private-channel.repository';
+import { ChannelRepository } from '../repository/channel.repository';
 
 describe('ConnectionGateway', () => {
   let gateway: ConnectionGateway;
@@ -27,6 +29,8 @@ describe('ConnectionGateway', () => {
           provide: getRepositoryToken(Friendship),
           useClass: Repository,
         },
+        PrivateChannelRepository,
+        ChannelRepository,
         SocketIdRepository,
         UserStatusRepository,
         {

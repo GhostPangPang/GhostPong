@@ -18,7 +18,8 @@ export class ChannelUser {
 }
 
 export class Channel {
-  constructor(mode: ChannelMode, name: string, password?: string) {
+  constructor(id: string, mode: ChannelMode, name: string, password?: string) {
+    this.id = id;
     this.mode = mode;
     this.name = name;
     this.password = password;
@@ -26,8 +27,9 @@ export class Channel {
     this.bannedUserIdList = [];
   }
 
+  id: string;
   name: string;
-  mode: ChannelMode = 'public';
+  mode: ChannelMode;
   password?: string;
   users: Map<number, ChannelUser>;
   bannedUserIdList: number[];

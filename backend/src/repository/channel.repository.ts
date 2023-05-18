@@ -11,10 +11,13 @@ import { Repository } from './repository.interface';
 export class ChannelRepository implements Repository<string, Channel> {
   private readonly channelList: Map<string, Channel> = new Map<string, Channel>();
 
+  create(channelOptions: Pick<Channel, 'mode' | 'name' | 'password'>): Channel {
+    return new Channel(nanoid(), channelOptions.mode, channelOptions.name, channelOptions.password);
+  }
+
   insert(channel: Channel): string {
-    const id = nanoid();
-    this.channelList.set(id, channel);
-    return id;
+    this.channelList.set(channel.id, channel);
+    return channel.id;
   }
 
   update(id: string, partialChannel: Partial<Channel>): Channel | undefined {
@@ -41,5 +44,12 @@ export class ChannelRepository implements Repository<string, Channel> {
 
   findAll(): Channel[] {
     return Array.from(this.channelList.values());
+  }
+
+  findByCursor(cursor: number): Channel[] {
+    const channelArray = Array.from(this.channelList.values());
+    const endIndex = channelArray.length > cursor * 9 ? channelArray.length - cursor * 9 : 0;
+    const startIndex = endIndex > 9 ? endIndex - 9 : 0;
+    return channelArray.slice(startIndex, endIndex).reverse();
   }
 }
