@@ -13,13 +13,15 @@ import { Response } from 'express';
 
 import { ExtractUserId } from '../common/decorator/extract-user-id.decorator';
 import { ErrorResponseDto } from '../common/dto/error-response.dto';
+import { SuccessResponseDto } from '../common/dto/success-response.dto';
+import { CheckChannelIdPipe } from '../common/pipe/check-channel-id.pipe';
 import { NonNegativeIntPipe } from '../common/pipe/non-negative-int.pipe';
+import { Channel } from '../repository/model/channel';
 
 import { ChannelService } from './channel.service';
 import { CreateChannelRequestDto } from './dto/request/create-channel-request.dto';
-import { ChannelsListResponseDto } from './dto/response/channels-list-response.dto';
-import { SuccessResponseDto } from '../common/dto/success-response.dto';
 import { JoinChannelRequestDto } from './dto/request/join-channel-request.dto';
+import { ChannelsListResponseDto } from './dto/response/channels-list-response.dto';
 
 @ApiTags('channel')
 @Controller('channel')
@@ -59,8 +61,8 @@ export class ChannelController {
   joinChannel(
     @ExtractUserId() myId: number,
     @Body() joinChannelRequestDto: JoinChannelRequestDto,
-    @Param('channelId') channelId: string,
+    @Param('channelId', CheckChannelIdPipe) channel: Channel,
   ): Promise<SuccessResponseDto> {
-    return this.channelService.joinChannel(myId, joinChannelRequestDto, channelId);
+    return this.channelService.joinChannel(myId, joinChannelRequestDto, channel);
   }
 }

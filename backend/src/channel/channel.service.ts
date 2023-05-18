@@ -13,13 +13,12 @@ import { PARTICIPANT_LIMIT } from '../common/constant';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
 import { User } from '../entity/user.entity';
 import { ChannelRepository } from '../repository/channel.repository';
-import { ChannelUser, ChannelRole } from '../repository/model/channel';
+import { ChannelUser, ChannelRole, Channel } from '../repository/model/channel';
 import { PrivateChannelRepository } from '../repository/private-channel.repository';
 
 import { CreateChannelRequestDto } from './dto/request/create-channel-request.dto';
-import { ChannelsListResponseDto } from './dto/response/channels-list-response.dto';
 import { JoinChannelRequestDto } from './dto/request/join-channel-request.dto';
-import { Channel } from '../repository/model/channel';
+import { ChannelsListResponseDto } from './dto/response/channels-list-response.dto';
 
 @Injectable()
 export class ChannelService {
@@ -66,14 +65,12 @@ export class ChannelService {
   async joinChannel(
     myId: number,
     joinChannelRequestDto: JoinChannelRequestDto,
-    channelId: string,
+    channel: Channel,
   ): Promise<SuccessResponseDto> {
     this.checkUserAlreadyInChannel(myId);
 
-    // TODO channelID가 존재하는지 확인하는 파이프 필요한지
-    const channel: Channel | undefined = this.channelRepository.find(channelId);
-    if (channel === undefined) {
-      throw new NotFoundException('해당 채널을 찾을 수 없습니다.');
+    if (channel.mode !== joinChannelRequestDto.mode) {
+      throw new BadRequestException('채널의 모드가 일치하지 않습니다.');
     }
     if (channel.mode === 'protected') {
       if (channel.password !== joinChannelRequestDto.password) {
@@ -86,7 +83,7 @@ export class ChannelService {
     if (channel.users.size >= PARTICIPANT_LIMIT) {
       throw new ConflictException('채널 정원이 초과되었습니다.');
     }
-    this.channelRepository.update(channelId, {
+    this.channelRepository.update(channel.id, {
       users: channel.users.set(myId, await this.generateChannelUser(myId, 'member')),
     });
     return {
