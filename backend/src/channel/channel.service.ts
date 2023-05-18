@@ -1,7 +1,16 @@
-import { ConflictException, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  ForbiddenException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
+import { PARTICIPANT_LIMIT } from '../common/constant';
+import { SuccessResponseDto } from '../common/dto/success-response.dto';
 import { User } from '../entity/user.entity';
 import { ChannelRepository } from '../repository/channel.repository';
 import { ChannelUser, ChannelRole } from '../repository/model/channel';
@@ -9,6 +18,8 @@ import { PrivateChannelRepository } from '../repository/private-channel.reposito
 
 import { CreateChannelRequestDto } from './dto/request/create-channel-request.dto';
 import { ChannelsListResponseDto } from './dto/response/channels-list-response.dto';
+import { JoinChannelRequestDto } from './dto/request/join-channel-request.dto';
+import { Channel } from '../repository/model/channel';
 
 @Injectable()
 export class ChannelService {
@@ -47,6 +58,42 @@ export class ChannelService {
     };
   }
 
+  /**
+   *  채널에 참여한다.
+   * @param myId
+   * @param joinChannelRequestDto
+   */
+  async joinChannel(
+    myId: number,
+    joinChannelRequestDto: JoinChannelRequestDto,
+    channelId: string,
+  ): Promise<SuccessResponseDto> {
+    this.checkUserAlreadyInChannel(myId);
+
+    // TODO channelID가 존재하는지 확인하는 파이프 필요한지
+    const channel: Channel | undefined = this.channelRepository.find(channelId);
+    if (channel === undefined) {
+      throw new NotFoundException('해당 채널을 찾을 수 없습니다.');
+    }
+    if (channel.mode === 'protected') {
+      if (channel.password !== joinChannelRequestDto.password) {
+        throw new BadRequestException('비밀번호가 일치하지 않습니다.');
+      }
+    }
+    if (channel.bannedUserIdList.find((elem) => elem === myId) !== undefined) {
+      throw new ForbiddenException('채널에 들어갈 권한이 없습니다.');
+    }
+    if (channel.users.size >= PARTICIPANT_LIMIT) {
+      throw new ConflictException('채널 정원이 초과되었습니다.');
+    }
+    this.channelRepository.update(channelId, {
+      users: channel.users.set(myId, await this.generateChannelUser(myId, 'member')),
+    });
+    return {
+      message: '채널에 참여하였습니다.',
+    };
+  }
+
   // SECTION: private
   /**
    * 채널 참여 시 user의 id를 이용해 channelUser 를 생성한다.
@@ -73,7 +120,7 @@ export class ChannelService {
 
     channels.forEach((channel) => {
       if (channel.users.has(userId)) {
-        throw new ConflictException('이미 채널에 참여중입니다.');
+        throw new ConflictException('이미 참여중인 채널이 있습니다.');
       }
     });
   }
