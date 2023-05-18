@@ -1,11 +1,4 @@
-import { ChannelsListResponse } from '@/types/channel/response';
-
-class ChannelInfo {
-  id: string;
-  name: string;
-  mode: string;
-  count: number;
-}
+import { ChannelInfo, ChannelsListResponse } from '@/types/channel/response';
 
 export class ChannelsListResponseDto implements ChannelsListResponse {
   /**
