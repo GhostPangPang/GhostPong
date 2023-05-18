@@ -1,14 +1,16 @@
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Inject, Logger } from '@nestjs/common';
+import { Inject, Logger, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WsException } from '@nestjs/websockets';
 import { Cache } from 'cache-manager';
+import { ValidationError } from 'class-validator';
 import { Socket } from 'socket.io';
 
+import { corsOption } from '../common/option/cors.option';
 import { ChannelRepository } from '../repository/channel.repository';
 
 import ChatDto from './dto/socket/chat.dto';
 
-@WebSocketGateway()
+@WebSocketGateway({ cors: corsOption })
 export class ChannelGateway {
   constructor(
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
@@ -17,6 +19,12 @@ export class ChannelGateway {
 
   logger: Logger = new Logger('ChannelGateway');
 
+  @UsePipes(
+    new ValidationPipe({
+      exceptionFactory: (validationErrors: ValidationError[] = []) =>
+        new WsException(Object.values(validationErrors[0]?.constraints || {})[0]),
+    }),
+  )
   @SubscribeMessage('chat')
   async handleMessage(@ConnectedSocket() socket: Socket, @MessageBody() data: ChatDto) {
     if ((await this.cacheManager.get(`${data.senderId}`)) !== undefined) {
