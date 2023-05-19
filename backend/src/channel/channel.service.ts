@@ -75,30 +75,7 @@ export class ChannelService {
     channel: Channel,
   ): Promise<SuccessResponseDto> {
     this.checkUserAlreadyInChannel(myId);
-
-    if (channel.mode !== joinChannelRequestDto.mode) {
-      throw new BadRequestException('채널의 모드가 일치하지 않습니다.');
-    }
-    if (channel.mode === 'protected') {
-      if (channel.password !== joinChannelRequestDto.password) {
-        throw new ForbiddenException('비밀번호가 일치하지 않습니다.');
-      }
-    }
-    if (channel.mode === 'private') {
-      if (this.invitationRepository.find(myId) === undefined) {
-        throw new ForbiddenException('초대가 필요한 채널입니다.');
-      }
-    }
-    this.invitationRepository.delete(myId);
-    if (channel.bannedUserIdList.find((elem) => elem === myId) !== undefined) {
-      throw new ForbiddenException('차단되어 입장이 불가능한 채널입니다.');
-    }
-    if (channel.users.size >= PARTICIPANT_LIMIT) {
-      throw new ForbiddenException('채널 정원이 초과되었습니다.');
-    }
-    if (channel.status === 'playing') {
-      throw new ForbiddenException('게임이 진행중인 채널입니다.');
-    }
+    this.checkJoinChannel(myId, joinChannelRequestDto, channel);
     this.visibleChannelRepository.update(channel.id, {
       users: channel.users.set(myId, await this.generateChannelUser(myId, 'member')),
     });
@@ -136,6 +113,28 @@ export class ChannelService {
         throw new ConflictException('이미 참여중인 채널이 있습니다.');
       }
     });
+  }
+
+  /**
+   * @description 채널 입장 시 채널의 모드, 비밀번호, 초대 여부, 차단 여부, 정원 초과 확인
+   */
+  private checkJoinChannel(myId: number, joinChannelRequestDto: JoinChannelRequestDto, channel: Channel): void {
+    if (channel.mode !== joinChannelRequestDto.mode) {
+      throw new BadRequestException('채널의 모드가 일치하지 않습니다.');
+    }
+    if (channel.mode === 'protected' && channel.password !== joinChannelRequestDto.password) {
+      throw new ForbiddenException('비밀번호가 일치하지 않습니다.');
+    }
+    if (channel.mode === 'private' && this.invitationRepository.find(myId) === undefined) {
+      throw new ForbiddenException('초대가 필요한 채널입니다.');
+    }
+    this.invitationRepository.delete(myId);
+    if (channel.bannedUserIdList.find((elem) => elem === myId) !== undefined) {
+      throw new ForbiddenException('차단되어 입장이 불가능한 채널입니다.');
+    }
+    if (channel.users.size >= PARTICIPANT_LIMIT) {
+      throw new ForbiddenException('채널 정원이 초과되었습니다.');
+    }
   }
   // !SECTION : private
 }

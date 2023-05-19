@@ -18,7 +18,7 @@ export class InvitationRepository implements Repository<number, Invitation> {
       return undefined;
     }
     const updatedInvitation = { ...invitation, ...partialItem };
-    this.invitationList.set(userId, { ...invitation, ...partialItem });
+    this.invitationList.set(userId, updatedInvitation);
     return updatedInvitation;
   }
 
