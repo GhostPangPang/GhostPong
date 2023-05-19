@@ -2,6 +2,9 @@ import styled from 'styled-components';
 import { ReactComponent as SendSvg } from '@/svgs/send.svg';
 import { Box } from '@/common/Box';
 import { IconButton } from '@/common/Button';
+import { useInput } from '@/hooks';
+import { useNewMessages } from '@/hooks/useNewMessages';
+import { useState } from 'react';
 
 const StyledInput = styled.input`
   font-size: 1.2rem;
@@ -18,15 +21,21 @@ const SendButton = ({ onClick }: { onClick?: () => void }) => {
   );
 };
 
-interface MessageInputProps {
-  value: string;
-  onChange: React.ChangeEventHandler<HTMLInputElement>;
-  onClick: () => void;
-}
+export const MessageInput = () => {
+  const { sendMessage } = useNewMessages();
+  const [isComposing, setIsComposing] = useState(false);
+  const { value: content, setValue: setContent, onChange: handleContentChange } = useInput('');
 
-export const MessageInput = ({ value, onChange, onClick }: MessageInputProps) => {
+  const handleSend = () => {
+    if (content) {
+      sendMessage(content);
+      setContent('');
+    }
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') onClick();
+    if (isComposing) return;
+    if (e.key === 'Enter') handleSend();
   };
 
   return (
@@ -35,11 +44,13 @@ export const MessageInput = ({ value, onChange, onClick }: MessageInputProps) =>
         type="text"
         placeholder="메시지를 입력하세요."
         style={{ flexGrow: 1 }}
-        value={value}
-        onChange={onChange}
+        value={content}
+        onCompositionStart={() => setIsComposing(true)}
+        onCompositionEnd={() => setIsComposing(false)}
+        onChange={handleContentChange}
         onKeyDown={handleKeyDown}
       />
-      <SendButton onClick={onClick} />
+      <SendButton onClick={handleSend} />
     </Box>
   );
 };

@@ -1,22 +1,23 @@
-import { Grid } from '@/common/Grid';
+import { Grid, GameButton } from '@/common';
 import { MessageList } from './MessageList';
 import { Message } from './Message';
-import { useFriend } from '@/hooks/useFriend';
 import { Suspense, useEffect, useState } from 'react';
-import { GameButton } from '@/common/Button/GameButton';
-import { useMessagesEvent } from '@/hooks/useMessagesEvent';
 import { FriendsModal } from './FriendsModal';
 import { BlockModal } from './BlockModal/BlockModal';
+import { useSetRecoilState } from 'recoil';
+import { socketState } from '@/stores';
 
 export const MessagePage = () => {
+  const setSocket = useSetRecoilState(socketState);
   const [friendIsOpen, setFriendIsOpen] = useState(false);
   const [blockIsOpen, setBlockIsOpen] = useState(false);
-  const { currentId, setCurrentId } = useMessagesEvent();
-  const { friends } = useFriend();
 
   useEffect(() => {
-    if (friends && currentId == -1) setCurrentId(friends[0].id);
-  }, [friends]);
+    console.log('what the');
+    setSocket((prev) => ({ ...prev, message: true })); // 이것도 리팩토링 고민해보기
+
+    return () => setSocket((prev) => ({ ...prev, message: false }));
+  }, []);
 
   return (
     <Grid
@@ -38,10 +39,10 @@ export const MessagePage = () => {
         </GameButton>
       </Grid>
       <Grid gridRow="2/3" gridColumn="1/2" size={{ overflowY: 'auto' }}>
-        <MessageList friends={friends} />
+        <MessageList />
       </Grid>
       <Grid gridRow="2/3" gridColumn="2/3" container="flex" direction="column" size={{ overflowY: 'auto' }}>
-        <Suspense fallback={<div>loading...</div>}>
+        <Suspense fallback={<div>Message</div>}>
           <Message />
         </Suspense>
       </Grid>

@@ -1,14 +1,9 @@
-import { Avatar } from '@/common/Avatar';
-import { Box } from '@/common/Box';
-import { Grid } from '@/common/Grid';
-import { Text } from '@/common/Text';
-import { Fragment } from 'react';
-import { useUserInfo } from '@/hooks/useUserInfo';
-import { useMessages } from '@/hooks/useMessages';
+import { Avatar, Box, Grid, Text } from '@/common';
+import { Fragment, useEffect, useRef } from 'react';
+import { useUserInfo, useMessages, useNewMessages } from '@/hooks';
 import { useIntersectObserver } from '@/hooks/useIntersectObserver';
 import { Message } from '@/types/entity';
 import { formatTime } from '@/libs/utils';
-import { useMessagesEvent } from '@/hooks/useMessagesEvent';
 import { nanoid } from 'nanoid';
 
 interface MessageContentItemProps {
@@ -35,46 +30,61 @@ export const MessageContentItem = ({ side, content, createdAt = '' }: MessageCon
 
 export const MessageContent = () => {
   const { userInfo } = useUserInfo();
-  const { currentId, receivedMessageList, sendMessageList } = useMessagesEvent();
+  const { newMessages } = useNewMessages();
   const {
-    data: { pages },
-    hasNextPage,
+    messages: { pages },
+    hasMoreMessages,
     isFetching,
-    fetchNextPage,
-  } = useMessages(currentId);
+    fetchNextMessages,
+  } = useMessages();
+  const messageBoxRef = useRef<HTMLDivElement>(null);
   const messageRef = useIntersectObserver(
     async (entry, observer) => {
       console.log('Intersect');
       observer.unobserve(entry.target);
-      if (hasNextPage && !isFetching) {
-        fetchNextPage();
+      if (hasMoreMessages && !isFetching) {
+        fetchNextMessages();
       }
     },
     { rootMargin: '0px 0px 100px 0px' },
   );
 
+  useEffect(() => {
+    if (messageBoxRef.current) {
+      messageBoxRef.current.scrollTop = messageBoxRef.current.scrollHeight;
+    }
+  }, [newMessages]);
+
   return (
-    <Grid container="flex" direction="column" rowGap={2} size={{ padding: 'sm' }}>
+    <Grid
+      ref={messageBoxRef}
+      container="flex"
+      direction="column"
+      rowGap={2}
+      size={{ padding: 'sm', overflowY: 'auto' }}
+    >
       <Text ref={messageRef} size="xxs" color="gray100" style={{ alignSelf: 'center', paddingBottom: '5rem' }}>
         ──────────── 마지막 메세지 입니다 ────────────
       </Text>
       {pages.map((group, i) => (
         <Fragment key={i}>
-          {group.messages.map((item) => {
+          {group.reverse().map((item) => {
             return (
               <MessageContentItem
-                key={item.id}
-                side={item.senderId == userInfo.id ? 'right' : 'left'}
+                key={nanoid()}
+                side={item.senderId === userInfo.id ? 'right' : 'left'}
                 content={item.content}
                 createdAt={item.createdAt}
               />
             );
           })}
-          {receivedMessageList.map((data) => (
-            <MessageContentItem key={nanoid()} side={'left'} content={data.content} createdAt={new Date()} />
-          ))}
-          {sendMessageList.map((data) => (
-            <MessageContentItem key={nanoid()} side={'right'} content={data.content} createdAt={new Date()} />
+          {newMessages.messages.map((data) => (
+            <MessageContentItem
+              key={nanoid()}
+              side={data.receiverId == userInfo.id ? 'right' : 'left'}
+              content={data.content}
+              createdAt={new Date()}
+            />
           ))}
         </Fragment>
       ))}
