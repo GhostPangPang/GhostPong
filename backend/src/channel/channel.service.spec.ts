@@ -6,9 +6,9 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { User } from '../entity/user.entity';
 import { CreateChannelRequestDto } from './dto/request/create-channel-request.dto';
 import { Repository } from 'typeorm';
-import { NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { Channel, ChannelUser } from '../repository/model/channel';
-import { before } from 'node:test';
+import { PARTICIPANT_LIMIT } from '../common/constant';
 
 describe('ChannelService', () => {
   let service: ChannelService;
@@ -228,6 +228,69 @@ describe('ChannelService', () => {
         expect(channels.total).toBeUndefined();
         expect(channels.channels).toHaveLength(0);
       });
+    });
+  });
+
+  describe('joinChannel', () => {
+    it('비밀번호가 일치하지 않을 경우', async () => {
+      const channel: Channel = {
+        id: 'aaa',
+        mode: 'protected',
+        password: '1234',
+        name: 'test',
+        users: new Map([]),
+        bannedUserIdList: [1],
+      };
+      try {
+        await service.joinChannel(1, { mode: 'protected', password: '4321' }, channel);
+      } catch (e) {
+        expect(e).toBeInstanceOf(ForbiddenException);
+        expect(e.message).toEqual('비밀번호가 일치하지 않습니다.');
+      }
+    });
+
+    it('채널에 차단되어 입장 불가능한 경우', async () => {
+      const channel: Channel = {
+        id: 'aaa',
+        mode: 'public',
+        name: 'test',
+        users: new Map([]),
+        bannedUserIdList: [1],
+      };
+
+      try {
+        await service.joinChannel(1, { mode: 'public' }, channel);
+      } catch (e) {
+        expect(e).toBeInstanceOf(ForbiddenException);
+        expect(e.message).toEqual('차단되어 입장이 불가능한 채널입니다.');
+      }
+    });
+
+    it('채널 정원 초과될 경우', async () => {
+      const user: ChannelUser = {
+        id: 1,
+        nickname: 'test',
+        image: '/asset/profile-1.png',
+        role: 'owner',
+        isMuted: false,
+        isPlayer: true,
+      };
+      const channel: Channel = {
+        id: 'aaa',
+        mode: 'public',
+        name: 'test',
+        users: new Map([[1, user]]),
+        bannedUserIdList: [],
+      };
+      for (let i = 2; i <= PARTICIPANT_LIMIT; i++) {
+        channel.users.set(i, user);
+      }
+      try {
+        await service.joinChannel(11, { mode: 'public' }, channel);
+      } catch (e) {
+        expect(e).toBeInstanceOf(ForbiddenException);
+        expect(e.message).toEqual('채널 정원이 초과되었습니다.');
+      }
     });
   });
 });
