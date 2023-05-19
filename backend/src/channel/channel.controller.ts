@@ -51,7 +51,10 @@ export class ChannelController {
   }
 
   @ApiOperation({ summary: '채널에 참여하기' })
-  @ApiForbiddenResponse({ type: ErrorResponseDto, description: '차단된 유저, 잘못된 비밀번호, 채널 정원 초과' })
+  @ApiForbiddenResponse({
+    type: ErrorResponseDto,
+    description: '차단된 유저, 잘못된 비밀번호, 채널 정원 초과, private 초대받지 않은 유저, 게임중인 채널',
+  })
   @ApiNotFoundResponse({ type: ErrorResponseDto, description: '존재하지 않는 채널' })
   @ApiConflictResponse({ type: ErrorResponseDto, description: '다른 채널에 참여 중인 유저' })
   @ApiHeaders([{ name: 'x-my-id', description: '내 auth 아이디 (임시값)' }])
