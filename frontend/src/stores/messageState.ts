@@ -1,26 +1,21 @@
 import { atom } from 'recoil';
+import { Message } from '@/dto/message/socket';
+import { Friend } from '@/types/entity';
 
-export type MessageData = {
-  id: number;
-  content: string;
+export type MessageInfoData = {
+  friend: Friend | null;
+  messages: Message[];
 };
 
-export const currentMessageIdState = atom<number>({
-  key: '/message/currentId',
-  default: -1,
+export const newMessagesState = atom<MessageInfoData>({
+  key: '/message/current',
+  default: {
+    friend: null,
+    messages: [],
+  },
 });
 
-export const receivedMessageListState = atom<MessageData[]>({
-  key: '/message/received',
-  default: [],
-});
-
-export const sendMessageListState = atom<MessageData[]>({
-  key: '/message/send',
-  default: [],
-});
-
-export const changeMessageIdListState = atom<number[]>({
+export const newMessageIdListState = atom<number[]>({
   key: '/message/changeId',
   default: [],
 });
