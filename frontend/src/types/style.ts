@@ -58,6 +58,8 @@ export type LayoutProps = {
   overflowX?: 'visible' | 'hidden' | 'scroll' | 'auto' | 'initial' | 'inherit';
   overflowY?: 'visible' | 'hidden' | 'scroll' | 'auto' | 'initial' | 'inherit';
   padding?: Padding | number;
+  paddingLR?: number;
+  paddingTB?: number;
   margin?: number;
 };
 

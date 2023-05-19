@@ -18,6 +18,7 @@ export const CommonButton = styled.button<CommonButtonProps>`
   padding-top: 1rem;
   padding-bottom: 1rem;
   font-weight: bold;
+  border-color: ${(props) => props.theme.color.gray300};
   color: ${(props) => (props.color ? props.theme.color[props.color] : props.theme.color.gray300)};
   ${(props) => {
     const bgColor = props.backgroundColor ? props.theme.color[props.backgroundColor] : props.theme.color.gray100;
@@ -37,7 +38,7 @@ export const CommonButton = styled.button<CommonButtonProps>`
         return `
           width: 8rem;
           height: 4rem;
-          font-size: 1.4rem;
+          font-size: 1.2rem;
         `;
       case 'md':
         return `
@@ -49,7 +50,7 @@ export const CommonButton = styled.button<CommonButtonProps>`
         return `
           width: 24rem;
           height: 4rem;
-          font-size: 1.4rem;
+          font-size: 1.6rem;
         `;
     }
   }}

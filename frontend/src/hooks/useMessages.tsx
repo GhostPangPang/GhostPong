@@ -1,35 +1,46 @@
 import { InfiniteData, useInfiniteQuery } from '@tanstack/react-query';
-import { MessageResponse } from '@/dto/message/response';
 import { get } from '@/libs/api';
+import { useRecoilValue } from 'recoil';
+import { MessageResponse as MessageDto } from '@/dto/message/response';
+import { newMessagesState } from '@/stores';
+
+const MESSAGE = '/message';
+
+type MessageResponse = MessageDto['messages'];
 
 const getMessages = async (friendId: number, offset: number) => {
-  return await get<MessageResponse>(`/message/${friendId}?offset=${offset}`);
+  return (await get<MessageDto>(`/message/${friendId}?offset=${offset}`)).messages;
 };
 
 const initialData: InfiniteData<MessageResponse> = {
-  pages: [] as MessageResponse[],
+  pages: [],
   pageParams: [],
 };
 
 const MESSAGE_SIZE = 32;
 
-export const useMessages = (friendId: number, offset = 0) => {
+export const useMessages = () => {
+  const newMessages = useRecoilValue(newMessagesState);
+
   const {
-    data = initialData,
-    isLoading,
-    isError,
-    fetchNextPage,
-    hasNextPage,
+    data: messages = initialData,
+    fetchNextPage: fetchNextMessages,
+    hasNextPage: hasMoreMessages,
     isFetching,
-  } = useInfiniteQuery({
-    queryKey: ['messages', friendId.toString(), offset.toString()],
-    queryFn: ({ pageParam = 0 }) => getMessages(friendId, pageParam),
-    enabled: friendId !== -1,
+  } = useInfiniteQuery<MessageResponse>({
+    queryKey: [MESSAGE, newMessages.friend?.id],
+    queryFn: ({ pageParam = 0 }) => getMessages(newMessages.friend!.id, pageParam),
+    enabled: !!newMessages.friend?.id,
     getNextPageParam: (lastPage) => {
-      if (lastPage.messages.length < MESSAGE_SIZE) return undefined;
-      return lastPage.messages[lastPage.messages.length - 1].id;
+      if (lastPage.length < MESSAGE_SIZE) return undefined;
+      return lastPage[lastPage.length - 1].id;
     },
   });
 
-  return { data, isLoading, isError, fetchNextPage, hasNextPage, isFetching };
+  return {
+    messages,
+    fetchNextMessages,
+    hasMoreMessages,
+    isFetching,
+  };
 };

@@ -11,8 +11,10 @@ import theme from '@/styles/theme';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      retry: 10,
+      retry: 5,
       suspense: true,
+      staleTime: 1000 * 60,
+      cacheTime: 1000 * 60 * 5,
     },
   },
 });

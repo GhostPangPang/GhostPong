@@ -10,3 +10,5 @@ export * from './ProgressBar';
 export * from './Text';
 export * from './RankBadge';
 export * from './Toggle';
+export * from './Input';
+export * from './Modal';

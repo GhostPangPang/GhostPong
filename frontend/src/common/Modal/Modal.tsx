@@ -8,14 +8,24 @@ export interface ModalProps {
   children: React.ReactNode;
   isOpen: boolean;
   onClose: () => void;
+  style?: React.CSSProperties;
 }
 
-export const Modal = ({ children, isOpen, onClose }: ModalProps) => {
+export const Modal = ({ children, isOpen, onClose, style }: ModalProps) => {
   if (!isOpen) return null;
   return (
     <ModalPortal>
       <ModalOverlay>
-        <Box position="relative" backgroundColor="gray300" padding="sm" maxHeight="80%" minWidth="80rem">
+        <Box
+          display="flex"
+          direction="column"
+          position="relative"
+          backgroundColor="gray300"
+          padding="sm"
+          height="80%"
+          minWidth="80rem"
+          style={style}
+        >
           <IconButton onClick={onClose} style={{ position: 'absolute', right: '0.5rem' }}>
             <CloseSvg />
           </IconButton>

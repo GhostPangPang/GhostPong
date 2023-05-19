@@ -1,34 +1,14 @@
-import { Box } from '@/common/Box';
+import { Box } from '@/common';
 import { MessageContent } from './MessageContent';
 import { MessageInput } from './MessageInput';
-import { Fragment, Suspense, useEffect, useRef } from 'react';
+import { Suspense } from 'react';
 
-interface MessageProps {
-  friendId: number;
-}
-
-export const Message = ({ friendId }: MessageProps) => {
-  const messageBoxRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (messageBoxRef.current) {
-      messageBoxRef.current.scrollTop = messageBoxRef.current.scrollHeight;
-    }
-  }, [friendId]);
-
+export const Message = () => {
   return (
     <>
-      <Box
-        ref={messageBoxRef}
-        display="flex"
-        direction="column-reverse"
-        height="100%"
-        backgroundColor="surfaceMix"
-        overflowY="auto"
-        style={{ direction: 'ltr' }}
-      >
+      <Box display="flex" direction="column-reverse" height="100%" backgroundColor="surfaceMix" overflowY="hidden">
         <Suspense fallback={<></>}>
-          <MessageContent friendId={friendId} />
+          <MessageContent />
         </Suspense>
       </Box>
       <MessageInput />

@@ -30,6 +30,7 @@ const StyledList = styled.ul<{ placement: Placement }>`
   padding: 0rem;
   position: absolute;
   z-index: 100;
+  box-shadow: 0 0.2rem 0.4rem rgba(0, 0, 0, 0.2);
   ${({ placement }) => {
     switch (placement) {
       case 'topright':
@@ -85,7 +86,8 @@ export const Dropbox = ({ items, placement, desc, children }: DropboxProps) => {
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const dropboxRef = useRef<HTMLDivElement>(null);
 
-  const handleOnClick = () => {
+  const handleOnClick = (e: React.MouseEvent<HTMLElement>) => {
+    e.stopPropagation();
     setIsVisible(!isVisible);
   };
 
@@ -98,6 +100,8 @@ export const Dropbox = ({ items, placement, desc, children }: DropboxProps) => {
   useEffect(() => {
     const observer = new ResizeObserver(() => {
       const child = dropboxRef.current?.firstChild as HTMLElement;
+      if (!child) return;
+
       const { width: childWidth, height: childHeight } = child.getBoundingClientRect();
       setDimensions({
         width: childWidth,

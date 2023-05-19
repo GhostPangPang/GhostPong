@@ -54,18 +54,18 @@ export const get = <T>(...args: Parameters<typeof client.get>) => {
   return client.get<T, T>(...args);
 };
 
-export const post = <T>(...args: Parameters<typeof client.post>) => {
+export const post = <T = ApiResponse>(...args: Parameters<typeof client.post>) => {
   return client.post<T, T>(...args);
 };
 
-export const patch = <T>(...args: Parameters<typeof client.patch>) => {
+export const patch = <T = ApiResponse>(...args: Parameters<typeof client.patch>) => {
   return client.patch<T, T>(...args);
 };
 
-export const put = <T>(...args: Parameters<typeof client.put>) => {
+export const put = <T = ApiResponse>(...args: Parameters<typeof client.put>) => {
   return client.put<T, T>(...args);
 };
 
-export const del = <T>(...args: Parameters<typeof client.delete>) => {
+export const del = <T = ApiResponse>(...args: Parameters<typeof client.delete>) => {
   return client.delete<T, T>(...args);
 };
