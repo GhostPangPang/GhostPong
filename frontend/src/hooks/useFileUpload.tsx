@@ -9,7 +9,7 @@ const postFileUpload = async (formData: FormData) => {
   return await post<LocationResponse>(API, formData);
 };
 
-const patchFileUpload = async (location: LocationResponse) => {
+const patchFileUpload = async (location: LocationResponse['location']) => {
   return await patch<ApiResponse>(API, { image: location });
 };
 
@@ -27,7 +27,7 @@ export const useFileUpload = () => {
   };
 
   const { mutate: patchMutate } = useMutation(
-    (location: LocationResponse) => {
+    (location: LocationResponse['location']) => {
       if (!location) throw new Error('No location selected');
       return patchFileUpload(location);
     },
@@ -53,7 +53,7 @@ export const useFileUpload = () => {
     },
     {
       onSuccess: (data: LocationResponse) => {
-        patchMutate(data);
+        patchMutate(data.location);
       },
       onError: (error: ApiError) => {
         alert(error.message);
