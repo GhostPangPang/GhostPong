@@ -22,6 +22,7 @@ export class Channel {
     this.id = id;
     this.mode = mode;
     this.name = name;
+    this.isInGame = false;
     this.password = password;
     this.users = new Map<number, ChannelUser>();
     this.bannedUserIdList = [];
@@ -30,6 +31,7 @@ export class Channel {
   id: string;
   name: string;
   mode: ChannelMode;
+  isInGame: boolean;
   password?: string;
   users: Map<number, ChannelUser>;
   bannedUserIdList: number[];

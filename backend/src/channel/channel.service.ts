@@ -12,9 +12,10 @@ import { Repository } from 'typeorm';
 import { PARTICIPANT_LIMIT } from '../common/constant';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
 import { User } from '../entity/user.entity';
-import { ChannelRepository } from '../repository/channel.repository';
+import { InvisibleChannelRepository } from '../repository/invisible-channel.repository';
+import { InvitationRepository } from '../repository/invitation.repository';
 import { ChannelUser, ChannelRole, Channel } from '../repository/model/channel';
-import { PrivateChannelRepository } from '../repository/private-channel.repository';
+import { VisibleChannelRepository } from '../repository/visible-channel.repository';
 
 import { CreateChannelRequestDto } from './dto/request/create-channel-request.dto';
 import { JoinChannelRequestDto } from './dto/request/join-channel-request.dto';
@@ -23,8 +24,9 @@ import { ChannelsListResponseDto } from './dto/response/channels-list-response.d
 @Injectable()
 export class ChannelService {
   constructor(
-    private readonly channelRepository: ChannelRepository,
-    private readonly privateChannelRepository: PrivateChannelRepository,
+    private readonly visibleChannelRepository: VisibleChannelRepository,
+    private readonly invisibleChannelRepository: InvisibleChannelRepository,
+    private readonly invitationRepository: InvitationRepository,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
   ) {}
@@ -38,21 +40,26 @@ export class ChannelService {
    */
   async createChannel(myId: number, channelOptions: CreateChannelRequestDto): Promise<string> {
     this.checkUserAlreadyInChannel(myId);
-    const channel = this.channelRepository.create(channelOptions);
+    let channel;
+    let channelId;
+    if (channelOptions.mode === 'private') {
+      channel = this.invisibleChannelRepository.create(channelOptions);
+      channelId = this.invisibleChannelRepository.insert(channel);
+    } else {
+      channel = this.visibleChannelRepository.create(channelOptions);
+      channelId = this.visibleChannelRepository.insert(channel);
+    }
     channel.users.set(myId, await this.generateChannelUser(myId, 'owner'));
     this.logger.log(`createChannel: ${JSON.stringify(channel)}`);
-    if (channel.mode === 'private') {
-      return this.privateChannelRepository.insert(channel);
-    }
-    return this.channelRepository.insert(channel);
+    return channelId;
   }
 
   getChannelsList(cursor: number): ChannelsListResponseDto {
-    const channels = this.channelRepository.findByCursor(cursor).map(({ id, name, mode, users }) => {
+    const channels = this.visibleChannelRepository.findByCursor(cursor).map(({ id, name, mode, users }) => {
       return { id, name, mode, count: users.size };
     });
     return {
-      total: cursor === 0 ? this.channelRepository.count() : undefined,
+      total: cursor === 0 ? this.visibleChannelRepository.count() : undefined,
       channels,
     };
   }
@@ -68,26 +75,12 @@ export class ChannelService {
     channel: Channel,
   ): Promise<SuccessResponseDto> {
     this.checkUserAlreadyInChannel(myId);
-
-    if (channel.mode !== joinChannelRequestDto.mode) {
-      throw new BadRequestException('채널의 모드가 일치하지 않습니다.');
-    }
-    if (channel.mode === 'protected') {
-      if (channel.password !== joinChannelRequestDto.password) {
-        throw new ForbiddenException('비밀번호가 일치하지 않습니다.');
-      }
-    }
-    if (channel.bannedUserIdList.find((elem) => elem === myId) !== undefined) {
-      throw new ForbiddenException('차단되어 입장이 불가능한 채널입니다.');
-    }
-    if (channel.users.size >= PARTICIPANT_LIMIT) {
-      throw new ForbiddenException('채널 정원이 초과되었습니다.');
-    }
-    this.channelRepository.update(channel.id, {
+    this.checkJoinChannel(myId, joinChannelRequestDto, channel);
+    this.visibleChannelRepository.update(channel.id, {
       users: channel.users.set(myId, await this.generateChannelUser(myId, 'member')),
     });
     return {
-      message: '채널에 참여하였습니다.',
+      message: '채널에 입장했습니다.',
     };
   }
 
@@ -113,13 +106,35 @@ export class ChannelService {
    * @param userId
    */
   private checkUserAlreadyInChannel(userId: number): void {
-    const channels = [...this.channelRepository.findAll(), ...this.privateChannelRepository.findAll()];
+    const channels = [...this.visibleChannelRepository.findAll(), ...this.invisibleChannelRepository.findAll()];
 
     channels.forEach((channel) => {
       if (channel.users.has(userId)) {
         throw new ConflictException('이미 참여중인 채널이 있습니다.');
       }
     });
+  }
+
+  /**
+   * @description 채널 입장 시 채널의 모드, 비밀번호, 초대 여부, 차단 여부, 정원 초과 확인
+   */
+  private checkJoinChannel(myId: number, joinChannelRequestDto: JoinChannelRequestDto, channel: Channel): void {
+    if (channel.mode !== joinChannelRequestDto.mode) {
+      throw new BadRequestException('채널의 모드가 일치하지 않습니다.');
+    }
+    if (channel.mode === 'protected' && channel.password !== joinChannelRequestDto.password) {
+      throw new ForbiddenException('비밀번호가 일치하지 않습니다.');
+    }
+    if (channel.mode === 'private' && this.invitationRepository.find(myId) === undefined) {
+      throw new ForbiddenException('초대가 필요한 채널입니다.');
+    }
+    this.invitationRepository.delete(myId);
+    if (channel.bannedUserIdList.find((elem) => elem === myId) !== undefined) {
+      throw new ForbiddenException('차단되어 입장이 불가능한 채널입니다.');
+    }
+    if (channel.users.size >= PARTICIPANT_LIMIT) {
+      throw new ForbiddenException('채널 정원이 초과되었습니다.');
+    }
   }
   // !SECTION : private
 }

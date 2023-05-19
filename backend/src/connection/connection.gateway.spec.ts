@@ -8,8 +8,8 @@ import { JwtService } from '@nestjs/jwt';
 import { AppConfigService } from '../config/app/configuration.service';
 import { Server, Socket } from 'socket.io';
 import { ConnectionGateway } from './connection.gateway';
-import { PrivateChannelRepository } from '../repository/private-channel.repository';
-import { ChannelRepository } from '../repository/channel.repository';
+import { InvisibleChannelRepository } from '../repository/invisible-channel.repository';
+import { VisibleChannelRepository } from '../repository/visible-channel.repository';
 
 describe('ConnectionGateway', () => {
   let gateway: ConnectionGateway;
@@ -29,8 +29,8 @@ describe('ConnectionGateway', () => {
           provide: getRepositoryToken(Friendship),
           useClass: Repository,
         },
-        PrivateChannelRepository,
-        ChannelRepository,
+        InvisibleChannelRepository,
+        VisibleChannelRepository,
         SocketIdRepository,
         UserStatusRepository,
         {
@@ -55,7 +55,7 @@ describe('ConnectionGateway', () => {
     userStatusRepository = moduleRef.get<UserStatusRepository>(UserStatusRepository);
     jwtService = moduleRef.get<JwtService>(JwtService);
     appConfigService = moduleRef.get<AppConfigService>(AppConfigService);
-    jest.spyOn(gateway as any, 'getUserIdFromHeader').mockImplementation(() => 1);
+    jest.spyOn(gateway as any, 'getUserId').mockImplementation(() => 1);
 
     socket = {
       id: 'asdf',
