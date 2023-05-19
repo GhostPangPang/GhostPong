@@ -1,4 +1,3 @@
-import { Injectable } from '@nestjs/common';
 import { nanoid } from 'nanoid';
 
 import { Channel } from './model/channel';
@@ -7,9 +6,8 @@ import { Repository } from './repository.interface';
 /**
  * public, protected 채널을 관리하는 repository.
  */
-@Injectable()
 export class ChannelRepository implements Repository<string, Channel> {
-  private readonly channelList: Map<string, Channel> = new Map<string, Channel>();
+  protected readonly channelList: Map<string, Channel> = new Map<string, Channel>();
 
   create(channelOptions: Pick<Channel, 'mode' | 'name' | 'password'>): Channel {
     return new Channel(nanoid(), channelOptions.mode, channelOptions.name, channelOptions.password);
@@ -44,12 +42,5 @@ export class ChannelRepository implements Repository<string, Channel> {
 
   findAll(): Channel[] {
     return Array.from(this.channelList.values());
-  }
-
-  findByCursor(cursor: number): Channel[] {
-    const channelArray = Array.from(this.channelList.values());
-    const endIndex = channelArray.length > cursor * 9 ? channelArray.length - cursor * 9 : 0;
-    const startIndex = endIndex > 9 ? endIndex - 9 : 0;
-    return channelArray.slice(startIndex, endIndex).reverse();
   }
 }

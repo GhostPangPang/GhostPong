@@ -1,27 +1,27 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ChannelService } from './channel.service';
-import { PrivateChannelRepository } from '../repository/private-channel.repository';
-import { ChannelRepository } from '../repository/channel.repository';
+import { InvisibleChannelRepository } from '../repository/invisible-channel.repository';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { User } from '../entity/user.entity';
 import { CreateChannelRequestDto } from './dto/request/create-channel-request.dto';
 import { Repository } from 'typeorm';
-import { BadRequestException, ConflictException, ForbiddenException, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, NotFoundException } from '@nestjs/common';
 import { Channel, ChannelUser } from '../repository/model/channel';
 import { PARTICIPANT_LIMIT } from '../common/constant';
+import { VisibleChannelRepository } from '../repository/visible-channel.repository';
 
 describe('ChannelService', () => {
   let service: ChannelService;
-  let channelRepository: ChannelRepository;
-  let privateChannelRepository: PrivateChannelRepository;
+  let visibleChannelRepository: VisibleChannelRepository;
+  let invisibleChannelRepository: InvisibleChannelRepository;
   let userRepository: Repository<User>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ChannelService,
-        ChannelRepository,
-        PrivateChannelRepository,
+        VisibleChannelRepository,
+        InvisibleChannelRepository,
         {
           provide: getRepositoryToken(User),
           useValue: {
@@ -32,8 +32,8 @@ describe('ChannelService', () => {
     }).compile();
 
     service = module.get<ChannelService>(ChannelService);
-    channelRepository = module.get<ChannelRepository>(ChannelRepository);
-    privateChannelRepository = module.get<PrivateChannelRepository>(PrivateChannelRepository);
+    visibleChannelRepository = module.get<VisibleChannelRepository>(VisibleChannelRepository);
+    invisibleChannelRepository = module.get<InvisibleChannelRepository>(InvisibleChannelRepository);
     userRepository = module.get<Repository<User>>(getRepositoryToken(User));
   });
 
@@ -46,8 +46,8 @@ describe('ChannelService', () => {
       };
 
       const id = await service.createChannel(1, channelRequest);
-      expect(channelRepository.count()).toBe(1);
-      const channel = channelRepository.find(id);
+      expect(visibleChannelRepository.count()).toBe(1);
+      const channel = visibleChannelRepository.find(id);
       expect(channel).toBeDefined(); // NOT undefined
 
       const { name, mode, users, password, bannedUserIdList } = channel!;
@@ -65,7 +65,7 @@ describe('ChannelService', () => {
       expect(password).toBeUndefined();
       expect(bannedUserIdList).toHaveLength(0);
 
-      expect(privateChannelRepository.findAll()).toHaveLength(0);
+      expect(invisibleChannelRepository.findAll()).toHaveLength(0);
     });
 
     it('private 채널 생성', async () => {
@@ -75,8 +75,8 @@ describe('ChannelService', () => {
       };
 
       const id = await service.createChannel(1, channelRequest);
-      expect(privateChannelRepository.findAll()).toHaveLength(1);
-      const channel = privateChannelRepository.find(id);
+      expect(invisibleChannelRepository.findAll()).toHaveLength(1);
+      const channel = invisibleChannelRepository.find(id);
       expect(channel).toBeDefined(); // NOT undefined
 
       const { name, mode, users, password, bannedUserIdList } = channel!;
@@ -94,7 +94,7 @@ describe('ChannelService', () => {
       expect(password).toBeUndefined();
       expect(bannedUserIdList).toHaveLength(0);
 
-      expect(channelRepository.findAll()).toHaveLength(0);
+      expect(visibleChannelRepository.findAll()).toHaveLength(0);
     });
 
     it('protected 채널 생성', async () => {
@@ -105,8 +105,8 @@ describe('ChannelService', () => {
       };
 
       const id = await service.createChannel(1, channelRequest);
-      expect(channelRepository.count()).toBe(1);
-      const channel = channelRepository.find(id);
+      expect(visibleChannelRepository.count()).toBe(1);
+      const channel = visibleChannelRepository.find(id);
       expect(channel).toBeDefined(); // NOT undefined
 
       const { name, mode, users, password, bannedUserIdList } = channel!;
@@ -125,7 +125,7 @@ describe('ChannelService', () => {
       expect(password).toBe('1234');
       expect(bannedUserIdList).toHaveLength(0);
 
-      expect(privateChannelRepository.findAll()).toHaveLength(0);
+      expect(invisibleChannelRepository.findAll()).toHaveLength(0);
     });
 
     // NOTE: failure case
@@ -150,7 +150,7 @@ describe('ChannelService', () => {
         users: new Map([[1, user]]),
         bannedUserIdList: [],
       };
-      channelRepository.insert(channel);
+      visibleChannelRepository.insert(channel);
 
       expect(service.createChannel(1, { name: 'test', mode: 'public' })).rejects.toThrowError();
     });
@@ -171,7 +171,7 @@ describe('ChannelService', () => {
         users: new Map([[1, user]]),
         bannedUserIdList: [],
       };
-      privateChannelRepository.insert(channel);
+      invisibleChannelRepository.insert(channel);
 
       expect(service.createChannel(1, { name: 'test', mode: 'public' })).rejects.toThrowError();
     });
@@ -192,7 +192,7 @@ describe('ChannelService', () => {
             users: new Map(),
             bannedUserIdList: [],
           };
-          channelRepository.insert(channel);
+          visibleChannelRepository.insert(channel);
         }
       });
 

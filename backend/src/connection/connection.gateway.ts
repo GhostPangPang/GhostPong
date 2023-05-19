@@ -13,11 +13,11 @@ import { Repository } from 'typeorm';
 import { corsOption } from '../common/option/cors.option';
 import { AppConfigService } from '../config/app/configuration.service';
 import { Friendship } from '../entity/friendship.entity';
-import { ChannelRepository } from '../repository/channel.repository';
+import { InvisibleChannelRepository } from '../repository/invisible-channel.repository';
 import { Status } from '../repository/model/user-status';
-import { PrivateChannelRepository } from '../repository/private-channel.repository';
 import { SocketIdRepository } from '../repository/socket-id.repository';
 import { UserStatusRepository } from '../repository/user-status.repository';
+import { VisibleChannelRepository } from '../repository/visible-channel.repository';
 
 @WebSocketGateway({ cors: corsOption })
 export class ConnectionGateway implements OnGatewayConnection, OnGatewayDisconnect {
@@ -29,8 +29,8 @@ export class ConnectionGateway implements OnGatewayConnection, OnGatewayDisconne
     private readonly friendshipRepository: Repository<Friendship>,
     private readonly socketIdRepository: SocketIdRepository,
     private readonly userStatusRepository: UserStatusRepository,
-    private readonly channelRepository: ChannelRepository,
-    private readonly privateChannelRepository: PrivateChannelRepository,
+    private readonly visibleChannelRepository: VisibleChannelRepository,
+    private readonly invisibleChannelRepository: InvisibleChannelRepository,
     private readonly jwtService: JwtService,
     private readonly appConfigService: AppConfigService,
   ) {}
@@ -131,7 +131,7 @@ export class ConnectionGateway implements OnGatewayConnection, OnGatewayDisconne
    * @param userId
    */
   private leaveChannel(userId: number): void {
-    const channels = [...this.channelRepository.findAll(), ...this.privateChannelRepository.findAll()];
+    const channels = [...this.visibleChannelRepository.findAll(), ...this.invisibleChannelRepository.findAll()];
 
     channels.forEach((channel) => {
       if (channel.users.has(userId)) {
