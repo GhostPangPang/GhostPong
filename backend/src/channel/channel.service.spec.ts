@@ -9,11 +9,13 @@ import { ForbiddenException, NotFoundException } from '@nestjs/common';
 import { Channel, ChannelUser } from '../repository/model/channel';
 import { PARTICIPANT_LIMIT } from '../common/constant';
 import { VisibleChannelRepository } from '../repository/visible-channel.repository';
+import { InvitationRepository } from '../repository/invitation.repository';
 
 describe('ChannelService', () => {
   let service: ChannelService;
   let visibleChannelRepository: VisibleChannelRepository;
   let invisibleChannelRepository: InvisibleChannelRepository;
+  let invitationRepository: InvitationRepository;
   let userRepository: Repository<User>;
 
   beforeEach(async () => {
@@ -22,6 +24,7 @@ describe('ChannelService', () => {
         ChannelService,
         VisibleChannelRepository,
         InvisibleChannelRepository,
+        InvitationRepository,
         {
           provide: getRepositoryToken(User),
           useValue: {
@@ -34,6 +37,7 @@ describe('ChannelService', () => {
     service = module.get<ChannelService>(ChannelService);
     visibleChannelRepository = module.get<VisibleChannelRepository>(VisibleChannelRepository);
     invisibleChannelRepository = module.get<InvisibleChannelRepository>(InvisibleChannelRepository);
+    invitationRepository = module.get<InvitationRepository>(InvitationRepository);
     userRepository = module.get<Repository<User>>(getRepositoryToken(User));
   });
 
@@ -247,6 +251,37 @@ describe('ChannelService', () => {
         expect(e).toBeInstanceOf(ForbiddenException);
         expect(e.message).toEqual('비밀번호가 일치하지 않습니다.');
       }
+    });
+
+    it('private 채널에 받지 못한 경우', async () => {
+      const channel: Channel = {
+        id: 'aaa',
+        mode: 'private',
+        name: 'test',
+        users: new Map([]),
+        bannedUserIdList: [],
+      };
+
+      try {
+        await service.joinChannel(1, { mode: 'private' }, channel);
+      } catch (e) {
+        expect(e).toBeInstanceOf(ForbiddenException);
+        expect(e.message).toEqual('초대가 필요한 채널입니다.');
+      }
+    });
+
+    it('private 채널에 초대된 경우', async () => {
+      const channel: Channel = {
+        id: 'aaa',
+        mode: 'private',
+        name: 'test',
+        users: new Map([]),
+        bannedUserIdList: [],
+      };
+      invitationRepository.insert({ userId: 1, channelId: 'aaa' });
+      expect(await service.joinChannel(1, { mode: 'private' }, channel)).toEqual({
+        message: '채널에 입장했습니다.',
+      });
     });
 
     it('채널에 차단되어 입장 불가능한 경우', async () => {

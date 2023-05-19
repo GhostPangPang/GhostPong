@@ -13,6 +13,7 @@ import { PARTICIPANT_LIMIT } from '../common/constant';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
 import { User } from '../entity/user.entity';
 import { InvisibleChannelRepository } from '../repository/invisible-channel.repository';
+import { InvitationRepository } from '../repository/invitation.repository';
 import { ChannelUser, ChannelRole, Channel } from '../repository/model/channel';
 import { VisibleChannelRepository } from '../repository/visible-channel.repository';
 
@@ -25,6 +26,7 @@ export class ChannelService {
   constructor(
     private readonly visibleChannelRepository: VisibleChannelRepository,
     private readonly invisibleChannelRepository: InvisibleChannelRepository,
+    private readonly invitationRepository: InvitationRepository,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
   ) {}
@@ -82,6 +84,12 @@ export class ChannelService {
         throw new ForbiddenException('비밀번호가 일치하지 않습니다.');
       }
     }
+    if (channel.mode === 'private') {
+      if (this.invitationRepository.find(myId) === undefined) {
+        throw new ForbiddenException('초대가 필요한 채널입니다.');
+      }
+    }
+    this.invitationRepository.delete(myId);
     if (channel.bannedUserIdList.find((elem) => elem === myId) !== undefined) {
       throw new ForbiddenException('차단되어 입장이 불가능한 채널입니다.');
     }
@@ -92,7 +100,7 @@ export class ChannelService {
       users: channel.users.set(myId, await this.generateChannelUser(myId, 'member')),
     });
     return {
-      message: '채널에 참여하였습니다.',
+      message: '채널에 입장했습니다.',
     };
   }
 
