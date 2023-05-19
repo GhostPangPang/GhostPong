@@ -1,24 +1,8 @@
 import { UserProfileResponse } from '@/types/user/response';
 
-export class UserProfileResponseDto implements UserProfileResponse {
-  /**
-   * 유저 닉네임
-   * @example nickname
-   */
-  nickname: string;
+import { UserInfoDto } from '../user-info.dto';
 
-  /**
-   * 유저 프로필 이미지
-   * @example /asset/3-profile.png
-   */
-  image?: string;
-
-  /**
-   * 유저 레벨
-   * @example 12
-   */
-  exp: number;
-
+export class UserProfileResponseDto extends UserInfoDto implements UserProfileResponse {
   /**
    * 유저 승리 횟수
    * @example 12

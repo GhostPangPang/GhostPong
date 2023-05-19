@@ -5,7 +5,7 @@ export class UserInfoDto implements UserInfo {
    * 유저 id
    * @example 1
    */
-  id?: number;
+  id: number;
 
   /**
    * 유저 닉네임
