@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 
 interface UseInputProps {
-  initialValue: string | undefined;
+  initialValue: string;
   validationFunc?: (value: string) => { isValid: boolean; errorMessage: string };
 }
 

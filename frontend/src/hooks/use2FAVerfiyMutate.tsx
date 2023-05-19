@@ -9,7 +9,7 @@ const post2FAVerify = async (code: CodeVerificationRequest) => {
 };
 
 interface Props {
-  code: string | undefined;
+  code: string;
   onSuccess: () => void;
 }
 

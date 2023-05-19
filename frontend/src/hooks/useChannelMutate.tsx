@@ -1,7 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { post, ApiError, LocationResponse, ApiResponse } from '@/libs/api';
-import { CreateChannelRequest } from '@/dto/channel/request';
-import { JoinChannelRequest } from '@/dto/channel/request';
+import { CreateChannelRequest, JoinChannelRequest } from '@/dto/channel/request';
 import { useNavigate } from 'react-router-dom';
 
 const API = '/channel';
@@ -20,6 +19,8 @@ const postJoinChannel = async ({ mode, password, id }: postJoinChannelRequest) =
 
 export const useJoinChannelMutation = ({ mode, password, id }: postJoinChannelRequest) => {
   const navigate = useNavigate();
+
+  if (mode !== 'protected') password = undefined;
 
   const mutation = useMutation(
     () => {
