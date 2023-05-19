@@ -151,6 +151,7 @@ describe('ChannelService', () => {
         id: 'aaa',
         mode: 'public',
         name: 'test',
+        status: 'ready',
         users: new Map([[1, user]]),
         bannedUserIdList: [],
       };
@@ -172,6 +173,7 @@ describe('ChannelService', () => {
         id: 'aaa',
         mode: 'private',
         name: 'test',
+        status: 'ready',
         users: new Map([[1, user]]),
         bannedUserIdList: [],
       };
@@ -193,6 +195,7 @@ describe('ChannelService', () => {
             id: `aaa${i}`,
             mode: 'public',
             name: 'test',
+            status: 'ready',
             users: new Map(),
             bannedUserIdList: [],
           };
@@ -242,6 +245,7 @@ describe('ChannelService', () => {
         mode: 'protected',
         password: '1234',
         name: 'test',
+        status: 'ready',
         users: new Map([]),
         bannedUserIdList: [1],
       };
@@ -258,6 +262,7 @@ describe('ChannelService', () => {
         id: 'aaa',
         mode: 'private',
         name: 'test',
+        status: 'ready',
         users: new Map([]),
         bannedUserIdList: [],
       };
@@ -275,6 +280,7 @@ describe('ChannelService', () => {
         id: 'aaa',
         mode: 'private',
         name: 'test',
+        status: 'ready',
         users: new Map([]),
         bannedUserIdList: [],
       };
@@ -289,6 +295,7 @@ describe('ChannelService', () => {
         id: 'aaa',
         mode: 'public',
         name: 'test',
+        status: 'ready',
         users: new Map([]),
         bannedUserIdList: [1],
       };
@@ -314,6 +321,7 @@ describe('ChannelService', () => {
         id: 'aaa',
         mode: 'public',
         name: 'test',
+        status: 'ready',
         users: new Map([[1, user]]),
         bannedUserIdList: [],
       };
@@ -325,6 +333,23 @@ describe('ChannelService', () => {
       } catch (e) {
         expect(e).toBeInstanceOf(ForbiddenException);
         expect(e.message).toEqual('채널 정원이 초과되었습니다.');
+      }
+    });
+
+    it('게임중인 채널에 입장할 경우', async () => {
+      const channel: Channel = {
+        id: 'aaa',
+        mode: 'public',
+        name: 'test',
+        status: 'playing',
+        users: new Map(),
+        bannedUserIdList: [],
+      };
+      try {
+        await service.joinChannel(1, { mode: 'public' }, channel);
+      } catch (e) {
+        expect(e).toBeInstanceOf(ForbiddenException);
+        expect(e.message).toEqual('게임이 진행중인 채널입니다.');
       }
     });
   });

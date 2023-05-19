@@ -96,6 +96,9 @@ export class ChannelService {
     if (channel.users.size >= PARTICIPANT_LIMIT) {
       throw new ForbiddenException('채널 정원이 초과되었습니다.');
     }
+    if (channel.status === 'playing') {
+      throw new ForbiddenException('게임이 진행중인 채널입니다.');
+    }
     this.visibleChannelRepository.update(channel.id, {
       users: channel.users.set(myId, await this.generateChannelUser(myId, 'member')),
     });
