@@ -13,7 +13,7 @@ import { Response } from 'express';
 import { ExtractUserId } from '../common/decorator/extract-user-id.decorator';
 import { ErrorResponseDto } from '../common/dto/error-response.dto';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
-import { CheckChannelIdPipe } from '../common/pipe/check-channel-id.pipe';
+import { IdToChannelPipe } from '../common/pipe/id-to-channel.pipe';
 import { NonNegativeIntPipe } from '../common/pipe/non-negative-int.pipe';
 import { Channel } from '../repository/model/channel';
 
@@ -59,7 +59,7 @@ export class ChannelController {
   joinChannel(
     @ExtractUserId() myId: number,
     @Body() joinChannelRequestDto: JoinChannelRequestDto,
-    @Param('channelId', CheckChannelIdPipe) channel: Channel,
+    @Param('channelId', IdToChannelPipe) channel: Channel,
   ): Promise<SuccessResponseDto> {
     return this.channelService.joinChannel(myId, joinChannelRequestDto, channel);
   }
