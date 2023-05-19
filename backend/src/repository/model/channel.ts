@@ -1,5 +1,6 @@
 export type ChannelMode = 'private' | 'public' | 'protected';
 export type ChannelRole = 'owner' | 'admin' | 'member';
+export type ChannelStatus = 'ready' | 'playing';
 export class ChannelUser {
   constructor(role: ChannelRole, id: number, nickname: string, image?: string) {
     this.id = id;
@@ -22,6 +23,7 @@ export class Channel {
     this.id = id;
     this.mode = mode;
     this.name = name;
+    this.status = 'ready';
     this.password = password;
     this.users = new Map<number, ChannelUser>();
     this.bannedUserIdList = [];
@@ -30,6 +32,7 @@ export class Channel {
   id: string;
   name: string;
   mode: ChannelMode;
+  status: ChannelStatus;
   password?: string;
   users: Map<number, ChannelUser>;
   bannedUserIdList: number[];
