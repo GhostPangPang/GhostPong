@@ -26,14 +26,14 @@ function App() {
             <Route element={<MainLayout />}>
               <Route path="/" element={<LobbyPage />} />
               <Route path="/message" element={<MessagePage />} />
-              <Route path="/game/list" element={<GameListPage />} />
+              <Route path="/channel/list" element={<GameListPage />} />
               <Route element={<FooterLayout />}>
                 <Route path="/profile/:userId" element={<ProfilePage />} />
                 <Route path="/profile/edit" element={<EditProfilePage />} />
               </Route>
             </Route>
             <Route element={<GameLayout />}>
-              <Route path="/game/:gameId" element={<GameReadyPage />} />
+              <Route path="/channel/:gameId" element={<GameReadyPage />} />
             </Route>
             <Route path="/pre" element={<PrePage />} />
             <Route path="/auth?/" element={<AuthHandler />} />
