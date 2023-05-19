@@ -1,1 +1,1 @@
-export { BlockedUserResponse } from './blocked-user-response.interface';
+export * from './blocked-user-response.interface';

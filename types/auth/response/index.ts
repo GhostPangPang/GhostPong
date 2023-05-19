@@ -1,1 +1,1 @@
-export { TwoFactorAuthResponse } from "./two-factor-auth-response.interface";
+export * from './two-factor-auth-response.interface';

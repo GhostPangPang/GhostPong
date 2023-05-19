@@ -1,2 +1,2 @@
-export { ErrorResponse } from './error-response.interface';
-export { SuccessResponse } from './success-response.interface';
+export * from './error-response.interface';
+export * from './success-response.interface';

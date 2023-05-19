@@ -1,2 +1,2 @@
-export { Message } from "./message.interface";
-export { LastMessageView } from "./last-message-view.interface";
+export * from './message.interface';
+export * from './last-message-view.interface';

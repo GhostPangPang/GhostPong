@@ -1,2 +1,2 @@
-export { CreateChannelRequest } from "./create-channel-request.interface";
-export { JoinChannelRequest } from "./join-channel-request.interface";
+export * from './create-channel-request.interface';
+export * from './join-channel-request.interface';
