@@ -14,12 +14,14 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { GameListPage } from './pages/GameListPage';
 import { AuthHandler } from './AuthHandler';
 import { Loading } from './common/Loading/Loading';
+import { SocketHandler } from './SocketHandler';
 
 function App() {
   return (
     <BrowserRouter>
       <Suspense fallback={<Loading />}>
         <ErrorBoundary fallback={<h1>Error</h1>}>
+          <SocketHandler />
           <Routes>
             <Route element={<MainLayout />}>
               <Route path="/" element={<LobbyPage />} />
