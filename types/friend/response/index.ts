@@ -1,2 +1,2 @@
-export { FriendResponse, UserStatus } from './friend-response.interface';
-export { RequestedFriendsResponse } from './requested-friend-response.interface';
+export * from './friend-response.interface';
+export * from './requested-friend-response.interface';

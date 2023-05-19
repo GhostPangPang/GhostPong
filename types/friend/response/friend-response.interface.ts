@@ -1,13 +1,12 @@
-import { UserInfo } from '../../user/user-info.interface';
-
-export type UserStatus = 'online' | 'offline' | 'game';
+import { UserInfo } from '../../user';
+import { Status } from '../../user/socket';
 
 export interface FriendResponse {
   friends: {
     id: number;
     lastMessageTime: Date | string | null;
     lastViewTime: Date | string | null;
-    status: UserStatus;
+    status: Status;
     user: UserInfo;
   }[];
 }

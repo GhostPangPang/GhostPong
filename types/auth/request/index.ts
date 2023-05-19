@@ -1,2 +1,2 @@
-export { TwoFactorAuthRequest } from "./two-factor-auth-request.interface";
-export { CodeVerificationRequest } from "./code-verification-request.interface";
+export * from './two-factor-auth-request.interface';
+export * from './code-verification-request.interface';

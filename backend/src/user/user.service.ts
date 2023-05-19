@@ -63,8 +63,9 @@ export class UserService {
   }
 
   async getUserProfile(userId: number): Promise<UserProfileResponseDto> {
-    const { nickname, image, exp, userRecord, achievements } = await this.findExistUserProfile(userId);
+    const { id, nickname, image, exp, userRecord, achievements } = await this.findExistUserProfile(userId);
     return {
+      id,
       nickname,
       image,
       exp,

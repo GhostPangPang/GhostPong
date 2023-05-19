@@ -124,6 +124,7 @@ export class UserController {
 
   @ApiOperation({ summary: '유저 프로필 가져오기' })
   @ApiNotFoundResponse({ type: ErrorResponseDto, description: '존재하지 않는 사용자' })
+  @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
   @Get(':userId/profile')
   getUserProfile(
     @Param('userId', NonNegativeIntPipe, CheckUserIdPipe) userId: number,
