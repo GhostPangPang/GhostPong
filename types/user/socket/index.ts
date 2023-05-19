@@ -1,1 +1,1 @@
-export { UserStatus } from './user-status.interface';
+export { Status, UserStatus } from './user-status.interface';
