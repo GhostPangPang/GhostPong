@@ -17,6 +17,7 @@ const TWO_FA_JWT_EXPIRES_IN = '15m';
 const TWO_FA_EXPIRES_IN = 1000 * 60 * 5; // 5m
 const TWO_FA_MAX = 1000;
 const COOKIE_EXPIRES_IN = 1000 * 60 * 15; // 15m
+const MUTE_EXPIRES_IN = 1000 * 60;
 
 const COOKIE_OPTIONS: CookieOptions = {
   maxAge: COOKIE_EXPIRES_IN,
@@ -39,4 +40,5 @@ export {
   TWO_FA_EXPIRES_IN,
   TWO_FA_MAX,
   COOKIE_OPTIONS,
+  MUTE_EXPIRES_IN,
 };
