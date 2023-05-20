@@ -8,11 +8,11 @@ import {
   WebSocketServer,
   WsException,
 } from '@nestjs/websockets';
-import { ValidationError } from 'class-validator';
 import { Server, Socket } from 'socket.io';
 import { Repository } from 'typeorm';
 
 import { corsOption } from '../common/option/cors.option';
+import { createWsException } from '../common/util';
 import { Friendship } from '../entity/friendship.entity';
 import { MessageView } from '../entity/message-view.entity';
 import { Message } from '../entity/message.entity';
@@ -45,12 +45,7 @@ export class MessageGateway {
    * @param socket
    * @param data
    */
-  @UsePipes(
-    new ValidationPipe({
-      exceptionFactory: (validationErrors: ValidationError[] = []) =>
-        new WsException(Object.values(validationErrors[0]?.constraints || {})[0]),
-    }),
-  )
+  @UsePipes(new ValidationPipe({ exceptionFactory: createWsException }))
   @SubscribeMessage('message')
   async handleMessage(@ConnectedSocket() socket: Socket, @MessageBody() data: MesssageDto): Promise<void> {
     console.log('friend id is ', data.id);
@@ -75,7 +70,7 @@ export class MessageGateway {
    * @param socket
    * @param data
    */
-  @UsePipes(new ValidationPipe({ exceptionFactory: () => new WsException('Bad Request') }))
+  @UsePipes(new ValidationPipe({ exceptionFactory: createWsException }))
   @SubscribeMessage('last-message-view')
   async handleLeaveMessageRoom(
     @ConnectedSocket() socket: Socket,

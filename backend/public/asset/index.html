@@ -33,11 +33,6 @@
         });
       }
 
-      // let friendId;
-      function joinRoom() {
-        socket.emit('join-message-room');
-      }
-
       // 메세지 전송
       function sendMessage() {
         const friendId = Number(document.getElementById('friendId').value);
@@ -53,10 +48,27 @@
         // socket.emit('last-message-view', { friendId, lastViewTime: new Number });
       }
 
-      class MessageDto {
-        id;
-        content;
+      function joinChannel() {
+        const channelId = document.getElementById('channel').value;
+        socket.emit('test', { channelId }, (ack) => {
+          console.log(ack);
+        });
       }
+
+      function emitChat() {
+        const channelId = document.getElementById('channelId').value;
+        const senderId = Number(document.getElementById('senderId').value);
+        const content = document.getElementById('message').value;
+        // const content = `${message}`;
+
+        socket.emit('chat', { channelId, senderId, createdAt: new Date(), content }, (ack) => {
+          console.log(ack);
+        });
+      }
+
+      socket.on('exception', function (data) {
+        console.log(data);
+      });
 
       socket.on('message', function (data) {
         const messagesList = document.getElementById('messages');
@@ -66,6 +78,13 @@
         messagesList.appendChild(messageItem);
       });
       // 메세지 수신
+      socket.on('chat', function (data) {
+        const messagesList = document.getElementById('chat');
+        const messageItem = document.createElement('div');
+        const fullMessage = `${data.senderId}: ${data.content}`;
+        messageItem.textContent = fullMessage;
+        messagesList.appendChild(messageItem);
+      });
     </script>
   </head>
   <body>
@@ -76,20 +95,34 @@
     </div>
 
     <div>
-      <button onClick="joinRoom()">가입</button>
-
       <input type="number" id="friendId" placeholder="친구" style="width: 50px" />
       <input type="text" id="message" placeholder="메세지" style="width: 200px" />
       <button onClick="sendMessage()">전송</button>
     </div>
 
-    <div id="chat-log">
+    <div id="message-log">
       <div id="messages"></div>
     </div>
 
     <div>
       <input type="number" id="friendIdforleave" placeholder="친구" style="width: 50px" />
       <button onclick="leaveRoom()">나가기</button>
+    </div>
+
+    <div>
+      <input type="text" id="channel" placeholder="채널id" style="width: 50px" />
+      <button onclick="joinChannel()">채널 들어가기</button>
+    </div>
+
+    <div>
+      <input type="text" id="channelId" placeholder="채널id" style="width: 50px" />
+      <input type="number" id="senderId" placeholder="senderid" style="width: 50px" />
+      <input type="text" id="chat" placeholder="채팅" style="width: 200px" />
+      <button onClick="emitChat()">전송</button>
+    </div>
+
+    <div id="chat-log">
+      <div id="chat"></div>
     </div>
   </body>
 </html>
