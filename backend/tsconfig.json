@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "paths": { "@/types/*": ["../types/*"] },
+    "paths": { "@/types/*": ["../types/*"], "@/game/*": ["../game/*"] },
     "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
