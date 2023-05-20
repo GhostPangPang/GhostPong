@@ -88,7 +88,7 @@ export function checkGameEnded(game: Game) {
  *
  * @param game
  */
-export function update(game: Game) {
+export function updateBall(game: Game) {
   game.ball.x += game.ball.vx;
   game.ball.y += game.ball.vy;
 }
@@ -96,7 +96,7 @@ export function update(game: Game) {
 export function startGame(game: Game) {
   // run game loop
   game.intervalId = setInterval(() => {
-    update(game);
+    updateBall(game);
     checkPlayerCollision(game);
     checkWallcollision(game.ball);
     checkGameEnded(game);
