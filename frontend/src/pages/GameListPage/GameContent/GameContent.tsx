@@ -4,16 +4,15 @@ import image1 from '@/assets/svgs/ChannelBackground1.png';
 import image2 from '@/assets/svgs/ChannelBackground2.png';
 import { ReactComponent as LockIcon } from '@/svgs/lock.svg';
 import { ReactComponent as PeopleIcon } from '@/svgs/people.svg';
-import { ChannelsListResponse, ChannelInfo } from '@/dto/channel/response';
-import { useJoinChannelMutation } from '@/hooks/useChannelMutate';
+import { ChannelInfo } from '@/dto/channel/response';
 import { useInput } from '@/hooks/useInput';
 import { validatePassword } from '@/libs/utils/validate';
 import { useState } from 'react';
+import { useChannel, useChannelMutation } from '@/hooks/useChannel';
 
 interface GameContentProps {
-  channels: ChannelsListResponse['channels'];
+  cursor: number;
 }
-
 interface GameItemProps extends ChannelInfo {
   backgroundImageUrl: string;
 }
@@ -70,12 +69,12 @@ const GameListItem = ({ id, name, mode, count, backgroundImageUrl }: GameItemPro
   const [isOpen, setIsOpen] = useState(false);
   const { value: password, onChange, errorMessage } = useInput({ initialValue: '', validationFunc: validatePassword });
 
-  const { handleSubmit } = useJoinChannelMutation({ mode, password, id });
+  const { joinChannel } = useChannelMutation();
   return (
     <>
       <StyledGameListItem
         backgroundImageUrl={backgroundImageUrl}
-        onClick={mode === 'protected' ? () => setIsOpen(true) : handleSubmit}
+        onClick={mode === 'protected' ? () => setIsOpen(true) : () => joinChannel({ mode, password: undefined, id })}
       >
         <Box backgroundColor="foregroundt" padding={0.5} width="100%">
           <Grid container="flex" justifyContent="space-between" alignItems="center">
@@ -100,17 +99,19 @@ const GameListItem = ({ id, name, mode, count, backgroundImageUrl }: GameItemPro
           password={password}
           errorMessage={errorMessage}
           onChange={onChange}
-          handleSubmit={handleSubmit}
+          handleSubmit={() => joinChannel({ mode, password, id })}
         />
       </Modal>
     </>
   );
 };
 
-export const GameContent = ({ channels }: GameContentProps) => {
+export const GameContent = ({ cursor }: GameContentProps) => {
+  const { channels } = useChannel({ cursor });
+
   return (
     <>
-      {channels.map((channel, index) => {
+      {channels.channels.map((channel, index) => {
         return (
           <GameListItem
             key={index}
