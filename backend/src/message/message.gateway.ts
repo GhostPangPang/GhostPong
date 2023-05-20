@@ -45,11 +45,7 @@ export class MessageGateway {
    * @param socket
    * @param data
    */
-  @UsePipes(
-    new ValidationPipe({
-      exceptionFactory: createWsException,
-    }),
-  )
+  @UsePipes(new ValidationPipe({ exceptionFactory: createWsException }))
   @SubscribeMessage('message')
   async handleMessage(@ConnectedSocket() socket: Socket, @MessageBody() data: MesssageDto): Promise<void> {
     console.log('friend id is ', data.id);
