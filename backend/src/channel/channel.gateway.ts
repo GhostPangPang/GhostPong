@@ -20,11 +20,7 @@ import { VisibleChannelRepository } from '../repository/visible-channel.reposito
 import { ChannelIdDto } from './dto/socket/channelId.dto';
 import ChatDto from './dto/socket/chat.dto';
 
-@UsePipes(
-  new ValidationPipe({
-    exceptionFactory: createWsException,
-  }),
-)
+@UsePipes(new ValidationPipe({ exceptionFactory: createWsException }))
 @WebSocketGateway({ cors: corsOption })
 export class ChannelGateway {
   @WebSocketServer()
@@ -40,7 +36,7 @@ export class ChannelGateway {
   logger: Logger = new Logger('ChannelGateway');
 
   @SubscribeMessage('chat')
-  async handleMessage(@ConnectedSocket() socket: Socket, @MessageBody() data: ChatDto) {
+  async handleChat(@ConnectedSocket() socket: Socket, @MessageBody() data: ChatDto) {
     if (data.senderId !== socket.data.userId) {
       throw new WsException('유저 정보가 일치하지 않습니다.');
     }
