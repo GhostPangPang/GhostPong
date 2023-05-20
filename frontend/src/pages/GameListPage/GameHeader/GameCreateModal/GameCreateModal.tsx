@@ -1,9 +1,9 @@
 import { GameButton, Grid, InputBox, Text } from '@/common';
 import { useInput } from '@/hooks/useInput';
-import { useChannelMutation } from '@/hooks/useChannelMutate';
 import { GameDropdown } from './GameDropdown';
 import { validatePassword, validateTitle } from '@/libs/utils/validate';
 import { useState } from 'react';
+import { useChannelMutation } from '@/hooks/useChannel';
 
 interface GameTypeSettingProps {
   onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
@@ -66,6 +66,7 @@ const GamePasswordSetting = ({
 };
 
 export const GameCreateModal = () => {
+  const { createChannel } = useChannelMutation();
   const [selectedOption, setSelectedOption] = useState<'public' | 'protected' | 'private'>('public');
   const {
     value: title,
@@ -79,11 +80,6 @@ export const GameCreateModal = () => {
   } = useInput({
     initialValue: '',
     validationFunc: validatePassword,
-  });
-  const { handleSubmit } = useChannelMutation({
-    name: title,
-    mode: selectedOption,
-    password: selectedOption !== 'protected' ? undefined : password,
   });
 
   const handleSelectedChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -100,7 +96,16 @@ export const GameCreateModal = () => {
       {selectedOption === 'protected' && (
         <GamePasswordSetting onChange={onChangePassword} errorMessage={errorPasswordMessage} />
       )}
-      <GameButton size="md" onClick={handleSubmit}>
+      <GameButton
+        size="md"
+        onClick={() =>
+          createChannel({
+            name: title,
+            mode: selectedOption,
+            password: selectedOption !== 'protected' ? undefined : password,
+          })
+        }
+      >
         CREATE GAME
       </GameButton>
     </Grid>
