@@ -4,13 +4,23 @@
 
 import { CookieOptions } from 'express';
 
+/**
+ * limit
+ */
 const FRIEND_LIMIT = 42;
 const BLOCKED_USER_LIMIT = 42;
 const PARTICIPANT_LIMIT = 10;
-const DEFAULT_IMAGE = 'images/default_image.png';
-const MESSAGE_SIZE_PER_PAGE = 32;
+
+/**
+ * size
+ */
 const MAX_IMAGE_SIZE = 4 * 1024 * 1024;
+const MESSAGE_SIZE_PER_PAGE = 32;
 const HISTORY_SIZE_PER_PAGE = 10;
+
+/**
+ * token
+ */
 const AUTH_JWT_EXPIRES_IN = '15m';
 const USER_JWT_EXPIRES_IN = '4d';
 const TWO_FA_JWT_EXPIRES_IN = '15m';
@@ -30,7 +40,6 @@ export {
   FRIEND_LIMIT,
   BLOCKED_USER_LIMIT,
   PARTICIPANT_LIMIT,
-  DEFAULT_IMAGE,
   MESSAGE_SIZE_PER_PAGE,
   MAX_IMAGE_SIZE,
   HISTORY_SIZE_PER_PAGE,
