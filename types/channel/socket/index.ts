@@ -1,1 +1,1 @@
-export { Chat } from './chat.interface';
+export * from './chat.interface';
