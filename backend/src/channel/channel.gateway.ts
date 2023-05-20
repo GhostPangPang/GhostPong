@@ -2,10 +2,10 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject, Logger, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WsException } from '@nestjs/websockets';
 import { Cache } from 'cache-manager';
-import { ValidationError } from 'class-validator';
 import { Socket } from 'socket.io';
 
 import { corsOption } from '../common/option/cors.option';
+import { createWsException } from '../common/util';
 import { InvisibleChannelRepository } from '../repository/invisible-channel.repository';
 import { Channel } from '../repository/model/channel';
 import { VisibleChannelRepository } from '../repository/visible-channel.repository';
@@ -25,8 +25,7 @@ export class ChannelGateway {
 
   @UsePipes(
     new ValidationPipe({
-      exceptionFactory: (validationErrors: ValidationError[] = []) =>
-        new WsException(Object.values(validationErrors[0]?.constraints || {})[0]),
+      exceptionFactory: createWsException,
     }),
   )
   @SubscribeMessage('chat')
@@ -49,10 +48,8 @@ export class ChannelGateway {
    */
   private checkExistChannel(channelId: string): Channel {
     let channel = this.visibleChannelRepository.find(channelId);
-    if (channel === undefined) {
-      if ((channel = this.invisibleChannelRepository.find(channelId)) === undefined) {
-        throw new WsException('존재하지 않는 채널입니다.');
-      }
+    if (channel === undefined && (channel = this.invisibleChannelRepository.find(channelId)) === undefined) {
+      throw new WsException('존재하지 않는 채널입니다.');
     }
     return channel;
   }
