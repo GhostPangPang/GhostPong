@@ -29,7 +29,7 @@ const FriendRequestItem = ({ friendId, friend }: { friendId: number; friend: Use
 
 export const FriendsModal = ({ isOpen, onClose }: Omit<ModalProps, 'children'>) => {
   const { friendRequests, requestFriend } = useFriend();
-  const { value: nickname, setValue: setNickname, onChange: handleNicknameChange } = useInput('');
+  const { value: nickname, setValue: setNickname, onChange: handleNicknameChange } = useInput({ initialValue: '' });
 
   const handleFriendRequest = () => {
     if (!nickname) alert('닉네임을 입력해주세요!');

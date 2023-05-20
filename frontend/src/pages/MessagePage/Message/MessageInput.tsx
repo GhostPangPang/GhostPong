@@ -24,7 +24,7 @@ const SendButton = ({ onClick }: { onClick?: () => void }) => {
 export const MessageInput = () => {
   const { sendMessage } = useNewMessages();
   const [isComposing, setIsComposing] = useState(false);
-  const { value: content, setValue: setContent, onChange: handleContentChange } = useInput('');
+  const { value: content, setValue: setContent, onChange: handleContentChange } = useInput({ initialValue: '' });
 
   const handleSend = () => {
     if (content) {
