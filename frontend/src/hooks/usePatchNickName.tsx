@@ -4,7 +4,7 @@ import { useMutation } from '@tanstack/react-query';
 const API = '/user/nickname';
 
 interface Props {
-  nickName: string | undefined;
+  nickName: string;
   onSuccess: () => void;
 }
 
