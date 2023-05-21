@@ -1,5 +1,5 @@
+import { ChannelRole } from '@/types/channel';
 export type ChannelMode = 'private' | 'public' | 'protected';
-export type ChannelRole = 'owner' | 'admin' | 'member';
 export class ChannelUser {
   constructor(role: ChannelRole, id: number, nickname: string, image?: string) {
     this.id = id;

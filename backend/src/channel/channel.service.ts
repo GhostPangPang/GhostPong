@@ -9,14 +9,16 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { MemberInfo } from '@/types/channel';
+import { ChannelRole, MemberInfo } from '@/types/channel';
+
+import { ChannelRepository } from 'src/repository/channel.repository';
 
 import { PARTICIPANT_LIMIT } from '../common/constant';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
 import { User } from '../entity/user.entity';
 import { InvisibleChannelRepository } from '../repository/invisible-channel.repository';
 import { InvitationRepository } from '../repository/invitation.repository';
-import { ChannelUser, ChannelRole, Channel } from '../repository/model/channel';
+import { ChannelUser, Channel } from '../repository/model/channel';
 import { SocketIdRepository } from '../repository/socket-id.repository';
 import { VisibleChannelRepository } from '../repository/visible-channel.repository';
 
@@ -103,14 +105,8 @@ export class ChannelService {
     if (user === null) {
       throw new NotFoundException('존재하지 않는 유저입니다.');
     }
-    const data: MemberInfo = {
-      userId: user.id,
-      nickname: user.nickname,
-      image: user.image,
-      role: 'member',
-    };
 
-    await this.insertNewMember(myId, channel);
+    const data = await this.insertNewMember(myId, channel);
     this.channelGateway.joinChannel(socket.socketId, channel.id);
     this.channelGateway.emitChannel<MemberInfo>(channel.id, 'new-member', data, socket.socketId);
 
@@ -172,16 +168,22 @@ export class ChannelService {
     }
   }
 
-  private async insertNewMember(myId: number, channel: Channel): Promise<void> {
+  private async insertNewMember(myId: number, channel: Channel): Promise<MemberInfo> {
+    const channelUser = await this.generateChannelUser(myId, 'member');
+    let repository: ChannelRepository = this.visibleChannelRepository;
     if (channel.mode === 'private') {
-      this.invisibleChannelRepository.update(channel.id, {
-        users: channel.users.set(myId, await this.generateChannelUser(myId, 'member')),
-      });
-    } else {
-      this.visibleChannelRepository.update(channel.id, {
-        users: channel.users.set(myId, await this.generateChannelUser(myId, 'member')),
-      });
+      repository = this.invisibleChannelRepository;
     }
+    repository.update(channel.id, {
+      users: channel.users.set(myId, channelUser),
+    });
+
+    return {
+      userId: channelUser.id,
+      nickname: channelUser.nickname,
+      image: channelUser.image,
+      role: channelUser.role,
+    };
   }
 
   // !SECTION : private
