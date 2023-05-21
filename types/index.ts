@@ -5,3 +5,4 @@ export * from './common';
 export * from './friend';
 export * from './message';
 export * from './user';
+export * from './game';
