@@ -9,6 +9,8 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
+import { MemberInfo } from '@/types/channel';
+
 import { PARTICIPANT_LIMIT } from '../common/constant';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
 import { User } from '../entity/user.entity';
@@ -22,7 +24,6 @@ import { ChannelGateway } from './channel.gateway';
 import { CreateChannelRequestDto } from './dto/request/create-channel-request.dto';
 import { JoinChannelRequestDto } from './dto/request/join-channel-request.dto';
 import { ChannelsListResponseDto } from './dto/response/channels-list-response.dto';
-import { NewMemberDto } from './dto/socket/new-member.dto';
 
 @Injectable()
 export class ChannelService {
@@ -102,15 +103,16 @@ export class ChannelService {
     if (user === null) {
       throw new NotFoundException('존재하지 않는 유저입니다.');
     }
-    const data = {
+    const data: MemberInfo = {
       userId: user.id,
       nickname: user.nickname,
       image: user.image,
+      role: 'member',
     };
 
     await this.insertNewMember(myId, channel);
     this.channelGateway.joinChannel(socket.socketId, channel.id);
-    this.channelGateway.emitChannel<NewMemberDto>(channel.id, 'new-member', data, socket.socketId);
+    this.channelGateway.emitChannel<MemberInfo>(channel.id, 'new-member', data, socket.socketId);
 
     return {
       message: '채널에 입장했습니다.',

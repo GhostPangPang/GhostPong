@@ -1,2 +1,2 @@
 export * from './chat.interface';
-export * from './new-member.interface';
+export * from './member-info.interface';

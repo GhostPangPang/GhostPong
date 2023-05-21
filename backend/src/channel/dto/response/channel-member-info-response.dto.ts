@@ -1,4 +1,5 @@
-import { ChannelMemberInfoResponse, MemberInfo } from '@/types/channel/response';
+import { MemberInfo } from '@/types/channel';
+import { ChannelMemberInfoResponse } from '@/types/channel/response';
 
 export class ChannelMemberInfoResponseDto implements ChannelMemberInfoResponse {
   /**
