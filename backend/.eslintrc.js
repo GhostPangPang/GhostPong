@@ -31,8 +31,14 @@ module.exports = {
             group: 'internal',
             position: 'before',
           },
+          {
+            pattern: '@/game/**',
+            group: 'internal',
+            position: 'before',
+          },
         ],
         pathGroupsExcludedImportTypes: ['@/types/**'],
+        pathGroupsExcludedImportTypes: ['@/game/**'],
         alphabetize: {
           order: 'asc',
         },

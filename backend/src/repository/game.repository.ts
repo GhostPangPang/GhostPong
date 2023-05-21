@@ -1,4 +1,5 @@
-import { Game } from './model/game';
+import { Game } from '@/game/game';
+
 import { Repository } from './repository.interface';
 
 export class GameRepository implements Repository<string, Game> {
