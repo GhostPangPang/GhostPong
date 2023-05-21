@@ -73,9 +73,9 @@ export const EditProfilePage = () => {
 
   const { selectedFile, handleFileChange, handleUpload } = useFileUpload();
 
-  const { value: nickName, onChange: handleNickName } = useInput({ initialValue: userInfo.nickname });
-  const { value: email, onChange: handleEmail } = useInput({ initialValue: data.twoFa ? data.twoFa : '' });
-  const { value: verify, onChange: handleVerify } = useInput({ initialValue: '' });
+  const { value: nickName, onChange: handleNickName } = useInput(userInfo.nickname);
+  const { value: email, onChange: handleEmail } = useInput(data.twoFa ? data.twoFa : '');
+  const { value: verify, onChange: handleVerify } = useInput('');
   const { handleSubmit: handleNickNameSubmit } = usePatchNickName({ nickName, onSuccess: refetchAuth });
   const { handleSubmit: handleEmailSubmit } = use2FAMutation({ twoFAEmail: email ?? '' });
   const { handleSubmit: handleVerifySubmit } = use2FAVerifyMutation({ code: verify, onSuccess: refetch2FA });

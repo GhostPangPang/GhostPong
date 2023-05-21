@@ -67,7 +67,7 @@ const PasswordModal = ({ password, errorMessage, onChange, handleSubmit }: Passw
 
 const GameListItem = ({ id, name, mode, count, backgroundImageUrl }: GameItemProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const { value: password, onChange, errorMessage } = useInput({ initialValue: '', validationFunc: validatePassword });
+  const { value: password, onChange, errorMessage } = useInput('', validatePassword);
 
   const { joinChannel } = useChannelMutation();
   return (

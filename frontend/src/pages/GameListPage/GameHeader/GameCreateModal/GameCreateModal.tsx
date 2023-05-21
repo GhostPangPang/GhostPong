@@ -68,19 +68,12 @@ const GamePasswordSetting = ({
 export const GameCreateModal = () => {
   const { createChannel } = useChannelMutation();
   const [selectedOption, setSelectedOption] = useState<'public' | 'protected' | 'private'>('public');
-  const {
-    value: title,
-    onChange: onChangeTitle,
-    errorMessage: errorTitleMessage,
-  } = useInput({ initialValue: '', validationFunc: validateTitle });
+  const { value: title, onChange: onChangeTitle, errorMessage: errorTitleMessage } = useInput('', validateTitle);
   const {
     value: password,
     onChange: onChangePassword,
     errorMessage: errorPasswordMessage,
-  } = useInput({
-    initialValue: '',
-    validationFunc: validatePassword,
-  });
+  } = useInput('', validatePassword);
 
   const handleSelectedChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedOption(event.target.value as 'public' | 'protected' | 'private');

@@ -25,7 +25,7 @@ const BlockFriendItem = ({ blocked }: { blocked: User }) => {
 
 export const BlockModal = ({ isOpen, onClose }: Omit<ModalProps, 'children'>) => {
   const { blocked, updateBlocked } = useBlocked();
-  const { value: nickname, onChange: handleNicknameChange } = useInput({ initialValue: '' });
+  const { value: nickname, onChange: handleNicknameChange } = useInput('');
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>

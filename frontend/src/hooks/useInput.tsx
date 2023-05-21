@@ -1,11 +1,9 @@
 import { useState, useCallback } from 'react';
 
-interface UseInputProps {
-  initialValue: string;
-  validationFunc?: (value: string) => { isValid: boolean; errorMessage: string };
-}
-
-export const useInput = ({ initialValue, validationFunc }: UseInputProps) => {
+export const useInput = (
+  initialValue: string,
+  validationFunc?: (value: string) => { isValid: boolean; errorMessage: string },
+) => {
   const [value, setValue] = useState(initialValue);
   const [errorMessage, setErrorMessage] = useState('');
 
