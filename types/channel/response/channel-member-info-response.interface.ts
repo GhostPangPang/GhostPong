@@ -7,8 +7,7 @@ export interface MemberInfo {
   role: Role;
 }
 
-export interface ChannelInfoResponse {
-  name: string;
+export interface ChannelMemberInfoResponse {
   players: MemberInfo[];
   oberservers: MemberInfo[];
 }

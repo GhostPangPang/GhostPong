@@ -1,6 +1,6 @@
-import { ChannelInfoResponse, MemberInfo } from '@/types/channel/response';
+import { ChannelMemberInfoResponse, MemberInfo } from '@/types/channel/response';
 
-export class ChannelInfoResponseDto implements ChannelInfoResponse {
+export class ChannelMemberInfoResponseDto implements ChannelMemberInfoResponse {
   /**
    * @description 채널 이름
    * @example '아무나 들어와~'
