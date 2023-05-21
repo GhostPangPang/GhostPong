@@ -15,13 +15,11 @@ export const GameHeader = ({ cursor, setCursor }: GameHeaderProps) => {
   const { channels, refetchChannel } = useChannel({ cursor });
 
   const handleNextPage = () => {
-    console.log('handleNextPage', cursor);
     if (cursor + 1 > (channels.total ?? 0) / 9) return;
     setCursor((prevPage) => prevPage + 1);
   };
 
   const handlePrevPage = () => {
-    console.log('handlePrevPage', cursor);
     if (cursor - 1 < 0) return;
     setCursor((prevPage) => prevPage - 1);
   };
