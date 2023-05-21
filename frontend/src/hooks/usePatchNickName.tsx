@@ -1,6 +1,5 @@
 import { patch, ApiResponse, ApiError } from '@/libs/api';
 import { useMutation } from '@tanstack/react-query';
-import { ChangeEvent, useState } from 'react';
 
 const API = '/user/nickname';
 

@@ -37,7 +37,7 @@ export class ChannelController {
     @Res() res: Response,
   ): Promise<void> {
     const channelId = await this.channelService.createChannel(myId, createChannelRequestDto);
-    res.setHeader('Location', `'/channel/${channelId}`).json({ message: '채널이 생성되었습니다.' });
+    res.setHeader('Location', `/channel/${channelId}`).json({ message: '채널이 생성되었습니다.' });
   }
 
   @ApiOperation({ summary: '채널 목록 조회하기' })

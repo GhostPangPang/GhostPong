@@ -11,7 +11,7 @@ const createAxiosInstance = () => {
 
 const responseInterceptor = (res: AxiosResponse) => {
   if (res.status === 201) {
-    return res.headers.location;
+    return { message: res.data.message, location: res.headers.location };
   } else if (res.status >= 200 && res.status < 300) {
     return res.data;
   }
@@ -37,6 +37,7 @@ client.interceptors.response.use(responseInterceptor, errorInterceptor);
 // 여기서 auth req interceptor 로 customAuthError 발생시키기 -> ErrorBoundary 에서 해결
 
 export type LocationResponse = {
+  message: string;
   location: string;
 };
 
