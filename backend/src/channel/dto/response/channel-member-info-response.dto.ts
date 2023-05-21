@@ -9,5 +9,5 @@ export class ChannelMemberInfoResponseDto implements ChannelMemberInfoResponse {
   /**
    * @description 채널에 접속한 관전자 목록
    */
-  oberservers: MemberInfo[];
+  observers: MemberInfo[];
 }

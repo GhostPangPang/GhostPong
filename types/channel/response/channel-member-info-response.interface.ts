@@ -9,5 +9,5 @@ export interface MemberInfo {
 
 export interface ChannelMemberInfoResponse {
   players: MemberInfo[];
-  oberservers: MemberInfo[];
+  observers: MemberInfo[];
 }
