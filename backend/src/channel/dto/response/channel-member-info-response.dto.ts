@@ -2,12 +2,6 @@ import { ChannelMemberInfoResponse, MemberInfo } from '@/types/channel/response'
 
 export class ChannelMemberInfoResponseDto implements ChannelMemberInfoResponse {
   /**
-   * @description 채널 이름
-   * @example '아무나 들어와~'
-   */
-  name: string;
-
-  /**
    * @description 채널에 접속한 플레이어 목록
    */
   players: MemberInfo[];
