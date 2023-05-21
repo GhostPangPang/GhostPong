@@ -343,7 +343,10 @@ describe('ChannelService', () => {
         mode: 'public',
         name: 'test',
         isInGame: false,
-        users: new Map([[1, user]]),
+        users: new Map([
+          [1, user],
+          [2, user],
+        ]),
         bannedUserIdList: [],
       };
       for (let i = 2; i <= PARTICIPANT_LIMIT; i++) {
@@ -355,6 +358,59 @@ describe('ChannelService', () => {
         expect(e).toBeInstanceOf(ForbiddenException);
         expect(e.message).toEqual('채널 정원이 초과되었습니다.');
       }
+    });
+  });
+
+  describe('getChannelInfo', () => {
+    it('채널에 참여하지 않은 경우', () => {
+      const channel: Channel = {
+        id: 'aaa',
+        mode: 'public',
+        name: 'test',
+        isInGame: false,
+        users: new Map(),
+        bannedUserIdList: [],
+      };
+      try {
+        service.getChannelInfo(1, channel);
+      } catch (e) {
+        expect(e).toBeInstanceOf(NotFoundException);
+        expect(e.message).toEqual('채널에 참여하지 않은 유저입니다.');
+      }
+    });
+
+    it('채널 정보 조회 성공', () => {
+      const player: ChannelUser = {
+        id: 1,
+        nickname: 'test',
+        image: '/asset/profile-1.png',
+        role: 'owner',
+        isMuted: false,
+        isPlayer: true,
+      };
+      const observer: ChannelUser = {
+        id: 2,
+        nickname: 'test',
+        image: '/asset/profile-1.png',
+        role: 'member',
+        isMuted: false,
+        isPlayer: false,
+      };
+      const channel: Channel = {
+        id: 'aaa',
+        mode: 'public',
+        name: 'test',
+        isInGame: false,
+        users: new Map([
+          [1, player],
+          [2, observer],
+        ]),
+        bannedUserIdList: [],
+      };
+      expect(service.getChannelInfo(1, channel)).toEqual({
+        players: [{ id: 1, nickname: 'test', image: '/asset/profile-1.png', role: 'owner' }],
+        observers: [{ id: 2, nickname: 'test', image: '/asset/profile-1.png', role: 'member' }],
+      });
     });
   });
 });
