@@ -15,8 +15,10 @@ import { User } from '../entity/user.entity';
 import { InvisibleChannelRepository } from '../repository/invisible-channel.repository';
 import { InvitationRepository } from '../repository/invitation.repository';
 import { ChannelUser, ChannelRole, Channel } from '../repository/model/channel';
+import { SocketIdRepository } from '../repository/socket-id.repository';
 import { VisibleChannelRepository } from '../repository/visible-channel.repository';
 
+import { ChannelGateway } from './channel.gateway';
 import { CreateChannelRequestDto } from './dto/request/create-channel-request.dto';
 import { JoinChannelRequestDto } from './dto/request/join-channel-request.dto';
 import { ChannelsListResponseDto } from './dto/response/channels-list-response.dto';
@@ -27,6 +29,8 @@ export class ChannelService {
     private readonly visibleChannelRepository: VisibleChannelRepository,
     private readonly invisibleChannelRepository: InvisibleChannelRepository,
     private readonly invitationRepository: InvitationRepository,
+    private readonly socketIdRepository: SocketIdRepository,
+    private readonly channelGateway: ChannelGateway,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
   ) {}
@@ -42,6 +46,12 @@ export class ChannelService {
     this.checkUserAlreadyInChannel(myId);
     let channel;
     let channelId;
+
+    const socket = this.socketIdRepository.find(myId);
+    if (socket === undefined) {
+      throw new NotFoundException('소켓 아이디를 찾을 수 없습니다.');
+    }
+
     if (channelOptions.mode === 'private') {
       channel = this.invisibleChannelRepository.create(channelOptions);
       channelId = this.invisibleChannelRepository.insert(channel);
@@ -50,6 +60,8 @@ export class ChannelService {
       channelId = this.visibleChannelRepository.insert(channel);
     }
     channel.users.set(myId, await this.generateChannelUser(myId, 'owner'));
+    this.channelGateway.server.in(socket.socketId).socketsJoin(channel.id);
+
     this.logger.log(`createChannel: ${JSON.stringify(channel)}`);
     return channelId;
   }
@@ -76,9 +88,25 @@ export class ChannelService {
   ): Promise<SuccessResponseDto> {
     this.checkUserAlreadyInChannel(myId);
     this.checkJoinChannel(myId, joinChannelRequestDto, channel);
-    this.visibleChannelRepository.update(channel.id, {
-      users: channel.users.set(myId, await this.generateChannelUser(myId, 'member')),
+
+    const socket = this.socketIdRepository.find(myId);
+    if (socket === undefined) {
+      throw new NotFoundException('소켓 아이디를 찾을 수 없습니다.');
+    }
+
+    const user = await this.userRepository.findOne({
+      where: { id: myId },
+      select: ['nickname', 'image'],
     });
+
+    await this.insertNewMember(myId, channel);
+    this.channelGateway.server.in(socket.socketId).socketsJoin(channel.id);
+    this.channelGateway.server.to(channel.id).except(socket.socketId).emit('new-member', {
+      userId: user?.id,
+      nickname: user?.nickname,
+      image: user?.image,
+    });
+
     return {
       message: '채널에 입장했습니다.',
     };
@@ -136,5 +164,18 @@ export class ChannelService {
       throw new ForbiddenException('채널 정원이 초과되었습니다.');
     }
   }
+
+  private async insertNewMember(myId: number, channel: Channel): Promise<void> {
+    if (channel.mode === 'private') {
+      this.invisibleChannelRepository.update(channel.id, {
+        users: channel.users.set(myId, await this.generateChannelUser(myId, 'member')),
+      });
+    } else {
+      this.visibleChannelRepository.update(channel.id, {
+        users: channel.users.set(myId, await this.generateChannelUser(myId, 'member')),
+      });
+    }
+  }
+
   // !SECTION : private
 }

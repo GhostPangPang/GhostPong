@@ -1,8 +1,15 @@
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject, Logger, UsePipes, ValidationPipe } from '@nestjs/common';
-import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WsException } from '@nestjs/websockets';
+import {
+  ConnectedSocket,
+  MessageBody,
+  SubscribeMessage,
+  WebSocketGateway,
+  WebSocketServer,
+  WsException,
+} from '@nestjs/websockets';
 import { Cache } from 'cache-manager';
-import { Socket } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 
 import { corsOption } from '../common/option/cors.option';
 import { createWsException } from '../common/util';
@@ -14,6 +21,9 @@ import ChatDto from './dto/socket/chat.dto';
 
 @WebSocketGateway({ cors: corsOption })
 export class ChannelGateway {
+  @WebSocketServer()
+  public server: Server;
+
   constructor(
     @Inject(CACHE_MANAGER)
     private cacheManager: Cache,
