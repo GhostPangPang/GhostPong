@@ -10,6 +10,9 @@ import { Channel, ChannelUser } from '../repository/model/channel';
 import { PARTICIPANT_LIMIT } from '../common/constant';
 import { VisibleChannelRepository } from '../repository/visible-channel.repository';
 import { InvitationRepository } from '../repository/invitation.repository';
+import { ChannelGateway } from './channel.gateway';
+import { SocketIdRepository } from '../repository/socket-id.repository';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
 describe('ChannelService', () => {
   let service: ChannelService;
@@ -17,6 +20,8 @@ describe('ChannelService', () => {
   let invisibleChannelRepository: InvisibleChannelRepository;
   let invitationRepository: InvitationRepository;
   let userRepository: Repository<User>;
+  let socketIdRepository: SocketIdRepository;
+  let channelGateway: ChannelGateway;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -25,11 +30,17 @@ describe('ChannelService', () => {
         VisibleChannelRepository,
         InvisibleChannelRepository,
         InvitationRepository,
+        SocketIdRepository,
+        ChannelGateway,
         {
           provide: getRepositoryToken(User),
           useValue: {
             findOne: jest.fn().mockResolvedValue({ id: 1, nickname: 'test', image: '/asset/profile-1.png' }),
           },
+        },
+        {
+          provide: CACHE_MANAGER,
+          useValue: {},
         },
       ],
     }).compile();
@@ -39,6 +50,8 @@ describe('ChannelService', () => {
     invisibleChannelRepository = module.get<InvisibleChannelRepository>(InvisibleChannelRepository);
     invitationRepository = module.get<InvitationRepository>(InvitationRepository);
     userRepository = module.get<Repository<User>>(getRepositoryToken(User));
+    socketIdRepository = module.get<SocketIdRepository>(SocketIdRepository);
+    channelGateway = module.get<ChannelGateway>(ChannelGateway);
   });
 
   describe('createChannel', () => {
@@ -285,6 +298,14 @@ describe('ChannelService', () => {
         bannedUserIdList: [],
       };
       invitationRepository.insert({ userId: 1, channelId: 'aaa' });
+
+      socketIdRepository.insert({ userId: 1, socketId: 'socketId' });
+
+      service.joinChannel(1, { mode: 'private' }, channel);
+
+      // expect(channelGateway.server.in).toBeCalledWith();
+      // expect(channelGateway.server.socketsJoin).toBeCalledWith(channel.id);
+
       expect(await service.joinChannel(1, { mode: 'private' }, channel)).toEqual({
         message: '채널에 입장했습니다.',
       });

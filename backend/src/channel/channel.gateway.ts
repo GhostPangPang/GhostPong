@@ -1,8 +1,15 @@
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject, Logger, UsePipes, ValidationPipe } from '@nestjs/common';
-import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WsException } from '@nestjs/websockets';
+import {
+  ConnectedSocket,
+  MessageBody,
+  SubscribeMessage,
+  WebSocketGateway,
+  WebSocketServer,
+  WsException,
+} from '@nestjs/websockets';
 import { Cache } from 'cache-manager';
-import { Socket } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 
 import { corsOption } from '../common/option/cors.option';
 import { createWsException } from '../common/util';
@@ -14,6 +21,9 @@ import ChatDto from './dto/socket/chat.dto';
 
 @WebSocketGateway({ cors: corsOption })
 export class ChannelGateway {
+  @WebSocketServer()
+  public server: Server;
+
   constructor(
     @Inject(CACHE_MANAGER)
     private cacheManager: Cache,
@@ -41,6 +51,24 @@ export class ChannelGateway {
       throw new WsException('채널에 참여하지 않은 유저입니다.');
     }
     socket.to(data.channelId).emit('chat', data);
+  }
+
+  /**
+   * @summary channel socket room에 join
+   */
+  joinChannel(socketId: string, channelId: string): void {
+    this.server.in(socketId).socketsJoin(channelId);
+  }
+
+  /**
+   * @summary channel socket room에서 broadcast
+   */
+  emitChannel<DataType>(channelId: string, event: string, data: DataType, exceptId?: string): void {
+    if (exceptId === undefined) {
+      this.server.to(channelId).emit(event, data);
+    } else {
+      this.server.to(channelId).except(exceptId).emit(event, data);
+    }
   }
 
   /**

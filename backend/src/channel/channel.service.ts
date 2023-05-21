@@ -9,14 +9,20 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
+import { ChannelRole, MemberInfo } from '@/types/channel';
+
+import { ChannelRepository } from 'src/repository/channel.repository';
+
 import { PARTICIPANT_LIMIT } from '../common/constant';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
 import { User } from '../entity/user.entity';
 import { InvisibleChannelRepository } from '../repository/invisible-channel.repository';
 import { InvitationRepository } from '../repository/invitation.repository';
-import { ChannelUser, ChannelRole, Channel } from '../repository/model/channel';
+import { ChannelUser, Channel } from '../repository/model/channel';
+import { SocketIdRepository } from '../repository/socket-id.repository';
 import { VisibleChannelRepository } from '../repository/visible-channel.repository';
 
+import { ChannelGateway } from './channel.gateway';
 import { CreateChannelRequestDto } from './dto/request/create-channel-request.dto';
 import { JoinChannelRequestDto } from './dto/request/join-channel-request.dto';
 import { ChannelsListResponseDto } from './dto/response/channels-list-response.dto';
@@ -27,6 +33,8 @@ export class ChannelService {
     private readonly visibleChannelRepository: VisibleChannelRepository,
     private readonly invisibleChannelRepository: InvisibleChannelRepository,
     private readonly invitationRepository: InvitationRepository,
+    private readonly socketIdRepository: SocketIdRepository,
+    private readonly channelGateway: ChannelGateway,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
   ) {}
@@ -42,6 +50,12 @@ export class ChannelService {
     this.checkUserAlreadyInChannel(myId);
     let channel;
     let channelId;
+
+    const socket = this.socketIdRepository.find(myId);
+    if (socket === undefined) {
+      throw new NotFoundException('소켓 아이디를 찾을 수 없습니다.');
+    }
+
     if (channelOptions.mode === 'private') {
       channel = this.invisibleChannelRepository.create(channelOptions);
       channelId = this.invisibleChannelRepository.insert(channel);
@@ -50,6 +64,8 @@ export class ChannelService {
       channelId = this.visibleChannelRepository.insert(channel);
     }
     channel.users.set(myId, await this.generateChannelUser(myId, 'owner'));
+    this.channelGateway.joinChannel(socket.socketId, channel.id);
+
     this.logger.log(`createChannel: ${JSON.stringify(channel)}`);
     return channelId;
   }
@@ -76,9 +92,24 @@ export class ChannelService {
   ): Promise<SuccessResponseDto> {
     this.checkUserAlreadyInChannel(myId);
     this.checkJoinChannel(myId, joinChannelRequestDto, channel);
-    this.visibleChannelRepository.update(channel.id, {
-      users: channel.users.set(myId, await this.generateChannelUser(myId, 'member')),
+
+    const socket = this.socketIdRepository.find(myId);
+    if (socket === undefined) {
+      throw new NotFoundException('소켓 아이디를 찾을 수 없습니다.');
+    }
+
+    const user = await this.userRepository.findOne({
+      where: { id: myId },
+      select: ['nickname', 'image'],
     });
+    if (user === null) {
+      throw new NotFoundException('존재하지 않는 유저입니다.');
+    }
+
+    const data = await this.insertNewMember(myId, channel);
+    this.channelGateway.joinChannel(socket.socketId, channel.id);
+    this.channelGateway.emitChannel<MemberInfo>(channel.id, 'new-member', data, socket.socketId);
+
     return {
       message: '채널에 입장했습니다.',
     };
@@ -136,5 +167,24 @@ export class ChannelService {
       throw new ForbiddenException('채널 정원이 초과되었습니다.');
     }
   }
+
+  private async insertNewMember(myId: number, channel: Channel): Promise<MemberInfo> {
+    const channelUser = await this.generateChannelUser(myId, 'member');
+    let repository: ChannelRepository = this.visibleChannelRepository;
+    if (channel.mode === 'private') {
+      repository = this.invisibleChannelRepository;
+    }
+    repository.update(channel.id, {
+      users: channel.users.set(myId, channelUser),
+    });
+
+    return {
+      userId: channelUser.id,
+      nickname: channelUser.nickname,
+      image: channelUser.image,
+      role: channelUser.role,
+    };
+  }
+
   // !SECTION : private
 }
