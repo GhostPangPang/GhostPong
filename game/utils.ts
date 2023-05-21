@@ -1,4 +1,4 @@
-import { BALL_INITIAL_SPEED, CANVASE_HEIGHT, CANVASE_WIDTH, DEGREE, GameData, Ball, Player } from './game';
+import { BALL_INITIAL_SPEED, CANVASE_HEIGHT, CANVASE_WIDTH, DEGREE, GameData, Ball, Player } from './game-data';
 
 export function resetBallData(ball: Ball) {
   ball.x = CANVASE_WIDTH / 2;
