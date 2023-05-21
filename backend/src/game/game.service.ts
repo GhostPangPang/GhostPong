@@ -1,6 +1,6 @@
 import { ForbiddenException, Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 
-import { Game } from '@/game/game';
+import { GameData } from '@/game/game-data';
 
 import { ChannelRepository } from '../repository/channel.repository';
 import { GameRepository } from '../repository/game.repository';
@@ -47,7 +47,7 @@ export class GameService {
       throw new ConflictException('해당 채널에서 이미 진행 중인 게임이 있습니다.');
     }
 
-    const game = new Game(channelId, leftPlayer.id, rightPlayer.id);
+    const game = new GameData(channelId, leftPlayer.id, rightPlayer.id);
     this.gameRepository.insert(game);
     this.userStatusRepository.update(leftPlayer.id, { status: 'game' });
     this.userStatusRepository.update(rightPlayer.id, { status: 'game' });

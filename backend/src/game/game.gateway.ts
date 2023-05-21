@@ -1,7 +1,9 @@
 import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server } from 'socket.io';
 
-@WebSocketGateway()
+import { corsOption } from '../common/option/cors.option';
+
+@WebSocketGateway({ cors: corsOption })
 export class GameGateway {
   @WebSocketServer()
   public server: Server;
