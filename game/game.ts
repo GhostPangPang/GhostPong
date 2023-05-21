@@ -58,5 +58,5 @@ export class Game {
   ball: Ball;
   leftPlayer: Player;
   rightPlayer: Player;
-  intervalId: number;
+  intervalId?: number;
 }
