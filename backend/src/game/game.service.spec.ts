@@ -5,22 +5,36 @@ import { UserStatusRepository } from '../repository/user-status.repository';
 import { ChannelRepository } from '../repository/channel.repository';
 import { GameRepository } from '../repository/game.repository';
 import { Channel, ChannelUser } from '../repository/model/channel';
+import { GameGateway } from './game.gateway';
 
 describe('GameService', () => {
   let service: GameService;
   let gameRepository: GameRepository;
   let channelRepository: ChannelRepository;
   let userStatusRepository: UserStatusRepository;
+  let gameGateway: GameGateway;
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [GameService, GameRepository, ChannelRepository, UserStatusRepository],
+      providers: [
+        GameService,
+        GameRepository,
+        ChannelRepository,
+        UserStatusRepository,
+        {
+          provide: GameGateway,
+          useValue: {
+            broadcastGameStart: jest.fn(),
+          },
+        },
+      ],
     }).compile();
 
     service = module.get<GameService>(GameService);
     gameRepository = module.get<GameRepository>(GameRepository);
     channelRepository = module.get<ChannelRepository>(ChannelRepository);
     userStatusRepository = module.get<UserStatusRepository>(UserStatusRepository);
+    gameGateway = module.get<GameGateway>(GameGateway);
 
     userStatusRepository.insert({ userId: 1, status: 'online' });
     userStatusRepository.insert({ userId: 2, status: 'online' });
@@ -62,6 +76,7 @@ describe('GameService', () => {
     expect(userStatusRepository.find(2)).toEqual({ userId: 2, status: 'game' });
     const channel = channelRepository.find('1');
     expect(channel?.isInGame).toEqual(true);
+    expect(gameGateway.broadcastGameStart).toBeCalledWith('1');
   });
 
   it('owner 가 아닌 유저가 게임 시작', () => {

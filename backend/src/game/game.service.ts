@@ -7,12 +7,15 @@ import { GameRepository } from '../repository/game.repository';
 import { ChannelUser } from '../repository/model/channel';
 import { UserStatusRepository } from '../repository/user-status.repository';
 
+import { GameGateway } from './game.gateway';
+
 @Injectable()
 export class GameService {
   constructor(
     private readonly gameRepository: GameRepository,
     private readonly channelRepository: ChannelRepository,
     private readonly userStatusRepository: UserStatusRepository,
+    private readonly gameGateway: GameGateway,
   ) {}
 
   createGame(channelId: string, userId: number) {
@@ -50,6 +53,7 @@ export class GameService {
     this.userStatusRepository.update(rightPlayer.id, { status: 'game' });
     channel.isInGame = true;
 
+    this.gameGateway.broadcastGameStart(game.id);
     return { message: '게임이 생성되었습니다.' };
   }
 }
