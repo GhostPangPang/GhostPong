@@ -133,11 +133,12 @@ export class ConnectionGateway implements OnGatewayConnection, OnGatewayDisconne
   private leaveChannel(userId: number): void {
     const channels = [...this.visibleChannelRepository.findAll(), ...this.invisibleChannelRepository.findAll()];
 
-    channels.forEach((channel) => {
+    for (const channel of channels) {
       if (channel.users.has(userId)) {
-        return channel.users.delete(userId);
+        channel.users.delete(userId);
+        return;
       }
-    });
+    }
   }
 
   /**
