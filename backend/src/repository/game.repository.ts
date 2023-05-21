@@ -27,4 +27,9 @@ export class GameRepository implements Repository<string, Game> {
   find(id: string): Game | undefined {
     return this.gameList.get(id);
   }
+
+  // check id is exist
+  exist(id: string): boolean {
+    return this.gameList.has(id);
+  }
 }

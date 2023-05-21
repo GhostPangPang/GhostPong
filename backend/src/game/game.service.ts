@@ -48,7 +48,7 @@ export class GameService {
     this.gameRepository.insert(game);
     this.userStatusRepository.update(leftPlayer.id, { status: 'game' });
     this.userStatusRepository.update(rightPlayer.id, { status: 'game' });
-    this.channelRepository.update(channelId, { isInGame: true });
+    channel.isInGame = true;
 
     return { message: '게임이 생성되었습니다.' };
   }
