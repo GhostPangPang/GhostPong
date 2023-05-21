@@ -20,6 +20,7 @@ import { Channel } from '../repository/model/channel';
 import { ChannelService } from './channel.service';
 import { CreateChannelRequestDto } from './dto/request/create-channel-request.dto';
 import { JoinChannelRequestDto } from './dto/request/join-channel-request.dto';
+import { ChannelMemberInfoResponseDto } from './dto/response/channel-member-info-response.dto';
 import { ChannelsListResponseDto } from './dto/response/channels-list-response.dto';
 
 @ApiTags('channel')
@@ -27,6 +28,39 @@ import { ChannelsListResponseDto } from './dto/response/channels-list-response.d
 export class ChannelController {
   constructor(private readonly channelService: ChannelService) {}
 
+  /**
+   * @summary 채널 목록 조회하기
+   * @description GET /channel
+   */
+  @ApiOperation({ summary: '채널 목록 조회하기' })
+  @ApiHeaders([{ name: 'x-my-id', description: '내 auth 아이디 (임시값)' }])
+  @ApiQuery({ name: 'cursor', required: false, description: 'channel 의 페이지 cursor' })
+  @Get()
+  getChannelsList(
+    @Query('cursor', new DefaultValuePipe(0), NonNegativeIntPipe) cusror: number,
+  ): ChannelsListResponseDto {
+    return this.channelService.getChannelsList(cusror);
+  }
+
+  /**
+   * @summary 채널 정보 조회하기
+   * @description GET /channel/:channelId
+   */
+  @ApiOperation({ summary: '채널 정보 조회하기' })
+  @ApiNotFoundResponse({ type: ErrorResponseDto, description: '존재하지 않는 채널' })
+  @ApiHeaders([{ name: 'x-my-id', description: '내 auth 아이디 (임시값)' }])
+  @Get(':channelId')
+  getChannelInfo(
+    @ExtractUserId() myId: number,
+    @Param('channelId', IdToChannelPipe) channel: Channel,
+  ): ChannelMemberInfoResponseDto {
+    return this.channelService.getChannelInfo(myId, channel);
+  }
+
+  /**
+   * @summary 채널 생성하기
+   * @description POST /channel
+   */
   @ApiOperation({ summary: '채널 생성하기' })
   @ApiConflictResponse({ type: ErrorResponseDto, description: '다른 채널에 참여 중인 유저' })
   @ApiHeaders([{ name: 'x-my-id', description: '내 auth 아이디 (임시값)' }])
@@ -40,16 +74,10 @@ export class ChannelController {
     res.setHeader('Location', `/channel/${channelId}`).json({ message: '채널이 생성되었습니다.' });
   }
 
-  @ApiOperation({ summary: '채널 목록 조회하기' })
-  @ApiHeaders([{ name: 'x-my-id', description: '내 auth 아이디 (임시값)' }])
-  @ApiQuery({ name: 'cursor', required: false, description: 'channel 의 페이지 cursor' })
-  @Get()
-  getChannelsList(
-    @Query('cursor', new DefaultValuePipe(0), NonNegativeIntPipe) cusror: number,
-  ): ChannelsListResponseDto {
-    return this.channelService.getChannelsList(cusror);
-  }
-
+  /**
+   * @summary 채널에 참여하기
+   * @description POST /channel/:channelId
+   */
   @ApiOperation({ summary: '채널에 참여하기' })
   @ApiForbiddenResponse({
     type: ErrorResponseDto,
