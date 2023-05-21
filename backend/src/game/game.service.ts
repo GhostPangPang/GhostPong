@@ -20,7 +20,7 @@ export class GameService {
 
   createGame(channelId: string, userId: number) {
     const channel = this.channelRepository.find(channelId);
-    if (!channel) {
+    if (channel === undefined) {
       throw new NotFoundException('채널이 존재하지 않습니다.');
     }
 
