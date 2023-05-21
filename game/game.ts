@@ -46,7 +46,7 @@ export class Player {
   height: number;
 }
 
-export class Game {
+export class GameData {
   constructor(id: string, leftUserId: number, rightUserId: number) {
     this.id = id;
     this.ball = new Ball();
@@ -58,5 +58,4 @@ export class Game {
   ball: Ball;
   leftPlayer: Player;
   rightPlayer: Player;
-  intervalId?: number;
 }
