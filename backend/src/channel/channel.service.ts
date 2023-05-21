@@ -22,6 +22,7 @@ import { ChannelGateway } from './channel.gateway';
 import { CreateChannelRequestDto } from './dto/request/create-channel-request.dto';
 import { JoinChannelRequestDto } from './dto/request/join-channel-request.dto';
 import { ChannelsListResponseDto } from './dto/response/channels-list-response.dto';
+import { NewMemberDto } from './dto/socket/new-member.dto';
 
 @Injectable()
 export class ChannelService {
@@ -60,7 +61,7 @@ export class ChannelService {
       channelId = this.visibleChannelRepository.insert(channel);
     }
     channel.users.set(myId, await this.generateChannelUser(myId, 'owner'));
-    this.channelGateway.server.in(socket.socketId).socketsJoin(channel.id);
+    this.channelGateway.joinChannel(socket.socketId, channel.id);
 
     this.logger.log(`createChannel: ${JSON.stringify(channel)}`);
     return channelId;
@@ -98,14 +99,18 @@ export class ChannelService {
       where: { id: myId },
       select: ['nickname', 'image'],
     });
+    if (user === null) {
+      throw new NotFoundException('존재하지 않는 유저입니다.');
+    }
+    const data = {
+      userId: user.id,
+      nickname: user.nickname,
+      image: user.image,
+    };
 
     await this.insertNewMember(myId, channel);
-    this.channelGateway.server.in(socket.socketId).socketsJoin(channel.id);
-    this.channelGateway.server.to(channel.id).except(socket.socketId).emit('new-member', {
-      userId: user?.id,
-      nickname: user?.nickname,
-      image: user?.image,
-    });
+    this.channelGateway.joinChannel(socket.socketId, channel.id);
+    this.channelGateway.emitChannel<NewMemberDto>(channel.id, socket.socketId, 'new-member', data);
 
     return {
       message: '채널에 입장했습니다.',

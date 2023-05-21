@@ -54,6 +54,20 @@ export class ChannelGateway {
   }
 
   /**
+   * @summary channel socket room에 join
+   */
+  joinChannel(socketId: string, channelId: string): void {
+    this.server.in(socketId).socketsJoin(channelId);
+  }
+
+  /**
+   * @summary channel socket room에서 broadcast
+   */
+  emitChannel<DataType>(channelId: string, exceptId: string, event: string, data: DataType): void {
+    this.server.to(channelId).except(exceptId).emit(event, data);
+  }
+
+  /**
    * private
    */
   private checkExistChannel(channelId: string): Channel {
