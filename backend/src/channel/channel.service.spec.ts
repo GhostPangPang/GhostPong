@@ -375,7 +375,7 @@ describe('ChannelService', () => {
         service.getChannelInfo(1, channel);
       } catch (e) {
         expect(e).toBeInstanceOf(NotFoundException);
-        expect(e.message).toEqual('채널에 참여하지 않은 유저입니다.');
+        expect(e.message).toEqual('해당 채널에 참여중인 유저가 아닙니다.');
       }
     });
 
