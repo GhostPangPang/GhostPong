@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Res, Get, DefaultValuePipe, Query, Param } from '@nestjs/common';
+import { Controller, Post, Body, Res, Get, DefaultValuePipe, Query, Param, HttpStatus, HttpCode } from '@nestjs/common';
 import {
   ApiConflictResponse,
   ApiForbiddenResponse,
@@ -58,6 +58,7 @@ export class ChannelController {
   @ApiNotFoundResponse({ type: ErrorResponseDto, description: '존재하지 않는 채널' })
   @ApiConflictResponse({ type: ErrorResponseDto, description: '다른 채널에 참여 중인 유저' })
   @ApiHeaders([{ name: 'x-my-id', description: '내 auth 아이디 (임시값)' }])
+  @HttpCode(HttpStatus.OK)
   @Post(':channelId')
   joinChannel(
     @ExtractUserId() myId: number,
