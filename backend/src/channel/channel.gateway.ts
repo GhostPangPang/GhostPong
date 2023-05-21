@@ -63,8 +63,12 @@ export class ChannelGateway {
   /**
    * @summary channel socket room에서 broadcast
    */
-  emitChannel<DataType>(channelId: string, exceptId: string, event: string, data: DataType): void {
-    this.server.to(channelId).except(exceptId).emit(event, data);
+  emitChannel<DataType>(channelId: string, event: string, data: DataType, exceptId?: string): void {
+    if (exceptId === undefined) {
+      this.server.to(channelId).emit(event, data);
+    } else {
+      this.server.to(channelId).except(exceptId).emit(event, data);
+    }
   }
 
   /**

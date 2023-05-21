@@ -110,7 +110,7 @@ export class ChannelService {
 
     await this.insertNewMember(myId, channel);
     this.channelGateway.joinChannel(socket.socketId, channel.id);
-    this.channelGateway.emitChannel<NewMemberDto>(channel.id, socket.socketId, 'new-member', data);
+    this.channelGateway.emitChannel<NewMemberDto>(channel.id, 'new-member', data, socket.socketId);
 
     return {
       message: '채널에 입장했습니다.',
