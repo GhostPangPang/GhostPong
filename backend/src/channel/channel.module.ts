@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { MUTE_EXPIRES_IN } from '../common/constant';
+import { Friendship } from '../entity/friendship.entity';
 import { User } from '../entity/user.entity';
 import { RepositoryModule } from '../repository/repository.module';
 
@@ -13,7 +14,7 @@ import { ChannelService } from './channel.service';
 @Module({
   imports: [
     RepositoryModule,
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, Friendship]),
     CacheModule.register({ store: 'memory', ttl: MUTE_EXPIRES_IN }),
   ],
   controllers: [ChannelController],

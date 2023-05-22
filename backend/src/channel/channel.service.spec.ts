@@ -13,6 +13,7 @@ import { InvitationRepository } from '../repository/invitation.repository';
 import { ChannelGateway } from './channel.gateway';
 import { SocketIdRepository } from '../repository/socket-id.repository';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Friendship } from '../entity/friendship.entity';
 
 describe('ChannelService', () => {
   let service: ChannelService;
@@ -22,6 +23,7 @@ describe('ChannelService', () => {
   let userRepository: Repository<User>;
   let socketIdRepository: SocketIdRepository;
   let channelGateway: ChannelGateway;
+  let friendshipRepository: Repository<Friendship>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -39,6 +41,12 @@ describe('ChannelService', () => {
           },
         },
         {
+          provide: getRepositoryToken(Friendship),
+          useValue: {
+            findOne: jest.fn().mockResolvedValue({ id: 1, senderId: 1, receiverId: 2, accept: true }),
+          },
+        },
+        {
           provide: CACHE_MANAGER,
           useValue: {},
         },
@@ -47,6 +55,7 @@ describe('ChannelService', () => {
           useValue: {
             joinChannel: jest.fn(),
             emitChannel: jest.fn(),
+            emitUser: jest.fn(),
           },
         },
       ],
@@ -60,7 +69,9 @@ describe('ChannelService', () => {
     socketIdRepository = module.get<SocketIdRepository>(SocketIdRepository);
     channelGateway = module.get<ChannelGateway>(ChannelGateway);
 
-    socketIdRepository.insert({ userId: 1, socketId: 'socketId' });
+    socketIdRepository.insert({ userId: 1, socketId: 'socketId1' });
+    socketIdRepository.insert({ userId: 2, socketId: 'socketId2' });
+    socketIdRepository.insert({ userId: 3, socketId: 'socketId3' });
   });
 
   describe('createChannel', () => {
@@ -414,6 +425,50 @@ describe('ChannelService', () => {
         isInGame: false,
         name: 'test',
       });
+    });
+  });
+
+  describe('inviteChannel', () => {
+    it('채널에 참여하지 않은 유저', async () => {
+      const channel: Channel = {
+        id: 'aaa',
+        mode: 'public',
+        name: 'test',
+        isInGame: false,
+        users: new Map([]),
+        bannedUserIdList: [],
+      };
+      try {
+        await service.inviteChannel(1, 3, channel);
+      } catch (e) {
+        expect(e).toBeInstanceOf(ForbiddenException);
+        expect(e.message).toEqual('해당 채널에 참여중인 유저가 아닙니다.');
+      }
+    });
+
+    it('친구가 아닌 유저를 초대한 경우', async () => {
+      const player: ChannelUser = {
+        id: 1,
+        nickname: 'test',
+        image: '/asset/profile-1.png',
+        role: 'owner',
+        isMuted: false,
+        isPlayer: true,
+      };
+      const channel: Channel = {
+        id: 'aaa',
+        mode: 'public',
+        name: 'test',
+        isInGame: false,
+        users: new Map([[1, player]]),
+        bannedUserIdList: [],
+      };
+      try {
+        service.inviteChannel(1, 3, channel);
+      } catch (e) {
+        expect(e).toBeInstanceOf(ForbiddenException);
+        expect(e.message).toEqual('친구만 초대 가능합니다.');
+      }
     });
   });
 });

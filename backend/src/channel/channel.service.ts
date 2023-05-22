@@ -13,6 +13,7 @@ import { ChannelRole, MemberInfo } from '@/types/channel';
 
 import { PARTICIPANT_LIMIT } from '../common/constant';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
+import { Friendship } from '../entity/friendship.entity';
 import { User } from '../entity/user.entity';
 import { InvisibleChannelRepository } from '../repository/invisible-channel.repository';
 import { InvitationRepository } from '../repository/invitation.repository';
@@ -36,6 +37,8 @@ export class ChannelService {
     private readonly channelGateway: ChannelGateway,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(Friendship)
+    private readonly friendshipRepository: Repository<Friendship>,
   ) {}
   logger: Logger = new Logger('ChannelService');
 
@@ -102,7 +105,7 @@ export class ChannelService {
 
     const socket = this.socketIdRepository.find(myId);
     if (socket === undefined) {
-      throw new NotFoundException('소켓 아이디를 찾을 수 없습니다.');
+      throw new NotFoundException('접속중인 유저가 아닙니다.');
     }
 
     if (channelOptions.mode === 'private') {
@@ -134,7 +137,7 @@ export class ChannelService {
 
     const socket = this.socketIdRepository.find(myId);
     if (socket === undefined) {
-      throw new NotFoundException('소켓 아이디를 찾을 수 없습니다.');
+      throw new NotFoundException('접속중인 유저가 아닙니다.');
     }
 
     const user = await this.userRepository.findOne({
@@ -151,6 +154,26 @@ export class ChannelService {
 
     return {
       message: '채널에 입장했습니다.',
+    };
+  }
+
+  /**
+   * 채널 초대하기
+   */
+  async inviteChannel(myId: number, userId: number, channel: Channel): Promise<SuccessResponseDto> {
+    if (channel.users.has(myId) === false) {
+      throw new ForbiddenException('해당 채널에 참여중인 유저가 아닙니다.');
+    }
+    const socketId = this.socketIdRepository.find(userId);
+    if (socketId === undefined) {
+      throw new NotFoundException('접속중인 유저가 아닙니다.');
+    }
+    await this.checkExistFriendship(myId, userId);
+    this.invitationRepository.insert({ userId: userId, channelId: channel.id });
+    this.channelGateway.emitUser<{ userId: number }>(socketId.socketId, 'invite-channel', { userId });
+
+    return {
+      message: '채널 초대에 성공했습니다.',
     };
   }
 
@@ -217,6 +240,19 @@ export class ChannelService {
       image: channelUser.image,
       role: channelUser.role,
     };
+  }
+
+  private async checkExistFriendship(myId: number, userId: number): Promise<void> {
+    const friendship = await this.friendshipRepository.findOne({
+      where: [
+        { senderId: myId, receiverId: userId, accept: true },
+        { senderId: userId, receiverId: myId, accept: true },
+      ],
+      select: ['id'],
+    });
+    if (friendship === null) {
+      throw new ForbiddenException('친구만 초대 가능합니다.');
+    }
   }
 
   // !SECTION : private

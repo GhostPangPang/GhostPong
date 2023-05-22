@@ -96,6 +96,13 @@ export class ChannelGateway {
   }
 
   /**
+   * @summary user 한 명에게 emit
+   */
+  emitUser<DataType>(socketId: string, event: string, data: DataType): void {
+    this.server.to(socketId).emit(event, data);
+  }
+
+  /**
    * private
    */
   private checkExistChannel(channelId: string): Channel {
