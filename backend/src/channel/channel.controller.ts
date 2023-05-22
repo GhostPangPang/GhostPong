@@ -5,6 +5,7 @@ import {
   ApiHeaders,
   ApiNotFoundResponse,
   ApiOperation,
+  ApiParam,
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
@@ -51,6 +52,7 @@ export class ChannelController {
   @ApiNotFoundResponse({ type: ErrorResponseDto, description: '존재하지 않는 채널' })
   @ApiForbiddenResponse({ type: ErrorResponseDto, description: '채널 참여중인 유저 아님' })
   @ApiHeaders([{ name: 'x-my-id', description: '내 auth 아이디 (임시값)' }])
+  @ApiParam({ name: 'channelId', description: '조회할 채널 아이디' })
   @Get(':channelId')
   getChannelInfo(
     @ExtractUserId() myId: number,
@@ -88,6 +90,7 @@ export class ChannelController {
   @ApiNotFoundResponse({ type: ErrorResponseDto, description: '존재하지 않는 채널' })
   @ApiConflictResponse({ type: ErrorResponseDto, description: '다른 채널에 참여 중인 유저' })
   @ApiHeaders([{ name: 'x-my-id', description: '내 auth 아이디 (임시값)' }])
+  @ApiParam({ name: 'channelId', description: '참여할 채널 아이디' })
   @HttpCode(HttpStatus.OK)
   @Post(':channelId')
   joinChannel(
@@ -109,6 +112,7 @@ export class ChannelController {
   })
   @ApiForbiddenResponse({ type: ErrorResponseDto, description: '채널에 참여중인 유저가 아님, 친구가 아님' })
   @ApiHeaders([{ name: 'x-my-id', description: '내 auth 아이디 (임시값)' }])
+  @ApiParam({ name: 'channelId', description: '초대할 채널 아이디' })
   @HttpCode(HttpStatus.OK)
   @Post(':channelId/invite')
   inviteChannel(

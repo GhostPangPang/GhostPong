@@ -44,7 +44,6 @@ describe('GameService', () => {
       role: 'owner',
       isPlayer: true,
       nickname: 'test',
-      isMuted: false,
     };
 
     const mockUser2: ChannelUser = {
@@ -52,7 +51,6 @@ describe('GameService', () => {
       role: 'member',
       isPlayer: true,
       nickname: 'test2',
-      isMuted: false,
     };
 
     const channel: Channel = new Channel('1', 'public', 'test');
