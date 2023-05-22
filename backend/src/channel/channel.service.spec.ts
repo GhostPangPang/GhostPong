@@ -55,6 +55,7 @@ describe('ChannelService', () => {
           useValue: {
             joinChannel: jest.fn(),
             emitChannel: jest.fn(),
+            emitUser: jest.fn(),
           },
         },
       ],
@@ -68,7 +69,9 @@ describe('ChannelService', () => {
     socketIdRepository = module.get<SocketIdRepository>(SocketIdRepository);
     channelGateway = module.get<ChannelGateway>(ChannelGateway);
 
-    socketIdRepository.insert({ userId: 1, socketId: 'socketId' });
+    socketIdRepository.insert({ userId: 1, socketId: 'socketId1' });
+    socketIdRepository.insert({ userId: 2, socketId: 'socketId2' });
+    socketIdRepository.insert({ userId: 3, socketId: 'socketId3' });
   });
 
   describe('createChannel', () => {
