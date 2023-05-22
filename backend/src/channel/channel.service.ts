@@ -166,8 +166,13 @@ export class ChannelService {
     if (channel.users.has(myId) === false) {
       throw new ForbiddenException('채널에 참여중인 유저만 초대 가능합니다.');
     }
+    const socketId = this.socketIdRepository.find(userId);
+    if (socketId === undefined) {
+      throw new NotFoundException('소켓 아이디를 찾을 수 없습니다.');
+    }
     await this.checkExistFriendship(myId, userId);
     this.invitationRepository.insert({ userId: userId, channelId: channel.id });
+    this.channelGateway.emitUser<{ userId: number }>(socketId.socketId, 'invite-channel', { userId });
 
     return {
       message: '채널 초대에 성공했습니다.',
