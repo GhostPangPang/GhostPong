@@ -49,7 +49,10 @@ export class GameService {
     const game = new Game(gameId, leftPlayer.id, rightPlayer.id);
     this.gameRepository.insert(game);
     this.userStatusRepository.update(leftPlayer.id, { status: 'game' });
+    this.gameGateway.emitGameStatusToFriends(leftPlayer.id);
     this.userStatusRepository.update(rightPlayer.id, { status: 'game' });
+    this.gameGateway.emitGameStatusToFriends(leftPlayer.id);
+
     channel.isInGame = true;
 
     this.gameGateway.broadcastGameStart(game.gameData.id);

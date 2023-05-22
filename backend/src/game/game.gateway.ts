@@ -43,7 +43,21 @@ export class GameGateway {
     }
   }
 
+  /**
+   * channel 에 있는 유저들에게 게임이 시작함을 알린다.
+   *
+   * @param gameId
+   */
   broadcastGameStart(gameId: string) {
     this.server.to(gameId).emit('game-start', { gameId });
+  }
+
+  /**
+   * user의 친구들에게 게임 중 상태임을 알린다.
+   *
+   * @param userId
+   */
+  emitGameStatusToFriends(userId: number) {
+    this.server.to(`user-${userId}`).emit('user-status', { id: userId, status: 'game' });
   }
 }
