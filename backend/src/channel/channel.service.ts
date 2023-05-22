@@ -25,6 +25,7 @@ import { VisibleChannelRepository } from '../repository/visible-channel.reposito
 import { ChannelGateway } from './channel.gateway';
 import { CreateChannelRequestDto } from './dto/request/create-channel-request.dto';
 import { JoinChannelRequestDto } from './dto/request/join-channel-request.dto';
+import { ChannelMemberInfoResponseDto } from './dto/response/channel-member-info-response.dto';
 import { ChannelsListResponseDto } from './dto/response/channels-list-response.dto';
 
 @Injectable()
@@ -39,6 +40,54 @@ export class ChannelService {
     private readonly userRepository: Repository<User>,
   ) {}
   logger: Logger = new Logger('ChannelService');
+
+  /**
+   * @summary 채널 목록 조회하기
+   */
+  getChannelsList(cursor: number): ChannelsListResponseDto {
+    const channels = this.visibleChannelRepository.findByCursor(cursor).map(({ id, name, mode, users }) => {
+      return { id, name, mode, count: users.size };
+    });
+    return {
+      total: cursor === 0 ? this.visibleChannelRepository.count() : undefined,
+      channels,
+    };
+  }
+
+  /**
+   * @summary 채널 정보 조회하기
+   */
+  getChannelInfo(myId: number, channel: Channel): ChannelMemberInfoResponseDto {
+    const channelUser = channel.users.get(myId);
+    if (channelUser === undefined) {
+      throw new ForbiddenException('해당 채널에 참여중인 유저가 아닙니다.');
+    }
+    const users = [...channel.users.values()];
+    const players: MemberInfo[] = users
+      .filter((user) => user.isPlayer)
+      .map((user) => {
+        return {
+          userId: user.id,
+          nickname: user.nickname,
+          image: user.image,
+          role: user.role,
+        };
+      });
+    const observers: MemberInfo[] = users
+      .filter((user) => !user.isPlayer)
+      .map((user) => {
+        return {
+          userId: user.id,
+          nickname: user.nickname,
+          image: user.image,
+          role: user.role,
+        };
+      });
+    return {
+      players,
+      observers,
+    };
+  }
 
   /**
    * 채널을 생성한다. protected 인 경우만 password 를 입력받는다.
@@ -68,16 +117,6 @@ export class ChannelService {
 
     this.logger.log(`createChannel: ${JSON.stringify(channel)}`);
     return channelId;
-  }
-
-  getChannelsList(cursor: number): ChannelsListResponseDto {
-    const channels = this.visibleChannelRepository.findByCursor(cursor).map(({ id, name, mode, users }) => {
-      return { id, name, mode, count: users.size };
-    });
-    return {
-      total: cursor === 0 ? this.visibleChannelRepository.count() : undefined,
-      channels,
-    };
   }
 
   /**
