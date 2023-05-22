@@ -87,6 +87,7 @@ export class ChannelService {
       players,
       observers,
       isInGame: channel.isInGame,
+      name: channel.name,
     };
   }
 

@@ -411,6 +411,8 @@ describe('ChannelService', () => {
       expect(service.getChannelInfo(1, channel)).toEqual({
         players: [{ userId: 1, nickname: 'test', image: '/asset/profile-1.png', role: 'owner' }],
         observers: [{ userId: 2, nickname: 'test', image: '/asset/profile-1.png', role: 'member' }],
+        isInGame: false,
+        name: 'test',
       });
     });
   });
