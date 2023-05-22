@@ -1,6 +1,7 @@
 import { MemberInfo } from '../socket';
 
-export interface ChannelMemberInfoResponse {
+export interface FullChannelInfoResponse {
   players: MemberInfo[];
   observers: MemberInfo[];
+  isInGame: boolean;
 }

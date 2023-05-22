@@ -1,2 +1,2 @@
 export * from './channels-list-response.interface';
-export * from './channel-member-info-response.interface';
+export * from './full-channel-info-response.interface';

@@ -25,8 +25,8 @@ import { VisibleChannelRepository } from '../repository/visible-channel.reposito
 import { ChannelGateway } from './channel.gateway';
 import { CreateChannelRequestDto } from './dto/request/create-channel-request.dto';
 import { JoinChannelRequestDto } from './dto/request/join-channel-request.dto';
-import { ChannelMemberInfoResponseDto } from './dto/response/channel-member-info-response.dto';
 import { ChannelsListResponseDto } from './dto/response/channels-list-response.dto';
+import { FullChannelInfoResponseDto } from './dto/response/full-channel-info-response.dto';
 
 @Injectable()
 export class ChannelService {
@@ -57,7 +57,7 @@ export class ChannelService {
   /**
    * @summary 채널 정보 조회하기
    */
-  getChannelInfo(myId: number, channel: Channel): ChannelMemberInfoResponseDto {
+  getChannelInfo(myId: number, channel: Channel): FullChannelInfoResponseDto {
     const channelUser = channel.users.get(myId);
     if (channelUser === undefined) {
       throw new ForbiddenException('해당 채널에 참여중인 유저가 아닙니다.');
@@ -86,6 +86,7 @@ export class ChannelService {
     return {
       players,
       observers,
+      isInGame: channel.isInGame,
     };
   }
 

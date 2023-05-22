@@ -20,8 +20,8 @@ import { Channel } from '../repository/model/channel';
 import { ChannelService } from './channel.service';
 import { CreateChannelRequestDto } from './dto/request/create-channel-request.dto';
 import { JoinChannelRequestDto } from './dto/request/join-channel-request.dto';
-import { ChannelMemberInfoResponseDto } from './dto/response/channel-member-info-response.dto';
 import { ChannelsListResponseDto } from './dto/response/channels-list-response.dto';
+import { FullChannelInfoResponseDto } from './dto/response/full-channel-info-response.dto';
 
 @ApiTags('channel')
 @Controller('channel')
@@ -54,7 +54,7 @@ export class ChannelController {
   getChannelInfo(
     @ExtractUserId() myId: number,
     @Param('channelId', IdToChannelPipe) channel: Channel,
-  ): ChannelMemberInfoResponseDto {
+  ): FullChannelInfoResponseDto {
     return this.channelService.getChannelInfo(myId, channel);
   }
 
