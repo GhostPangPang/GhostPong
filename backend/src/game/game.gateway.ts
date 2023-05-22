@@ -41,7 +41,7 @@ export class GameGateway {
   @SubscribeMessage('game-start')
   handleGameStart(@ConnectedSocket() socket: Socket, @MessageBody() { gameId }: GameStartDto) {
     const game = this.gameRepository.find(gameId);
-    if (!game) {
+    if (game === undefined) {
       throw new WsException('게임이 존재하지 않습니다.');
     }
     const userId: number = socket.data.userId;
