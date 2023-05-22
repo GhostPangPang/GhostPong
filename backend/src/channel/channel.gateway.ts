@@ -17,8 +17,14 @@ import { InvisibleChannelRepository } from '../repository/invisible-channel.repo
 import { Channel } from '../repository/model/channel';
 import { VisibleChannelRepository } from '../repository/visible-channel.repository';
 
+import { ChannelIdDto } from './dto/socket/channelId.dto';
 import ChatDto from './dto/socket/chat.dto';
 
+@UsePipes(
+  new ValidationPipe({
+    exceptionFactory: createWsException,
+  }),
+)
 @WebSocketGateway({ cors: corsOption })
 export class ChannelGateway {
   @WebSocketServer()
@@ -33,11 +39,6 @@ export class ChannelGateway {
 
   logger: Logger = new Logger('ChannelGateway');
 
-  @UsePipes(
-    new ValidationPipe({
-      exceptionFactory: createWsException,
-    }),
-  )
   @SubscribeMessage('chat')
   async handleMessage(@ConnectedSocket() socket: Socket, @MessageBody() data: ChatDto) {
     if (data.senderId !== socket.data.userId) {
@@ -51,6 +52,29 @@ export class ChannelGateway {
       throw new WsException('채널에 참여하지 않은 유저입니다.');
     }
     socket.to(data.channelId).emit('chat', data);
+  }
+
+  /**
+   * @summary channel 나가기 event
+   */
+  @SubscribeMessage('leave-channel')
+  handleLeaveChannel(@ConnectedSocket() socket: Socket, @MessageBody() data: ChannelIdDto) {
+    const channel = this.checkExistChannel(data.channelId);
+
+    if (channel.users.delete(socket.data.userId) === false) {
+      throw new WsException('채널에 참여하지 않은 유저입니다.');
+    }
+    if (channel.users.size === 0) {
+      if (channel.mode === 'private') {
+        this.invisibleChannelRepository.delete(channel.id);
+      } else {
+        this.visibleChannelRepository.delete(channel.id);
+      }
+    }
+    socket.leave(data.channelId);
+    this.emitChannel(data.channelId, 'user-left-channel', {
+      userId: socket.data.userId,
+    });
   }
 
   /**
