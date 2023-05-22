@@ -1,3 +1,4 @@
 export * from './chat.interface';
 export * from './member-info.interface';
-export * from './leave-channel.interface';
+export * from './channelId.interface';
+export * from './userId.interface';

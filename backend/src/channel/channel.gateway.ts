@@ -11,14 +11,13 @@ import {
 import { Cache } from 'cache-manager';
 import { Server, Socket } from 'socket.io';
 
-import { LeaveChannel } from '@/types/channel';
-
 import { corsOption } from '../common/option/cors.option';
 import { createWsException } from '../common/util';
 import { InvisibleChannelRepository } from '../repository/invisible-channel.repository';
 import { Channel } from '../repository/model/channel';
 import { VisibleChannelRepository } from '../repository/visible-channel.repository';
 
+import { ChannelIdDto } from './dto/socket/channelId.dto';
 import ChatDto from './dto/socket/chat.dto';
 
 @UsePipes(
@@ -59,7 +58,7 @@ export class ChannelGateway {
    * @summary channel 나가기 event
    */
   @SubscribeMessage('leave-channel')
-  handleLeaveChannel(@ConnectedSocket() socket: Socket, @MessageBody() data: LeaveChannel) {
+  handleLeaveChannel(@ConnectedSocket() socket: Socket, @MessageBody() data: ChannelIdDto) {
     const channel = this.checkExistChannel(data.channelId);
 
     if (channel.users.delete(socket.data.userId) === false) {
