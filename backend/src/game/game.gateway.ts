@@ -39,7 +39,7 @@ export class GameGateway {
   ) {}
 
   @SubscribeMessage('game-start')
-  handleGameStart(@ConnectedSocket() socket: Socket, @MessageBody() { gameId }: GameStartDto) {
+  handleGameStart(@ConnectedSocket() socket: Socket, @MessageBody() { gameId }: GameStartDto): void {
     const game = this.gameRepository.find(gameId);
     if (game === undefined) {
       throw new WsException('게임이 존재하지 않습니다.');
@@ -53,10 +53,6 @@ export class GameGateway {
       throw new WsException('게임의 플레이어가 아닙니다.');
     }
     if (game.playerStarted[0] && game.playerStarted[1]) {
-      const game = this.gameRepository.find(gameId);
-      if (game === undefined) {
-        return undefined;
-      }
       if (game.engineIntervalId !== undefined) {
         throw new WsException('이미 게임이 시작되었습니다.');
       }
@@ -65,7 +61,7 @@ export class GameGateway {
   }
 
   @SubscribeMessage('move-bar')
-  movePlayerBar(@ConnectedSocket() socket: Socket, @MessageBody() { gameId, y }: MoveBarDto) {
+  movePlayerBar(@ConnectedSocket() socket: Socket, @MessageBody() { gameId, y }: MoveBarDto): void {
     const game = this.gameRepository.find(gameId);
     if (game === undefined) {
       throw new WsException('게임이 존재하지 않습니다.');
@@ -85,15 +81,15 @@ export class GameGateway {
    *
    * @param gameId
    */
-  broadcastGameStart(gameId: string) {
+  broadcastGameStart(gameId: string): void {
     this.server.to(gameId).emit('game-start', { gameId });
   }
 
-  broadcastGameData(gamedata: GameData) {
+  broadcastGameData(gamedata: GameData): void {
     this.server.to(gamedata.id).emit('game-data', gamedata);
   }
 
-  broadcastGameEnd(gameId: string, winner: Player, loser: Player) {
+  broadcastGameEnd(gameId: string, winner: Player, loser: Player): void {
     this.server.to(gameId).emit('game-end', {
       id: gameId,
       winner: { id: winner.userId, score: winner.score },
@@ -101,7 +97,7 @@ export class GameGateway {
     });
   }
 
-  updateUserStatus(userId: number, status: Status) {
+  updateUserStatus(userId: number, status: Status): void {
     this.userStatusRepository.update(userId, { status });
     this.server.to(`user-${userId}`).emit('user-status', { id: userId, status });
   }

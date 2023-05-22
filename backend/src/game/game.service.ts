@@ -1,5 +1,6 @@
 import { ForbiddenException, Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 
+import { SuccessResponseDto } from '../common/dto/success-response.dto';
 import { ChannelRepository } from '../repository/channel.repository';
 import { GameRepository } from '../repository/game.repository';
 import { ChannelUser } from '../repository/model/channel';
@@ -15,7 +16,7 @@ export class GameService {
     private readonly gameGateway: GameGateway,
   ) {}
 
-  createGame(gameId: string, userId: number) {
+  createGame(gameId: string, userId: number): SuccessResponseDto {
     const channel = this.channelRepository.find(gameId);
     if (channel === undefined) {
       throw new NotFoundException('채널이 존재하지 않습니다.');

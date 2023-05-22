@@ -30,7 +30,7 @@ export class GameEngineService {
 
   logger: Logger = new Logger('GameEngine');
 
-  startGame(game: Game) {
+  startGame(game: Game): void {
     game.syncIntervalId = setInterval(() => {
       this.gameGateway.broadcastGameData(game.gameData);
     }, SYNC_INTERVAL);
@@ -39,7 +39,7 @@ export class GameEngineService {
     }, ENGINE_INTERVAL);
   }
 
-  async endGame(game: Game) {
+  async endGame(game: Game): Promise<void> {
     if (game.engineIntervalId !== undefined) {
       // end loops
       clearInterval(game.engineIntervalId);
@@ -81,7 +81,7 @@ export class GameEngineService {
     });
   }
 
-  private async gameLoop(game: Game) {
+  private async gameLoop(game: Game): Promise<void> {
     const { gameData } = game;
     updateBall(gameData);
 
