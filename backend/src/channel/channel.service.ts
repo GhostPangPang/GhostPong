@@ -170,7 +170,7 @@ export class ChannelService {
     }
     await this.checkExistFriendship(myId, userId);
     this.invitationRepository.insert({ userId: userId, channelId: channel.id });
-    this.channelGateway.emitUser<UserId>(socketId.socketId, 'invite-channel', { userId });
+    this.channelGateway.emitUser<UserId>(socketId.socketId, 'invite-channel', { userId: myId });
 
     return {
       message: '채널 초대에 성공했습니다.',
