@@ -1,13 +1,14 @@
-import { IsInt, IsString, Max, Min } from 'class-validator';
+import { IsInt, IsString, Length, Max, Min } from 'class-validator';
 
-import { Mute } from '@/types/channel/socket';
+import { Operation } from '@/types/channel/socket';
 
-export class MuteDto implements Mute {
+export class OperationDto implements Operation {
   /**
    * @description 채널 아이디
    * @example 4
    */
   @IsString()
+  @Length(21, 21)
   channelId: string;
 
   /**

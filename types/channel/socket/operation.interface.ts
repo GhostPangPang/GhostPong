@@ -1,4 +1,4 @@
-export interface Mute {
+export interface Operation {
   channelId: string;
   targetId: number;
 }

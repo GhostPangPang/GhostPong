@@ -20,7 +20,7 @@ import { VisibleChannelRepository } from '../repository/visible-channel.reposito
 
 import { ChannelIdDto } from './dto/socket/channelId.dto';
 import ChatDto from './dto/socket/chat.dto';
-import { MuteDto } from './dto/socket/mute.dto';
+import { OperationDto } from './dto/socket/operation.dto';
 
 @UsePipes(new ValidationPipe({ exceptionFactory: createWsException }))
 @WebSocketGateway({ cors: corsOption })
@@ -53,7 +53,7 @@ export class ChannelGateway {
   }
 
   @SubscribeMessage('mute')
-  async handleMute(@ConnectedSocket() socket: Socket, @MessageBody() data: MuteDto) {
+  async handleMute(@ConnectedSocket() socket: Socket, @MessageBody() data: OperationDto) {
     /**
      * - channel 존재여부 확인한다.
      * - socket.data.userId의 role 확인하고 mute 권한이 있는지 확인한다.
