@@ -14,13 +14,14 @@ import { createWsException } from '../common/util';
 import { GameRepository } from '../repository/game.repository';
 
 import { GameStartDto } from './dto/game-start.dto';
+import { GameEngine } from './game.engine';
 
 @WebSocketGateway({ cors: corsOption })
 export class GameGateway {
   @WebSocketServer()
   public server: Server;
 
-  constructor(private readonly gameRepository: GameRepository) {}
+  constructor(private readonly gameRepository: GameRepository, private readonly gameEngine: GameEngine) {}
 
   @UsePipes(new ValidationPipe({ exceptionFactory: createWsException }))
   @SubscribeMessage('game-start')
@@ -35,11 +36,17 @@ export class GameGateway {
     } else if (game.gameData.rightPlayer.userId === userId) {
       game.playerStarted[1] = true;
     } else {
-      throw new WsException('게임에 참여하지 않은 유저입니다.');
+      throw new WsException('게임의 플레이어가 아닙니다.');
     }
     if (game.playerStarted[0] && game.playerStarted[1]) {
-      // start game engine
-      // game data broadcast
+      const game = this.gameRepository.find(gameId);
+      if (game === undefined) {
+        return undefined;
+      }
+      if (game.intervalId !== undefined) {
+        throw new WsException('이미 게임이 시작되었습니다.');
+      }
+      this.gameEngine.startGame(game);
     }
   }
 
@@ -59,5 +66,9 @@ export class GameGateway {
    */
   emitGameStatusToFriends(userId: number) {
     this.server.to(`user-${userId}`).emit('user-status', { id: userId, status: 'game' });
+  }
+
+  emitExceptionToGame(gameId: string, message: string) {
+    this.server.to(gameId).emit('exception', { status: 'error', message });
   }
 }

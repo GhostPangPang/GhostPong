@@ -54,7 +54,6 @@ export class GameService {
     this.gameGateway.emitGameStatusToFriends(leftPlayer.id);
 
     channel.isInGame = true;
-
     this.gameGateway.broadcastGameStart(game.gameData.id);
     return { message: '게임이 생성되었습니다.' };
   }

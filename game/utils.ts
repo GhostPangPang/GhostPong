@@ -31,7 +31,7 @@ export function modifyBallDirection(ball: Ball, player: Player, direction: 1 | -
  *
  * @param game
  */
-export function checkPlayerCollision(game: GameData) {
+export function checkPlayerCollision(game: GameData): boolean {
   if (game.ball.x < CANVASE_WIDTH / 2) {
     const player = game.leftPlayer;
     if (
@@ -40,6 +40,7 @@ export function checkPlayerCollision(game: GameData) {
       game.ball.y > player.y - player.height / 2
     ) {
       modifyBallDirection(game.ball, player, 1);
+      return true;
     }
   } else {
     const player = game.rightPlayer;
@@ -49,8 +50,10 @@ export function checkPlayerCollision(game: GameData) {
       game.ball.y > player.y - player.height / 2
     ) {
       modifyBallDirection(game.ball, player, -1);
+      return true;
     }
   }
+  return false;
 }
 
 /**
