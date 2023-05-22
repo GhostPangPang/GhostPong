@@ -5,6 +5,7 @@ export const socketState = atom({
   default: {
     global: true,
     message: false,
+    channel: false,
     game: false,
   },
 });
