@@ -42,6 +42,13 @@ describe('ChannelService', () => {
           provide: CACHE_MANAGER,
           useValue: {},
         },
+        {
+          provide: ChannelGateway,
+          useValue: {
+            joinChannel: jest.fn(),
+            emitChannel: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
@@ -57,6 +64,7 @@ describe('ChannelService', () => {
   describe('createChannel', () => {
     // NOTE: success case
     it('public 채널 생성', async () => {
+      socketIdRepository.insert({ userId: 1, socketId: 'socketId' });
       const channelRequest: CreateChannelRequestDto = {
         name: 'test',
         mode: 'public',
@@ -86,6 +94,7 @@ describe('ChannelService', () => {
     });
 
     it('private 채널 생성', async () => {
+      socketIdRepository.insert({ userId: 1, socketId: 'socketId' });
       const channelRequest: CreateChannelRequestDto = {
         name: 'test',
         mode: 'private',
@@ -115,6 +124,7 @@ describe('ChannelService', () => {
     });
 
     it('protected 채널 생성', async () => {
+      socketIdRepository.insert({ userId: 1, socketId: 'socketId' });
       const channelRequest: CreateChannelRequestDto = {
         name: 'test',
         mode: 'protected',
@@ -298,14 +308,7 @@ describe('ChannelService', () => {
         bannedUserIdList: [],
       };
       invitationRepository.insert({ userId: 1, channelId: 'aaa' });
-
       socketIdRepository.insert({ userId: 1, socketId: 'socketId' });
-
-      service.joinChannel(1, { mode: 'private' }, channel);
-
-      // expect(channelGateway.server.in).toBeCalledWith();
-      // expect(channelGateway.server.socketsJoin).toBeCalledWith(channel.id);
-
       expect(await service.joinChannel(1, { mode: 'private' }, channel)).toEqual({
         message: '채널에 입장했습니다.',
       });
@@ -408,8 +411,8 @@ describe('ChannelService', () => {
         bannedUserIdList: [],
       };
       expect(service.getChannelInfo(1, channel)).toEqual({
-        players: [{ id: 1, nickname: 'test', image: '/asset/profile-1.png', role: 'owner' }],
-        observers: [{ id: 2, nickname: 'test', image: '/asset/profile-1.png', role: 'member' }],
+        players: [{ userId: 1, nickname: 'test', image: '/asset/profile-1.png', role: 'owner' }],
+        observers: [{ userId: 2, nickname: 'test', image: '/asset/profile-1.png', role: 'member' }],
       });
     });
   });
