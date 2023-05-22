@@ -18,7 +18,7 @@ import { Status } from '../repository/model/user-status';
 import { UserStatusRepository } from '../repository/user-status.repository';
 
 import { GameStartDto } from './dto/game-start.dto';
-import { GameEngine } from './game.engine';
+import { GameEngineService } from './game-engine.service';
 
 @UsePipes(
   new ValidationPipe({
@@ -33,8 +33,8 @@ export class GameGateway {
   constructor(
     private readonly gameRepository: GameRepository,
     private readonly userStatusRepository: UserStatusRepository,
-    @Inject(forwardRef(() => GameEngine))
-    private readonly gameEngine: GameEngine,
+    @Inject(forwardRef(() => GameEngineService))
+    private readonly gameEngine: GameEngineService,
   ) {}
 
   @SubscribeMessage('game-start')

@@ -6,14 +6,14 @@ import { UserRecord } from '../entity/user-record.entity';
 import { User } from '../entity/user.entity';
 import { RepositoryModule } from '../repository/repository.module';
 
+import { GameEngineService } from './game-engine.service';
 import { GameController } from './game.controller';
-import { GameEngine } from './game.engine';
 import { GameGateway } from './game.gateway';
 import { GameService } from './game.service';
 
 @Module({
   imports: [RepositoryModule, TypeOrmModule.forFeature([User, UserRecord, GameHistory])],
-  providers: [GameService, GameGateway, GameEngine],
+  providers: [GameService, GameGateway, GameEngineService],
   controllers: [GameController],
 })
 export class GameModule {}

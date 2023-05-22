@@ -18,7 +18,7 @@ const ENGINE_INTERVAL = 10;
 const SYNC_INTERVAL = 500;
 
 @Injectable()
-export class GameEngine {
+export class GameEngineService {
   constructor(
     private readonly gameRepository: GameRepository,
     private readonly channelRepository: ChannelRepository,
