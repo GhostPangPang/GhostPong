@@ -4,7 +4,6 @@ import { ChannelRepository } from '../repository/channel.repository';
 import { GameRepository } from '../repository/game.repository';
 import { ChannelUser } from '../repository/model/channel';
 import { Game } from '../repository/model/game';
-import { UserStatusRepository } from '../repository/user-status.repository';
 
 import { GameGateway } from './game.gateway';
 
@@ -13,7 +12,6 @@ export class GameService {
   constructor(
     private readonly gameRepository: GameRepository,
     private readonly channelRepository: ChannelRepository,
-    private readonly userStatusRepository: UserStatusRepository,
     private readonly gameGateway: GameGateway,
   ) {}
 
@@ -48,10 +46,8 @@ export class GameService {
 
     const game = new Game(gameId, leftPlayer.id, rightPlayer.id);
     this.gameRepository.insert(game);
-    this.userStatusRepository.update(leftPlayer.id, { status: 'game' });
-    this.gameGateway.emitGameStatusToFriends(leftPlayer.id);
-    this.userStatusRepository.update(rightPlayer.id, { status: 'game' });
-    this.gameGateway.emitGameStatusToFriends(leftPlayer.id);
+    this.gameGateway.updateUserStatus(leftPlayer.id, 'game');
+    this.gameGateway.updateUserStatus(rightPlayer.id, 'game');
 
     channel.isInGame = true;
     this.gameGateway.broadcastGameStart(game.gameData.id);

@@ -13,10 +13,16 @@ import { GameData } from '../../../game/game-data';
 import { corsOption } from '../common/option/cors.option';
 import { createWsException } from '../common/util';
 import { GameRepository } from '../repository/game.repository';
+import { UserStatusRepository } from '../repository/user-status.repository';
 
 import { GameStartDto } from './dto/game-start.dto';
 import { GameEngine } from './game.engine';
 
+@UsePipes(
+  new ValidationPipe({
+    exceptionFactory: createWsException,
+  }),
+)
 @WebSocketGateway({ cors: corsOption })
 export class GameGateway {
   @WebSocketServer()
@@ -24,11 +30,11 @@ export class GameGateway {
 
   constructor(
     private readonly gameRepository: GameRepository,
+    private readonly userStatusRepository: UserStatusRepository,
     @Inject(forwardRef(() => GameEngine))
     private readonly gameEngine: GameEngine,
   ) {}
 
-  @UsePipes(new ValidationPipe({ exceptionFactory: createWsException }))
   @SubscribeMessage('game-start')
   public handleGameStart(@ConnectedSocket() socket: Socket, @MessageBody() { gameId }: GameStartDto) {
     const game = this.gameRepository.find(gameId);
@@ -55,10 +61,6 @@ export class GameGateway {
     }
   }
 
-  broadcastGameData(gamedata: GameData) {
-    this.server.to(gamedata.id).emit('game-data', gamedata);
-  }
-
   /**
    * channel 에 있는 유저들에게 게임이 시작함을 알린다.
    *
@@ -68,12 +70,12 @@ export class GameGateway {
     this.server.to(gameId).emit('game-start', { gameId });
   }
 
-  /**
-   * user의 친구들에게 게임 중 상태임을 알린다.
-   *
-   * @param userId
-   */
-  emitGameStatusToFriends(userId: number) {
-    this.server.to(`user-${userId}`).emit('user-status', { id: userId, status: 'game' });
+  broadcastGameData(gamedata: GameData) {
+    this.server.to(gamedata.id).emit('game-data', gamedata);
+  }
+
+  updateUserStatus(userId: number, status: string) {
+    this.userStatusRepository.update(userId, { status: 'game' });
+    this.server.to(`user-${userId}`).emit('user-status', { id: userId, status });
   }
 }
