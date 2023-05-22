@@ -59,12 +59,13 @@ describe('ChannelService', () => {
     userRepository = module.get<Repository<User>>(getRepositoryToken(User));
     socketIdRepository = module.get<SocketIdRepository>(SocketIdRepository);
     channelGateway = module.get<ChannelGateway>(ChannelGateway);
+
+    socketIdRepository.insert({ userId: 1, socketId: 'socketId' });
   });
 
   describe('createChannel', () => {
     // NOTE: success case
     it('public 채널 생성', async () => {
-      socketIdRepository.insert({ userId: 1, socketId: 'socketId' });
       const channelRequest: CreateChannelRequestDto = {
         name: 'test',
         mode: 'public',
@@ -94,7 +95,6 @@ describe('ChannelService', () => {
     });
 
     it('private 채널 생성', async () => {
-      socketIdRepository.insert({ userId: 1, socketId: 'socketId' });
       const channelRequest: CreateChannelRequestDto = {
         name: 'test',
         mode: 'private',
@@ -124,7 +124,6 @@ describe('ChannelService', () => {
     });
 
     it('protected 채널 생성', async () => {
-      socketIdRepository.insert({ userId: 1, socketId: 'socketId' });
       const channelRequest: CreateChannelRequestDto = {
         name: 'test',
         mode: 'protected',
@@ -308,7 +307,6 @@ describe('ChannelService', () => {
         bannedUserIdList: [],
       };
       invitationRepository.insert({ userId: 1, channelId: 'aaa' });
-      socketIdRepository.insert({ userId: 1, socketId: 'socketId' });
       expect(await service.joinChannel(1, { mode: 'private' }, channel)).toEqual({
         message: '채널에 입장했습니다.',
       });

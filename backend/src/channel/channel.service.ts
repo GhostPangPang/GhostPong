@@ -84,8 +84,8 @@ export class ChannelService {
         };
       });
     return {
-      players: players,
-      observers: observers,
+      players,
+      observers,
     };
   }
 

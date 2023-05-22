@@ -37,9 +37,9 @@ export class ChannelController {
   @ApiQuery({ name: 'cursor', required: false, description: 'channel 의 페이지 cursor' })
   @Get()
   getChannelsList(
-    @Query('cursor', new DefaultValuePipe(0), NonNegativeIntPipe) cusror: number,
+    @Query('cursor', new DefaultValuePipe(0), NonNegativeIntPipe) cursor: number,
   ): ChannelsListResponseDto {
-    return this.channelService.getChannelsList(cusror);
+    return this.channelService.getChannelsList(cursor);
   }
 
   /**
