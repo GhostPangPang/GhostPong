@@ -61,7 +61,7 @@ export function checkPlayerCollision(game: GameData): boolean {
  *
  * @param ball
  */
-export function checkWallcollision(ball: Ball) {
+export function checkWallCollision(ball: Ball) {
   if (ball.y - ball.radius < 0 || ball.y + ball.radius > CANVASE_HEIGHT) {
     ball.vy *= -1;
   }
