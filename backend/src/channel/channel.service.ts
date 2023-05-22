@@ -139,11 +139,11 @@ export class ChannelService {
   private checkUserAlreadyInChannel(userId: number): void {
     const channels = [...this.visibleChannelRepository.findAll(), ...this.invisibleChannelRepository.findAll()];
 
-    channels.forEach((channel) => {
+    for (const channel of channels) {
       if (channel.users.has(userId)) {
         throw new ConflictException('이미 참여중인 채널이 있습니다.');
       }
-    });
+    }
   }
 
   /**

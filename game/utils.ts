@@ -1,4 +1,4 @@
-import { BALL_INITIAL_SPEED, CANVASE_HEIGHT, CANVASE_WIDTH, DEGREE, Game, Ball, Player } from './game';
+import { BALL_INITIAL_SPEED, CANVASE_HEIGHT, CANVASE_WIDTH, DEGREE, GameData, Ball, Player } from './game-data';
 
 export function resetBallData(ball: Ball) {
   ball.x = CANVASE_WIDTH / 2;
@@ -31,7 +31,7 @@ export function modifyBallDirection(ball: Ball, player: Player, direction: 1 | -
  *
  * @param game
  */
-export function checkPlayerCollision(game: Game) {
+export function checkPlayerCollision(game: GameData) {
   if (game.ball.x < CANVASE_WIDTH / 2) {
     const player = game.leftPlayer;
     if (
@@ -69,18 +69,18 @@ export function checkWallcollision(ball: Ball) {
  *
  * @param game
  */
-export function checkGameEnded(game: Game) {
+export function checkGameEnded(game: GameData): boolean {
   if (game.ball.x - game.ball.radius < 0) {
     game.rightPlayer.score += 1;
     resetBallData(game.ball);
+    return true;
   }
   if (game.ball.x + game.ball.radius > CANVASE_WIDTH) {
     game.leftPlayer.score += 1;
     resetBallData(game.ball);
+    return true;
   }
-  if (game.leftPlayer.score === 10 || game.rightPlayer.score === 10) {
-    clearInterval(game.intervalId);
-  }
+  return false;
 }
 
 /**
@@ -88,17 +88,7 @@ export function checkGameEnded(game: Game) {
  *
  * @param game
  */
-export function updateBall(game: Game) {
+export function updateBall(game: GameData) {
   game.ball.x += game.ball.vx;
   game.ball.y += game.ball.vy;
-}
-
-export function startGame(game: Game) {
-  // run game loop
-  game.intervalId = setInterval(() => {
-    updateBall(game);
-    checkPlayerCollision(game);
-    checkWallcollision(game.ball);
-    checkGameEnded(game);
-  }, 10);
 }

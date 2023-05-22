@@ -37,8 +37,7 @@ module.exports = {
             position: 'before',
           },
         ],
-        pathGroupsExcludedImportTypes: ['@/types/**'],
-        pathGroupsExcludedImportTypes: ['@/game/**'],
+        pathGroupsExcludedImportTypes: ['@/types/**', '@/game/**'],
         alphabetize: {
           order: 'asc',
         },

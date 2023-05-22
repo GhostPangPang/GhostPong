@@ -1,16 +1,16 @@
-import { Game } from '@/game/game';
+import { GameData } from '@/game/game-data';
 
 import { Repository } from './repository.interface';
 
-export class GameRepository implements Repository<string, Game> {
-  private readonly gameList: Map<string, Game> = new Map<string, Game>();
+export class GameRepository implements Repository<string, GameData> {
+  private readonly gameList: Map<string, GameData> = new Map<string, GameData>();
 
-  insert(game: Game): string {
+  insert(game: GameData): string {
     this.gameList.set(game.id, game);
     return game.id;
   }
 
-  update(id: string, partialItem: Partial<Game>): Game | undefined {
+  update(id: string, partialItem: Partial<GameData>): GameData | undefined {
     const game = this.gameList.get(id);
     if (game === undefined) {
       return undefined;
@@ -24,7 +24,12 @@ export class GameRepository implements Repository<string, Game> {
     return this.gameList.delete(id);
   }
 
-  find(id: string): Game | undefined {
+  find(id: string): GameData | undefined {
     return this.gameList.get(id);
+  }
+
+  // check id is exist
+  exist(id: string): boolean {
+    return this.gameList.has(id);
   }
 }
