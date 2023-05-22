@@ -1,4 +1,4 @@
-import { UsePipes, ValidationPipe } from '@nestjs/common';
+import { Inject, forwardRef, UsePipes, ValidationPipe } from '@nestjs/common';
 import {
   ConnectedSocket,
   MessageBody,
@@ -21,7 +21,11 @@ export class GameGateway {
   @WebSocketServer()
   public server: Server;
 
-  constructor(private readonly gameRepository: GameRepository, private readonly gameEngine: GameEngine) {}
+  constructor(
+    private readonly gameRepository: GameRepository,
+    @Inject(forwardRef(() => GameEngine))
+    private readonly gameEngine: GameEngine,
+  ) {}
 
   @UsePipes(new ValidationPipe({ exceptionFactory: createWsException }))
   @SubscribeMessage('game-start')
@@ -43,7 +47,7 @@ export class GameGateway {
       if (game === undefined) {
         return undefined;
       }
-      if (game.intervalId !== undefined) {
+      if (game.engineIntervalId !== undefined) {
         throw new WsException('이미 게임이 시작되었습니다.');
       }
       this.gameEngine.startGame(game);

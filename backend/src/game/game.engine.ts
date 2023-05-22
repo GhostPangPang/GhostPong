@@ -1,3 +1,5 @@
+import { Injectable, Inject, forwardRef } from '@nestjs/common';
+
 import { GameData } from '@/game/game-data';
 import { checkPlayerCollision, checkWallcollision, checkGameEnded, updateBall } from '@/game/utils';
 
@@ -6,18 +8,30 @@ import { Game } from '../repository/model/game';
 
 import { GameGateway } from './game.gateway';
 
+const ENGINE_INTERVAL = 10;
+const SYNC_INTERVAL = 500;
+
+@Injectable()
 export class GameEngine {
-  constructor(private readonly gameRepository: GameRepository, private readonly gameGateway: GameGateway) {}
+  constructor(
+    private readonly gameRepository: GameRepository,
+    @Inject(forwardRef(() => GameGateway))
+    private readonly gameGateway: GameGateway,
+  ) {}
 
   startGame(game: Game) {
-    game.intervalId = setInterval(() => {
+    game.engineIntervalId = setInterval(() => {
       this.gameLoop(game.gameData);
-    }, 1000);
+    }, ENGINE_INTERVAL);
+
+    game.syncIntervalId = setInterval(() => {
+      //this.gameGateway.emitGameData(game.gameData);
+    }, SYNC_INTERVAL);
   }
 
   endGame(game: Game) {
-    if (game.intervalId !== undefined) {
-      clearInterval(game.intervalId);
+    if (game.engineIntervalId !== undefined) {
+      clearInterval(game.engineIntervalId);
     }
     // update user data
     this.gameRepository.delete(game.gameData.id);
