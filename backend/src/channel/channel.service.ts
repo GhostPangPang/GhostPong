@@ -107,7 +107,7 @@ export class ChannelService {
 
     const socket = this.socketIdRepository.find(myId);
     if (socket === undefined) {
-      throw new NotFoundException('소켓 아이디를 찾을 수 없습니다.');
+      throw new NotFoundException('접속중인 유저가 아닙니다.');
     }
 
     if (channelOptions.mode === 'private') {
@@ -139,7 +139,7 @@ export class ChannelService {
 
     const socket = this.socketIdRepository.find(myId);
     if (socket === undefined) {
-      throw new NotFoundException('소켓 아이디를 찾을 수 없습니다.');
+      throw new NotFoundException('접속중인 유저가 아닙니다.');
     }
 
     const user = await this.userRepository.findOne({
@@ -164,11 +164,11 @@ export class ChannelService {
    */
   async inviteChannel(myId: number, userId: number, channel: Channel): Promise<SuccessResponseDto> {
     if (channel.users.has(myId) === false) {
-      throw new ForbiddenException('채널에 참여중인 유저만 초대 가능합니다.');
+      throw new ForbiddenException('해당 채널에 참여중인 유저가 아닙니다.');
     }
     const socketId = this.socketIdRepository.find(userId);
     if (socketId === undefined) {
-      throw new NotFoundException('소켓 아이디를 찾을 수 없습니다.');
+      throw new NotFoundException('접속중인 유저가 아닙니다.');
     }
     await this.checkExistFriendship(myId, userId);
     this.invitationRepository.insert({ userId: userId, channelId: channel.id });
