@@ -45,13 +45,14 @@ export const Badge = ({ status, onClick, children }: BadgeProps) => {
   useEffect(() => {
     const observer = new ResizeObserver(() => {
       const child = badgeRef.current?.firstChild as HTMLElement;
-      const { width: childWidth, height: childHeight } = child.getBoundingClientRect();
-      setDimensions({
-        width: childWidth,
-        height: childHeight,
-      });
+      if (child) {
+        const { width: childWidth, height: childHeight } = child.getBoundingClientRect();
+        setDimensions({
+          width: childWidth,
+          height: childHeight,
+        });
+      }
     });
-
     const child = badgeRef.current?.firstChild;
     if (child instanceof HTMLElement) {
       observer.observe(child);
