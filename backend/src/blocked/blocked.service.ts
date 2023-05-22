@@ -12,6 +12,7 @@ import { BLOCKED_USER_LIMIT } from '../common/constant';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
 import { BlockedUser } from '../entity/blocked-user.entity';
 import { Friendship } from '../entity/friendship.entity';
+import { FriendGateway } from '../friend/friend.gateway';
 
 import { BlockedUserResponseDto } from './dto/response/blocked-user-response.dto';
 
@@ -20,6 +21,7 @@ export class BlockedService {
   constructor(
     @InjectRepository(BlockedUser)
     private readonly blockedUserRepository: Repository<BlockedUser>,
+    private readonly friendGateway: FriendGateway,
   ) {}
 
   async blockUser(myId: number, userId: number): Promise<SuccessResponseDto> {
@@ -90,6 +92,7 @@ export class BlockedService {
         .orWhere('friendship.sender_id = :userId AND friendship.receiver_id= :blockedUserId', { userId, blockedUserId })
         .execute();
       await manager.insert('blocked_user', { userId: userId, blockedUserId: blockedUserId });
+      this.friendGateway.removeFriendFromRoom(userId, blockedUserId);
     });
   }
 }
