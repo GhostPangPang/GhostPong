@@ -2,9 +2,9 @@ import { Injectable, Inject, forwardRef, Logger } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
+import { Player } from '@/game/game-data';
 import { checkPlayerCollision, checkWallcollision, checkGameEnded, updateBall } from '@/game/utils';
 
-import { GameData } from '../../../game/game-data';
 import { GameHistory } from '../entity/game-history.entity';
 import { UserRecord } from '../entity/user-record.entity';
 import { User } from '../entity/user.entity';
@@ -52,16 +52,19 @@ export class GameEngine {
     this.gameGateway.updateUserStatus(gameData.rightPlayer.userId, 'online');
     this.channelRepository.update(gameData.id, { isInGame: false });
     this.gameRepository.delete(gameData.id);
+    const winner = gameData.leftPlayer.score > gameData.rightPlayer.score ? gameData.leftPlayer : gameData.rightPlayer;
+    const loser = winner === gameData.leftPlayer ? gameData.rightPlayer : gameData.leftPlayer;
+
     try {
-      await this.insertGameHistory(gameData);
+      await this.insertGameHistory(winner, loser);
     } catch (e) {
       this.logger.error(e);
     }
+    // emit game end event
+    this.gameGateway.broadcastGameEnd(gameData.id, winner, loser);
   }
 
-  private insertGameHistory(gameData: GameData): Promise<void> {
-    const winner = gameData.leftPlayer.score > gameData.rightPlayer.score ? gameData.leftPlayer : gameData.rightPlayer;
-    const loser = winner === gameData.leftPlayer ? gameData.rightPlayer : gameData.leftPlayer;
+  private insertGameHistory(winner: Player, loser: Player): Promise<void> {
     const point = winner.score - loser.score;
 
     return this.dataSource.manager.transaction(async (manager) => {
@@ -78,7 +81,7 @@ export class GameEngine {
     });
   }
 
-  private gameLoop(game: Game) {
+  private async gameLoop(game: Game) {
     const { gameData } = game;
     updateBall(gameData);
 
@@ -89,7 +92,7 @@ export class GameEngine {
     if (checkGameEnded(gameData) === true) {
       this.gameGateway.broadcastGameData(gameData);
       if (gameData.rightPlayer.score === 10 || gameData.leftPlayer.score === 10) {
-        this.endGame(game);
+        await this.endGame(game);
         return;
       }
     }

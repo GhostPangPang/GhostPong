@@ -9,7 +9,8 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 
-import { GameData } from '../../../game/game-data';
+import { GameData, Player } from '@/game/game-data';
+
 import { corsOption } from '../common/option/cors.option';
 import { createWsException } from '../common/util';
 import { GameRepository } from '../repository/game.repository';
@@ -72,6 +73,14 @@ export class GameGateway {
 
   broadcastGameData(gamedata: GameData) {
     this.server.to(gamedata.id).emit('game-data', gamedata);
+  }
+
+  broadcastGameEnd(gameId: string, winner: Player, loser: Player) {
+    this.server.to(gameId).emit('game-end', {
+      id: gameId,
+      winner: { id: winner.userId, score: winner.score },
+      loser: { id: loser.userId, score: loser.score },
+    });
   }
 
   updateUserStatus(userId: number, status: string) {
