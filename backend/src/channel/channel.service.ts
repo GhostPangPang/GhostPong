@@ -60,7 +60,7 @@ export class ChannelService {
   getChannelInfo(myId: number, channel: Channel): ChannelMemberInfoResponseDto {
     const channelUser = channel.users.get(myId);
     if (channelUser === undefined) {
-      throw new NotFoundException('해당 채널에 참여중인 유저가 아닙니다.');
+      throw new ForbiddenException('해당 채널에 참여중인 유저가 아닙니다.');
     }
     const users = [...channel.users.values()];
     const players: MemberInfo[] = users

@@ -48,6 +48,7 @@ export class ChannelController {
    */
   @ApiOperation({ summary: '채널 정보 조회하기' })
   @ApiNotFoundResponse({ type: ErrorResponseDto, description: '존재하지 않는 채널' })
+  @ApiForbiddenResponse({ type: ErrorResponseDto, description: '채널 참여중인 유저 아님' })
   @ApiHeaders([{ name: 'x-my-id', description: '내 auth 아이디 (임시값)' }])
   @Get(':channelId')
   getChannelInfo(
