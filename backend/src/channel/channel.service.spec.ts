@@ -13,6 +13,7 @@ import { InvitationRepository } from '../repository/invitation.repository';
 import { ChannelGateway } from './channel.gateway';
 import { SocketIdRepository } from '../repository/socket-id.repository';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Friendship } from '../entity/friendship.entity';
 
 describe('ChannelService', () => {
   let service: ChannelService;
@@ -22,6 +23,7 @@ describe('ChannelService', () => {
   let userRepository: Repository<User>;
   let socketIdRepository: SocketIdRepository;
   let channelGateway: ChannelGateway;
+  let friendshipRepository: Repository<Friendship>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -36,6 +38,12 @@ describe('ChannelService', () => {
           provide: getRepositoryToken(User),
           useValue: {
             findOne: jest.fn().mockResolvedValue({ id: 1, nickname: 'test', image: '/asset/profile-1.png' }),
+          },
+        },
+        {
+          provide: getRepositoryToken(Friendship),
+          useValue: {
+            findOne: jest.fn().mockResolvedValue({ id: 1, senderId: 1, receiverId: 2, accept: true }),
           },
         },
         {
@@ -401,7 +409,7 @@ describe('ChannelService', () => {
         id: 'aaa',
         mode: 'public',
         name: 'test',
-        isInGame: false,
+        isInGame: true,
         users: new Map([
           [1, player],
           [2, observer],
@@ -414,6 +422,33 @@ describe('ChannelService', () => {
         isInGame: false,
         name: 'test',
       });
+    });
+  });
+
+  describe('inviteChannel', () => {
+    it('초대할 유저가 친구가 아닌 경우', async () => {
+      const player: ChannelUser = {
+        id: 1,
+        nickname: 'test',
+        image: '/asset/profile-1.png',
+        role: 'owner',
+        isMuted: false,
+        isPlayer: true,
+      };
+      const channel: Channel = {
+        id: 'aaa',
+        mode: 'public',
+        name: 'test',
+        isInGame: false,
+        users: new Map([[1, player]]),
+        bannedUserIdList: [],
+      };
+      try {
+        service.inviteChannel(1, 3, channel);
+      } catch (e) {
+        expect(e).toBeInstanceOf(ForbiddenException);
+        expect(e.message).toEqual('채널에 참여중인 유저만 초대 가능합니다.');
+      }
     });
   });
 });
