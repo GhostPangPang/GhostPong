@@ -63,21 +63,21 @@ export class ChannelService {
       throw new NotFoundException('해당 채널에 참여중인 유저가 아닙니다.');
     }
     const users = [...channel.users.values()];
-    const players = users
+    const players: MemberInfo[] = users
       .filter((user) => user.isPlayer)
       .map((user) => {
         return {
-          id: user.id,
+          userId: user.id,
           nickname: user.nickname,
           image: user.image,
           role: user.role,
         };
       });
-    const observers = users
+    const observers: MemberInfo[] = users
       .filter((user) => !user.isPlayer)
       .map((user) => {
         return {
-          id: user.id,
+          userId: user.id,
           nickname: user.nickname,
           image: user.image,
           role: user.role,
