@@ -9,6 +9,7 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 
+import { GameData } from '../../../game/game-data';
 import { corsOption } from '../common/option/cors.option';
 import { createWsException } from '../common/util';
 import { GameRepository } from '../repository/game.repository';
@@ -54,6 +55,10 @@ export class GameGateway {
     }
   }
 
+  broadcastGameData(gamedata: GameData) {
+    this.server.to(gamedata.id).emit('game-data', gamedata);
+  }
+
   /**
    * channel 에 있는 유저들에게 게임이 시작함을 알린다.
    *
@@ -70,9 +75,5 @@ export class GameGateway {
    */
   emitGameStatusToFriends(userId: number) {
     this.server.to(`user-${userId}`).emit('user-status', { id: userId, status: 'game' });
-  }
-
-  emitExceptionToGame(gameId: string, message: string) {
-    this.server.to(gameId).emit('exception', { status: 'error', message });
   }
 }
