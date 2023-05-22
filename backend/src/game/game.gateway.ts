@@ -18,6 +18,7 @@ import { Status } from '../repository/model/user-status';
 import { UserStatusRepository } from '../repository/user-status.repository';
 
 import { GameStartDto } from './dto/game-start.dto';
+import { MoveBarDto } from './dto/move-bar.dto';
 import { GameEngineService } from './game-engine.service';
 
 @UsePipes(
@@ -38,7 +39,7 @@ export class GameGateway {
   ) {}
 
   @SubscribeMessage('game-start')
-  public handleGameStart(@ConnectedSocket() socket: Socket, @MessageBody() { gameId }: GameStartDto) {
+  handleGameStart(@ConnectedSocket() socket: Socket, @MessageBody() { gameId }: GameStartDto) {
     const game = this.gameRepository.find(gameId);
     if (!game) {
       throw new WsException('게임이 존재하지 않습니다.');
@@ -61,6 +62,22 @@ export class GameGateway {
       }
       this.gameEngine.startGame(game);
     }
+  }
+
+  @SubscribeMessage('move-bar')
+  movePlayerBar(@ConnectedSocket() socket: Socket, @MessageBody() { gameId, y }: MoveBarDto) {
+    const game = this.gameRepository.find(gameId);
+    if (game === undefined) {
+      throw new WsException('게임이 존재하지 않습니다.');
+    }
+    if (game.gameData.leftPlayer.userId === socket.data.userId) {
+      game.gameData.leftPlayer.y = y;
+    } else if (game.gameData.rightPlayer.userId === socket.data.userId) {
+      game.gameData.rightPlayer.y = y;
+    } else {
+      throw new WsException('게임의 플레이어가 아닙니다.');
+    }
+    socket.to(gameId).emit('bar-moved', { userId: socket.data.userId, y });
   }
 
   /**
