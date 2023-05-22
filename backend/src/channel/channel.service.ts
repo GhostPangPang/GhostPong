@@ -15,6 +15,7 @@ import { ChannelRepository } from 'src/repository/channel.repository';
 
 import { PARTICIPANT_LIMIT } from '../common/constant';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
+import { Friendship } from '../entity/friendship.entity';
 import { User } from '../entity/user.entity';
 import { InvisibleChannelRepository } from '../repository/invisible-channel.repository';
 import { InvitationRepository } from '../repository/invitation.repository';
@@ -38,6 +39,8 @@ export class ChannelService {
     private readonly channelGateway: ChannelGateway,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(Friendship)
+    private readonly friendshipRepository: Repository<Friendship>,
   ) {}
   logger: Logger = new Logger('ChannelService');
 
@@ -156,6 +159,21 @@ export class ChannelService {
     };
   }
 
+  /**
+   * 채널 초대하기
+   */
+  async inviteChannel(myId: number, userId: number, channel: Channel): Promise<SuccessResponseDto> {
+    if (channel.users.has(myId) === false) {
+      throw new ForbiddenException('채널에 참여중인 유저만 초대 가능합니다.');
+    }
+    await this.checkExistFriendship(myId, userId);
+    this.invitationRepository.insert({ userId: userId, channelId: channel.id });
+
+    return {
+      message: '채널 초대에 성공했습니다.',
+    };
+  }
+
   // SECTION: private
   /**
    * 채널 참여 시 user의 id를 이용해 channelUser 를 생성한다.
@@ -225,6 +243,19 @@ export class ChannelService {
       image: channelUser.image,
       role: channelUser.role,
     };
+  }
+
+  private async checkExistFriendship(myId: number, userId: number): Promise<void> {
+    const friendship = await this.friendshipRepository.findOne({
+      where: [
+        { senderId: myId, receiverId: userId, accept: true },
+        { senderId: userId, receiverId: myId, accept: true },
+      ],
+      select: ['id'],
+    });
+    if (friendship === null) {
+      throw new ForbiddenException('친구만 초대 가능합니다.');
+    }
   }
 
   // !SECTION : private
