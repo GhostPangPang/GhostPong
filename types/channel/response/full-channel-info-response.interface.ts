@@ -4,4 +4,5 @@ export interface FullChannelInfoResponse {
   players: MemberInfo[];
   observers: MemberInfo[];
   isInGame: boolean;
+  name: string;
 }
