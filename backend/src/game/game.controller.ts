@@ -4,7 +4,7 @@ import { ApiConflictResponse, ApiForbiddenResponse, ApiOperation } from '@nestjs
 import { ExtractUserId } from '../common/decorator/extract-user-id.decorator';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
 
-import { CreateGameRequestDto } from './dto/request/create-game-request.dto';
+import { GameStartDto } from './dto/game-start.dto';
 import { GameService } from './game.service';
 
 @Controller('game')
@@ -16,7 +16,7 @@ export class GameController {
   @ApiConflictResponse({ description: '해당 채널에서 이미 진행 중인 게임이 있는 경우' })
   @HttpCode(HttpStatus.OK)
   @Post()
-  createGame(@ExtractUserId() userId: number, @Body() { channelId }: CreateGameRequestDto): SuccessResponseDto {
-    return this.gameService.createGame(channelId, userId);
+  createGame(@ExtractUserId() userId: number, @Body() { gameId }: GameStartDto): SuccessResponseDto {
+    return this.gameService.createGame(gameId, userId);
   }
 }
