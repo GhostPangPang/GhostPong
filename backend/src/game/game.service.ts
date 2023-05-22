@@ -23,6 +23,9 @@ export class GameService {
     if (channel === undefined) {
       throw new NotFoundException('채널이 존재하지 않습니다.');
     }
+    if (this.gameRepository.exist(channelId)) {
+      throw new ConflictException('해당 채널에서 이미 진행 중인 게임이 있습니다.');
+    }
 
     const { users } = channel;
     const leftPlayer = users.get(userId);
@@ -42,9 +45,6 @@ export class GameService {
     }
     if (rightPlayer === null) {
       throw new ForbiddenException('플레이어가 2명 이상이어야 게임을 시작할 수 있습니다.');
-    }
-    if (this.gameRepository.exist(channelId)) {
-      throw new ConflictException('해당 채널에서 이미 진행 중인 게임이 있습니다.');
     }
 
     const game = new GameData(channelId, leftPlayer.id, rightPlayer.id);
