@@ -11,8 +11,6 @@ import { Repository } from 'typeorm';
 
 import { ChannelRole, MemberInfo } from '@/types/channel';
 
-import { ChannelRepository } from 'src/repository/channel.repository';
-
 import { PARTICIPANT_LIMIT } from '../common/constant';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
 import { User } from '../entity/user.entity';
@@ -209,13 +207,7 @@ export class ChannelService {
 
   private async insertNewMember(myId: number, channel: Channel): Promise<MemberInfo> {
     const channelUser = await this.generateChannelUser(myId, 'member');
-    let repository: ChannelRepository = this.visibleChannelRepository;
-    if (channel.mode === 'private') {
-      repository = this.invisibleChannelRepository;
-    }
-    repository.update(channel.id, {
-      users: channel.users.set(myId, channelUser),
-    });
+    channel.users.set(myId, channelUser);
 
     return {
       userId: channelUser.id,
