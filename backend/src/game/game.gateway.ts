@@ -9,6 +9,6 @@ export class GameGateway {
   public server: Server;
 
   broadcastGameStart(gameId: string) {
-    this.server.to(gameId).emit('game-start');
+    this.server.to(gameId).emit('game-start', { gameId });
   }
 }
