@@ -86,6 +86,7 @@ export class ChannelService {
     return {
       players,
       observers,
+      isInGame: channel.isInGame,
     };
   }
 
