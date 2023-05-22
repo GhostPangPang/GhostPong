@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 import { User } from './user.entity';
 
@@ -7,10 +7,18 @@ export class GameHistory {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column()
+  winnerId: number;
+
+  @Column()
+  loserId: number;
+
   @ManyToOne(() => User)
+  @JoinColumn()
   winner: User;
 
   @ManyToOne(() => User)
+  @JoinColumn()
   loser: User;
 
   @Column()
