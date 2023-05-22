@@ -15,10 +15,12 @@ import { corsOption } from '../common/option/cors.option';
 import { createWsException } from '../common/util';
 import { InvisibleChannelRepository } from '../repository/invisible-channel.repository';
 import { Channel } from '../repository/model/channel';
+import { SocketIdRepository } from '../repository/socket-id.repository';
 import { VisibleChannelRepository } from '../repository/visible-channel.repository';
 
 import { ChannelIdDto } from './dto/socket/channelId.dto';
 import ChatDto from './dto/socket/chat.dto';
+import { OperationDto } from './dto/socket/operation.dto';
 
 @UsePipes(
   new ValidationPipe({
@@ -35,6 +37,7 @@ export class ChannelGateway {
     private cacheManager: Cache,
     private readonly visibleChannelRepository: VisibleChannelRepository,
     private readonly invisibleChannelRepository: InvisibleChannelRepository,
+    private readonly socketIdRepository: SocketIdRepository,
   ) {}
 
   logger: Logger = new Logger('ChannelGateway');
@@ -52,6 +55,45 @@ export class ChannelGateway {
       throw new WsException('채널에 참여하지 않은 유저입니다.');
     }
     socket.to(data.channelId).emit('chat', data);
+  }
+
+  /**
+   * @summary ban하는 event
+   */
+  @SubscribeMessage('ban')
+  async handleBan(@ConnectedSocket() socket: Socket, @MessageBody() data: OperationDto) {
+    const channel = this.checkExistChannel(data.channelId);
+    const user = channel.users.get(socket.data.userId);
+    if (user === undefined) {
+      throw new WsException('채널에 참여하지 않은 유저입니다.');
+    }
+    if (user.role === 'member') {
+      return { message: '밴 권한이 없습니다.' };
+    }
+    if (data.targetId === socket.data.userId) {
+      return { message: '자기 자신은 밴할 수 없습니다.' };
+    }
+    const target = channel.users.get(data.targetId);
+    if (target === undefined) {
+      throw new WsException('밴 대상이 채널에 참여하지 않은 유저입니다.');
+    }
+    if (target.role === 'owner') {
+      return { message: '채널 오너는 밴할 수 없습니다.' };
+    } // 여기까지 오면 user.role >= target.role
+    if (channel.isInGame === true && target.isPlayer === true) {
+      return { message: '게임 중인 유저는 밴할 수 없습니다.' };
+    }
+
+    channel.users.delete(data.targetId);
+    this.cacheManager.del(`mute-${data.targetId}`);
+    channel.bannedUserIdList.push(data.targetId);
+    this.emitChannel(data.channelId, 'banned', { userId: data.targetId });
+
+    const targetSocketId = this.socketIdRepository.find(data.targetId)?.socketId;
+    if (targetSocketId === undefined) {
+      throw new WsException('소켓 아이디를 찾을 수 없습니다.');
+    }
+    this.server.in(targetSocketId).socketsLeave(data.channelId);
   }
 
   /**
