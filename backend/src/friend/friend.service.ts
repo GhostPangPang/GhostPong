@@ -122,6 +122,7 @@ export class FriendService {
       throw new ForbiddenException('친구 관계를 삭제할 수 있는 권한이 없습니다.');
     }
     await this.friendshipRepository.delete(friendId);
+    this.friendGateway.removeFriendFromRoom(myId, senderId === myId ? receiverId : senderId);
     return { message: '친구를 삭제했습니다.' };
   }
 
@@ -140,6 +141,7 @@ export class FriendService {
     await this.checkFriendLimit(friendship.receiver.id, '나');
     await this.checkFriendLimit(friendship.senderId, '상대방');
     await this.friendshipRepository.update({ id: friendId }, { accept: true });
+    this.friendGateway.addFriendToRoom(friendship.senderId, friendship.receiver.id);
     this.friendGateway.emitFriendAccepted(friendship);
     return { message: '친구 추가 되었습니다.' };
   }
