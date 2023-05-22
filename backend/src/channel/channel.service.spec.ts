@@ -412,7 +412,7 @@ describe('ChannelService', () => {
         id: 'aaa',
         mode: 'public',
         name: 'test',
-        isInGame: true,
+        isInGame: false,
         users: new Map([
           [1, player],
           [2, observer],
@@ -429,7 +429,24 @@ describe('ChannelService', () => {
   });
 
   describe('inviteChannel', () => {
-    it('초대할 유저가 친구가 아닌 경우', async () => {
+    it('채널에 참여하지 않은 유저', async () => {
+      const channel: Channel = {
+        id: 'aaa',
+        mode: 'public',
+        name: 'test',
+        isInGame: false,
+        users: new Map([]),
+        bannedUserIdList: [],
+      };
+      try {
+        await service.inviteChannel(1, 3, channel);
+      } catch (e) {
+        expect(e).toBeInstanceOf(ForbiddenException);
+        expect(e.message).toEqual('해당 채널에 참여중인 유저가 아닙니다.');
+      }
+    });
+
+    it('친구가 아닌 유저를 초대한 경우', async () => {
       const player: ChannelUser = {
         id: 1,
         nickname: 'test',
@@ -450,7 +467,7 @@ describe('ChannelService', () => {
         service.inviteChannel(1, 3, channel);
       } catch (e) {
         expect(e).toBeInstanceOf(ForbiddenException);
-        expect(e.message).toEqual('채널에 참여중인 유저만 초대 가능합니다.');
+        expect(e.message).toEqual('친구만 초대 가능합니다.');
       }
     });
   });
