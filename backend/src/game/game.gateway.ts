@@ -14,6 +14,7 @@ import { GameData, Player } from '@/game/game-data';
 import { corsOption } from '../common/option/cors.option';
 import { createWsException } from '../common/util';
 import { GameRepository } from '../repository/game.repository';
+import { Status } from '../repository/model/user-status';
 import { UserStatusRepository } from '../repository/user-status.repository';
 
 import { GameStartDto } from './dto/game-start.dto';
@@ -83,8 +84,8 @@ export class GameGateway {
     });
   }
 
-  updateUserStatus(userId: number, status: string) {
-    this.userStatusRepository.update(userId, { status: 'game' });
+  updateUserStatus(userId: number, status: Status) {
+    this.userStatusRepository.update(userId, { status });
     this.server.to(`user-${userId}`).emit('user-status', { id: userId, status });
   }
 }

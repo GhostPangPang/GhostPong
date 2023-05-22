@@ -3,7 +3,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
 import { Player } from '@/game/game-data';
-import { checkPlayerCollision, checkWallcollision, checkGameEnded, updateBall } from '@/game/utils';
+import { checkPlayerCollision, checkWallCollision, checkGameEnded, updateBall } from '@/game/utils';
 
 import { GameHistory } from '../entity/game-history.entity';
 import { UserRecord } from '../entity/user-record.entity';
@@ -88,7 +88,7 @@ export class GameEngine {
     if (checkPlayerCollision(gameData) === true) {
       this.gameGateway.broadcastGameData(gameData);
     }
-    checkWallcollision(gameData.ball);
+    checkWallCollision(gameData.ball);
     if (checkGameEnded(gameData) === true) {
       this.gameGateway.broadcastGameData(gameData);
       if (gameData.rightPlayer.score === 10 || gameData.leftPlayer.score === 10) {

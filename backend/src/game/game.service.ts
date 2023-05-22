@@ -46,6 +46,7 @@ export class GameService {
 
     const game = new Game(gameId, leftPlayer.id, rightPlayer.id);
     this.gameRepository.insert(game);
+
     this.gameGateway.updateUserStatus(leftPlayer.id, 'game');
     this.gameGateway.updateUserStatus(rightPlayer.id, 'game');
 
