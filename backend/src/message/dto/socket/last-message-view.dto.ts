@@ -1,4 +1,4 @@
-import { IsDateString, IsNotEmpty, IsNumber, Max, Min } from 'class-validator';
+import { IsDateString, IsInt, IsNotEmpty, Max, Min } from 'class-validator';
 
 import { LastMessageView } from '@/types/message/socket/last-message-view.interface';
 
@@ -8,7 +8,7 @@ export class LastMessageViewDto implements LastMessageView {
    * @example 1
    */
   @IsNotEmpty()
-  @IsNumber()
+  @IsInt()
   @Min(1)
   @Max(2147483647)
   friendId: number;
