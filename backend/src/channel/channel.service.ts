@@ -9,7 +9,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { ChannelRole, MemberInfo } from '@/types/channel';
+import { ChannelRole, MemberInfo, UserId } from '@/types/channel';
 
 import { PARTICIPANT_LIMIT } from '../common/constant';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
@@ -170,7 +170,7 @@ export class ChannelService {
     }
     await this.checkExistFriendship(myId, userId);
     this.invitationRepository.insert({ userId: userId, channelId: channel.id });
-    this.channelGateway.emitUser<{ userId: number }>(socketId.socketId, 'invite-channel', { userId });
+    this.channelGateway.emitUser<UserId>(socketId.socketId, 'invite-channel', { userId });
 
     return {
       message: '채널 초대에 성공했습니다.',
