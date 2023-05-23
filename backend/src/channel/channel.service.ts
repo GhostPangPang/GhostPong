@@ -59,10 +59,7 @@ export class ChannelService {
    * @summary 채널 정보 조회하기
    */
   getChannelInfo(myId: number, channel: Channel): FullChannelInfoResponseDto {
-    const channelUser = channel.users.get(myId);
-    if (channelUser === undefined) {
-      throw new ForbiddenException('해당 채널에 참여중인 유저가 아닙니다.');
-    }
+    this.checkUserInChannel(myId, channel);
     const users = [...channel.users.values()];
     const players: MemberInfo[] = users
       .filter((user) => user.isPlayer)
@@ -103,10 +100,7 @@ export class ChannelService {
     let channel;
     let channelId;
 
-    const socket = this.socketIdRepository.find(myId);
-    if (socket === undefined) {
-      throw new NotFoundException('접속중인 유저가 아닙니다.');
-    }
+    const socketId = this.checkExistSocket(myId);
 
     if (channelOptions.mode === 'private') {
       channel = this.invisibleChannelRepository.create(channelOptions);
@@ -116,7 +110,7 @@ export class ChannelService {
       channelId = this.visibleChannelRepository.insert(channel);
     }
     channel.users.set(myId, await this.generateChannelUser(myId, 'owner'));
-    this.channelGateway.joinChannel(socket.socketId, channel.id);
+    this.channelGateway.joinChannel(socketId, channel.id);
 
     this.logger.log(`createChannel: ${JSON.stringify(channel)}`);
     return channelId;
@@ -135,10 +129,7 @@ export class ChannelService {
     this.checkUserAlreadyInChannel(myId);
     this.checkJoinChannel(myId, joinChannelRequestDto, channel);
 
-    const socket = this.socketIdRepository.find(myId);
-    if (socket === undefined) {
-      throw new NotFoundException('접속중인 유저가 아닙니다.');
-    }
+    const socketId = this.checkExistSocket(myId);
 
     const user = await this.userRepository.findOne({
       where: { id: myId },
@@ -149,8 +140,8 @@ export class ChannelService {
     }
 
     const data = await this.insertNewMember(myId, channel);
-    this.channelGateway.joinChannel(socket.socketId, channel.id);
-    this.channelGateway.emitChannel<MemberInfo>(channel.id, 'new-member', data, socket.socketId);
+    this.channelGateway.joinChannel(socketId, channel.id);
+    this.channelGateway.emitChannel<MemberInfo>(channel.id, 'new-member', data, socketId);
 
     return {
       message: '채널에 입장했습니다.',
@@ -161,19 +152,39 @@ export class ChannelService {
    * 채널 초대하기
    */
   async inviteChannel(myId: number, userId: number, channel: Channel): Promise<SuccessResponseDto> {
-    if (channel.users.has(myId) === false) {
-      throw new ForbiddenException('해당 채널에 참여중인 유저가 아닙니다.');
-    }
-    const socketId = this.socketIdRepository.find(userId);
-    if (socketId === undefined) {
-      throw new NotFoundException('접속중인 유저가 아닙니다.');
-    }
+    this.checkUserInChannel(myId, channel);
+    const socketId = this.checkExistSocket(myId);
     await this.checkExistFriendship(myId, userId);
     this.invitationRepository.insert({ userId: userId, channelId: channel.id });
-    this.channelGateway.emitUser<UserId>(socketId.socketId, 'invite-channel', { userId: myId });
+    this.channelGateway.emitUser<UserId>(socketId, 'invite-channel', { userId: myId });
 
     return {
       message: '채널 초대에 성공했습니다.',
+    };
+  }
+
+  /**
+   * @description 플레이어로 참여하기
+   * @param myId
+   * @param channel
+   */
+  participateAsPlayer(myId: number, channel: Channel): SuccessResponseDto {
+    const user = this.checkUserInChannel(myId, channel);
+    let count = 0;
+
+    for (const users of channel.users.values()) {
+      if (users.isPlayer === true) {
+        ++count;
+      }
+      if (count === 2) {
+        throw new ForbiddenException('플레이어 정원이 찼습니다.');
+      }
+    }
+    const socketId = this.checkExistSocket(myId);
+    user.isPlayer = true;
+    this.channelGateway.emitChannel<UserId>(channel.id, 'player', { userId: myId }, socketId);
+    return {
+      message: '플레이어가 되었습니다.',
     };
   }
 
@@ -206,6 +217,19 @@ export class ChannelService {
         throw new ConflictException('이미 참여중인 채널이 있습니다.');
       }
     }
+  }
+
+  /**
+   * @description 채널에 참여중인 유저인지 확인
+   * @param myId
+   * @param channel
+   */
+  private checkUserInChannel(myId: number, channel: Channel): ChannelUser {
+    const user = channel.users.get(myId);
+    if (user === undefined) {
+      throw new ForbiddenException('해당 채널에 참여중인 유저가 아닙니다.');
+    }
+    return user;
   }
 
   /**
@@ -253,6 +277,19 @@ export class ChannelService {
     if (friendship === null) {
       throw new ForbiddenException('친구만 초대 가능합니다.');
     }
+  }
+
+  /**
+   * @description socketIdRepository 에서 userId 에 해당하는 socketId 를 찾아 반환
+   * @param userId
+   * @returns socketId: string
+   */
+  private checkExistSocket(userId: number): string {
+    const socket = this.socketIdRepository.find(userId);
+    if (socket === undefined) {
+      throw new NotFoundException('접속중인 유저가 아닙니다.');
+    }
+    return socket.socketId;
   }
 
   // !SECTION : private

@@ -86,6 +86,7 @@ export class ChannelGateway {
 
   /**
    * @summary channel socket room에서 broadcast
+   * @param exceptId 제외할 socket id. undefined면 모두에게 broadcast
    */
   emitChannel<DataType>(channelId: string, event: string, data: DataType, exceptId?: string): void {
     if (exceptId === undefined) {

@@ -1,10 +1,23 @@
-import { Controller, Post, Body, Res, Get, DefaultValuePipe, Query, Param, HttpStatus, HttpCode } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Res,
+  Get,
+  DefaultValuePipe,
+  Query,
+  Param,
+  HttpStatus,
+  HttpCode,
+  Patch,
+} from '@nestjs/common';
 import {
   ApiConflictResponse,
   ApiForbiddenResponse,
   ApiHeaders,
   ApiNotFoundResponse,
   ApiOperation,
+  ApiParam,
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
@@ -117,5 +130,21 @@ export class ChannelController {
     @Body('userId', NonNegativeIntPipe, CheckUserIdPipe) userId: number,
   ): Promise<SuccessResponseDto> {
     return this.channelService.inviteChannel(myId, userId, channel);
+  }
+
+  /**
+   * @summary 채널에서 플레이어로 참여하기
+   * @description POST /channel/:channelId/player
+   */
+  @ApiOperation({ summary: '플레이어로 참여하기' })
+  @ApiConflictResponse({ type: ErrorResponseDto, description: '플레이어 자리가 이미 차있음' })
+  @ApiHeaders([{ name: 'x-my-id', description: '내 auth 아이디 (임시값)' }])
+  @ApiParam({ name: 'channelId', description: '채널 아이디' })
+  @Patch(':channelId/player')
+  participateAsPlayer(
+    @ExtractUserId() myId: number,
+    @Param('cahnnelId', IdToChannelPipe) channel: Channel,
+  ): SuccessResponseDto {
+    return this.channelService.participateAsPlayer(myId, channel);
   }
 }
