@@ -67,7 +67,7 @@ export const GameReadyPage = () => {
   const { pathname } = useLocation();
   const channelId = pathname.replace('/channel/', '');
 
-  useChannelInfo(channelId, currentUserId);
+  useChannelInfo(channelId);
 
   const newChannelData = useRecoilValue(newChannelDataState);
 

@@ -16,15 +16,9 @@ export class PingPongGame {
     this.rightPlayer = new Player(rightPlayerId, CANVASE_WIDTH - BAR_PADDING - BAR_WIDTH);
   }
 
-  startGame() {}
-
   updateData(data: GameData) {
     this.ball = data.ball;
     this.leftPlayer = data.leftPlayer;
     this.rightPlayer = data.rightPlayer;
-  }
-
-  endGame(data: GameEnd) {
-    this.status = 'end';
   }
 }

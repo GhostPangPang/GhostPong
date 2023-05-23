@@ -1,5 +1,5 @@
 import theme from '@/assets/styles/theme';
-import { GamePageWrapper } from '../GameReadyPage/GameReadyPage';
+// import { GamePageWrapper } from '../GameReadyPage/GameReadyPage';
 import { MouseEvent, useEffect } from 'react';
 import { useCanvas } from '@/hooks';
 import { usePingPongGame } from './usePingPongGame';
@@ -55,7 +55,7 @@ export const GamePage = ({ type = 'rightPlayer', channelId = '1' }: GamePageProp
   };
 
   return (
-    <GamePageWrapper>
+    <div>
       <canvas
         ref={canvasRef}
         width={900}
@@ -63,6 +63,6 @@ export const GamePage = ({ type = 'rightPlayer', channelId = '1' }: GamePageProp
         onMouseMove={handleMouseMove}
         style={{ borderRadius: '4px', backgroundColor: theme.color.gray500 }}
       ></canvas>
-    </GamePageWrapper>
+    </div>
   );
 };
