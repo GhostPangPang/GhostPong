@@ -48,9 +48,6 @@ export class MessageGateway {
    */
   @SubscribeMessage('message')
   async handleMessage(@ConnectedSocket() socket: Socket, @MessageBody() data: MesssageDto): Promise<void> {
-    console.log('friend id is ', data.id);
-    console.log('content is ', data.content);
-    console.log('creatdAt is ', data.createdAt);
     await this.checkExistFriendship(data.id, socket.data.userId, data.receiverId);
     await this.messageRepository.insert({
       senderId: socket.data.userId,
@@ -80,10 +77,6 @@ export class MessageGateway {
       friend: { id: data.friendId }, // 친구 ID를 MessageView의 friend 필드에 저장
       lastViewTime: data.lastViewTime,
     });
-
-    console.log('data.friendId : ', data.friendId);
-    console.log('data lastViewTime : ', data.lastViewTime);
-    // console.log(typeof data.lastViewTime);
   }
 
   /**
