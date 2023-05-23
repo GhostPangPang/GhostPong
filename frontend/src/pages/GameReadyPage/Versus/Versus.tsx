@@ -1,16 +1,17 @@
 import styled from 'styled-components';
 import { Grid, Text, Dropbox, Ghost, GameButton as BaseGameButton } from '@/common';
 import { ReactComponent as Crown } from '@/svgs/crown.svg';
-import { PlayerInfo } from '../mock-data';
+import { MemberInfo } from '@/dto/channel/socket';
+// import { PlayerInfo } from '../mock-data';
 
 interface VersusProps {
-  players: PlayerInfo[];
+  leftPlayer: MemberInfo | null;
+  rightPlayer: MemberInfo | null;
   currentUserId: number;
   items: { label: string; onClick: () => void }[];
 }
-
 interface GhostBoxProps {
-  player: PlayerInfo;
+  player: MemberInfo;
   currentUserId: number;
   items: { label: string; onClick: () => void }[];
 }
@@ -50,7 +51,7 @@ const GhostBox = ({ player, currentUserId, items }: GhostBoxProps) => {
         size={{ height: '100%' }}
       >
         {player.role === 'owner' && <Crown />}
-        {player.id == currentUserId ? (
+        {player.userId == currentUserId ? (
           <NickNameText size="xxl">{player.nickname}</NickNameText>
         ) : (
           <Dropbox items={items} placement="bottomleft">
@@ -65,24 +66,14 @@ const GhostBox = ({ player, currentUserId, items }: GhostBoxProps) => {
   );
 };
 
-export const Versus = ({ players, currentUserId, items }: VersusProps) => {
-  const sortedPlayers = [...players].sort((a, b) => (b.role === 'owner' ? 1 : -1)); // owner가 먼저 나오도록 정렬
-
+export const Versus = ({ leftPlayer, rightPlayer, currentUserId, items }: VersusProps) => {
   return (
     <Grid container="flex" direction="row" alignItems="center" justifyContent="center">
-      {sortedPlayers.length > 0 ? ( // players가 있으면 GhostBox, 없으면 GameButton
-        <GhostBox player={sortedPlayers[0]} currentUserId={currentUserId} items={items} />
-      ) : (
-        <GameButton />
-      )}
+      {leftPlayer ? <GhostBox player={leftPlayer} currentUserId={currentUserId} items={items} /> : <GameButton />}
       <Text size="xxl" weight="bold">
         VS
       </Text>
-      {sortedPlayers.length > 1 ? ( // players가 있으면 GhostBox, 없으면 GameButton
-        <GhostBox player={sortedPlayers[1]} currentUserId={currentUserId} items={items} />
-      ) : (
-        <GameButton />
-      )}
+      {rightPlayer ? <GhostBox player={rightPlayer} currentUserId={currentUserId} items={items} /> : <GameButton />}
     </Grid>
   );
 };
