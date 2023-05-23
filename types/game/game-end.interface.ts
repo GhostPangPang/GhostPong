@@ -1,4 +1,4 @@
-export class GameEnd {
+export interface GameEnd {
   id: string;
   winner: {
     id: number;
