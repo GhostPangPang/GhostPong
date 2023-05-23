@@ -75,7 +75,11 @@ export class GameEngineService {
         loserScore: loser.score,
       });
       await manager.update(User, { id: winner.userId }, { exp: () => `exp + ${point}` });
-      await manager.update(User, { id: loser.userId }, { exp: () => `exp - ${point}` });
+      await manager.update(
+        User,
+        { id: loser.userId },
+        { exp: () => `case when exp > ${point} then exp - ${point} else 0 end` },
+      );
       await manager.update(UserRecord, { id: winner.userId }, { winCount: () => `winCount + 1` });
       await manager.update(UserRecord, { id: loser.userId }, { loseCount: () => `loseCount + 1` });
     });
