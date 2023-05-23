@@ -1,9 +1,6 @@
-import { GameButton } from '@/common/Button/GameButton';
-import { Text } from '@/common/Text';
-import { Grid } from '@/common/Grid';
+import { GameButton, Text, Grid, GameInput } from '@/common';
 import { post } from '@/libs/api';
 import { useState } from 'react';
-import { GameInput } from '@/common';
 
 export const RegisterPage = () => {
   const [nickname, setNickname] = useState<string>('');

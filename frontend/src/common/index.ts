@@ -12,3 +12,5 @@ export * from './RankBadge';
 export * from './Toggle';
 export * from './Input';
 export * from './Modal';
+export * from './Loading';
+export * from './ProgressBar';

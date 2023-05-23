@@ -1,5 +1,6 @@
 import { Avatar, Box, CommonButton, GameButton, GameInput, Grid, Text, Modal, ModalProps } from '@/common';
-import { useBlocked, useInput } from '@/hooks';
+import { useInput } from '@/hooks';
+import { useBlocked } from '@/hooks/blocked';
 import { User } from '@/types/entity';
 
 const BlockFriendItem = ({ blocked }: { blocked: User }) => {

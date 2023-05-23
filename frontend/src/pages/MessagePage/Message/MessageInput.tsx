@@ -1,9 +1,8 @@
 import styled from 'styled-components';
 import { ReactComponent as SendSvg } from '@/svgs/send.svg';
-import { Box } from '@/common/Box';
-import { IconButton } from '@/common/Button';
+import { Box, IconButton } from '@/common';
 import { useInput } from '@/hooks';
-import { useNewMessages } from '@/hooks/useNewMessages';
+import { useNewMessages } from '@/hooks/message/useNewMessages';
 import { useState } from 'react';
 
 const StyledInput = styled.input`

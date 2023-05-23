@@ -1,6 +1,7 @@
 import { Avatar, Box, Grid, Text } from '@/common';
 import { Fragment, useEffect, useRef } from 'react';
-import { useUserInfo, useMessages, useNewMessages } from '@/hooks';
+import { useUserInfo } from '@/hooks/user';
+import { useMessages, useNewMessages } from '@/hooks/message';
 import { useIntersectObserver } from '@/hooks/useIntersectObserver';
 import { Message } from '@/types/entity';
 import { formatTime } from '@/libs/utils';

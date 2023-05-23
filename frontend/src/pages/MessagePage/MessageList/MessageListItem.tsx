@@ -6,7 +6,7 @@ import { ReactComponent as More } from '@/svgs/more.svg';
 import { formatRelativeDate } from '@/libs/utils';
 import { Friend } from '@/types/entity';
 import theme from '@/assets/styles/theme';
-import { useNewMessages } from '@/hooks/useNewMessages';
+import { useNewMessages } from '@/hooks/message/useNewMessages';
 
 export interface MessageListItemProps {
   friend: Friend;

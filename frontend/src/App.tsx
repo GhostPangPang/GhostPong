@@ -1,23 +1,24 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Suspense } from 'react';
-import { MainLayout } from '@/layout/MainLayout';
-import { FooterLayout } from './layout/FooterLayout';
-import { GameLayout } from './layout/GameLayout';
-import { LobbyPage } from '@/pages/LobbyPage';
-import { PrePage } from '@/pages/PrePage';
-import { MessagePage } from '@/pages/MessagePage';
-import { ProfilePage } from '@/pages/ProfilePage';
-import { EditProfilePage } from '@/pages/EditProfilePage';
-import { RegisterPage } from '@/pages/RegisterPage';
-import { GameReadyPage } from './pages/GameReadyPage/GameReadyPage';
+import { MainLayout, FooterLayout, GameLayout } from '@/layout';
+import {
+  LobbyPage,
+  MessagePage,
+  ProfilePage,
+  PrePage,
+  EditProfilePage,
+  RegisterPage,
+  GameReadyPage,
+  GameListPage,
+  FallbackComponent,
+  logError,
+  GamePage,
+} from '@/pages';
+import { Loading } from '@/common';
 import { ErrorBoundary } from 'react-error-boundary';
-import { GameListPage } from './pages/GameListPage';
 import { AuthHandler } from './AuthHandler';
-import { Loading } from './common/Loading/Loading';
 import { SocketHandler } from './SocketHandler';
-import { FallbackComponent, logError } from '@/pages/ErrorFallback';
 import { QueryErrorResetBoundary } from '@tanstack/react-query';
-import { GamePage } from './pages/GamePage';
 
 function App() {
   return (

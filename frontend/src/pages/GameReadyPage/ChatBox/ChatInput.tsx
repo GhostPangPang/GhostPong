@@ -1,9 +1,8 @@
 import styled from 'styled-components';
-import { IconButton } from '@/common/Button';
+import { IconButton, Box } from '@/common';
 import { ReactComponent as SendSvg } from '@/svgs/send.svg';
 import { useInput } from '@/hooks';
 import { useState } from 'react';
-import { Box } from '@/common';
 
 interface ChatInputProps {
   onSend: (message: string) => void;

@@ -1,5 +1,5 @@
 import { get } from '@/libs/api';
-import { useUserInfo } from '@/hooks/useUserInfo';
+import { useUserInfo } from '@/hooks/user/useUserInfo';
 import { UserInfoResponse } from '@/dto/user/response';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';

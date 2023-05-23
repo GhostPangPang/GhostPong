@@ -1,9 +1,9 @@
 import { GameButton, Grid, InputBox, Text } from '@/common';
-import { useInput } from '@/hooks/useInput';
 import { GameDropdown } from './GameDropdown';
 import { validatePassword, validateTitle } from '@/libs/utils/validate';
 import { useState } from 'react';
-import { useChannelMutation } from '@/hooks/useChannel';
+import { useInput } from '@/hooks';
+import { useChannelMutation } from '@/hooks/channel';
 
 interface GameTypeSettingProps {
   onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;

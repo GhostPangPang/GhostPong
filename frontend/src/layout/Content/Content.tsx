@@ -1,4 +1,4 @@
-import { Grid } from '@/common/Grid';
+import { Grid } from '@/common';
 
 type ContentProps = {
   children?: React.ReactNode;
