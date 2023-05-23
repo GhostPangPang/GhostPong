@@ -11,6 +11,7 @@ import {
 import { Cache } from 'cache-manager';
 import { Server, Socket } from 'socket.io';
 
+import { MUTE_EXPIRES_IN } from '../common/constant';
 import { corsOption } from '../common/option/cors.option';
 import { createWsException } from '../common/util';
 import { ConnectionGateway } from '../connection/connection.gateway';
@@ -19,12 +20,9 @@ import { Channel } from '../repository/model';
 
 import { ChannelIdDto } from './dto/socket/channelId.dto';
 import ChatDto from './dto/socket/chat.dto';
+import { OperationDto } from './dto/socket/operation.dto';
 
-@UsePipes(
-  new ValidationPipe({
-    exceptionFactory: createWsException,
-  }),
-)
+@UsePipes(new ValidationPipe({ exceptionFactory: createWsException }))
 @WebSocketGateway({ cors: corsOption })
 export class ChannelGateway {
   @WebSocketServer()
@@ -41,7 +39,7 @@ export class ChannelGateway {
   logger: Logger = new Logger('ChannelGateway');
 
   @SubscribeMessage('chat')
-  async handleMessage(@ConnectedSocket() socket: Socket, @MessageBody() data: ChatDto) {
+  async handleChat(@ConnectedSocket() socket: Socket, @MessageBody() data: ChatDto) {
     if (data.senderId !== socket.data.userId) {
       throw new WsException('유저 정보가 일치하지 않습니다.');
     }
@@ -53,6 +51,38 @@ export class ChannelGateway {
       throw new WsException('채널에 참여하지 않은 유저입니다.');
     }
     socket.to(data.channelId).emit('chat', data);
+  }
+
+  @SubscribeMessage('mute')
+  async handleMute(@ConnectedSocket() socket: Socket, @MessageBody() data: OperationDto) {
+    /**
+     * - channel 존재여부 확인한다.
+     * - socket.data.userId의 role 확인하고 mute 권한이 있는지 확인한다.
+     * - target의 채널 존재 여부와 role 확인하고 userId가 target을 mute할 수 있는지 확인
+     * - mute 한ㄷㅏ.
+     */
+    const channel = this.checkExistChannel(data.channelId);
+    const user = channel.users.get(socket.data.userId);
+    if (user === undefined) {
+      throw new WsException('채널에 참여하지 않은 유저입니다.');
+    }
+    if (user.role === 'member') {
+      return { message: '뮤트 권한이 없습니다.' };
+    }
+    if (data.targetId === socket.data.userId) {
+      return { message: '자기 자신은 뮤트할 수 없습니다.' };
+    }
+    const target = channel.users.get(data.targetId);
+    if (target === undefined) {
+      throw new WsException('뮤트 대상이 채널에 참여하지 않은 유저입니다.');
+    }
+    if (target.role === 'owner') {
+      return { message: '채널 오너는 뮤트할 수 없습니다.' };
+    } // 여기까지 오면 user.role >= target.role
+    if (channel.isInGame === true && target.isPlayer === true) {
+      return { message: '게임 중인 유저는 뮤트할 수 없습니다.' };
+    }
+    await this.cacheManager.set(`mute-${data.targetId}`, true, MUTE_EXPIRES_IN);
   }
 
   /**

@@ -101,7 +101,6 @@ describe('ChannelService', () => {
         nickname: 'test',
         image: '/asset/profile-1.png',
         role: 'owner',
-        isMuted: false,
         isPlayer: true,
       });
       expect(password).toBeUndefined();
@@ -130,7 +129,6 @@ describe('ChannelService', () => {
         nickname: 'test',
         image: '/asset/profile-1.png',
         role: 'owner',
-        isMuted: false,
         isPlayer: true,
       });
       expect(password).toBeUndefined();
@@ -160,7 +158,6 @@ describe('ChannelService', () => {
         nickname: 'test',
         image: '/asset/profile-1.png',
         role: 'owner',
-        isMuted: false,
         isPlayer: true,
       });
       // password 가 설정되었는지 확인
@@ -182,7 +179,6 @@ describe('ChannelService', () => {
         nickname: 'test',
         image: '/asset/profile-1.png',
         role: 'owner',
-        isMuted: false,
         isPlayer: true,
       };
       const channel: Channel = {
@@ -204,7 +200,6 @@ describe('ChannelService', () => {
         nickname: 'test',
         image: '/asset/profile-1.png',
         role: 'owner',
-        isMuted: false,
         isPlayer: true,
       };
       const channel: Channel = {
@@ -352,7 +347,6 @@ describe('ChannelService', () => {
         nickname: 'test',
         image: '/asset/profile-1.png',
         role: 'owner',
-        isMuted: false,
         isPlayer: true,
       };
       const channel: Channel = {
@@ -402,7 +396,6 @@ describe('ChannelService', () => {
         nickname: 'test',
         image: '/asset/profile-1.png',
         role: 'owner',
-        isMuted: false,
         isPlayer: true,
       };
       const observer: ChannelUser = {
@@ -410,7 +403,6 @@ describe('ChannelService', () => {
         nickname: 'test',
         image: '/asset/profile-1.png',
         role: 'member',
-        isMuted: false,
         isPlayer: false,
       };
       const channel: Channel = {
@@ -457,7 +449,6 @@ describe('ChannelService', () => {
         nickname: 'test',
         image: '/asset/profile-1.png',
         role: 'owner',
-        isMuted: false,
         isPlayer: true,
       };
       const channel: Channel = {
