@@ -13,6 +13,7 @@ import { Response } from 'express';
 import { ExtractUserId } from '../common/decorator/extract-user-id.decorator';
 import { ErrorResponseDto } from '../common/dto/error-response.dto';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
+import { CheckUserIdPipe } from '../common/pipe/check-user-id.pipe';
 import { IdToChannelPipe } from '../common/pipe/id-to-channel.pipe';
 import { NonNegativeIntPipe } from '../common/pipe/non-negative-int.pipe';
 import { Channel } from '../repository/model/channel';
@@ -95,5 +96,26 @@ export class ChannelController {
     @Param('channelId', IdToChannelPipe) channel: Channel,
   ): Promise<SuccessResponseDto> {
     return this.channelService.joinChannel(myId, joinChannelRequestDto, channel);
+  }
+
+  /**
+   * @summary 채널 초대하기
+   * @description POST /channel/:channelId/invite
+   */
+  @ApiOperation({ summary: '채널 초대하기' })
+  @ApiNotFoundResponse({
+    type: ErrorResponseDto,
+    description: '존재하지 않는 채널, 존재하지 않는 소켓',
+  })
+  @ApiForbiddenResponse({ type: ErrorResponseDto, description: '채널에 참여중인 유저가 아님, 친구가 아님' })
+  @ApiHeaders([{ name: 'x-my-id', description: '내 auth 아이디 (임시값)' }])
+  @HttpCode(HttpStatus.OK)
+  @Post(':channelId/invite')
+  inviteChannel(
+    @ExtractUserId() myId: number,
+    @Param('channelId', IdToChannelPipe) channel: Channel,
+    @Body('userId', NonNegativeIntPipe, CheckUserIdPipe) userId: number,
+  ): Promise<SuccessResponseDto> {
+    return this.channelService.inviteChannel(myId, userId, channel);
   }
 }

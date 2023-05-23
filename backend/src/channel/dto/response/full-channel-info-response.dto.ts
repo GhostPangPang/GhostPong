@@ -15,4 +15,9 @@ export class FullChannelInfoResponseDto implements FullChannelInfoResponse {
    * @description 채널이 게임 중인지 여부
    */
   isInGame: boolean;
+
+  /**
+   * @description 채널 이름
+   */
+  name: string;
 }

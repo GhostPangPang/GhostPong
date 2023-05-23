@@ -1,4 +1,4 @@
-import { IsDateString, IsInt, IsNotEmpty, IsString, Max, MaxLength, Min } from 'class-validator';
+import { IsDateString, IsInt, IsNotEmpty, IsString, Max, MaxLength, Min, Length } from 'class-validator';
 
 import { Chat } from '@/types/channel/socket';
 
@@ -8,6 +8,7 @@ export default class ChatDto implements Chat {
    * @example 4
    */
   @IsString()
+  @Length(21, 21)
   channelId: string;
 
   /**
