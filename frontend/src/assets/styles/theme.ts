@@ -16,6 +16,7 @@ const color = {
   gray150: '#A1A1A1',
   gray200: '#4A4A4A',
   gray300: '#3D3D3D',
+  gray500: '#222222',
   surface,
   surfaceDark,
   surfaceMix: mix(0.4, surface, surfaceDark),

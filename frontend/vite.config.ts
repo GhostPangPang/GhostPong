@@ -42,6 +42,7 @@ export default ({ mode }) => {
         '@/libs': path.resolve(__dirname, './src/libs'),
         '@/types': path.resolve(__dirname, './src/types'),
         '@/dto': path.resolve(__dirname, '../types'),
+        '@/game': path.resolve(__dirname, '../game'),
       },
     },
     server: {

@@ -34,7 +34,8 @@
       "@/stores/*": ["src/stores/*"],
       "@/libs/*": ["src/libs/*"],
       "@/types/*": ["src/types/*"],
-      "@/dto/*": ["../types/*"]
+      "@/dto/*": ["../types/*"],
+      "@/game/*": ["../game/*"]
     }
   },
   "include": ["../types", "src"],
