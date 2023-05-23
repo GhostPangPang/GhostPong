@@ -6,7 +6,7 @@ import { Suspense } from 'react';
 export const Message = () => {
   return (
     <>
-      <Box display="flex" direction="column-reverse" height="100%" backgroundColor="surfaceMix" overflowY="hidden">
+      <Box display="flex" direction="column" height="100%" backgroundColor="surfaceMix" overflowY="hidden">
         <Suspense fallback={<></>}>
           <MessageContent />
         </Suspense>

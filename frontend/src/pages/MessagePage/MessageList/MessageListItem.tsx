@@ -19,7 +19,7 @@ const compareDate = (date1: string | Date, date2: string | Date) => {
 };
 
 export const MessageListItem = ({ friend }: MessageListItemProps) => {
-  const { newMessages, changeMessageRoom, newMessageIdList, viewMessage } = useNewMessages();
+  const { currentFriend, changeMessageRoom, newMessageIdList, viewMessage } = useNewMessages();
 
   const items = [
     { label: '친구추가', onClick: () => console.log('친구추가') },
@@ -35,7 +35,7 @@ export const MessageListItem = ({ friend }: MessageListItemProps) => {
   return (
     <StyledMessageItemWrapper
       onClick={handleClick}
-      style={{ backgroundColor: newMessages.friend?.id === friend.id ? theme.color.surfaceDark : '' }}
+      style={{ backgroundColor: currentFriend?.id === friend.id ? theme.color.surfaceDark : '' }}
     >
       <Grid container="flex" alignItems="center">
         <Grid container="flex" direction="column" alignItems="center" size={{ width: '3rem' }}>

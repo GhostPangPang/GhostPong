@@ -59,35 +59,35 @@ export const MessageContent = () => {
     <Grid
       ref={messageBoxRef}
       container="flex"
-      direction="column"
+      direction="column-reverse"
       rowGap={2}
       size={{ padding: 'sm', overflowY: 'auto' }}
     >
-      <Text ref={messageRef} size="xxs" color="gray100" style={{ alignSelf: 'center', paddingBottom: '5rem' }}>
-        ──────────── 마지막 메세지 입니다 ────────────
-      </Text>
+      {newMessages.map((data) => (
+        <MessageContentItem
+          key={nanoid()}
+          side={data.receiverId == userInfo.id ? 'right' : 'left'}
+          content={data.content}
+          createdAt={new Date()}
+        />
+      ))}
       {pages.map((group, i) => (
         <Fragment key={i}>
-          {group.reverse().map((item) => {
+          {group.map((item) => {
             return (
               <MessageContentItem
                 key={nanoid()}
-                side={item.senderId === userInfo.id ? 'right' : 'left'}
+                side={item.senderId === userInfo.id ? 'left' : 'right'}
                 content={item.content}
                 createdAt={item.createdAt}
               />
             );
           })}
-          {newMessages.messages.map((data) => (
-            <MessageContentItem
-              key={nanoid()}
-              side={data.receiverId == userInfo.id ? 'right' : 'left'}
-              content={data.content}
-              createdAt={new Date()}
-            />
-          ))}
         </Fragment>
       ))}
+      <Text ref={messageRef} size="xxs" color="gray100" style={{ alignSelf: 'center', paddingBottom: '5rem' }}>
+        ──────────── 마지막 메세지 입니다 ────────────
+      </Text>
     </Grid>
   );
 };
