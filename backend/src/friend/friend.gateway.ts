@@ -41,10 +41,8 @@ export class FriendGateway {
   addFriendToRoom(myId: number, userId: number) {
     const mySocketId = this.socketIdRepository.find(myId)?.socketId;
     const friendSocketId = this.socketIdRepository.find(userId)?.socketId;
-    if (mySocketId !== undefined) {
+    if (mySocketId !== undefined && friendSocketId !== undefined) {
       this.server.in(mySocketId).socketsJoin(`user-${userId}`); //join my socket to friend's room
-    }
-    if (friendSocketId !== undefined) {
       this.server.in(friendSocketId).socketsJoin(`user-${myId}`); // join friend's socket to my room
     }
   }
@@ -57,10 +55,8 @@ export class FriendGateway {
   removeFriendFromRoom(myId: number, userId: number) {
     const mySocketId = this.socketIdRepository.find(myId)?.socketId;
     const friendSocketId = this.socketIdRepository.find(userId)?.socketId;
-    if (mySocketId !== undefined) {
+    if (mySocketId !== undefined && friendSocketId !== undefined) {
       this.server.in(mySocketId).socketsLeave(`user-${userId}`);
-    }
-    if (friendSocketId !== undefined) {
       this.server.in(friendSocketId).socketsLeave(`user-${myId}`);
     }
   }
