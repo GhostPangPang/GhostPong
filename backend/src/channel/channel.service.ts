@@ -172,6 +172,12 @@ export class ChannelService {
     const user = this.checkUserInChannel(myId, channel);
     let count = 0;
 
+    if (channel.isInGame === true) {
+      throw new ForbiddenException('게임 진행중에 처리할 수 없습니다.');
+    }
+    if (user.isPlayer === true) {
+      throw new ConflictException('이미 플레이어입니다.');
+    }
     for (const users of channel.users.values()) {
       if (users.isPlayer === true) {
         ++count;
