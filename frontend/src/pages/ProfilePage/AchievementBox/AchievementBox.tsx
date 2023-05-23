@@ -1,7 +1,5 @@
 import React from 'react';
-import { Grid } from '@/common/Grid';
-import { Box } from '@/common/Box';
-import { Text } from '@/common/Text';
+import { Grid, Box, Text } from '@/common';
 
 export interface AchievementBoxProps {
   children?: React.ReactNode;

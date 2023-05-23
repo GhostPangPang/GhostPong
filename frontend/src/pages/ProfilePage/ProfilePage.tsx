@@ -1,15 +1,12 @@
 import { getRank } from '@/libs/utils/rank';
-import { Grid } from '@/common/Grid';
-import { Text } from '@/common/Text';
-import { RankBadge } from '@/common/RankBadge';
-import { Avatar } from '@/common/Avatar';
+import { Grid, Text, RankBadge, Avatar } from '@/common';
 import { InfoBox } from './InfoBox';
 import { AchievementBox } from './AchievementBox';
 import { HistroyBox } from './HistoryBox';
 import { useMemo } from 'react';
 import { ReactComponent as Achievement1 } from '@/svgs/achievment1.svg';
 import { ReactComponent as Achievement2 } from '@/svgs/achievment2.svg';
-import { useProfileData } from '@/hooks/useProfileData';
+import { useProfileData } from '@/hooks/user/useProfileData';
 
 export const ProfilePage = () => {
   // const { userInfo } = useUserInfo();

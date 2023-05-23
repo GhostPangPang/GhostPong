@@ -1,4 +1,4 @@
-import { CommonButton } from '@/common/Button/CommonButton';
+import { CommonButton } from '@/common';
 
 interface UploadFileProps {
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;

@@ -1,4 +1,5 @@
 import { Grid, Text, CommonButton } from '@/common';
+
 export const logError = (error: Error, info: { componentStack: string }) => {
   // Do something with the error, e.g. log to an external API
   console.log(error, info);

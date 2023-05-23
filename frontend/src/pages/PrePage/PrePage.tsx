@@ -1,5 +1,4 @@
-import { GameButton } from '@/common/Button/GameButton';
-import { Grid } from '@/common/Grid';
+import { GameButton, Grid } from '@/common';
 import { ReactComponent as Logo } from '@/svgs/logo-lg.svg';
 
 export const PrePage = () => {

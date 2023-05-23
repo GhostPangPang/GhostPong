@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { newChannelDataState } from '@/stores';
-import { useUserInfo } from './useUserInfo';
+import { useUserInfo } from '../user/useUserInfo';
 
 const CHANNEL = '/channel';
 

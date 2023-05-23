@@ -1,9 +1,9 @@
+import { Suspense, useEffect, useState } from 'react';
 import { Grid, GameButton } from '@/common';
 import { MessageList } from './MessageList';
 import { Message } from './Message';
-import { Suspense, useEffect, useState } from 'react';
 import { FriendsModal } from './FriendsModal';
-import { BlockModal } from './BlockModal/BlockModal';
+import { BlockModal } from './BlockModal';
 import { useSetRecoilState } from 'recoil';
 import { socketState } from '@/stores';
 

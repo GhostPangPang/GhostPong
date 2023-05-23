@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { Grid, Text, Dropbox, Ghost, GameButton as BaseGameButton } from '@/common';
 import { ReactComponent as Crown } from '@/svgs/crown.svg';
 import { MemberInfo } from '@/dto/channel/socket';
-import { useUserInfo } from '@/hooks';
+import { useUserInfo } from '@/hooks/user';
 // import { PlayerInfo } from '../mock-data';
 
 interface VersusProps {

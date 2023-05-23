@@ -1,12 +1,8 @@
 import { ReactComponent as Logo } from '@/svgs/logo-sm.svg';
 import { ResponsiveProps } from '@/types/style';
-import { Grid } from '@/common/Grid';
-import { Avatar } from '@/common/Avatar';
-import { Dropbox } from '@/common/Dropbox';
-import { Text } from '@/common/Text';
-import { RankProgressBar } from '@/common/ProgressBar/RankProgressBar';
+import { Grid, Avatar, Dropbox, Text, RankProgressBar } from '@/common';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/hooks/auth';
 import { removeAccessToken } from '@/libs/api/auth';
 
 type HeaderProps = Pick<ResponsiveProps, 'xs' | 'md' | 'lg'>;

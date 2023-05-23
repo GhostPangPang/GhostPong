@@ -1,6 +1,4 @@
-import { Ghost } from '@/common';
-import { GameButton } from '@/common/Button/GameButton';
-import { Grid } from '@/common/Grid';
+import { Ghost, GameButton, Grid } from '@/common';
 import { useNavigate } from 'react-router-dom';
 
 export const LobbyPage = () => {

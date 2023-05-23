@@ -1,7 +1,5 @@
 import React from 'react';
-import { Text } from '@/common/Text';
-import { Grid } from '@/common/Grid';
-import { Box } from '@/common/Box';
+import { Text, Grid, Box } from '@/common';
 
 export interface InfoBoxProps {
   title: string;

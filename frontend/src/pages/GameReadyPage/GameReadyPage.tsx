@@ -3,11 +3,10 @@ import { Versus } from './Versus';
 import { ChatBox } from './ChatBox';
 import { ObserverBox } from './ObserverBox';
 import { Grid, GameButton } from '@/common';
-// import { chnnelInfoMockData, CurrentUserId } from './mock-data';
 import { useRecoilValue } from 'recoil';
 import { newChannelDataState } from '@/stores';
-import { useChannelInfo } from '@/hooks/useChannel';
-import { useAuth } from '@/hooks/useAuth';
+import { useChannelInfo } from '@/hooks/channel';
+import { useAuth } from '@/hooks/auth';
 import { useLocation } from 'react-router-dom';
 
 // useItem hook 으로 빼기

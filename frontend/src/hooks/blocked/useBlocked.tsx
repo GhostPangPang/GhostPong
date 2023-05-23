@@ -1,7 +1,7 @@
 import { get, post, del } from '@/libs/api';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { BlockedUserResponse } from '@/dto/blocked/response';
-import { FRIEND } from './useFriend';
+import { FRIEND } from '../friend/useFriend';
 
 type BlockedResponse = BlockedUserResponse['blocked'];
 

@@ -1,6 +1,6 @@
-import { Avatar, Box, CommonButton, GameButton, GameInput, Grid, Text } from '@/common';
-import { Modal, ModalProps } from '@/common/Modal/Modal';
-import { useFriend, useInput } from '@/hooks';
+import { Avatar, Box, CommonButton, GameButton, GameInput, Grid, Text, Modal, ModalProps } from '@/common';
+import { useInput } from '@/hooks';
+import { useFriend } from '@/hooks/friend';
 import { User } from '@/types/entity';
 
 const FriendRequestItem = ({ friendId, friend }: { friendId: number; friend: User }) => {

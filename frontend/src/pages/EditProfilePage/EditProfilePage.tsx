@@ -2,14 +2,11 @@ import { Grid, Text, Box, Avatar, CommonButton, InputBox, Toggle, IconButton } f
 import { ReactComponent as TrashIcon } from '@/svgs/trash.svg';
 import styled from 'styled-components';
 import { UploadFile } from './UploadFile';
-import { useFileUpload } from '@/hooks/useFileUpload';
-import { usePatchNickName } from '@/hooks/usePatchNickName';
+import { useFileUpload } from '@/hooks/user/useFileUpload';
+import { usePatchNickName } from '@/hooks/user';
 import { useState } from 'react';
-import { useAuth } from '@/hooks/useAuth';
-import { use2FA } from '@/hooks/use2FA';
-import { useInput } from '@/hooks/useInput';
-import { use2FAMutation, use2FADeleteMutation } from '@/hooks/use2FAMutate';
-import { use2FAVerifyMutation } from '@/hooks/use2FAVerfiyMutate';
+import { useAuth, use2FA, use2FAMutation, use2FADeleteMutation, use2FAVerifyMutation } from '@/hooks/auth';
+import { useInput } from '@/hooks';
 
 interface EditFormProps {
   desc: string;
