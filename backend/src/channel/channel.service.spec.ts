@@ -5,7 +5,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { User } from '../entity/user.entity';
 import { CreateChannelRequestDto } from './dto/request/create-channel-request.dto';
 import { Repository } from 'typeorm';
-import { ForbiddenException, NotFoundException } from '@nestjs/common';
+import { ConflictException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { Channel, ChannelUser } from '../repository/model/channel';
 import { PARTICIPANT_LIMIT } from '../common/constant';
 import { VisibleChannelRepository } from '../repository/visible-channel.repository';
@@ -469,6 +469,97 @@ describe('ChannelService', () => {
         expect(e).toBeInstanceOf(ForbiddenException);
         expect(e.message).toEqual('친구만 초대 가능합니다.');
       }
+    });
+  });
+
+  describe('participateAsPlayer', () => {
+    const player: ChannelUser = {
+      id: 1,
+      nickname: 'test',
+      image: '/asset/profile-1.png',
+      role: 'owner',
+      isMuted: false,
+      isPlayer: true,
+    };
+    it('게임이 진행중인 경우', async () => {
+      const channel: Channel = {
+        id: 'aaa',
+        mode: 'public',
+        name: 'test',
+        isInGame: true,
+        users: new Map([[1, player]]),
+        bannedUserIdList: [],
+      };
+      try {
+        await service.participateAsPlayer(1, channel);
+      } catch (e) {
+        expect(e).toBeInstanceOf(ForbiddenException);
+        expect(e.message).toEqual('게임 진행중에 처리할 수 없습니다.');
+      }
+    });
+    it('이미 플레이어인 경우', async () => {
+      const channel: Channel = {
+        id: 'aaa',
+        mode: 'public',
+        name: 'test',
+        isInGame: false,
+        users: new Map([[1, player]]),
+        bannedUserIdList: [],
+      };
+      try {
+        await service.participateAsPlayer(1, channel);
+      } catch (e) {
+        expect(e).toBeInstanceOf(ConflictException);
+        expect(e.message).toEqual('이미 플레이어입니다.');
+      }
+    });
+    it('플레이어 정원이 다 찬 경우', async () => {
+      const user: ChannelUser = {
+        id: 3,
+        nickname: 'test',
+        image: '/asset/profile-1.png',
+        role: 'member',
+        isMuted: false,
+        isPlayer: false,
+      };
+      const channel: Channel = {
+        id: 'aaa',
+        mode: 'public',
+        name: 'test',
+        isInGame: false,
+        users: new Map([[1, player]]),
+        bannedUserIdList: [],
+      };
+      channel.users.set(2, player);
+      channel.users.set(3, user);
+      try {
+        await service.participateAsPlayer(3, channel);
+      } catch (e) {
+        expect(e).toBeInstanceOf(ForbiddenException);
+        expect(e.message).toEqual('플레이어 정원이 찼습니다.');
+      }
+    });
+    it('성공적으로 플레이어로 참여', async () => {
+      const user: ChannelUser = {
+        id: 2,
+        nickname: 'test',
+        image: '/asset/profile-1.png',
+        role: 'member',
+        isMuted: false,
+        isPlayer: false,
+      };
+      const channel: Channel = {
+        id: 'aaa',
+        mode: 'public',
+        name: 'test',
+        isInGame: false,
+        users: new Map([[1, user]]),
+        bannedUserIdList: [],
+      };
+      channel.users.set(2, user);
+      expect(await service.participateAsPlayer(2, channel)).toEqual({
+        message: '플레이어가 되었습니다.',
+      });
     });
   });
 });
