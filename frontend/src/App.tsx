@@ -17,6 +17,7 @@ import { Loading } from './common/Loading/Loading';
 import { SocketHandler } from './SocketHandler';
 import { FallbackComponent, logError } from '@/pages/ErrorFallback';
 import { QueryErrorResetBoundary } from '@tanstack/react-query';
+import { GamePage } from './pages/GamePage';
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
                 </Route>
                 <Route element={<GameLayout />}>
                   <Route path="/channel/:gameId" element={<GameReadyPage />} />
+                  <Route path="/game" element={<GamePage type={'leftPlayer'} channelId={''} />} />
                 </Route>
                 <Route path="/pre" element={<PrePage />} />
                 <Route path="/auth?/" element={<AuthHandler />} />
