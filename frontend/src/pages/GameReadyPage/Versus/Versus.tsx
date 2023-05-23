@@ -2,17 +2,16 @@ import styled from 'styled-components';
 import { Grid, Text, Dropbox, Ghost, GameButton as BaseGameButton } from '@/common';
 import { ReactComponent as Crown } from '@/svgs/crown.svg';
 import { MemberInfo } from '@/dto/channel/socket';
+import { useUserInfo } from '@/hooks';
 // import { PlayerInfo } from '../mock-data';
 
 interface VersusProps {
   leftPlayer: MemberInfo | null;
   rightPlayer: MemberInfo | null;
-  currentUserId: number;
   items: { label: string; onClick: () => void }[];
 }
 interface GhostBoxProps {
   player: MemberInfo;
-  currentUserId: number;
   items: { label: string; onClick: () => void }[];
 }
 
@@ -39,7 +38,9 @@ const GameButton = () => {
   );
 };
 
-const GhostBox = ({ player, currentUserId, items }: GhostBoxProps) => {
+const GhostBox = ({ player, items }: GhostBoxProps) => {
+  const { userInfo } = useUserInfo();
+
   return (
     <Grid container="flex" direction="column" alignItems="center" justifyContent="center">
       <Grid
@@ -51,7 +52,7 @@ const GhostBox = ({ player, currentUserId, items }: GhostBoxProps) => {
         size={{ height: '100%' }}
       >
         {player.role === 'owner' && <Crown />}
-        {player.userId == currentUserId ? (
+        {player.userId == userInfo.id ? (
           <NickNameText size="xxl">{player.nickname}</NickNameText>
         ) : (
           <Dropbox items={items} placement="bottomleft">
@@ -66,14 +67,14 @@ const GhostBox = ({ player, currentUserId, items }: GhostBoxProps) => {
   );
 };
 
-export const Versus = ({ leftPlayer, rightPlayer, currentUserId, items }: VersusProps) => {
+export const Versus = ({ leftPlayer, rightPlayer, items }: VersusProps) => {
   return (
     <Grid container="flex" direction="row" alignItems="center" justifyContent="center">
-      {leftPlayer ? <GhostBox player={leftPlayer} currentUserId={currentUserId} items={items} /> : <GameButton />}
+      {leftPlayer ? <GhostBox player={leftPlayer} items={items} /> : <GameButton />}
       <Text size="xxl" weight="bold">
         VS
       </Text>
-      {rightPlayer ? <GhostBox player={rightPlayer} currentUserId={currentUserId} items={items} /> : <GameButton />}
+      {rightPlayer ? <GhostBox player={rightPlayer} items={items} /> : <GameButton />}
     </Grid>
   );
 };

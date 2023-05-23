@@ -1,12 +1,12 @@
 export const BAR_HEIGHT = 10;
 export const BAR_WIDTH = 1;
-export const BAR_PADDING = 1;
+export const BAR_PADDING = 3;
 
 export const CANVASE_WIDTH = 100;
 export const CANVASE_HEIGHT = 50;
 
-export const BALL_RADIUS = 2;
-export const BALL_INITIAL_SPEED = 2;
+export const BALL_RADIUS = 1;
+export const BALL_INITIAL_SPEED = 0.5;
 
 export const DEGREE = Math.PI / 4; // 45도
 
@@ -33,7 +33,7 @@ export class Player {
     this.userId = userId;
     this.score = 0;
     this.x = x;
-    this.y = CANVASE_WIDTH / 2;
+    this.y = CANVASE_HEIGHT / 2;
     this.width = BAR_WIDTH;
     this.height = BAR_HEIGHT;
   }

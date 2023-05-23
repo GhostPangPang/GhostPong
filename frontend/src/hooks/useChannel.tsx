@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { newChannelDataState } from '@/stores';
+import { useUserInfo } from './useUserInfo';
 
 const CHANNEL = '/channel';
 
@@ -59,10 +60,13 @@ const postJoinChannel = async ({ mode, password, id }: postJoinChannelProps) => 
   return await post<ApiResponse>(CHANNEL + `/${id}`, { mode, password });
 };
 
-export const useChannelInfo = (id: string, currentUserId: number) => {
+export const useChannelInfo = (id: string) => {
   const newChannelData = useRecoilValue(newChannelDataState);
   const setNewChannelData = useSetRecoilState(newChannelDataState);
   const navigate = useNavigate();
+  const {
+    userInfo: { id: currentUserId },
+  } = useUserInfo();
 
   const { data: channelInfo = initialChannelInfoData, isError } = useQuery<FullChannelInfoResponse, ApiError>({
     queryKey: [CHANNEL, id],
