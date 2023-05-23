@@ -14,6 +14,7 @@ import { ChannelRole, MemberInfo, UserId } from '@/types/channel';
 
 import { PARTICIPANT_LIMIT } from '../common/constant';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
+import { ConnectionGateway } from '../connection/connection.gateway';
 import { Friendship } from '../entity/friendship.entity';
 import { User } from '../entity/user.entity';
 import {
@@ -43,6 +44,7 @@ export class ChannelService {
     private readonly userRepository: Repository<User>,
     @InjectRepository(Friendship)
     private readonly friendshipRepository: Repository<Friendship>,
+    private readonly connectionGateway: ConnectionGateway,
   ) {}
   logger: Logger = new Logger('ChannelService');
 
