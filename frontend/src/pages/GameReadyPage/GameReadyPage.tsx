@@ -3,12 +3,11 @@ import { Versus } from './Versus';
 import { ChatBox } from './ChatBox';
 import { ObserverBox } from './ObserverBox';
 import { Grid, GameButton } from '@/common';
-import { useRecoilValue } from 'recoil';
-import { newChannelDataState } from '@/stores';
-import { useChannelInfo } from '@/hooks/channel';
-import { useAuth } from '@/hooks/auth';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { newChannelDataState, socketState } from '@/stores';
+import { useEffect } from 'react';
+import { useChannelInfo, useLeaveChannel } from '@/hooks/channel';
 import { useLocation } from 'react-router-dom';
-
 // useItem hook 으로 빼기
 export const itemGenerator = (role: 'owner' | 'admin' | 'member' | undefined) => {
   switch (role) {
@@ -60,8 +59,8 @@ export const itemGenerator = (role: 'owner' | 'admin' | 'member' | undefined) =>
 };
 
 export const GameReadyPage = () => {
-  // const { userInfo } = useAuth();
-  // const currentUserId = userInfo.id;
+  const setSocket = useSetRecoilState(socketState);
+  const { leaveChannel } = useLeaveChannel();
 
   const { pathname } = useLocation();
   const channelId = pathname.replace('/channel/', '');
@@ -69,6 +68,31 @@ export const GameReadyPage = () => {
   useChannelInfo(channelId);
 
   const newChannelData = useRecoilValue(newChannelDataState);
+
+  useEffect(() => {
+    setSocket((prev) => ({ ...prev, channel: true })); // 이것도 리팩토링 고민해보기
+
+    return () => setSocket((prev) => ({ ...prev, channel: false }));
+  }, []);
+
+  // unload 이벤트는 브라우저가 닫히거나 페이지를 떠날 때 발생합니다.
+  useEffect(() => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = '';
+      return '';
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    window.onpopstate = function () {
+      leaveChannel(channelId);
+      alert('뒤로가기를 누르면 채널에서 나가집니다.');
+    };
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
 
   return (
     <>
@@ -107,21 +131,3 @@ export const GameReadyPage = () => {
     </>
   );
 };
-
-// export const GamePageWrapper = ({ children }: { children: ReactNode }) => {
-//   const items = itemGenerator('owner');
-
-//   return (
-//     <>
-//       <Grid container="flex" direction="row" alignItems="center" justifyContent="center" flexGrow={1}>
-//         <RoomInfo name={name} />
-//       </Grid>
-//       <Grid container="flex" direction="row" alignItems="center" justifyContent="center" flexGrow={1}>
-//         {children}
-//       </Grid>
-//       <Grid container="flex" direction="row" alignItems="center" justifyContent="center" flexGrow={1}>
-//         <Footer observers={observers} currentUserId={CurrentUserId} items={items} />
-//       </Grid>
-//     </>
-//   );
-// };
