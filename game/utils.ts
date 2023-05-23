@@ -4,9 +4,9 @@ import {
   CANVASE_WIDTH,
   DEGREE,
   GameData,
+  BAR_WIDTH,
   Ball,
   Player,
-  BAR_PADDING,
 } from './game-data';
 
 export function resetBallData(ball: Ball) {
@@ -44,7 +44,7 @@ export function checkPlayerCollision(game: GameData): boolean {
   if (game.ball.x < CANVASE_WIDTH / 2) {
     const player = game.leftPlayer;
     if (
-      game.ball.x - game.ball.radius < player.x + BAR_PADDING &&
+      game.ball.x - game.ball.radius < player.x + BAR_WIDTH &&
       game.ball.y < player.y + player.height / 2 &&
       game.ball.y > player.y - player.height / 2
     ) {
