@@ -21,6 +21,7 @@ import { SocketIdRepository } from '../repository';
 import { LastMessageViewDto } from './dto/socket/last-message-view.dto';
 import { MesssageDto } from './dto/socket/message.dto';
 
+@UsePipes(new ValidationPipe({ exceptionFactory: createWsException }))
 @WebSocketGateway({ cors: corsOption })
 export class MessageGateway {
   @WebSocketServer()
@@ -45,7 +46,6 @@ export class MessageGateway {
    * @param socket
    * @param data
    */
-  @UsePipes(new ValidationPipe({ exceptionFactory: createWsException }))
   @SubscribeMessage('message')
   async handleMessage(@ConnectedSocket() socket: Socket, @MessageBody() data: MesssageDto): Promise<void> {
     console.log('friend id is ', data.id);
@@ -70,7 +70,6 @@ export class MessageGateway {
    * @param socket
    * @param data
    */
-  @UsePipes(new ValidationPipe({ exceptionFactory: createWsException }))
   @SubscribeMessage('last-message-view')
   async handleLeaveMessageRoom(
     @ConnectedSocket() socket: Socket,
