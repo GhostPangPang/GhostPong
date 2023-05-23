@@ -1,11 +1,12 @@
 import { emitEvent } from '@/libs/api';
-import { newMessageIdListState, newMessagesState } from '@/stores';
+import { newMessageIdListState, newMessagesSelector, newMessagesState } from '@/stores';
 import { Friend } from '@/types/entity';
-import { useRecoilCallback, useRecoilState } from 'recoil';
+import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 import { MessageEvent } from '@/constants/event';
 
 export const useNewMessages = () => {
-  const [newMessages, setNewMessages] = useRecoilState(newMessagesState);
+  const newMessages = useRecoilValue(newMessagesSelector);
+  const [newMessagesInfo, setNewMessagesInfo] = useRecoilState(newMessagesState);
   const [newMessageIdList, setNewMessageIdList] = useRecoilState(newMessageIdListState);
 
   const changeMessageRoom = useRecoilCallback(({ snapshot, set }) => (friend: Friend) => {
@@ -16,12 +17,12 @@ export const useNewMessages = () => {
   });
 
   const sendMessage = (content: string) => {
-    const { friend } = newMessages;
+    const { friend } = newMessagesInfo;
     if (!friend) return;
 
     const data = { id: friend.id, receiverId: friend.user.id, content, createdAt: new Date().toISOString() };
 
-    setNewMessages((prev) => ({
+    setNewMessagesInfo((prev) => ({
       ...prev,
       messages: [...prev.messages, data],
     }));
@@ -32,5 +33,12 @@ export const useNewMessages = () => {
     setNewMessageIdList((prev) => prev.filter((id) => id !== friendId));
   };
 
-  return { newMessages, newMessageIdList, changeMessageRoom, sendMessage, viewMessage };
+  return {
+    currentFriend: newMessagesInfo.friend,
+    newMessages,
+    newMessageIdList,
+    changeMessageRoom,
+    sendMessage,
+    viewMessage,
+  };
 };

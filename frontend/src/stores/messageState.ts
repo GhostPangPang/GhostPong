@@ -1,4 +1,4 @@
-import { atom } from 'recoil';
+import { atom, selector } from 'recoil';
 import { Message } from '@/dto/message/socket';
 import { Friend } from '@/types/entity';
 
@@ -18,4 +18,12 @@ export const newMessagesState = atom<MessageInfoData>({
 export const newMessageIdListState = atom<number[]>({
   key: '/message/changeId',
   default: [],
+});
+
+export const newMessagesSelector = selector<Message[]>({
+  key: '/message/selector',
+  get: ({ get }) => {
+    const { messages } = get(newMessagesState);
+    return [...messages].reverse();
+  },
 });
