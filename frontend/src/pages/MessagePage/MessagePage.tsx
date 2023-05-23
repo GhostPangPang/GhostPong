@@ -13,7 +13,6 @@ export const MessagePage = () => {
   const [blockIsOpen, setBlockIsOpen] = useState(false);
 
   useEffect(() => {
-    console.log('what the');
     setSocket((prev) => ({ ...prev, message: true })); // 이것도 리팩토링 고민해보기
 
     return () => setSocket((prev) => ({ ...prev, message: false }));

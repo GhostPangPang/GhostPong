@@ -32,6 +32,10 @@ export const MessageList = () => {
     };
   }, []);
 
+  useEffect(() => {
+    setMessageList(friends);
+  }, [friends]);
+
   return (
     <Box height="100%" flexGrow={1} overflowY="auto">
       <Suspense fallback={<div>MessageList</div>}>
