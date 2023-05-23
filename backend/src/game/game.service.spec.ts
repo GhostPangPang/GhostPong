@@ -25,6 +25,11 @@ describe('GameService', () => {
           provide: GameGateway,
           useValue: {
             broadcastGameStart: jest.fn(),
+            updateUserStatus: jest
+              .spyOn(GameGateway.prototype, 'updateUserStatus')
+              .mockImplementation((userId, status) => {
+                userStatusRepository.update(userId, { status });
+              }),
           },
         },
       ],
@@ -54,6 +59,8 @@ describe('GameService', () => {
       nickname: 'test2',
       isMuted: false,
     };
+
+    jest.spyOn(gameGateway, 'broadcastGameStart');
 
     const channel: Channel = new Channel('1', 'public', 'test');
     channel.users.set(1, mockUser);

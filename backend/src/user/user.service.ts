@@ -5,8 +5,9 @@ import { EntityManager, Repository } from 'typeorm';
 import { AuthService } from '../auth/auth.service';
 import { HISTORY_SIZE_PER_PAGE } from '../common/constant';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
-import { AuthStatus } from '../entity/auth.entity';
+import { Auth, AuthStatus } from '../entity/auth.entity';
 import { GameHistory } from '../entity/game-history.entity';
+import { UserRecord } from '../entity/user-record.entity';
 import { User } from '../entity/user.entity';
 
 import { UserHistoryResponseDto } from './dto/response/user-history-response.dto';
@@ -45,8 +46,9 @@ export class UserService {
     await this.checkAlreadyExistUser(myId); // user 이미 있으면 에러
     await this.checkDuplicatedNickname(nickname);
     await this.userRepository.manager.transaction(async (manager: EntityManager) => {
-      await manager.insert('users', { id: myId, nickname: nickname });
-      await manager.update('auth', { id: myId }, { status: AuthStatus.REGISTERD });
+      await manager.insert(User, { id: myId, nickname: nickname });
+      await manager.insert(UserRecord, { id: myId });
+      await manager.update(Auth, { id: myId }, { status: AuthStatus.REGISTERD });
     });
     return await this.authService.signIn(myId);
   }

@@ -1,4 +1,4 @@
-import { IsDateString, IsNotEmpty, IsNumber, IsString, Max, MaxLength, Min } from 'class-validator';
+import { IsDateString, IsInt, IsNotEmpty, IsString, Max, MaxLength, Min } from 'class-validator';
 
 import { Message } from '@/types/message/socket';
 
@@ -8,7 +8,7 @@ export class MesssageDto implements Message {
    * @example 1
    */
   @IsNotEmpty()
-  @IsNumber()
+  @IsInt()
   @Min(1)
   @Max(2147483647)
   id: number;
@@ -18,7 +18,7 @@ export class MesssageDto implements Message {
    * @example 4
    */
   @IsNotEmpty()
-  @IsNumber()
+  @IsInt()
   @Min(1)
   @Max(2147483647)
   receiverId: number;
