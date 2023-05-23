@@ -137,7 +137,8 @@ export class ChannelController {
    * @description POST /channel/:channelId/player
    */
   @ApiOperation({ summary: '플레이어로 참여하기' })
-  @ApiConflictResponse({ type: ErrorResponseDto, description: '플레이어 자리가 이미 차있음' })
+  @ApiConflictResponse({ type: ErrorResponseDto, description: '이미 본인이 플레이어' })
+  @ApiForbiddenResponse({ type: ErrorResponseDto, description: '채널에 참여중인 유저가 아님, 플레이어 정원 참' })
   @ApiHeaders([{ name: 'x-my-id', description: '내 auth 아이디 (임시값)' }])
   @ApiParam({ name: 'channelId', description: '채널 아이디' })
   @Patch(':channelId/player')
