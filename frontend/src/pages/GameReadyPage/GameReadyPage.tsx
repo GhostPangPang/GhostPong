@@ -10,7 +10,7 @@ import { useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useUserInfo } from '@/hooks/user';
 // import { PingPongGame } from '../GamePage';
-import { useGameMutation } from '@/hooks/game/useGameMutation';
+// import { useGameMutation } from '@/hooks/game';
 import { ApiResponse, onEvent } from '@/libs/api';
 import { GameEvent } from '@/constants';
 
@@ -75,7 +75,7 @@ export const GameReadyPage = () => {
 
   const [gamePlayer, setGamePlayer] = useRecoilState(gamePlayerState);
   const setGameId = useSetRecoilState(gameIdState);
-  const { startGame } = useGameMutation();
+  // const { startGame } = useGameMutation();
 
   const {
     userInfo: { id: userId },
@@ -132,17 +132,17 @@ export const GameReadyPage = () => {
     }
 
     // 성공했을 때만 설정하고 싶은뎅 고민해보기
-    startGame(channelId, {
-      onSuccess: (data: ApiResponse) => {
-        console.log(data);
+    // startGame(channelId, {
+    //   onSuccess: (data: ApiResponse) => {
+    //     console.log(data);
 
-        setGamePlayer({
-          leftUser: channelData.leftPlayer,
-          rightUser: channelData.rightPlayer,
-        });
-        setGameId(channelId);
-      },
-    });
+    //     setGamePlayer({
+    //       leftUser: channelData.leftPlayer,
+    //       rightUser: channelData.rightPlayer,
+    //     });
+    //     setGameId(channelId);
+    //   },
+    // });
   };
 
   useEffect(() => {
