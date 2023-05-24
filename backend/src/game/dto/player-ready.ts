@@ -1,8 +1,8 @@
 import { IsString, Length } from 'class-validator';
 
-import { GameStart } from '@/types/game';
+import { PlayerReady } from '@/types/game';
 
-export class GameStartDto implements GameStart {
+export class PlayerReadyDto implements PlayerReady {
   @IsString()
   @Length(21, 21)
   gameId: string;

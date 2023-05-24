@@ -1,10 +1,13 @@
 import { ForbiddenException, Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 
+import { MemberInfo } from '@/types/channel';
+
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
-import { ChannelRepository } from '../repository/channel.repository';
 import { GameRepository } from '../repository/game.repository';
+import { InvisibleChannelRepository } from '../repository/invisible-channel.repository';
 import { ChannelUser } from '../repository/model/channel';
 import { Game } from '../repository/model/game';
+import { VisibleChannelRepository } from '../repository/visible-channel.repository';
 
 import { GameGateway } from './game.gateway';
 
@@ -12,13 +15,14 @@ import { GameGateway } from './game.gateway';
 export class GameService {
   constructor(
     private readonly gameRepository: GameRepository,
-    private readonly channelRepository: ChannelRepository,
+    private readonly visibleChannelRepository: VisibleChannelRepository,
+    private readonly invisibleChannelRepository: InvisibleChannelRepository,
     private readonly gameGateway: GameGateway,
   ) {}
 
   createGame(gameId: string, userId: number): SuccessResponseDto {
-    const channel = this.channelRepository.find(gameId);
-    if (channel === undefined) {
+    let channel = this.visibleChannelRepository.find(gameId);
+    if (channel === undefined && (channel = this.invisibleChannelRepository.find(gameId)) === undefined) {
       throw new NotFoundException('채널이 존재하지 않습니다.');
     }
     if (this.gameRepository.exist(gameId)) {
@@ -52,7 +56,19 @@ export class GameService {
     this.gameGateway.updateUserStatus(rightPlayer.id, 'game');
 
     channel.isInGame = true;
-    this.gameGateway.broadcastGameStart(game.gameData.id);
+    const leftMemberInfo: MemberInfo = {
+      userId: leftPlayer.id,
+      nickname: leftPlayer.nickname,
+      image: leftPlayer.image,
+      role: leftPlayer.role,
+    };
+    const rightMemberInfo: MemberInfo = {
+      userId: rightPlayer.id,
+      nickname: rightPlayer.nickname,
+      image: rightPlayer.image,
+      role: rightPlayer.role,
+    };
+    this.gameGateway.broadcastGameStart(game.gameData.id, leftMemberInfo, rightMemberInfo);
     return { message: '게임이 생성되었습니다.' };
   }
 }
