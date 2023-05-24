@@ -291,12 +291,6 @@ export class ChannelService {
     if (mode !== joinOptions.mode) {
       throw new BadRequestException('채널의 모드가 일치하지 않습니다.');
     }
-    if (bannedUserIdList.find((elem) => elem === myId) !== undefined) {
-      throw new ForbiddenException('차단되어 입장이 불가능한 채널입니다.');
-    }
-    if (users.size >= PARTICIPANT_LIMIT) {
-      throw new ForbiddenException('채널 정원이 초과되었습니다.');
-    }
     if (mode === 'private' && this.invitationRepository.find(myId) === undefined) {
       throw new ForbiddenException('초대가 필요한 채널입니다.');
     }
@@ -307,6 +301,12 @@ export class ChannelService {
       (await compare(joinOptions.password, password)) === false
     ) {
       throw new ForbiddenException('비밀번호가 일치하지 않습니다.');
+    }
+    if (bannedUserIdList.find((elem) => elem === myId) !== undefined) {
+      throw new ForbiddenException('차단되어 입장이 불가능한 채널입니다.');
+    }
+    if (users.size >= PARTICIPANT_LIMIT) {
+      throw new ForbiddenException('채널 정원이 초과되었습니다.');
     }
     this.invitationRepository.delete(myId);
   }
