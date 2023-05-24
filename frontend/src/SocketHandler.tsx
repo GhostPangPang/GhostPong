@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { connectSocket, disconnectSocket, emitEvent, offEvent, onEvent } from '@/libs/api';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
-import { newMessageIdListState, newMessagesState, channelDataState } from './stores';
+import { newMessageIdListState, newMessagesState, channelDataState, ChannelData } from './stores';
 import { socketState } from './stores/socketState';
 import { Message } from '@/dto/message/socket';
 import { MemberInfo, UserId, Chat } from '@/dto/channel/socket';
@@ -54,6 +54,23 @@ export const SocketHandler = () => {
     }));
   });
 
+  const updatePlayerEvent = useRecoilCallback(({ set }) => (data: UserId) => {
+    console.log('socket player', data);
+    set(channelDataState, (prev: ChannelData) => {
+      const { nickname, image, role } = prev.observers.find((observer) => observer.userId === data.userId) || {
+        nickname: '',
+        image: '',
+        role: 'member',
+      };
+
+      return {
+        ...prev,
+        observers: prev.observers.filter((observer) => observer.userId !== data.userId),
+        leftPlayer: { userId: data.userId, nickname, image, role },
+      };
+    });
+  });
+
   // Init socket
   useEffect(() => {
     connectSocket();
@@ -92,7 +109,7 @@ export const SocketHandler = () => {
     // onEvent(ChannelEvent.KICK, updateKickEvent);
     // onEvent(ChannelEvent.BAN, updateBanEvent);
     // onEvent(ChannelEvent.MUTE, updateMuteEvent);
-    // onEvent(ChannelEvent.PLAYER, updatePlayerEvent);
+    onEvent(ChannelEvent.PLAYER, updatePlayerEvent);
     // onEvent(ChannelEvent.ADMIN, updateAdminEvent);
     // onEvent(ChannelEvent.OWNER, updateOwnerEvent);
     return () => {
@@ -102,7 +119,7 @@ export const SocketHandler = () => {
       // offEvent(ChannelEvent.KICK);
       // offEvent(ChannelEvent.BAN);
       // offEvent(ChannelEvent.MUTE);
-      // offEvent(ChannelEvent.PLAYER);
+      offEvent(ChannelEvent.PLAYER);
       // offEvent(ChannelEvent.ADMIN);
       // offEvent(ChannelEvent.OWNER);
     };
