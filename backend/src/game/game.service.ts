@@ -1,5 +1,7 @@
 import { ForbiddenException, Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 
+import { MemberInfo } from '@/types/channel';
+
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
 import { GameRepository } from '../repository/game.repository';
 import { InvisibleChannelRepository } from '../repository/invisible-channel.repository';
@@ -54,7 +56,19 @@ export class GameService {
     this.gameGateway.updateUserStatus(rightPlayer.id, 'game');
 
     channel.isInGame = true;
-    this.gameGateway.broadcastGameStart(game.gameData.id);
+    const leftMemberInfo: MemberInfo = {
+      userId: leftPlayer.id,
+      nickname: leftPlayer.nickname,
+      image: leftPlayer.image,
+      role: leftPlayer.role,
+    };
+    const rightMemberInfo: MemberInfo = {
+      userId: rightPlayer.id,
+      nickname: rightPlayer.nickname,
+      image: rightPlayer.image,
+      role: rightPlayer.role,
+    };
+    this.gameGateway.broadcastGameStart(game.gameData.id, leftMemberInfo, rightMemberInfo);
     return { message: '게임이 생성되었습니다.' };
   }
 }

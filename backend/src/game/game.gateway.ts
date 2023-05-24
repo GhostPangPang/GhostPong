@@ -9,11 +9,12 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 
-import { BarMoved } from '@/types/game';
+import { MemberInfo } from '@/types/channel';
+import { BarMoved, GameEnd, GameStart } from '@/types/game';
+import { UserStatus } from '@/types/user';
 
 import { GameData, Player } from '@/game/game-data';
 
-import { UserStatus } from '../../../types/user';
 import { corsOption } from '../common/option/cors.option';
 import { createWsException } from '../common/util';
 import { GameRepository } from '../repository/game.repository';
@@ -85,9 +86,9 @@ export class GameGateway {
    *
    * @param gameId
    */
-  broadcastGameStart(gameId: string): void {
-    //const gameStart: PlayerReady = { gameId };
-    this.server.to(gameId).emit('game-ready');
+  broadcastGameStart(gameId: string, leftPlayer: MemberInfo, rightPlayer: MemberInfo): void {
+    const gameStart: GameStart = { gameId, leftPlayer, rightPlayer };
+    this.server.to(gameId).emit('game-ready', gameStart);
   }
 
   broadcastGameData(gamedata: GameData): void {
@@ -95,11 +96,12 @@ export class GameGateway {
   }
 
   broadcastGameEnd(gameId: string, winner: Player, loser: Player): void {
-    this.server.to(gameId).emit('game-end', {
+    const gameEnd: GameEnd = {
       id: gameId,
       winner: { id: winner.userId, score: winner.score },
       loser: { id: loser.userId, score: loser.score },
-    });
+    };
+    this.server.to(gameId).emit('game-end', gameEnd);
   }
 
   updateUserStatus(userId: number, status: Status): void {
