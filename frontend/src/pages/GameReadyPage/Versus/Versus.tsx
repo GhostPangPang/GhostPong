@@ -3,19 +3,19 @@ import { Grid, Text, Dropbox, Ghost, GameButton } from '@/common';
 import { ReactComponent as Crown } from '@/svgs/crown.svg';
 import { MemberInfo } from '@/dto/channel/socket';
 import { useUserInfo } from '@/hooks/user';
-import { useChannelMutation } from '@/hooks/channel';
 import { useRecoilValue } from 'recoil';
-import { channelIdState } from '@/stores';
+// import { newChannelDataState } from '@/stores';
+import { Items, Item } from '@/libs/utils/itemgenerator';
 // import { PlayerInfo } from '../mock-data';
 
 interface VersusProps {
   leftPlayer: MemberInfo | null;
   rightPlayer: MemberInfo | null;
-  items: { label: string; onClick: () => void }[];
+  items: Items;
 }
 interface GhostBoxProps {
   player: MemberInfo;
-  items: { label: string; onClick: () => void }[];
+  item: Item[];
 }
 
 const NickNameText = styled(Text)`
@@ -29,7 +29,7 @@ const NickNameText = styled(Text)`
   }
 `;
 
-const GhostBox = ({ player, items }: GhostBoxProps) => {
+const GhostBox = ({ player, item }: GhostBoxProps) => {
   const { userInfo } = useUserInfo();
 
   return (
@@ -46,7 +46,7 @@ const GhostBox = ({ player, items }: GhostBoxProps) => {
         {player.userId == userInfo.id ? (
           <NickNameText size="xxl">{player.nickname}</NickNameText>
         ) : (
-          <Dropbox items={items} placement="bottomleft">
+          <Dropbox items={item} placement="bottomleft">
             <NickNameText size="xxl">{player.nickname}</NickNameText>
           </Dropbox>
         )}
@@ -60,22 +60,33 @@ const GhostBox = ({ player, items }: GhostBoxProps) => {
 
 export const Versus = ({ leftPlayer, rightPlayer, items }: VersusProps) => {
   const channelId = useRecoilValue(channelIdState);
-  const { registerPlayer } = useChannelMutation();
+  const { becomePlayer } = useChannelMutation();
 
-  const handleRegisterPlayer = () => {
-    registerPlayer(channelId);
+  const handleBecomePlayer = () => {
+    becomePlayer(channelId);
+  };
+
+  const handleBecomeOwner = () => {
+    // becomeOwner(channelId);
+    console.log('becomeOwner');
   };
 
   return (
     <Grid container="flex" direction="row" alignItems="center" justifyContent="center">
-      {leftPlayer ? <GhostBox player={leftPlayer} items={items} /> : <GameButton size="md">방장되기</GameButton>}
+      {leftPlayer ? (
+        <GhostBox player={leftPlayer} item={items.leftPlayer} />
+      ) : (
+        <GameButton size="md" onClick={handleBecomeOwner}>
+          방장되기
+        </GameButton>
+      )}
       <Text size="xxl" weight="bold">
         VS
       </Text>
       {rightPlayer ? (
-        <GhostBox player={rightPlayer} items={items} />
+        <GhostBox player={rightPlayer} item={items.rightPlayer} />
       ) : (
-        <GameButton size="md" onClick={handleRegisterPlayer}>
+        <GameButton size="md" onClick={handleBecomePlayer}>
           참여하기
         </GameButton>
       )}

@@ -8,56 +8,8 @@ import { channelIdState, channelDataState, socketState } from '@/stores';
 import { useChannel, useLeaveChannel } from '@/hooks/channel';
 import { useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
-
+import { itemGenerator } from '@/libs/utils/itemgenerator';
 // useItem hook 으로 빼기
-export const itemGenerator = (role: 'owner' | 'admin' | 'member' | undefined) => {
-  switch (role) {
-    case 'owner':
-      return [
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        { label: '관리자 등록', onClick: () => {} },
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        { label: 'KICK', onClick: () => {} },
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        { label: 'MUTE', onClick: () => {} },
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        { label: 'BAN', onClick: () => {} },
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        { label: '친구추가', onClick: () => {} },
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        { label: '차단', onClick: () => {} },
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        { label: '프로필', onClick: () => {} },
-      ];
-
-    case 'admin':
-      return [
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        { label: 'KICK', onClick: () => {} },
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        { label: 'MUTE', onClick: () => {} },
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        { label: 'BAN', onClick: () => {} },
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        { label: '친구추가', onClick: () => {} },
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        { label: '차단', onClick: () => {} },
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        { label: '프로필', onClick: () => {} },
-      ];
-    case 'member':
-      return [
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        { label: '친구추가', onClick: () => {} },
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        { label: '차단', onClick: () => {} },
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        { label: '프로필', onClick: () => {} },
-      ];
-    default:
-      return [];
-  }
-};
 
 export const GameReadyPage = () => {
   const setSocket = useSetRecoilState(socketState);
@@ -132,6 +84,8 @@ export const GameReadyPage = () => {
     };
   }, []);
 
+  const items = itemGenerator();
+
   return (
     <>
       <Grid container="flex" direction="row" alignItems="center" justifyContent="center" flexGrow={1}>
@@ -148,11 +102,7 @@ export const GameReadyPage = () => {
           // /> */}
           </>
         ) : (
-          <Versus
-            leftPlayer={channelData.leftPlayer}
-            rightPlayer={channelData.rightPlayer}
-            items={itemGenerator(channelData.currentRole)}
-          />
+          <Versus leftPlayer={channelData.leftPlayer} rightPlayer={channelData.rightPlayer} items={items} />
         )}
       </Grid>
       <Grid container="flex" direction="row" alignItems="end" justifyContent="center" flexGrow={1}>
@@ -160,7 +110,7 @@ export const GameReadyPage = () => {
           <ChatBox />
         </Grid>
         <Grid container="flex" flexGrow={1} alignItems="center" size={{ padding: 'md' }}>
-          <ObserverBox observers={channelData.observers} items={itemGenerator(channelData.currentRole)} />
+          <ObserverBox observers={channelData.observers} items={items} />
         </Grid>
         <Grid container="flex" flexGrow={1} alignItems="center" justifyContent="end" size={{ padding: 'md' }}>
           {channelData.isInGame ? null : channelData.currentRole === 'owner' ? ( // gmaeReady 중인 owner 만 start 버튼 보이게
