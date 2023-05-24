@@ -42,7 +42,7 @@ export class GameGateway {
     private readonly gameEngine: GameEngineService,
   ) {}
 
-  @SubscribeMessage('game-start')
+  @SubscribeMessage('game-ready')
   handleGameStart(@ConnectedSocket() socket: Socket, @MessageBody() { gameId }: PlayerReadyDto): void {
     const game = this.gameRepository.find(gameId);
     if (game === undefined) {
@@ -88,7 +88,7 @@ export class GameGateway {
    */
   broadcastGameStart(gameId: string, leftPlayer: MemberInfo, rightPlayer: MemberInfo): void {
     const gameStart: GameStart = { gameId, leftPlayer, rightPlayer };
-    this.server.to(gameId).emit('game-ready', gameStart);
+    this.server.to(gameId).emit('game-start', gameStart);
   }
 
   broadcastGameData(gamedata: GameData): void {
