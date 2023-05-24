@@ -172,10 +172,10 @@ export class ChannelController {
    * @description POST /channel/:channelId/owner
    */
   @ApiOperation({ summary: '채널에서 방장되기' })
-  @ApiConflictResponse({ type: ErrorResponseDto, description: '이미 본인이 방장' })
+  @ApiConflictResponse({ type: ErrorResponseDto, description: '이미 본인이 방장, 방장 존재' })
   @ApiForbiddenResponse({
     type: ErrorResponseDto,
-    description: '채널에 참여중인 유저가 아님, 게임 진행중, 방장이 존재',
+    description: '채널에 참여중인 유저가 아님, 게임 진행중',
   })
   @ApiHeaders([{ name: 'x-my-id', description: '내 auth 아이디 (임시값)' }])
   @ApiParam({ name: 'channelId', description: '채널 아이디' })

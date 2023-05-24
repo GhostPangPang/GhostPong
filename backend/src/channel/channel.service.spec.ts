@@ -686,7 +686,7 @@ describe('ChannelService', () => {
       try {
         await service.becomeOwner(2, channel);
       } catch (e) {
-        expect(e).toBeInstanceOf(ForbiddenException);
+        expect(e).toBeInstanceOf(ConflictException);
         expect(e.message).toEqual('방장이 존재합니다.');
       }
     });

@@ -229,7 +229,7 @@ export class ChannelService {
     }
     for (const user of channel.users.values()) {
       if (user.role === 'owner') {
-        throw new ForbiddenException('방장이 존재합니다.');
+        throw new ConflictException('방장이 존재합니다.');
       }
     }
     channelUser.role = 'owner';
