@@ -260,7 +260,6 @@ export class ChannelService {
    */
   async kickUser(myId: number, channel: Channel, targetId: number): Promise<SuccessResponseDto> {
     this.checkOperationAuthority(myId, channel, targetId);
-    channel.users.delete(targetId);
     await this.cacheManager.del(`mute-${targetId}`);
     this.channelGateway.emitChannel<UserId>(channel.id, 'kicked', { userId: targetId });
     this.connectionGateway.leaveChannel(targetId, channel, undefined);
@@ -272,7 +271,6 @@ export class ChannelService {
    */
   async banUser(myId: number, channel: Channel, targetId: number): Promise<SuccessResponseDto> {
     this.checkOperationAuthority(myId, channel, targetId);
-    channel.users.delete(targetId);
     await this.cacheManager.del(`mute-${targetId}`);
     channel.bannedUserIdList.push(targetId);
     this.channelGateway.emitChannel<UserId>(channel.id, 'banned', { userId: targetId });
