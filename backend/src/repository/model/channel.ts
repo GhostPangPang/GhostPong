@@ -18,7 +18,7 @@ export class ChannelUser {
 }
 
 export class Channel {
-  constructor(id: string, mode: ChannelMode, name: string, password?: string, salt?: string) {
+  constructor(id: string, mode: ChannelMode, name: string, password?: string) {
     this.id = id;
     this.mode = mode;
     this.name = name;
@@ -26,7 +26,6 @@ export class Channel {
     this.password = password;
     this.users = new Map<number, ChannelUser>();
     this.bannedUserIdList = [];
-    this.salt = salt;
   }
 
   id: string;
@@ -36,5 +35,4 @@ export class Channel {
   password?: string;
   users: Map<number, ChannelUser>;
   bannedUserIdList: number[];
-  salt?: string;
 }
