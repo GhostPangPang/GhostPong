@@ -12,7 +12,7 @@ import { FRIEND_LIMIT } from '../common/constant';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
 import { BlockedUser } from '../entity/blocked-user.entity';
 import { Friendship } from '../entity/friendship.entity';
-import { UserStatusRepository } from '../repository/user-status.repository';
+import { UserStatusRepository } from '../repository';
 
 import { FriendsResponseDto } from './dto/response/friend-response.dto';
 import { RequestedFriendsResponseDto } from './dto/response/requested-friend-response.dto';

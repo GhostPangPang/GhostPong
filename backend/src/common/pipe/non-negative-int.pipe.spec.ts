@@ -1,4 +1,5 @@
 import { BadRequestException } from '@nestjs/common';
+
 import { NonNegativeIntPipe } from './non-negative-int.pipe';
 
 describe('NonNegativeIntegerPipe', () => {

@@ -17,9 +17,8 @@ import { GameData, Player } from '@/game/game-data';
 
 import { corsOption } from '../common/option/cors.option';
 import { createWsException } from '../common/util';
-import { GameRepository } from '../repository/game.repository';
-import { Status } from '../repository/model/user-status';
-import { UserStatusRepository } from '../repository/user-status.repository';
+import { GameRepository, UserStatusRepository } from '../repository';
+import { Status } from '../repository/model';
 
 import { MoveBarDto } from './dto/move-bar.dto';
 import { PlayerReadyDto } from './dto/player-ready';

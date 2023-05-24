@@ -1,9 +1,11 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { NicknameToIdPipe } from './nickname-to-id.pipe';
-import { Repository } from 'typeorm';
-import { User } from '../../entity/user.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+
+import { User } from '../../entity/user.entity';
+
+import { NicknameToIdPipe } from './nickname-to-id.pipe';
 
 describe('NicknameToUserIdPipe', () => {
   let pipe: NicknameToIdPipe;

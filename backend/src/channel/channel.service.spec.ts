@@ -1,19 +1,24 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { ChannelService } from './channel.service';
-import { InvisibleChannelRepository } from '../repository/invisible-channel.repository';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { User } from '../entity/user.entity';
-import { CreateChannelRequestDto } from './dto/request/create-channel-request.dto';
-import { Repository } from 'typeorm';
-import { ConflictException, ForbiddenException, NotFoundException } from '@nestjs/common';
-import { Channel, ChannelUser } from '../repository/model/channel';
-import { PARTICIPANT_LIMIT } from '../common/constant';
-import { VisibleChannelRepository } from '../repository/visible-channel.repository';
-import { InvitationRepository } from '../repository/invitation.repository';
-import { ChannelGateway } from './channel.gateway';
-import { SocketIdRepository } from '../repository/socket-id.repository';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { ConflictException, ForbiddenException, NotFoundException } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+
+import { PARTICIPANT_LIMIT } from '../common/constant';
 import { Friendship } from '../entity/friendship.entity';
+import { User } from '../entity/user.entity';
+import {
+  InvitationRepository,
+  InvisibleChannelRepository,
+  VisibleChannelRepository,
+  SocketIdRepository,
+} from '../repository';
+import { Channel, ChannelUser } from '../repository/model';
+
+import { ChannelGateway } from './channel.gateway';
+import { ChannelService } from './channel.service';
+import { CreateChannelRequestDto } from './dto/request/create-channel-request.dto';
+import { compare } from 'bcrypt';
 
 describe('ChannelService', () => {
   let service: ChannelService;
@@ -159,7 +164,7 @@ describe('ChannelService', () => {
         isPlayer: true,
       });
       // password 가 설정되었는지 확인
-      expect(password).toBe('1234');
+      expect(await compare('1234', channelRequest.password!)).toBe(true);
       expect(bannedUserIdList).toHaveLength(0);
 
       expect(invisibleChannelRepository.findAll()).toHaveLength(0);
@@ -280,7 +285,7 @@ describe('ChannelService', () => {
         name: 'test',
         isInGame: false,
         users: new Map([]),
-        bannedUserIdList: [1],
+        bannedUserIdList: [],
       };
       try {
         await service.joinChannel(1, { mode: 'protected', password: '4321' }, channel);

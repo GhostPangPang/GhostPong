@@ -3,7 +3,7 @@ import { Server } from 'socket.io';
 
 import { corsOption } from '../common/option/cors.option';
 import { Friendship } from '../entity/friendship.entity';
-import { SocketIdRepository } from '../repository/socket-id.repository';
+import { SocketIdRepository } from '../repository';
 
 @WebSocketGateway({ cors: corsOption })
 export class FriendGateway {

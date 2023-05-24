@@ -16,12 +16,14 @@ import { PARTICIPANT_LIMIT } from '../common/constant';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
 import { Friendship } from '../entity/friendship.entity';
 import { User } from '../entity/user.entity';
-import { ChannelRepository } from '../repository/channel.repository';
-import { InvisibleChannelRepository } from '../repository/invisible-channel.repository';
+import {
+  ChannelRepository,
+  InvisibleChannelRepository,
+  SocketIdRepository,
+  VisibleChannelRepository,
+} from '../repository';
 import { InvitationRepository } from '../repository/invitation.repository';
-import { ChannelUser, Channel } from '../repository/model/channel';
-import { SocketIdRepository } from '../repository/socket-id.repository';
-import { VisibleChannelRepository } from '../repository/visible-channel.repository';
+import { ChannelUser, Channel } from '../repository/model';
 
 import { ChannelGateway } from './channel.gateway';
 import { CreateChannelRequestDto } from './dto/request/create-channel-request.dto';

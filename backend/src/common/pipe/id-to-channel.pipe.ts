@@ -1,8 +1,7 @@
 import { Injectable, NotFoundException, PipeTransform } from '@nestjs/common';
 
-import { InvisibleChannelRepository } from '../../repository/invisible-channel.repository';
-import { Channel } from '../../repository/model/channel';
-import { VisibleChannelRepository } from '../../repository/visible-channel.repository';
+import { InvisibleChannelRepository, VisibleChannelRepository } from '../../repository';
+import { Channel } from '../../repository/model';
 
 @Injectable()
 export class IdToChannelPipe implements PipeTransform<string, Channel> {

@@ -8,9 +8,8 @@ import { checkPlayerCollision, checkWallCollision, checkGameEnded, updateBall } 
 import { GameHistory } from '../entity/game-history.entity';
 import { UserRecord } from '../entity/user-record.entity';
 import { User } from '../entity/user.entity';
-import { ChannelRepository } from '../repository/channel.repository';
-import { GameRepository } from '../repository/game.repository';
-import { Game } from '../repository/model/game';
+import { ChannelRepository, GameRepository } from '../repository';
+import { Game } from '../repository/model';
 
 import { GameGateway } from './game.gateway';
 
