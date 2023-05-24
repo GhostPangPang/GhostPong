@@ -203,7 +203,6 @@ export class ChannelController {
   })
   @ApiHeaders([{ name: 'x-my-id', description: '내 auth 아이디 (임시값)' }])
   @ApiParam({ name: 'channelId', description: '채널 아이디' })
-  @HttpCode(HttpStatus.OK)
   @Patch(':channelId/mute')
   muteUser(
     @ExtractUserId() myId: number,
@@ -226,7 +225,6 @@ export class ChannelController {
   })
   @ApiHeaders([{ name: 'x-my-id', description: '내 auth 아이디 (임시값)' }])
   @ApiParam({ name: 'channelId', description: '채널 아이디' })
-  @HttpCode(HttpStatus.OK)
   @Patch(':channelId/kick')
   kickUser(
     @ExtractUserId() myId: number,
@@ -249,7 +247,6 @@ export class ChannelController {
   })
   @ApiHeaders([{ name: 'x-my-id', description: '내 auth 아이디 (임시값)' }])
   @ApiParam({ name: 'channelId', description: '채널 아이디' })
-  @HttpCode(HttpStatus.OK)
   @Patch(':channelId/ban')
   banUser(
     @ExtractUserId() myId: number,

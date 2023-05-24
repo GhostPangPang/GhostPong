@@ -249,34 +249,34 @@ export class ChannelService {
   /**
    * mute 하기
    */
-  async muteUser(myId: number, channel: Channel, userId: number): Promise<SuccessResponseDto> {
-    this.checkOperationAuthority(myId, channel, userId);
-    await this.cacheManager.set(`mute-${userId}`, true, MUTE_EXPIRES_IN);
+  async muteUser(myId: number, channel: Channel, targetId: number): Promise<SuccessResponseDto> {
+    this.checkOperationAuthority(myId, channel, targetId);
+    await this.cacheManager.set(`mute-${targetId}`, true, MUTE_EXPIRES_IN);
     return { message: 'mute 되었습니다.' };
   }
 
   /**
    * kick 하기
    */
-  async kickUser(myId: number, channel: Channel, userId: number): Promise<SuccessResponseDto> {
-    this.checkOperationAuthority(myId, channel, userId);
-    channel.users.delete(userId);
-    await this.cacheManager.del(`mute-${userId}`);
-    this.channelGateway.emitChannel(channel.id, 'kicked', { userId: userId });
-    this.connectionGateway.leaveChannel(userId, channel, undefined);
+  async kickUser(myId: number, channel: Channel, targetId: number): Promise<SuccessResponseDto> {
+    this.checkOperationAuthority(myId, channel, targetId);
+    channel.users.delete(targetId);
+    await this.cacheManager.del(`mute-${targetId}`);
+    this.channelGateway.emitChannel<UserId>(channel.id, 'kicked', { userId: targetId });
+    this.connectionGateway.leaveChannel(targetId, channel, undefined);
     return { message: 'kick 되었습니다.' };
   }
 
   /**
    * ban 하기
    */
-  async banUser(myId: number, channel: Channel, userId: number): Promise<SuccessResponseDto> {
-    this.checkOperationAuthority(myId, channel, userId);
-    channel.users.delete(userId);
-    await this.cacheManager.del(`mute-${userId}`);
-    channel.bannedUserIdList.push(userId);
-    this.channelGateway.emitChannel(channel.id, 'banned', { userId: userId });
-    this.connectionGateway.leaveChannel(userId, channel, undefined);
+  async banUser(myId: number, channel: Channel, targetId: number): Promise<SuccessResponseDto> {
+    this.checkOperationAuthority(myId, channel, targetId);
+    channel.users.delete(targetId);
+    await this.cacheManager.del(`mute-${targetId}`);
+    channel.bannedUserIdList.push(targetId);
+    this.channelGateway.emitChannel<UserId>(channel.id, 'banned', { userId: targetId });
+    this.connectionGateway.leaveChannel(targetId, channel, undefined);
     return { message: 'ban 되었습니다.' };
   }
 
@@ -399,7 +399,7 @@ export class ChannelService {
   private checkOperationAuthority(myId: number, channel: Channel, targetId: number): void {
     const user = channel.users.get(myId);
     if (user === undefined) {
-      throw new NotFoundException('채널에 참여하지 않은 유저입니다.');
+      throw new ForbiddenException('채널에 참여하지 않은 유저입니다.');
     }
     if (user.role === 'member') {
       throw new ForbiddenException('kick, ban, mute 권한이 없습니다.');
@@ -412,7 +412,7 @@ export class ChannelService {
       throw new NotFoundException('대상이 채널에 참여하지 않은 유저입니다.');
     }
     if (channel.isInGame === true && target.isPlayer === true) {
-      throw new ConflictException('게임 중인 유저는 kick, ban, mute 할 수 없습니다.');
+      throw new ForbiddenException('게임 중인 유저는 kick, ban, mute 할 수 없습니다.');
     }
     if (target.role === 'owner') {
       throw new ForbiddenException('방장을 kick, ban, mute 할 수 없습니다');
