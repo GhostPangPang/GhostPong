@@ -42,7 +42,7 @@ export class GameGateway {
     private readonly gameEngine: GameEngineService,
   ) {}
 
-  @SubscribeMessage('game-ready')
+  @SubscribeMessage('player-ready')
   handleGameStart(@ConnectedSocket() socket: Socket, @MessageBody() { gameId }: PlayerReadyDto): void {
     const game = this.gameRepository.find(gameId);
     if (game === undefined) {
