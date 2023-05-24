@@ -1,3 +1,4 @@
+import { MemberInfo } from '@/dto/channel/socket';
 import { Ball, Player, GameData } from '@/game/game-data';
 import { DefaultValue, atom, selector } from 'recoil';
 
@@ -14,7 +15,7 @@ export const canvasRatioState = atom<CanvasRatio>({
   default: {
     normalW: 0,
     normalH: 0,
-    ratio: 1,
+    ratio: 0,
   },
 });
 
@@ -63,28 +64,34 @@ export const gameDataState = atom<GameData>({
   default: {
     id: '',
     ball: new Ball(),
-    leftPlayer: new Player(1, 1),
-    rightPlayer: new Player(2, 99),
+    leftPlayer: new Player(0, 0),
+    rightPlayer: new Player(0, 0),
   },
 });
 
-type Game = {
-  status: 'ready' | 'playing' | 'end';
-  // result: ;
-  gameData: GameData;
+export const gameIdState = atom<string>({
+  key: 'gameIdState',
+  default: '',
+});
+
+// game player data
+type GamePlayerData = {
+  leftUser: MemberInfo | null;
+  rightUser: MemberInfo | null;
 };
 
-// export const gameState =
+// 타입 일관성 없음 MemberInfo 인지 User 인지, MemberInfo 로 일단 구현
+export const gamePlayerState = atom<GamePlayerData>({
+  key: 'gamePlayerState',
+  default: {
+    leftUser: null,
+    rightUser: null,
+  },
+});
 
-// export const gameState = selector<Game>({
-//   key: 'gameState',
-//   get: ({ get }) => {
-//     const { width_ratio, height_ratio } = get(canvasState);
-//     const { id, ball, leftPlayer, rightPlayer } = get(gameEventState);
+type GameStatus = 'ready' | 'playing' | 'end';
 
-//     return {
-//       id,
-//       ball: {}
-//     };
-//   },
-// });
+export const gameStatusState = atom<GameStatus>({
+  key: 'gameStatusState',
+  default: 'ready',
+});
