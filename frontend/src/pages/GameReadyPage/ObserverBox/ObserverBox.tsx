@@ -1,11 +1,11 @@
 import styled from 'styled-components';
 import { Grid, Avatar as BaseAvatar, Dropbox } from '@/common';
 import { MemberInfo } from '@/dto/channel/socket';
+import { useUserInfo } from '@/hooks/user';
 // import { PlayerInfo } from '../mock-data';
 
 interface ObserverBoxProps {
   observers: MemberInfo[];
-  currentUserId: number;
   items: { label: string; onClick: () => void }[];
 }
 
@@ -18,11 +18,12 @@ const Avatar = styled(BaseAvatar)`
   }
 `;
 
-export const ObserverBox = ({ observers, currentUserId, items }: ObserverBoxProps) => {
+export const ObserverBox = ({ observers, items }: ObserverBoxProps) => {
+  const { userInfo } = useUserInfo();
   return (
     <Grid container="flex" direction="row" alignItems="center" justifyContent="start" gap={1}>
       {observers.map((item, index) =>
-        item.userId == currentUserId ? (
+        item.userId == userInfo.id ? (
           <Avatar size="md" borderColor="gradient" src={item.image} key={index} />
         ) : (
           <Dropbox items={items} desc={item.nickname} placement="topleft" key={index}>

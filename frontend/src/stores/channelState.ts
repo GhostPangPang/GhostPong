@@ -9,7 +9,6 @@ export type ChannelData = {
   observers: MemberInfo[] | [];
   isInGame: boolean;
   currentRole: 'owner' | 'admin' | 'member' | undefined;
-  currentUserId: number;
   chats: Chat[] | [];
 };
 
@@ -23,7 +22,6 @@ export const newChannelDataState = atom<ChannelData>({
     observers: [],
     isInGame: false,
     currentRole: undefined,
-    currentUserId: -1,
     chats: [],
   },
 });
