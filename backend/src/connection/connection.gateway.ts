@@ -160,7 +160,6 @@ export class ConnectionGateway implements OnGatewayConnection, OnGatewayDisconne
 
     for (const channel of channels) {
       if (channel.users.has(userId)) {
-        // this.leaveSocketRoom(userId, channel);
         return channel;
       }
     }
