@@ -11,12 +11,11 @@ import {
 import { Server, Socket } from 'socket.io';
 import { Repository } from 'typeorm';
 
-import { Channel } from 'src/repository/model/channel';
-
 import { corsOption } from '../common/option/cors.option';
 import { AppConfigService } from '../config/app/configuration.service';
 import { Friendship } from '../entity/friendship.entity';
 import { InvisibleChannelRepository } from '../repository/invisible-channel.repository';
+import { Channel } from '../repository/model/channel';
 import { Status } from '../repository/model/user-status';
 import { SocketIdRepository } from '../repository/socket-id.repository';
 import { UserStatusRepository } from '../repository/user-status.repository';
