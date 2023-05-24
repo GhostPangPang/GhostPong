@@ -474,7 +474,6 @@ describe('ChannelService', () => {
       nickname: 'test',
       image: '/asset/profile-1.png',
       role: 'owner',
-      isMuted: false,
       isPlayer: true,
     };
     it('게임이 진행중인 경우', async () => {
@@ -515,7 +514,7 @@ describe('ChannelService', () => {
         nickname: 'test',
         image: '/asset/profile-1.png',
         role: 'member',
-        isMuted: false,
+
         isPlayer: false,
       };
       const channel: Channel = {
@@ -541,7 +540,7 @@ describe('ChannelService', () => {
         nickname: 'test',
         image: '/asset/profile-1.png',
         role: 'member',
-        isMuted: false,
+
         isPlayer: false,
       };
       const channel: Channel = {
@@ -565,7 +564,6 @@ describe('ChannelService', () => {
       nickname: 'test',
       image: '/asset/profile-1.png',
       role: 'owner',
-      isMuted: false,
       isPlayer: true,
     };
 
@@ -574,7 +572,6 @@ describe('ChannelService', () => {
       nickname: 'test',
       image: '/asset/profile-1.png',
       role: 'admin',
-      isMuted: false,
       isPlayer: false,
     };
 
@@ -583,7 +580,6 @@ describe('ChannelService', () => {
       nickname: 'test',
       image: '/asset/profile-1.png',
       role: 'member',
-      isMuted: false,
       isPlayer: false,
     };
 
@@ -632,7 +628,7 @@ describe('ChannelService', () => {
         nickname: 'test',
         image: '/asset/profile-1.png',
         role: 'owner',
-        isMuted: false,
+
         isPlayer: true,
       };
       const channel: Channel = {
@@ -657,7 +653,7 @@ describe('ChannelService', () => {
         nickname: 'test',
         image: '/asset/profile-1.png',
         role: 'owner',
-        isMuted: false,
+
         isPlayer: false,
       };
       const user: ChannelUser = {
@@ -665,7 +661,7 @@ describe('ChannelService', () => {
         nickname: 'test',
         image: '/asset/profile-1.png',
         role: 'member',
-        isMuted: false,
+
         isPlayer: false,
       };
       const channel: Channel = {
@@ -693,7 +689,7 @@ describe('ChannelService', () => {
         nickname: 'test',
         image: '/asset/profile-1.png',
         role: 'member',
-        isMuted: false,
+
         isPlayer: false,
       };
       const channel: Channel = {
