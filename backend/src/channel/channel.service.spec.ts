@@ -656,6 +656,14 @@ describe('ChannelService', () => {
     });
 
     it('방장이 존재하는 경우', async () => {
+      const owner: ChannelUser = {
+        id: 1,
+        nickname: 'test',
+        image: '/asset/profile-1.png',
+        role: 'owner',
+        isMuted: false,
+        isPlayer: false,
+      };
       const user: ChannelUser = {
         id: 2,
         nickname: 'test',
@@ -670,7 +678,7 @@ describe('ChannelService', () => {
         name: 'test',
         isInGame: false,
         users: new Map([
-          [1, user],
+          [1, owner],
           [2, user],
         ]),
         bannedUserIdList: [],
