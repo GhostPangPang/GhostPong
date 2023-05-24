@@ -18,7 +18,11 @@ export const ProfilePage = () => {
 
   const rank = useMemo(() => getRank(data.exp), [data.exp]);
   const winRate = useMemo(
-    () => ((data.winCount / (data.winCount + data.loseCount)) * 100).toFixed(1),
+    () =>
+      (data.winCount == 0 && data.loseCount == 0
+        ? 0
+        : (data.winCount / (data.winCount + data.loseCount)) * 100
+      ).toFixed(1),
     [data.winCount, data.loseCount],
   );
 
