@@ -4,7 +4,7 @@ import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { newMessageIdListState, newMessagesState, newChannelDataState } from './stores';
 import { socketState } from './stores/socketState';
 import { Message } from '@/dto/message/socket';
-import { MemberInfo, UserId } from '@/dto/channel/socket';
+import { MemberInfo, UserId, Chat } from '@/dto/channel/socket';
 import { MessageEvent, ChannelEvent } from './constants';
 
 export const SocketHandler = () => {
@@ -28,13 +28,13 @@ export const SocketHandler = () => {
     }
   });
 
-  // const updateChatEvent = useRecoilCallback(({ set }) => (data: Chat) => {
-  //   console.log('socket chat', data);
-  //   set(newChannelDataState, (prev) => ({
-  //     ...prev,
-  //     chat: [...prev.chats, data],
-  //   }));
-  // });
+  const updateChatEvent = useRecoilCallback(({ set }) => (data: Chat) => {
+    console.log('socket chat', data);
+    set(newChannelDataState, (prev) => ({
+      ...prev,
+      chats: [...prev.chats, data],
+    }));
+  });
 
   const updateJoinEvent = useRecoilCallback(({ set }) => (data: MemberInfo) => {
     console.log('socket join', data);
@@ -79,7 +79,7 @@ export const SocketHandler = () => {
   // Turn on channel socket event
   useEffect(() => {
     if (!socket.channel) return;
-    // onEvent(ChannelEvent.CHAT, updateChatEvent);
+    onEvent(ChannelEvent.CHAT, updateChatEvent);
     onEvent(ChannelEvent.JOIN, updateJoinEvent);
     onEvent(ChannelEvent.LEAVE, updateLeaveEvent);
     // onEvent(ChannelEvent.KICK, updateKickEvent);
@@ -89,7 +89,7 @@ export const SocketHandler = () => {
     // onEvent(ChannelEvent.ADMIN, updateAdminEvent);
     // onEvent(ChannelEvent.OWNER, updateOwnerEvent);
     return () => {
-      // offEvent(ChannelEvent.CHAT);
+      offEvent(ChannelEvent.CHAT);
       offEvent(ChannelEvent.JOIN);
       offEvent(ChannelEvent.LEAVE);
       // offEvent(ChannelEvent.KICK);

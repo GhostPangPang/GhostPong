@@ -116,11 +116,7 @@ export const GameReadyPage = () => {
           <ChatBox />
         </Grid>
         <Grid container="flex" flexGrow={1} alignItems="center" size={{ padding: 'md' }}>
-          <ObserverBox
-            observers={newChannelData.observers}
-            currentUserId={newChannelData.currentUserId}
-            items={itemGenerator(newChannelData.currentRole)}
-          />
+          <ObserverBox observers={newChannelData.observers} items={itemGenerator(newChannelData.currentRole)} />
         </Grid>
         <Grid container="flex" flexGrow={1} alignItems="center" justifyContent="end" size={{ padding: 'md' }}>
           {newChannelData.isInGame ? null : newChannelData.currentRole === 'owner' ? ( // gmaeReady 중인 owner 만 start 버튼 보이게

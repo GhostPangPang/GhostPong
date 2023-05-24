@@ -3,9 +3,9 @@ import { IconButton, Box } from '@/common';
 import { ReactComponent as SendSvg } from '@/svgs/send.svg';
 import { useInput } from '@/hooks';
 import { useState } from 'react';
+import { useChat } from '@/hooks/channel/useChat';
 
 interface ChatInputProps {
-  onSend: (message: string) => void;
   onFocus?: () => void;
   onBlur?: () => void;
 }
@@ -25,14 +25,14 @@ const SendButton = ({ onClick }: { onClick?: () => void }) => {
   );
 };
 
-export const ChatInput = ({ onSend, onFocus, onBlur }: ChatInputProps) => {
+export const ChatInput = ({ onFocus, onBlur }: ChatInputProps) => {
   const [isComposing, setIsComposing] = useState(false);
   const { value: content, setValue: setContent, onChange: handleContentChange } = useInput('');
+  const { sendChat } = useChat();
 
   const handleSend = () => {
     if (content) {
-      // sendChat(content);
-      onSend(content);
+      sendChat(content);
       setContent('');
     }
   };

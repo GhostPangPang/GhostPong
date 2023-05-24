@@ -15,7 +15,9 @@ export const LobbyPage = () => {
         </GameButton>
       </Grid>
       <Grid container="flex" justifyContent="end" alignItems="end" gridColumn="2/4" gridRow="2" columnGap={1}>
-        <GameButton size="md">Normal</GameButton>
+        <GameButton size="md" onClick={() => navigate('/channel/list')}>
+          Normal
+        </GameButton>
         <GameButton size="md">Random</GameButton>
       </Grid>
     </Grid>
