@@ -77,9 +77,9 @@ export class ConnectionGateway implements OnGatewayConnection, OnGatewayDisconne
    * @description 채널 나가기 (channel.gateway에서도 사용)
    * @param userId 채널을 떠난 user 의 id
    * @param channel 떠난 채널
-   * @param socket 떠난 user 의 socket
+   * @param socket 떠난 user 의 socket. undefined 이면 socketIdRepository 에서 socketId 를 찾아서 사용한다.
    */
-  leaveChannel(userId: number, channel: Channel, socket: Socket): void {
+  leaveChannel(userId: number, channel: Channel, socket: Socket | undefined): void {
     if (channel.users.delete(userId) === false) {
       throw new WsException('채널에 참여하지 않은 유저입니다.');
     }
@@ -90,7 +90,14 @@ export class ConnectionGateway implements OnGatewayConnection, OnGatewayDisconne
         this.visibleChannelRepository.delete(channel.id);
       }
     }
-    socket.leave(channel.id);
+    if (socket === undefined) {
+      const socketId = this.socketIdRepository.find(userId)?.socketId;
+      if (socketId !== undefined) {
+        this.server.to(socketId).socketsLeave(channel.id);
+      }
+    } else {
+      socket.leave(channel.id);
+    }
     this.server.to(channel.id).emit('user-left-channel', { userId });
   }
 
