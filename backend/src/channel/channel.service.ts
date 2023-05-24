@@ -19,10 +19,10 @@ import { User } from '../entity/user.entity';
 import {
   ChannelRepository,
   InvisibleChannelRepository,
+  InvitationRepository,
   SocketIdRepository,
   VisibleChannelRepository,
 } from '../repository';
-import { InvitationRepository } from '../repository/invitation.repository';
 import { ChannelUser, Channel } from '../repository/model';
 
 import { ChannelGateway } from './channel.gateway';
