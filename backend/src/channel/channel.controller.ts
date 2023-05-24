@@ -144,7 +144,7 @@ export class ChannelController {
   @Patch(':channelId/player')
   participateAsPlayer(
     @ExtractUserId() myId: number,
-    @Param('cahnnelId', IdToChannelPipe) channel: Channel,
+    @Param('channelId', IdToChannelPipe) channel: Channel,
   ): SuccessResponseDto {
     return this.channelService.participateAsPlayer(myId, channel);
   }
