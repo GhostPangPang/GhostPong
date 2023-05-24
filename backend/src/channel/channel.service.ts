@@ -214,6 +214,32 @@ export class ChannelService {
     };
   }
 
+  /**
+   * @description owner 되기
+   * @param myId
+   * @param channel
+   */
+  becomeOwner(myId: number, channel: Channel): SuccessResponseDto {
+    const channelUser = this.findExistChannelUser(myId, channel);
+    if (channel.isInGame === true) {
+      throw new ForbiddenException('게임 진행중에 처리할 수 없습니다.');
+    }
+    if (channelUser.role === 'owner') {
+      throw new ConflictException('이미 방장입니다.');
+    }
+    for (const user of channel.users.values()) {
+      if (user.role === 'owner') {
+        throw new ConflictException('방장이 존재합니다.');
+      }
+    }
+    channelUser.role = 'owner';
+    channelUser.isPlayer = true;
+    this.channelGateway.emitChannel<UserId>(channel.id, 'owner', { userId: myId });
+    return {
+      message: '방장이 되었습니다.',
+    };
+  }
+
   // SECTION: private
   /**
    * 채널 참여 시 user의 id를 이용해 channelUser 를 생성한다.

@@ -628,4 +628,89 @@ describe('ChannelService', () => {
       });
     });
   });
+
+  describe('becomeOwner', () => {
+    it('이미 방장인 경우', async () => {
+      const user: ChannelUser = {
+        id: 1,
+        nickname: 'test',
+        image: '/asset/profile-1.png',
+        role: 'owner',
+        isMuted: false,
+        isPlayer: true,
+      };
+      const channel: Channel = {
+        id: 'aaa',
+        mode: 'public',
+        name: 'test',
+        isInGame: false,
+        users: new Map([[1, user]]),
+        bannedUserIdList: [],
+      };
+      try {
+        await service.becomeOwner(1, channel);
+      } catch (e) {
+        expect(e).toBeInstanceOf(ConflictException);
+        expect(e.message).toEqual('이미 방장입니다.');
+      }
+    });
+
+    it('방장이 존재하는 경우', async () => {
+      const owner: ChannelUser = {
+        id: 1,
+        nickname: 'test',
+        image: '/asset/profile-1.png',
+        role: 'owner',
+        isMuted: false,
+        isPlayer: false,
+      };
+      const user: ChannelUser = {
+        id: 2,
+        nickname: 'test',
+        image: '/asset/profile-1.png',
+        role: 'member',
+        isMuted: false,
+        isPlayer: false,
+      };
+      const channel: Channel = {
+        id: 'aaa',
+        mode: 'public',
+        name: 'test',
+        isInGame: false,
+        users: new Map([
+          [1, owner],
+          [2, user],
+        ]),
+        bannedUserIdList: [],
+      };
+      try {
+        await service.becomeOwner(2, channel);
+      } catch (e) {
+        expect(e).toBeInstanceOf(ConflictException);
+        expect(e.message).toEqual('방장이 존재합니다.');
+      }
+    });
+
+    it('성공적으로 방장이 되는 경우', async () => {
+      const user: ChannelUser = {
+        id: 2,
+        nickname: 'test',
+        image: '/asset/profile-1.png',
+        role: 'member',
+        isMuted: false,
+        isPlayer: false,
+      };
+      const channel: Channel = {
+        id: 'aaa',
+        mode: 'public',
+        name: 'test',
+        isInGame: false,
+        users: new Map([[1, user]]),
+        bannedUserIdList: [],
+      };
+      expect(await service.becomeOwner(1, channel)).toEqual({
+        message: '방장이 되었습니다.',
+      });
+    });
+  });
 });
