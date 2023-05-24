@@ -251,9 +251,7 @@ export class ChannelService {
    */
   async muteUser(myId: number, channel: Channel, userId: number): Promise<SuccessResponseDto> {
     this.checkOperationAuthority(myId, channel, userId);
-    this.logger.debug(`muteUser: ${JSON.stringify(this.cacheManager.get(`mute-${userId}`))}`);
     await this.cacheManager.set(`mute-${userId}`, true, MUTE_EXPIRES_IN);
-    this.logger.log('muteUser: ' + this.cacheManager.get(`mute-${userId}`));
     return { message: 'mute 되었습니다.' };
   }
 
