@@ -12,17 +12,13 @@ export type MemberType = 'leftPlayer' | 'rightPlayer' | 'observer';
 
 export interface GamePageProps {
   type: MemberType;
-  channelId: string;
 }
 
-export const GamePage = ({ type = 'rightPlayer', channelId = '1' }: GamePageProps) => {
+// default member 로 바꾸어야함
+export const PingPongGame = ({ type = 'rightPlayer' }: GamePageProps) => {
   const setSocket = useSetRecoilState(socketState);
-  const { setCanvasSize, playGame, moveBar, drawCountDown } = usePingPongGame({
-    channelId,
-    leftPlayerId: 2,
-    rightPlayerId: 1,
-  });
-  const canvasRef = useCanvas(playGame);
+  const { gameStatus, setCanvasSize, playGame, moveBar } = usePingPongGame();
+  const canvasRef = useCanvas(playGame, gameStatus === 'end');
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -31,13 +27,7 @@ export const GamePage = ({ type = 'rightPlayer', channelId = '1' }: GamePageProp
     if (!context) return;
 
     setSocket((prev) => ({ ...prev, game: true }));
-
-    drawCountDown(context, canvas.width, canvas.height);
-    setTimeout(() => {
-      // 이거 두개는 합쳐도 될듯
-      setCanvasSize({ width: canvas.width, height: canvas.height });
-      emitEvent(GameEvent.GAMESTART, { gameId: channelId });
-    }, 3000);
+    setCanvasSize({ width: canvas.clientWidth, height: canvas.clientHeight });
 
     return () => setSocket((prev) => ({ ...prev, game: false }));
   }, []);
@@ -58,10 +48,8 @@ export const GamePage = ({ type = 'rightPlayer', channelId = '1' }: GamePageProp
     <div>
       <canvas
         ref={canvasRef}
-        width={900}
-        height={450}
         onMouseMove={handleMouseMove}
-        style={{ borderRadius: '4px', backgroundColor: theme.color.gray500 }}
+        style={{ aspectRatio: '2 / 1', width: '90rem', borderRadius: '4px', backgroundColor: theme.color.gray500 }}
       ></canvas>
     </div>
   );

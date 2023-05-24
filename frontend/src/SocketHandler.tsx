@@ -199,16 +199,16 @@ export const SocketHandler = () => {
   }, [socket]);
 
   // Turn on game socket event
-  useEffect(() => {
-    if (!socket.game) return;
-    console.log('socket game connect');
-    // game-start(게임 시작 준비하세요 알리기) 이벤트 -> channel state 바꿔주기 [gamePlaying: true]
+  // useEffect(() => {
+  //   if (!socket.game) return;
+  //   console.log('socket game connect');
+  //   // game-start(게임 시작 준비하세요 알리기) 이벤트 -> channel state 바꿔주기 [gamePlaying: true]
 
-    // register game socket on event
-    return () => {
-      console.log('socket game disconnect');
-    };
-  }, [socket]);
+  //   // register game socket on event
+  //   return () => {
+  //     console.log('socket game disconnect');
+  //   };
+  // }, [socket]);
 
   useEffect(() => {
     if (newMessages.friend === null) return;

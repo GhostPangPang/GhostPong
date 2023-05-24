@@ -2,7 +2,7 @@ import { UserInfo } from '@/dto/user';
 import { FriendResponse } from '@/dto/friend/response';
 import { MessageResponse } from '@/dto/message/response';
 
-export type User = Omit<UserInfo, 'id'> & { id: number };
+export type User = UserInfo;
 
 export type Message = MessageResponse['messages'][number];
 

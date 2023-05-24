@@ -9,6 +9,7 @@ import { useChannel, useLeaveChannel } from '@/hooks/channel';
 import { useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import { itemGenerator } from '@/libs/utils/itemgenerator';
+import { useGameStart } from '@/hooks/game/useGameStart';
 // useItem hook 으로 빼기
 
 export const GameReadyPage = () => {
@@ -21,10 +22,15 @@ export const GameReadyPage = () => {
   // const { startGame } = useGameMutation();
 
   const { refetchChannel } = useChannel(channelId);
-  const channelData = useRecoilValue(channelDataState);
+  const [channelData, setChannelData] = useRecoilState(channelDataState);
   const { isInGame, leftPlayer, rightPlayer } = channelData;
 
-  console.log('sdf', channelData);
+  useGameStart({
+    onGameStart: () => {
+      setChannelData((prev) => ({ ...prev, isInGame: true }));
+    },
+  });
+
   useEffect(() => {
     const channelId = pathname.replace('/channel/', '');
     console.log('channelId', channelId);

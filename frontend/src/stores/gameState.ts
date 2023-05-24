@@ -76,16 +76,16 @@ export const gameIdState = atom<string>({
 
 // game player data
 type GamePlayerData = {
-  leftUser: MemberInfo | null;
-  rightUser: MemberInfo | null;
+  leftPlayer: MemberInfo | null;
+  rightPlayer: MemberInfo | null;
 };
 
 // 타입 일관성 없음 MemberInfo 인지 User 인지, MemberInfo 로 일단 구현
 export const gamePlayerState = atom<GamePlayerData>({
   key: 'gamePlayerState',
   default: {
-    leftUser: null,
-    rightUser: null,
+    leftPlayer: null,
+    rightPlayer: null,
   },
 });
 
