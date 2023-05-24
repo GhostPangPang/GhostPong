@@ -168,7 +168,7 @@ export class ChannelService {
    * @param myId
    * @param channel
    */
-  participateAsPlayer(myId: number, channel: Channel): SuccessResponseDto {
+  becomePlayer(myId: number, channel: Channel): SuccessResponseDto {
     const channelUser = this.findExistChannelUser(myId, channel);
     let count = 0;
 
@@ -188,6 +188,29 @@ export class ChannelService {
     this.channelGateway.emitChannel<UserId>(channel.id, 'player', { userId: myId }, socketId);
     return {
       message: '플레이어가 되었습니다.',
+    };
+  }
+
+  /**
+   * @description Admin 권한 부여하기
+   * @param myId
+   * @param targetId 부여할 유저의 id
+   * @param channel
+   */
+  assignAdminPrivileges(myId: number, targetId: number, channel: Channel): SuccessResponseDto {
+    const user = this.findExistChannelUser(myId, channel);
+    if (user.role !== 'owner' && user.role !== 'admin') {
+      throw new ForbiddenException('관리자 권한이 없습니다.');
+    }
+    const target = this.findExistChannelUser(targetId, channel);
+    if (target.role === 'owner' || target.role === 'admin') {
+      throw new ConflictException('이미 관리자 권한을 가진 유저입니다.');
+    }
+    const socketId = this.findExistSocket(myId);
+    target.role = 'admin';
+    this.channelGateway.emitChannel<UserId>(channel.id, 'admin', { userId: targetId }, socketId);
+    return {
+      message: '관리자 권한을 부여했습니다.',
     };
   }
 
