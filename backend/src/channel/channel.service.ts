@@ -7,6 +7,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { hash, compare } from 'bcrypt';
 import { Repository } from 'typeorm';
 
 import { ChannelRole, MemberInfo, UserId } from '@/types/channel';
@@ -15,6 +16,7 @@ import { PARTICIPANT_LIMIT } from '../common/constant';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
 import { Friendship } from '../entity/friendship.entity';
 import { User } from '../entity/user.entity';
+import { ChannelRepository } from '../repository/channel.repository';
 import { InvisibleChannelRepository } from '../repository/invisible-channel.repository';
 import { InvitationRepository } from '../repository/invitation.repository';
 import { ChannelUser, Channel } from '../repository/model/channel';
@@ -97,37 +99,32 @@ export class ChannelService {
    */
   async createChannel(myId: number, channelOptions: CreateChannelRequestDto): Promise<string> {
     this.checkUserAlreadyInChannel(myId);
-    let channel;
-    let channelId;
-
     const socketId = this.findExistSocket(myId);
 
+    let channelRepository: ChannelRepository;
     if (channelOptions.mode === 'private') {
-      channel = this.invisibleChannelRepository.create(channelOptions);
-      channelId = this.invisibleChannelRepository.insert(channel);
+      channelRepository = this.invisibleChannelRepository;
     } else {
-      channel = this.visibleChannelRepository.create(channelOptions);
-      channelId = this.visibleChannelRepository.insert(channel);
+      channelRepository = this.visibleChannelRepository;
+      if (channelOptions.password !== undefined) {
+        channelOptions.password = await hash(channelOptions.password, 5);
+      }
     }
+    const channel = channelRepository.create(channelOptions);
+    const channelId = channelRepository.insert(channel);
     channel.users.set(myId, await this.generateChannelUser(myId, 'owner'));
     this.channelGateway.joinChannel(socketId, channel.id);
-
-    this.logger.log(`createChannel: ${JSON.stringify(channel)}`);
     return channelId;
   }
 
   /**
    *  채널에 참여한다.
    * @param myId
-   * @param joinChannelRequestDto
+   * @param joinOptions
    */
-  async joinChannel(
-    myId: number,
-    joinChannelRequestDto: JoinChannelRequestDto,
-    channel: Channel,
-  ): Promise<SuccessResponseDto> {
+  async joinChannel(myId: number, joinOptions: JoinChannelRequestDto, channel: Channel): Promise<SuccessResponseDto> {
     this.checkUserAlreadyInChannel(myId);
-    this.checkJoinChannel(myId, joinChannelRequestDto, channel);
+    await this.checkJoinChannel(myId, joinOptions, channel);
 
     const socketId = this.findExistSocket(myId);
 
@@ -287,23 +284,29 @@ export class ChannelService {
   /**
    * @description 채널 입장 시 채널의 모드, 비밀번호, 초대 여부, 차단 여부, 정원 초과 확인
    */
-  private checkJoinChannel(myId: number, joinChannelRequestDto: JoinChannelRequestDto, channel: Channel): void {
-    if (channel.mode !== joinChannelRequestDto.mode) {
+  private async checkJoinChannel(myId: number, joinOptions: JoinChannelRequestDto, channel: Channel): Promise<void> {
+    const { mode, password, users, bannedUserIdList } = channel;
+    if (mode !== joinOptions.mode) {
       throw new BadRequestException('채널의 모드가 일치하지 않습니다.');
     }
-    if (channel.mode === 'protected' && channel.password !== joinChannelRequestDto.password) {
-      throw new ForbiddenException('비밀번호가 일치하지 않습니다.');
-    }
-    if (channel.mode === 'private' && this.invitationRepository.find(myId) === undefined) {
-      throw new ForbiddenException('초대가 필요한 채널입니다.');
-    }
-    this.invitationRepository.delete(myId);
-    if (channel.bannedUserIdList.find((elem) => elem === myId) !== undefined) {
+    if (bannedUserIdList.find((elem) => elem === myId) !== undefined) {
       throw new ForbiddenException('차단되어 입장이 불가능한 채널입니다.');
     }
-    if (channel.users.size >= PARTICIPANT_LIMIT) {
+    if (users.size >= PARTICIPANT_LIMIT) {
       throw new ForbiddenException('채널 정원이 초과되었습니다.');
     }
+    if (mode === 'private' && this.invitationRepository.find(myId) === undefined) {
+      throw new ForbiddenException('초대가 필요한 채널입니다.');
+    }
+    if (
+      mode === 'protected' &&
+      password !== undefined &&
+      joinOptions.password !== undefined &&
+      (await compare(joinOptions.password, password)) === false
+    ) {
+      throw new ForbiddenException('비밀번호가 일치하지 않습니다.');
+    }
+    this.invitationRepository.delete(myId);
   }
 
   private async insertNewMember(myId: number, channel: Channel): Promise<MemberInfo> {
