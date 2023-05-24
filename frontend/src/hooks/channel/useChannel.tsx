@@ -105,7 +105,6 @@ export const useChannelInfo = (id: string) => {
         leftPlayer: leftPlayer || null,
         rightPlayer: rightPlayer[0] || null,
         observers: channelInfo.observers,
-        currentUserId: currentUserId,
         currentRole: currentUserRole,
         isInGame: channelInfo.isInGame,
       });
@@ -118,7 +117,6 @@ export const useChannelInfo = (id: string) => {
         leftPlayer: null,
         rightPlayer: null,
         observers: [],
-        currentUserId: -1,
         currentRole: undefined,
         isInGame: false,
         chats: [],
