@@ -33,13 +33,6 @@ interface patchBanProps {
 
 let previousTotal = 0;
 
-const initialChannelInfoData: FullChannelInfoResponse = {
-  players: [],
-  observers: [],
-  isInGame: false,
-  name: '',
-};
-
 const initialChannelListData: ChannelsListResponse = {
   total: 0,
   channels: [
