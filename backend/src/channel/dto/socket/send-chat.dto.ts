@@ -1,8 +1,8 @@
-import { IsDateString, IsInt, IsNotEmpty, IsString, Max, MaxLength, Min, Length } from 'class-validator';
+import { IsDateString, IsString, MaxLength, Length } from 'class-validator';
 
-import { Chat } from '@/types/channel/socket';
+import { SendChat } from '@/types/channel/socket';
 
-export default class ChatDto implements Chat {
+export default class SendChatDto implements SendChat {
   /**
    * @description 채널 아이디
    * @example 4
@@ -10,16 +10,6 @@ export default class ChatDto implements Chat {
   @IsString()
   @Length(21, 21)
   channelId: string;
-
-  /**
-   * @description 채팅 보낸 사람 아이디
-   * @example 4
-   */
-  @IsNotEmpty()
-  @IsInt()
-  @Min(1)
-  @Max(2147483647)
-  senderId: number;
 
   /**
    * @description 채팅 보낸 시간

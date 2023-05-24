@@ -20,7 +20,8 @@ import { InvisibleChannelRepository, VisibleChannelRepository } from '../reposit
 import { Channel } from '../repository/model';
 
 import { ChannelIdDto } from './dto/socket/channelId.dto';
-import ChatDto from './dto/socket/chat.dto';
+import NewChatDto from './dto/socket/new-chat.dto';
+import SendChatDto from './dto/socket/send-chat.dto';
 
 @UsePipes(new ValidationPipe({ exceptionFactory: createWsException }))
 @WebSocketGateway({ cors: corsOption })
@@ -38,22 +39,22 @@ export class ChannelGateway {
 
   logger: Logger = new Logger('ChannelGateway');
 
-  /**
-   * @summary chat하는 event
-   */
-  @SubscribeMessage('chat')
-  async handleChat(@ConnectedSocket() socket: Socket, @MessageBody() data: ChatDto) {
-    if (data.senderId !== socket.data.userId) {
-      throw new WsException('유저 정보가 일치하지 않습니다.');
-    }
-    if ((await this.cacheManager.get(`mute-${data.senderId}`)) !== undefined) {
+  @SubscribeMessage('send-chat')
+  async handleMessage(@ConnectedSocket() socket: Socket, @MessageBody() data: SendChatDto) {
+    if ((await this.cacheManager.get(`mute-${socket.data.userId}`)) !== undefined) {
       return { message: '당신은 뮤트된 유저입니다.' };
     }
     const channel = this.checkExistChannel(data.channelId);
-    if (channel.users.get(data.senderId) === undefined) {
+    const sender = channel.users.get(socket.data.userId);
+    if (sender === undefined) {
       throw new WsException('채널에 참여하지 않은 유저입니다.');
     }
-    socket.to(data.channelId).emit('chat', data);
+    this.emitChannel<NewChatDto>(
+      data.channelId,
+      'new-chat',
+      { ...data, senderId: sender.id, senderNickname: sender.nickname },
+      socket.id,
+    );
   }
 
   /**
@@ -62,7 +63,6 @@ export class ChannelGateway {
   @SubscribeMessage('leave-channel')
   handleLeaveChannel(@ConnectedSocket() socket: Socket, @MessageBody() data: ChannelIdDto) {
     const channel = this.checkExistChannel(data.channelId);
-
     this.connectionGateway.leaveChannel(socket.data.userId, channel, socket);
     this.emitChannel<UserId>(channel.id, 'user-left-channel', { userId: socket.data.userId });
   }
