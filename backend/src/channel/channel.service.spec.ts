@@ -491,7 +491,7 @@ describe('ChannelService', () => {
         bannedUserIdList: [],
       };
       try {
-        await service.participateAsPlayer(1, channel);
+        await service.becomePlayer(1, channel);
       } catch (e) {
         expect(e).toBeInstanceOf(ForbiddenException);
         expect(e.message).toEqual('게임 진행중에 처리할 수 없습니다.');
@@ -507,7 +507,7 @@ describe('ChannelService', () => {
         bannedUserIdList: [],
       };
       try {
-        await service.participateAsPlayer(1, channel);
+        await service.becomePlayer(1, channel);
       } catch (e) {
         expect(e).toBeInstanceOf(ConflictException);
         expect(e.message).toEqual('이미 플레이어입니다.');
@@ -533,7 +533,7 @@ describe('ChannelService', () => {
       channel.users.set(2, player);
       channel.users.set(3, user);
       try {
-        await service.participateAsPlayer(3, channel);
+        await service.becomePlayer(3, channel);
       } catch (e) {
         expect(e).toBeInstanceOf(ForbiddenException);
         expect(e.message).toEqual('플레이어 정원이 찼습니다.');
@@ -557,8 +557,74 @@ describe('ChannelService', () => {
         bannedUserIdList: [],
       };
       channel.users.set(2, user);
-      expect(await service.participateAsPlayer(2, channel)).toEqual({
+      expect(await service.becomePlayer(2, channel)).toEqual({
         message: '플레이어가 되었습니다.',
+      });
+    });
+  });
+
+  describe('assignAdminPrivileges', () => {
+    const owner: ChannelUser = {
+      id: 1,
+      nickname: 'test',
+      image: '/asset/profile-1.png',
+      role: 'owner',
+      isMuted: false,
+      isPlayer: true,
+    };
+
+    const admin: ChannelUser = {
+      id: 2,
+      nickname: 'test',
+      image: '/asset/profile-1.png',
+      role: 'admin',
+      isMuted: false,
+      isPlayer: false,
+    };
+
+    const member: ChannelUser = {
+      id: 3,
+      nickname: 'test',
+      image: '/asset/profile-1.png',
+      role: 'member',
+      isMuted: false,
+      isPlayer: false,
+    };
+
+    const channel: Channel = {
+      id: 'aaa',
+      mode: 'public',
+      name: 'test',
+      isInGame: false,
+      users: new Map([
+        [1, owner],
+        [2, admin],
+        [3, member],
+      ]),
+      bannedUserIdList: [],
+    };
+
+    it('관리자 권한이 없는 경우', async () => {
+      try {
+        await service.assignAdminPrivileges(3, 2, channel);
+      } catch (e) {
+        expect(e).toBeInstanceOf(ForbiddenException);
+        expect(e.message).toEqual('관리자 권한이 없습니다.');
+      }
+    });
+
+    it('이미 관리자 권한을 가진 유저인 경우', async () => {
+      try {
+        await service.assignAdminPrivileges(1, 2, channel);
+      } catch (e) {
+        expect(e).toBeInstanceOf(ConflictException);
+        expect(e.message).toEqual('이미 관리자 권한을 가진 유저입니다.');
+      }
+    });
+
+    it('성공적으로 관리자 권한 부여', async () => {
+      expect(await service.assignAdminPrivileges(1, 3, channel)).toEqual({
+        message: '관리자 권한을 부여했습니다.',
       });
     });
   });
