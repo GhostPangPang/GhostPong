@@ -3,16 +3,11 @@ import { Versus } from './Versus';
 import { ChatBox } from './ChatBox';
 import { ObserverBox } from './ObserverBox';
 import { Grid, GameButton } from '@/common';
-import { useRecoilState, useSetRecoilState } from 'recoil';
-import { channelIdState, channelDataState, socketState, gamePlayerState, gameIdState } from '@/stores';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { channelIdState, channelDataState, socketState } from '@/stores';
 import { useChannel, useLeaveChannel } from '@/hooks/channel';
 import { useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
-import { useUserInfo } from '@/hooks/user';
-// import { PingPongGame } from '../GamePage';
-// import { useGameMutation } from '@/hooks/game';
-import { ApiResponse, onEvent } from '@/libs/api';
-import { GameEvent } from '@/constants';
 
 // useItem hook 으로 빼기
 export const itemGenerator = (role: 'owner' | 'admin' | 'member' | undefined) => {
@@ -66,65 +61,32 @@ export const itemGenerator = (role: 'owner' | 'admin' | 'member' | undefined) =>
 
 export const GameReadyPage = () => {
   const setSocket = useSetRecoilState(socketState);
-  const { leaveChannel } = useLeaveChannel();
-
   const { pathname } = useLocation();
-
+  const { leaveChannel } = useLeaveChannel();
   const [channelId, setChannelId] = useRecoilState(channelIdState);
-  const [channelData, setChannelData] = useRecoilState(channelDataState);
-
-  const [gamePlayer, setGamePlayer] = useRecoilState(gamePlayerState);
-  const setGameId = useSetRecoilState(gameIdState);
   // const { startGame } = useGameMutation();
 
-  const {
-    userInfo: { id: userId },
-  } = useUserInfo();
-  const { channelInfo, refetchChannelInfo } = useChannel(channelId);
-
-  const { leftPlayer, rightPlayer, isInGame } = channelData;
+  const { refetchChannel } = useChannel(channelId);
+  const channelData = useRecoilValue(channelDataState);
+  const { isInGame, leftPlayer, rightPlayer } = channelData;
 
   useEffect(() => {
     const channelId = pathname.replace('/channel/', '');
     setChannelId(channelId);
 
     // socket 통신 받아서 navigate 하기
-    onEvent(GameEvent.GAMESTART, (data: { gameId: string }) => {
-      console.log('game-start 이벤트왔다', data);
-      setChannelData({
-        ...channelData,
-        isInGame: true,
-      });
-    });
+    // onEvent(GameEvent.GAMESTART, (data: { gameId: string }) => {
+    //   console.log('game-start 이벤트왔다', data);
+    //   setChannelData({
+    //     ...channelData,
+    //     isInGame: true,
+    //   });
+    // });
   }, []);
-
-  useEffect(() => {
-    if (channelId && channelInfo) {
-      const currentUserRole =
-        channelInfo.players.find((user) => user.userId === userId)?.role ||
-        channelInfo.observers.find((user) => user.userId === userId)?.role;
-      const leftPlayer = channelInfo.players.find((player) => player.role === 'owner');
-      const rightPlayer = channelInfo.players.filter((player) => player.role !== 'owner'); // 이게 무슨 로직이지??ㅇㅅㅇ,,,
-
-      setChannelData({
-        ...channelInfo,
-        leftPlayer: leftPlayer || null,
-        rightPlayer: rightPlayer[0] || null,
-        currentRole: currentUserRole,
-        chats: [],
-      });
-
-      // 저기에서 leftPlayer rightPlayer gameState 로 분리해야함
-      setGamePlayer({
-        leftUser: leftPlayer || null,
-        rightUser: rightPlayer[0] || null,
-      });
-    }
-  }, [channelInfo]);
 
   const handleStartGame = () => {
     // 임시로 새로 채널 정보 가져오게 하기
-    refetchChannelInfo();
+    refetchChannel();
 
     if (!channelData.leftPlayer || !channelData.rightPlayer) {
       alert('플레이어가 없습니다.');

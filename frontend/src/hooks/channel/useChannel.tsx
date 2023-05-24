@@ -4,6 +4,8 @@ import { ChannelsListResponse, FullChannelInfoResponse } from '@/dto/channel/res
 import { CreateChannelRequest, JoinChannelRequest } from '@/dto/channel/request';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
+import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
+import { UserInfoState, channelDataState } from '@/stores';
 
 const CHANNEL = '/channel';
 
@@ -16,6 +18,13 @@ interface postJoinChannelProps extends JoinChannelRequest {
 }
 
 let previousTotal = 0;
+
+const initialChannelInfoData: FullChannelInfoResponse = {
+  players: [],
+  observers: [],
+  isInGame: false,
+  name: '',
+};
 
 const initialChannelListData: ChannelsListResponse = {
   total: 0,
@@ -50,16 +59,20 @@ const postJoinChannel = async ({ mode, password, id }: postJoinChannelProps) => 
   return await post<ApiResponse>(CHANNEL + `/${id}`, { mode, password });
 };
 
-const patchRegisterPlayer = async (id: string) => {
+const patchBePlayer = async (id: string) => {
   return await patch<ApiResponse>(CHANNEL + `/${id}/player`);
 };
 
 export const useChannel = (id: string) => {
   const navigate = useNavigate();
+  const [channelData, setChannelData] = useRecoilState(channelDataState);
+
+  const { id: currentUserId } = useRecoilValue(UserInfoState);
+  const resetChannelData = useResetRecoilState(channelDataState);
 
   const {
-    data: channelInfo = null,
-    refetch: refetchChannelInfo,
+    data: channel = initialChannelInfoData,
+    refetch: refetchChannel,
     isFetching,
     isError,
   } = useQuery<FullChannelInfoResponse, ApiError>({
@@ -76,48 +89,35 @@ export const useChannel = (id: string) => {
   });
 
   useEffect(() => {
-    console.log('isError', isError);
     if (!isFetching && isError) {
       navigate('/channel/list');
     }
   }, [isError]);
 
-  // useEffect(() => {
-  //   console.log('chan', channelInfo);
-  //   if (channelInfo) {
-  //     const currentUserRole = channelInfo.players
-  //       .concat(channelInfo.observers)
-  //       .find((user) => user.userId === currentUserId)?.role;
-  //     const leftPlayer = channelInfo.players.find((player) => player.role === 'owner');
-  //     const rightPlayer = channelInfo.players.filter((player) => player.role !== 'owner');
+  useEffect(() => {
+    if (channel) {
+      const currentUserRole = channel.players
+        .concat(channel.observers)
+        .find((user) => user.userId === currentUserId)?.role;
+      const leftPlayer = channel.players.find((player) => player.role === 'owner');
+      const rightPlayer = channel.players.filter((player) => player.role !== 'owner');
 
-  //     setNewChannelData({
-  //       ...newChannelData,
-  //       name: channelInfo.name,
-  //       channelId: id,
-  //       leftPlayer: leftPlayer || null,
-  //       rightPlayer: rightPlayer[0] || null,
-  //       observers: channelInfo.observers,
-  //       currentRole: currentUserRole,
-  //       isInGame: channelInfo.isInGame,
-  //     });
-  //   }
-  //   return () => {
-  //     setNewChannelData({
-  //       ...newChannelData,
-  //       name: '',
-  //       channelId: '',
-  //       leftPlayer: null,
-  //       rightPlayer: null,
-  //       observers: [],
-  //       currentRole: undefined,
-  //       isInGame: false,
-  //       chats: [],
-  //     });
-  //   };
-  // }, [channelInfo]);
-  // return { channelInfo };
-  return { channelInfo, refetchChannelInfo };
+      setChannelData({
+        ...channelData,
+        name: channel.name,
+        leftPlayer: leftPlayer || null,
+        rightPlayer: rightPlayer[0] || null,
+        observers: channel.observers,
+        currentRole: currentUserRole,
+        isInGame: channel.isInGame,
+      });
+    }
+    return () => {
+      resetChannelData();
+    };
+  }, [channel]);
+
+  return { channel, refetchChannel };
 };
 
 export const useChannelList = ({ cursor = 0 }: useChannelProps) => {
@@ -161,7 +161,7 @@ export const useChannelMutation = () => {
     },
   });
 
-  const { mutate: registerPlayer } = useMutation(patchRegisterPlayer, {
+  const { mutate: registerPlayer } = useMutation(patchBePlayer, {
     onSuccess: (data: ApiResponse, id: string) => {
       queryClient.invalidateQueries([CHANNEL, id]);
       alert(data.message);
