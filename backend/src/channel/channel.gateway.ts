@@ -13,6 +13,7 @@ import { Server, Socket } from 'socket.io';
 
 import { corsOption } from '../common/option/cors.option';
 import { createWsException } from '../common/util';
+import { ConnectionGateway } from '../connection/connection.gateway';
 import { InvisibleChannelRepository } from '../repository/invisible-channel.repository';
 import { Channel } from '../repository/model/channel';
 import { VisibleChannelRepository } from '../repository/visible-channel.repository';
@@ -35,6 +36,7 @@ export class ChannelGateway {
     private cacheManager: Cache,
     private readonly visibleChannelRepository: VisibleChannelRepository,
     private readonly invisibleChannelRepository: InvisibleChannelRepository,
+    private readonly connectionGateway: ConnectionGateway,
   ) {}
 
   logger: Logger = new Logger('ChannelGateway');
@@ -61,20 +63,7 @@ export class ChannelGateway {
   handleLeaveChannel(@ConnectedSocket() socket: Socket, @MessageBody() data: ChannelIdDto) {
     const channel = this.checkExistChannel(data.channelId);
 
-    if (channel.users.delete(socket.data.userId) === false) {
-      throw new WsException('채널에 참여하지 않은 유저입니다.');
-    }
-    if (channel.users.size === 0) {
-      if (channel.mode === 'private') {
-        this.invisibleChannelRepository.delete(channel.id);
-      } else {
-        this.visibleChannelRepository.delete(channel.id);
-      }
-    }
-    socket.leave(data.channelId);
-    this.emitChannel(data.channelId, 'user-left-channel', {
-      userId: socket.data.userId,
-    });
+    this.connectionGateway.leaveChannel(socket.data.userId, channel, socket);
   }
 
   /**
