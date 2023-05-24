@@ -9,16 +9,19 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 
+import { BarMoved } from '@/types/game';
+
 import { GameData, Player } from '@/game/game-data';
 
+import { UserStatus } from '../../../types/user';
 import { corsOption } from '../common/option/cors.option';
 import { createWsException } from '../common/util';
 import { GameRepository } from '../repository/game.repository';
 import { Status } from '../repository/model/user-status';
 import { UserStatusRepository } from '../repository/user-status.repository';
 
-import { GameStartDto } from './dto/game-start.dto';
 import { MoveBarDto } from './dto/move-bar.dto';
+import { PlayerReadyDto } from './dto/player-ready';
 import { GameEngineService } from './game-engine.service';
 
 @UsePipes(
@@ -39,7 +42,7 @@ export class GameGateway {
   ) {}
 
   @SubscribeMessage('game-start')
-  handleGameStart(@ConnectedSocket() socket: Socket, @MessageBody() { gameId }: GameStartDto): void {
+  handleGameStart(@ConnectedSocket() socket: Socket, @MessageBody() { gameId }: PlayerReadyDto): void {
     const game = this.gameRepository.find(gameId);
     if (game === undefined) {
       throw new WsException('게임이 존재하지 않습니다.');
@@ -73,7 +76,8 @@ export class GameGateway {
     } else {
       throw new WsException('게임의 플레이어가 아닙니다.');
     }
-    socket.to(gameId).emit('bar-moved', { userId: socket.data.userId, y });
+    const moveBar: BarMoved = { userId: socket.data.userId, y };
+    socket.to(gameId).emit('bar-moved', moveBar);
   }
 
   /**
@@ -82,7 +86,8 @@ export class GameGateway {
    * @param gameId
    */
   broadcastGameStart(gameId: string): void {
-    this.server.to(gameId).emit('game-start', { gameId });
+    //const gameStart: PlayerReady = { gameId };
+    this.server.to(gameId).emit('game-ready');
   }
 
   broadcastGameData(gamedata: GameData): void {
@@ -98,7 +103,9 @@ export class GameGateway {
   }
 
   updateUserStatus(userId: number, status: Status): void {
-    this.userStatusRepository.update(userId, { status });
-    this.server.to(`user-${userId}`).emit('user-status', { id: userId, status });
+    const userStatus: UserStatus | undefined = this.userStatusRepository.update(userId, { status });
+    if (userStatus !== undefined) {
+      this.server.to(`user-${userId}`).emit('user-status', userStatus);
+    }
   }
 }
