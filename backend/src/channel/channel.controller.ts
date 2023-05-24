@@ -133,8 +133,8 @@ export class ChannelController {
   }
 
   /**
-   * @summary 채널에서 플레이어로 참여하기
-   * @description POST /channel/:channelId/player
+   * @summary 채널에서 플레이어 되기
+   * @description PATCH /channel/:channelId/player
    */
   @ApiOperation({ summary: '플레이어로 참여하기' })
   @ApiConflictResponse({ type: ErrorResponseDto, description: '이미 본인이 플레이어' })
@@ -142,10 +142,28 @@ export class ChannelController {
   @ApiHeaders([{ name: 'x-my-id', description: '내 auth 아이디 (임시값)' }])
   @ApiParam({ name: 'channelId', description: '채널 아이디' })
   @Patch(':channelId/player')
-  participateAsPlayer(
+  becomePlayer(
     @ExtractUserId() myId: number,
-    @Param('cahnnelId', IdToChannelPipe) channel: Channel,
+    @Param('channelId', IdToChannelPipe) channel: Channel,
   ): SuccessResponseDto {
-    return this.channelService.participateAsPlayer(myId, channel);
+    return this.channelService.becomePlayer(myId, channel);
+  }
+
+  /**
+   * @summary 채널의 admin 권한 부여하기
+   * @description PATCH /channel/:channelId/admin
+   */
+  @ApiOperation({ summary: '채널에서 admin 되기' })
+  @ApiForbiddenResponse({ type: ErrorResponseDto, description: '채널에 참여중인 유저가 아님, 권리자 권한 없음' })
+  @ApiConflictResponse({ type: ErrorResponseDto, description: '이미 관리자 권한 가지고있는 유저에게 권한 부여' })
+  @ApiHeaders([{ name: 'x-my-id', description: '내 auth 아이디 (임시값)' }])
+  @ApiParam({ name: 'channelId', description: '채널 아이디' })
+  @Patch(':channelId/admin')
+  assignAdminPrivileges(
+    @ExtractUserId() myId: number,
+    @Param('channelId', IdToChannelPipe) channel: Channel,
+    @Body('userId', NonNegativeIntPipe, CheckUserIdPipe) targetId: number,
+  ): SuccessResponseDto {
+    return this.channelService.assignAdminPrivileges(myId, targetId, channel);
   }
 }

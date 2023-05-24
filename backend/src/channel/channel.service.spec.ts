@@ -472,7 +472,7 @@ describe('ChannelService', () => {
     });
   });
 
-  describe('participateAsPlayer', () => {
+  describe('becomePlayer', () => {
     const player: ChannelUser = {
       id: 1,
       nickname: 'test',
