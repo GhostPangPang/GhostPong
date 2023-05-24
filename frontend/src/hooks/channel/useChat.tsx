@@ -1,15 +1,15 @@
 import { emitEvent } from '@/libs/api';
-import { useRecoilState } from 'recoil';
-import { newChannelDataState } from '@/stores';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { channelDataState, channelIdState } from '@/stores';
 import { Chat } from '@/dto/channel/socket';
 import { useUserInfo } from '../user';
 
 export const useChat = () => {
-  const [newChannelData, setNewChannelData] = useRecoilState(newChannelDataState);
+  const channelId = useRecoilValue(channelIdState);
+  const setNewChannelData = useSetRecoilState(channelDataState);
 
   const sendChat = (content: string) => {
     const { userInfo } = useUserInfo();
-    const { channelId } = newChannelData;
 
     const data: Chat = {
       channelId,
