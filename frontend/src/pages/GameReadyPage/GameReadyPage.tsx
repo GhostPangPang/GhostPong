@@ -9,7 +9,7 @@ import { useChannel, useLeaveChannel } from '@/hooks/channel';
 import { useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useUserInfo } from '@/hooks/user';
-import { PingPongGame } from '../GamePage';
+// import { PingPongGame } from '../GamePage';
 import { useGameMutation } from '@/hooks/game/useGameMutation';
 import { ApiResponse, onEvent } from '@/libs/api';
 import { GameEvent } from '@/constants';
@@ -178,11 +178,13 @@ export const GameReadyPage = () => {
 
       <Grid container="flex" direction="row" alignItems="center" justifyContent="center" flexGrow={1}>
         {isInGame && leftPlayer && rightPlayer ? (
-          <PingPongGame
-            type={
-              leftPlayer.userId === userId ? 'leftPlayer' : rightPlayer.userId === userId ? 'rightPlayer' : 'observer'
-            }
-          />
+          <>
+            {/* // <PingPongGame
+          //   type={
+          //     leftPlayer.userId === userId ? 'leftPlayer' : rightPlayer.userId === userId ? 'rightPlayer' : 'observer'
+          //   }
+          // /> */}
+          </>
         ) : (
           <Versus
             leftPlayer={channelData.leftPlayer}
