@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { Box } from '@/common';
 import styled from 'styled-components';
 import { useRecoilValue } from 'recoil';
-import { newChannelDataState } from '@/stores';
+import { channelDataState } from '@/stores';
 
 interface ChatContentProps {
   inputFocus: boolean;
@@ -16,7 +16,7 @@ const ChatBubble = styled.div`
 `;
 
 export const ChatContent = ({ inputFocus }: ChatContentProps) => {
-  const { chats } = useRecoilValue(newChannelDataState);
+  const { chats } = useRecoilValue(channelDataState);
   const chatRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
