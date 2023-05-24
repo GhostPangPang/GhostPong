@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { connectSocket, disconnectSocket, emitEvent, offEvent, onEvent } from '@/libs/api';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
-import { newMessageIdListState, newMessagesState, newChannelDataState } from './stores';
+import { newMessageIdListState, newMessagesState, channelDataState } from './stores';
 import { socketState } from './stores/socketState';
 import { Message } from '@/dto/message/socket';
 import { MemberInfo, UserId, Chat } from '@/dto/channel/socket';
@@ -30,7 +30,7 @@ export const SocketHandler = () => {
 
   const updateChatEvent = useRecoilCallback(({ set }) => (data: Chat) => {
     console.log('socket chat', data);
-    set(newChannelDataState, (prev) => ({
+    set(channelDataState, (prev) => ({
       ...prev,
       chats: [...prev.chats, data],
     }));
@@ -38,7 +38,7 @@ export const SocketHandler = () => {
 
   const updateJoinEvent = useRecoilCallback(({ set }) => (data: MemberInfo) => {
     console.log('socket join', data);
-    set(newChannelDataState, (prev) => ({
+    set(channelDataState, (prev) => ({
       ...prev,
       observers: [...prev.observers, data],
     }));
@@ -46,7 +46,7 @@ export const SocketHandler = () => {
 
   const updateLeaveEvent = useRecoilCallback(({ set }) => (data: UserId) => {
     console.log('socket leave', data);
-    set(newChannelDataState, (prev) => ({
+    set(channelDataState, (prev) => ({
       ...prev,
       observers: prev.observers.filter((observer) => observer.userId !== data.userId),
       leftPlayer: prev.leftPlayer?.userId === data.userId ? null : prev.leftPlayer,
@@ -57,6 +57,7 @@ export const SocketHandler = () => {
   // Init socket
   useEffect(() => {
     connectSocket();
+    console.log('socket connect');
 
     onEvent('exception', (error) => {
       console.log('WebSocket Error', error);
@@ -64,15 +65,21 @@ export const SocketHandler = () => {
 
     return () => {
       disconnectSocket();
+      console.log('socket disconnect');
     };
   }, []);
 
   // Turn on message socket event
   useEffect(() => {
     if (!socket.message) return;
-    onEvent(MessageEvent.MESSAGE, updateMessageEvent);
+    // onEvent(MessageEvent.MESSAGE, updateMessageEvent);
+    onEvent(MessageEvent.MESSAGE, (data: Message) => {
+      console.log('socket message fuckfuck', data);
+      updateMessageEvent(data);
+    });
     return () => {
       offEvent(MessageEvent.MESSAGE);
+      console.log('socket message closed');
     };
   }, [socket]);
 
@@ -105,9 +112,13 @@ export const SocketHandler = () => {
   // Turn on game socket event
   useEffect(() => {
     if (!socket.game) return;
+    console.log('socket game connect');
     // game-start(게임 시작 준비하세요 알리기) 이벤트 -> channel state 바꿔주기 [gamePlaying: true]
 
     // register game socket on event
+    return () => {
+      console.log('socket game disconnect');
+    };
   }, [socket]);
 
   useEffect(() => {
