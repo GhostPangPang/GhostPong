@@ -1,9 +1,10 @@
 import { useEffect, useRef } from 'react';
 import { Box } from '@/common';
 import styled from 'styled-components';
+import { useRecoilValue } from 'recoil';
+import { newChannelDataState } from '@/stores';
 
 interface ChatContentProps {
-  messages: string[];
   inputFocus: boolean;
 }
 
@@ -14,7 +15,8 @@ const ChatBubble = styled.div`
   margin-bottom: 0.5rem;
 `;
 
-export const ChatContent = ({ messages, inputFocus }: ChatContentProps) => {
+export const ChatContent = ({ inputFocus }: ChatContentProps) => {
+  const { chats } = useRecoilValue(newChannelDataState);
   const chatRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -22,7 +24,7 @@ export const ChatContent = ({ messages, inputFocus }: ChatContentProps) => {
     if (chatElement) {
       chatElement.scrollTop = chatElement.scrollHeight;
     }
-  }, [messages]);
+  }, [chats]);
 
   return (
     <Box
@@ -33,8 +35,10 @@ export const ChatContent = ({ messages, inputFocus }: ChatContentProps) => {
       backgroundColor="surfaceMix"
       overflowY="auto"
     >
-      {messages.map((message, index) => (
-        <ChatBubble key={index}>{message}</ChatBubble>
+      {[...chats].reverse().map((message, index) => (
+        <ChatBubble key={index}>
+          {message.senderId}: {message.content}
+        </ChatBubble>
       ))}
     </Box>
   );
