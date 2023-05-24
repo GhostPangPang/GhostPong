@@ -3,20 +3,23 @@ import { Chat, MemberInfo } from '@/dto/channel/socket';
 
 export type ChannelData = {
   name: string;
-  channelId: string;
   leftPlayer: MemberInfo | null;
   rightPlayer: MemberInfo | null;
-  observers: MemberInfo[] | [];
+  observers: MemberInfo[];
   isInGame: boolean;
   currentRole: 'owner' | 'admin' | 'member' | undefined;
-  chats: Chat[] | [];
+  chats: Chat[];
 };
 
-export const newChannelDataState = atom<ChannelData>({
+export const channelIdState = atom<string>({
+  key: '/channel/id',
+  default: '',
+});
+
+export const channelDataState = atom<ChannelData>({
   key: '/channel',
   default: {
     name: '',
-    channelId: '',
     leftPlayer: null,
     rightPlayer: null,
     observers: [],
@@ -26,10 +29,10 @@ export const newChannelDataState = atom<ChannelData>({
   },
 });
 
-export const newChatSelector = selector<Chat[]>({
+export const chatSelector = selector<Chat[]>({
   key: '/chat/selector',
   get: ({ get }) => {
-    const { chats } = get(newChannelDataState);
+    const { chats } = get(channelDataState);
     return [...chats].reverse();
   },
 });
