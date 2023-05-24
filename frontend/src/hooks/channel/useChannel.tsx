@@ -101,6 +101,7 @@ export const useChannelInfo = (id: string) => {
       setNewChannelData({
         ...newChannelData,
         name: channelInfo.name,
+        channelId: id,
         leftPlayer: leftPlayer || null,
         rightPlayer: rightPlayer[0] || null,
         observers: channelInfo.observers,
@@ -109,6 +110,20 @@ export const useChannelInfo = (id: string) => {
         isInGame: channelInfo.isInGame,
       });
     }
+    return () => {
+      setNewChannelData({
+        ...newChannelData,
+        name: '',
+        channelId: '',
+        leftPlayer: null,
+        rightPlayer: null,
+        observers: [],
+        currentUserId: -1,
+        currentRole: undefined,
+        isInGame: false,
+        chats: [],
+      });
+    };
   }, [channelInfo]);
   return { channelInfo };
 };
@@ -118,7 +133,8 @@ export const useChannel = ({ cursor = 0 }: useChannelProps) => {
     queryKey: [CHANNEL, cursor],
     queryFn: () => getChannels(cursor),
     keepPreviousData: true,
-    staleTime: Infinity,
+    staleTime: 0,
+    refetchOnWindowFocus: false,
     onError: (error) => {
       throw error;
     },
