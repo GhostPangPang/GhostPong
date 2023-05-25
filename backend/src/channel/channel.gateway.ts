@@ -11,7 +11,7 @@ import {
 import { Cache } from 'cache-manager';
 import { Server, Socket } from 'socket.io';
 
-import { UserId } from '@/types/channel';
+import { NewChat, UserId } from '@/types/channel';
 
 import { corsOption } from '../common/option/cors.option';
 import { createWsException } from '../common/util';
@@ -20,8 +20,7 @@ import { InvisibleChannelRepository, VisibleChannelRepository } from '../reposit
 import { Channel } from '../repository/model';
 
 import { ChannelIdDto } from './dto/socket/channelId.dto';
-import NewChatDto from './dto/socket/new-chat.dto';
-import SendChatDto from './dto/socket/send-chat.dto';
+import { SendChatDto } from './dto/socket/send-chat.dto';
 
 @UsePipes(new ValidationPipe({ exceptionFactory: createWsException }))
 @WebSocketGateway({ cors: corsOption })
@@ -49,10 +48,10 @@ export class ChannelGateway {
     if (sender === undefined) {
       throw new WsException('채널에 참여하지 않은 유저입니다.');
     }
-    this.emitChannel<NewChatDto>(
+    this.emitChannel<NewChat>(
       data.channelId,
       'new-chat',
-      { ...data, senderId: sender.id, senderNickname: sender.nickname },
+      { senderId: sender.id, senderNickname: sender.nickname, content: data.content },
       socket.id,
     );
   }
