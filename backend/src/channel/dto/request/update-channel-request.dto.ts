@@ -1,6 +1,6 @@
 import { IsIn } from 'class-validator';
 
-import { UpdateChannelRequest } from '@/types/channel';
+import { ChannelMode, UpdateChannelRequest } from '@/types/channel';
 
 import { IsChannelPassword } from '../decorator/is-password-required.decorator';
 
@@ -10,7 +10,7 @@ export class UpdateChannelRequestDto implements UpdateChannelRequest {
    * @example 'public'
    */
   @IsIn(['public', 'protected', 'private'], { message: '유효하지 않은 모드입니다.' })
-  mode: 'public' | 'protected' | 'private';
+  mode: ChannelMode;
 
   /**
    * channel 의 password. mode 가 protected 일 때만 있어야 한다.

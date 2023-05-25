@@ -1,4 +1,6 @@
+import { ChannelMode } from '../response';
+
 export interface UpdateChannelRequest {
-  mode: 'public' | 'protected' | 'private';
+  mode: ChannelMode;
   password?: string;
 }
