@@ -15,7 +15,6 @@ async function bootstrap() {
     new ValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,
-      // validateCustomDecorators: true, // custom decorator 에 대한 validation 을 수행
       exceptionFactory: (validationErrors: ValidationError[] = []) => {
         return new BadRequestException(Object.values(validationErrors[0]?.constraints || {})[0]);
       },
@@ -23,6 +22,7 @@ async function bootstrap() {
   );
   app.useGlobalFilters(new HttpExceptionFilter());
   app.use(cookieParser());
+  app.setGlobalPrefix('/api/v1');
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle('GhostPong API')

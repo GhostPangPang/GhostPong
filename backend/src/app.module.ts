@@ -5,7 +5,6 @@ import { APP_GUARD } from '@nestjs/core';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { UserGuard } from './auth/guard/user.guard';
@@ -42,7 +41,6 @@ import { UserModule } from './user/user.module';
     ConnectionModule,
     GameModule,
   ],
-  controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: UserGuard }],
 })
 export class AppModule {}
