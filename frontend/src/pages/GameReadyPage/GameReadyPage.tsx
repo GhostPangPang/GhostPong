@@ -76,7 +76,6 @@ export const GameReadyPage = () => {
 
     window.addEventListener('beforeunload', handleBeforeUnload);
     window.onpopstate = function () {
-      console.log('123', channelId);
       leaveChannel(channelId);
       alert('뒤로가기를 누르면 채널에서 나가집니다.');
     };
