@@ -171,6 +171,12 @@ export const useChannelMutation = () => {
     },
   });
 
+  const { mutate: becomePlayer } = useMutation(patchBePlayer, {
+    onSuccess: (data: ApiResponse, id: string) => {
+      queryClient.invalidateQueries([CHANNEL, id]);
+    },
+  });
+
   const { mutate: becomeAdmin } = useMutation(patchBeAdmin, {
     onSuccess: (data: ApiResponse) => {
       alert(data.message);
@@ -180,5 +186,5 @@ export const useChannelMutation = () => {
     },
   });
 
-  return { joinChannel, createChannel, becomeAdmin };
+  return { joinChannel, createChannel, becomePlayer, becomeAdmin };
 };
