@@ -16,7 +16,7 @@ import { createWsException } from '../common/util';
 import { Friendship } from '../entity/friendship.entity';
 import { MessageView } from '../entity/message-view.entity';
 import { Message } from '../entity/message.entity';
-import { SocketIdRepository } from '../repository/socket-id.repository';
+import { SocketIdRepository } from '../repository';
 
 import { LastMessageViewDto } from './dto/socket/last-message-view.dto';
 import { MesssageDto } from './dto/socket/message.dto';

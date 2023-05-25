@@ -29,7 +29,7 @@ import { SuccessResponseDto } from '../common/dto/success-response.dto';
 import { CheckUserIdPipe } from '../common/pipe/check-user-id.pipe';
 import { IdToChannelPipe } from '../common/pipe/id-to-channel.pipe';
 import { NonNegativeIntPipe } from '../common/pipe/non-negative-int.pipe';
-import { Channel } from '../repository/model/channel';
+import { Channel } from '../repository/model';
 
 import { ChannelService } from './channel.service';
 import { CreateChannelRequestDto } from './dto/request/create-channel-request.dto';

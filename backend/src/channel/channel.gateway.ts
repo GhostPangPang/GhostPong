@@ -14,9 +14,8 @@ import { Server, Socket } from 'socket.io';
 import { corsOption } from '../common/option/cors.option';
 import { createWsException } from '../common/util';
 import { ConnectionGateway } from '../connection/connection.gateway';
-import { InvisibleChannelRepository } from '../repository/invisible-channel.repository';
-import { Channel } from '../repository/model/channel';
-import { VisibleChannelRepository } from '../repository/visible-channel.repository';
+import { InvisibleChannelRepository, VisibleChannelRepository } from '../repository';
+import { Channel } from '../repository/model';
 
 import { ChannelIdDto } from './dto/socket/channelId.dto';
 import ChatDto from './dto/socket/chat.dto';

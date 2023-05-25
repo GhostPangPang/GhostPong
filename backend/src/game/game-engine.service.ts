@@ -8,9 +8,8 @@ import { checkPlayerCollision, checkWallCollision, checkGameEnded, updateBall } 
 import { GameHistory } from '../entity/game-history.entity';
 import { UserRecord } from '../entity/user-record.entity';
 import { User } from '../entity/user.entity';
-import { ChannelRepository } from '../repository/channel.repository';
-import { GameRepository } from '../repository/game.repository';
-import { Game } from '../repository/model/game';
+import { ChannelRepository, GameRepository } from '../repository';
+import { Game } from '../repository/model';
 
 import { GameGateway } from './game.gateway';
 
@@ -75,7 +74,11 @@ export class GameEngineService {
         loserScore: loser.score,
       });
       await manager.update(User, { id: winner.userId }, { exp: () => `exp + ${point}` });
-      await manager.update(User, { id: loser.userId }, { exp: () => `exp - ${point}` });
+      await manager.update(
+        User,
+        { id: loser.userId },
+        { exp: () => `case when exp > ${point} then exp - ${point} else 0 end` },
+      );
       await manager.update(UserRecord, { id: winner.userId }, { winCount: () => `winCount + 1` });
       await manager.update(UserRecord, { id: loser.userId }, { loseCount: () => `loseCount + 1` });
     });

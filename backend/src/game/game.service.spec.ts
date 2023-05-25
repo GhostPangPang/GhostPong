@@ -1,11 +1,11 @@
 import { ForbiddenException, ConflictException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { GameService } from './game.service';
-import { UserStatusRepository } from '../repository/user-status.repository';
-import { ChannelRepository } from '../repository/channel.repository';
-import { GameRepository } from '../repository/game.repository';
-import { Channel, ChannelUser } from '../repository/model/channel';
+
+import { UserStatusRepository, ChannelRepository, GameRepository } from '../repository';
+import { Channel, ChannelUser } from '../repository/model';
+
 import { GameGateway } from './game.gateway';
+import { GameService } from './game.service';
 
 describe('GameService', () => {
   let service: GameService;

@@ -1,15 +1,19 @@
+import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Friendship } from '../entity/friendship.entity';
-import { Repository } from 'typeorm';
-import { SocketIdRepository } from '../repository/socket-id.repository';
-import { UserStatusRepository } from '../repository/user-status.repository';
-import { JwtService } from '@nestjs/jwt';
-import { AppConfigService } from '../config/app/configuration.service';
 import { Server, Socket } from 'socket.io';
+import { Repository } from 'typeorm';
+
+import { AppConfigService } from '../config/app/configuration.service';
+import { Friendship } from '../entity/friendship.entity';
+import {
+  SocketIdRepository,
+  UserStatusRepository,
+  InvisibleChannelRepository,
+  VisibleChannelRepository,
+} from '../repository';
+
 import { ConnectionGateway } from './connection.gateway';
-import { InvisibleChannelRepository } from '../repository/invisible-channel.repository';
-import { VisibleChannelRepository } from '../repository/visible-channel.repository';
 
 describe('ConnectionGateway', () => {
   let gateway: ConnectionGateway;

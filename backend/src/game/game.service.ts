@@ -3,11 +3,9 @@ import { ForbiddenException, Injectable, NotFoundException, ConflictException } 
 import { MemberInfo } from '@/types/channel';
 
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
-import { GameRepository } from '../repository/game.repository';
-import { InvisibleChannelRepository } from '../repository/invisible-channel.repository';
-import { ChannelUser } from '../repository/model/channel';
-import { Game } from '../repository/model/game';
-import { VisibleChannelRepository } from '../repository/visible-channel.repository';
+
+import { GameRepository, VisibleChannelRepository, InvisibleChannelRepository } from '../repository';
+import { ChannelUser, Game } from '../repository/model';
 
 import { GameGateway } from './game.gateway';
 

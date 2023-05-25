@@ -2,7 +2,7 @@ import { IsIn } from 'class-validator';
 
 import { JoinChannelRequest } from '@/types/channel/request';
 
-import { ChannelMode } from '../../../repository/model/channel';
+import { ChannelMode } from '../../../repository/model';
 import { IsChannelPassword } from '../decorator/is-password-required.decorator';
 
 export class JoinChannelRequestDto implements JoinChannelRequest {
