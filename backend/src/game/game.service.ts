@@ -3,7 +3,6 @@ import { ForbiddenException, Injectable, NotFoundException, ConflictException } 
 import { MemberInfo } from '@/types/channel';
 
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
-
 import { GameRepository, VisibleChannelRepository, InvisibleChannelRepository } from '../repository';
 import { ChannelUser, Game } from '../repository/model';
 
