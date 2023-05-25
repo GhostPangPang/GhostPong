@@ -188,6 +188,8 @@ export class ChannelService {
     const socketId = this.findExistSocket(myId);
     if (updateChannelOptions.mode === 'protected' && updateChannelOptions.password !== undefined) {
       channel.password = await hash(updateChannelOptions.password, 5);
+    } else if (updateChannelOptions.mode !== 'protected' && channel.password !== undefined) {
+      channel.password = undefined;
     }
     channel.mode = updateChannelOptions.mode;
     this.channelGateway.emitChannel<UpdatedMode>(channel.id, 'channel-updated', { mode: channel.mode }, socketId);
