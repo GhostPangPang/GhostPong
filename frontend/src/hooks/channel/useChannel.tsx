@@ -1,12 +1,11 @@
-import { get, post, ApiResponse, ApiError, LocationResponse } from '@/libs/api';
+import { get, post, ApiResponse, ApiError, LocationResponse, patch } from '@/libs/api';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { ChannelsListResponse, FullChannelInfoResponse } from '@/dto/channel/response';
 import { CreateChannelRequest, JoinChannelRequest } from '@/dto/channel/request';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { newChannelDataState } from '@/stores';
-import { useUserInfo } from '../user/useUserInfo';
+import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
+import { UserInfoState, channelDataState } from '@/stores';
 
 const CHANNEL = '/channel';
 
@@ -60,15 +59,23 @@ const postJoinChannel = async ({ mode, password, id }: postJoinChannelProps) => 
   return await post<ApiResponse>(CHANNEL + `/${id}`, { mode, password });
 };
 
-export const useChannelInfo = (id: string) => {
-  const newChannelData = useRecoilValue(newChannelDataState);
-  const setNewChannelData = useSetRecoilState(newChannelDataState);
-  const navigate = useNavigate();
-  const {
-    userInfo: { id: currentUserId },
-  } = useUserInfo();
+const patchBePlayer = async (id: string) => {
+  return await patch<ApiResponse>(CHANNEL + `/${id}/player`);
+};
 
-  const { data: channelInfo = initialChannelInfoData, isError } = useQuery<FullChannelInfoResponse, ApiError>({
+export const useChannel = (id: string) => {
+  const navigate = useNavigate();
+  const [channelData, setChannelData] = useRecoilState(channelDataState);
+
+  const { id: currentUserId } = useRecoilValue(UserInfoState);
+  const resetChannelData = useResetRecoilState(channelDataState);
+
+  const {
+    data: channel = initialChannelInfoData,
+    refetch: refetchChannel,
+    isFetching,
+    isError,
+  } = useQuery<FullChannelInfoResponse, ApiError>({
     queryKey: [CHANNEL, id],
     queryFn: () => getChannelInfo(id),
     keepPreviousData: true,
@@ -82,51 +89,38 @@ export const useChannelInfo = (id: string) => {
   });
 
   useEffect(() => {
-    // 작동 안함
-    console.log('isError', isError);
-    if (isError) {
+    if (!isFetching && isError) {
       navigate('/channel/list');
     }
   }, [isError]);
 
   useEffect(() => {
-    console.log('chan', channelInfo);
-    if (channelInfo) {
-      const currentUserRole = channelInfo.players
-        .concat(channelInfo.observers)
+    if (channel) {
+      const currentUserRole = channel.players
+        .concat(channel.observers)
         .find((user) => user.userId === currentUserId)?.role;
-      const leftPlayer = channelInfo.players.find((player) => player.role === 'owner');
-      const rightPlayer = channelInfo.players.filter((player) => player.role !== 'owner');
+      const leftPlayer = channel.players.find((player) => player.role === 'owner');
+      const rightPlayer = channel.players.filter((player) => player.role !== 'owner');
 
-      setNewChannelData({
-        ...newChannelData,
-        name: channelInfo.name,
-        channelId: id,
+      setChannelData({
+        ...channelData,
+        name: channel.name,
         leftPlayer: leftPlayer || null,
         rightPlayer: rightPlayer[0] || null,
-        observers: channelInfo.observers,
+        observers: channel.observers,
         currentRole: currentUserRole,
-        isInGame: channelInfo.isInGame,
+        isInGame: channel.isInGame,
       });
     }
     return () => {
-      setNewChannelData({
-        ...newChannelData,
-        name: '',
-        channelId: '',
-        leftPlayer: null,
-        rightPlayer: null,
-        observers: [],
-        currentRole: undefined,
-        isInGame: false,
-        chats: [],
-      });
+      resetChannelData();
     };
-  }, [channelInfo]);
-  return { channelInfo };
+  }, [channel]);
+
+  return { channel, refetchChannel };
 };
 
-export const useChannel = ({ cursor = 0 }: useChannelProps) => {
+export const useChannelList = ({ cursor = 0 }: useChannelProps) => {
   const { data: channels = initialChannelListData, refetch: refetchChannel } = useQuery<ChannelsListResponse>({
     queryKey: [CHANNEL, cursor],
     queryFn: () => getChannels(cursor),
@@ -148,6 +142,7 @@ export const useChannelMutation = () => {
   const { mutate: joinChannel } = useMutation(postJoinChannel, {
     onSuccess: (data: ApiResponse, { id }) => {
       alert(data.message);
+
       navigate('/channel/' + id);
     },
     onError: (error: ApiError) => {
@@ -166,5 +161,15 @@ export const useChannelMutation = () => {
     },
   });
 
-  return { joinChannel, createChannel };
+  const { mutate: registerPlayer } = useMutation(patchBePlayer, {
+    onSuccess: (data: ApiResponse, id: string) => {
+      queryClient.invalidateQueries([CHANNEL, id]);
+      alert(data.message);
+    },
+    onError: (error: ApiError) => {
+      alert(error.message);
+    },
+  });
+
+  return { joinChannel, createChannel, registerPlayer };
 };

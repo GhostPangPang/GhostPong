@@ -8,7 +8,7 @@ import { ChannelInfo } from '@/dto/channel/response';
 import { useInput } from '@/hooks';
 import { validatePassword } from '@/libs/utils/validate';
 import { useState } from 'react';
-import { useChannel, useChannelMutation } from '@/hooks/channel/useChannel';
+import { useChannelList, useChannelMutation } from '@/hooks/channel/useChannel';
 
 interface GameContentProps {
   cursor: number;
@@ -107,7 +107,7 @@ const GameListItem = ({ id, name, mode, count, backgroundImageUrl }: GameItemPro
 };
 
 export const GameContent = ({ cursor }: GameContentProps) => {
-  const { channels } = useChannel({ cursor });
+  const { channels } = useChannelList({ cursor });
 
   return (
     <>

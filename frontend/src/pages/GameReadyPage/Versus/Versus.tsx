@@ -1,8 +1,11 @@
 import styled from 'styled-components';
-import { Grid, Text, Dropbox, Ghost, GameButton as BaseGameButton } from '@/common';
+import { Grid, Text, Dropbox, Ghost, GameButton } from '@/common';
 import { ReactComponent as Crown } from '@/svgs/crown.svg';
 import { MemberInfo } from '@/dto/channel/socket';
 import { useUserInfo } from '@/hooks/user';
+import { useChannelMutation } from '@/hooks/channel';
+import { useRecoilValue } from 'recoil';
+import { channelIdState } from '@/stores';
 // import { PlayerInfo } from '../mock-data';
 
 interface VersusProps {
@@ -25,18 +28,6 @@ const NickNameText = styled(Text)`
     transform: scale(1.1);
   }
 `;
-
-const GameButton = () => {
-  return (
-    <Grid container="flex" direction="row" alignItems="center" justifyContent="center">
-      <BaseGameButton size="lg">
-        <Text size="xl" weight="bold">
-          참여하기
-        </Text>
-      </BaseGameButton>
-    </Grid>
-  );
-};
 
 const GhostBox = ({ player, items }: GhostBoxProps) => {
   const { userInfo } = useUserInfo();
@@ -68,13 +59,26 @@ const GhostBox = ({ player, items }: GhostBoxProps) => {
 };
 
 export const Versus = ({ leftPlayer, rightPlayer, items }: VersusProps) => {
+  const channelId = useRecoilValue(channelIdState);
+  const { registerPlayer } = useChannelMutation();
+
+  const handleRegisterPlayer = () => {
+    registerPlayer(channelId);
+  };
+
   return (
     <Grid container="flex" direction="row" alignItems="center" justifyContent="center">
-      {leftPlayer ? <GhostBox player={leftPlayer} items={items} /> : <GameButton />}
+      {leftPlayer ? <GhostBox player={leftPlayer} items={items} /> : <GameButton size="md">방장되기</GameButton>}
       <Text size="xxl" weight="bold">
         VS
       </Text>
-      {rightPlayer ? <GhostBox player={rightPlayer} items={items} /> : <GameButton />}
+      {rightPlayer ? (
+        <GhostBox player={rightPlayer} items={items} />
+      ) : (
+        <GameButton size="md" onClick={handleRegisterPlayer}>
+          참여하기
+        </GameButton>
+      )}
     </Grid>
   );
 };

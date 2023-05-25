@@ -4,7 +4,7 @@ import { ReactComponent as Refresh } from '@/svgs/refresh.svg';
 import { ReactComponent as Left } from '@/svgs/left.svg';
 import { ReactComponent as Right } from '@/svgs/right.svg';
 import { GameCreateModal } from './GameCreateModal';
-import { useChannel } from '@/hooks/channel/useChannel';
+import { useChannelList } from '@/hooks/channel/useChannel';
 
 interface GameHeaderProps {
   cursor: number;
@@ -12,7 +12,7 @@ interface GameHeaderProps {
 }
 
 export const GameHeader = ({ cursor, setCursor }: GameHeaderProps) => {
-  const { channels, refetchChannel } = useChannel({ cursor });
+  const { channels, refetchChannel } = useChannelList({ cursor });
 
   const handleNextPage = () => {
     if (cursor + 1 > (channels.total ?? 0) / 9) return;
