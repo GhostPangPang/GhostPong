@@ -81,6 +81,7 @@ export const useChannel = (id: string) => {
     keepPreviousData: true,
     staleTime: Infinity,
     suspense: true,
+    enabled: !!id,
     retry: false,
     useErrorBoundary: true,
     onError: (error) => {
