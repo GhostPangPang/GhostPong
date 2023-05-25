@@ -13,7 +13,7 @@ import { hash, compare } from 'bcrypt';
 import { Cache } from 'cache-manager';
 import { Repository } from 'typeorm';
 
-import { ChannelRole, MemberInfo, UserId } from '@/types/channel';
+import { ChannelRole, MemberInfo, UpdatedMode, UserId } from '@/types/channel';
 
 import { MUTE_EXPIRES_IN, PARTICIPANT_LIMIT } from '../common/constant';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
@@ -185,11 +185,12 @@ export class ChannelService {
     if (channel.isInGame === true) {
       throw new ForbiddenException('게임 진행중에 처리할 수 없습니다.');
     }
+    const socketId = this.findExistSocket(myId);
     if (updateChannelOptions.mode === 'protected' && updateChannelOptions.password !== undefined) {
       channel.password = await hash(updateChannelOptions.password, 5);
     }
     channel.mode = updateChannelOptions.mode;
-    this.channelGateway.emitChannel<Channel>(channel.id, 'patch-channel', channel);
+    this.channelGateway.emitChannel<UpdatedMode>(channel.id, 'channel-updated', { mode: channel.mode }, socketId);
     return {
       message: '채널 정보를 수정했습니다.',
     };
