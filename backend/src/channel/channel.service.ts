@@ -32,7 +32,7 @@ import { ChannelUser, Channel } from '../repository/model';
 import { ChannelGateway } from './channel.gateway';
 import { CreateChannelRequestDto } from './dto/request/create-channel-request.dto';
 import { JoinChannelRequestDto } from './dto/request/join-channel-request.dto';
-import { PatchChannelRequestDto } from './dto/request/patch-channel-request.dto';
+import { UpdateChannelRequestDto } from './dto/request/update-channel-request.dto';
 import { ChannelsListResponseDto } from './dto/response/channels-list-response.dto';
 import { FullChannelInfoResponseDto } from './dto/response/full-channel-info-response.dto';
 
@@ -173,10 +173,10 @@ export class ChannelService {
   /**
    * @description 채널 정보(mode, password) 수정하기
    */
-  async patchChannel(
+  async updateChannel(
     myId: number,
     channel: Channel,
-    patchChannelOptions: PatchChannelRequestDto,
+    updateChannelOptions: UpdateChannelRequestDto,
   ): Promise<SuccessResponseDto> {
     const user = this.findExistChannelUser(myId, channel);
     if (user.role !== 'owner') {
@@ -185,10 +185,11 @@ export class ChannelService {
     if (channel.isInGame === true) {
       throw new ForbiddenException('게임 진행중에 처리할 수 없습니다.');
     }
-    if (patchChannelOptions.mode === 'protected' && patchChannelOptions.password !== undefined) {
-      channel.password = await hash(patchChannelOptions.password, 5);
+    if (updateChannelOptions.mode === 'protected' && updateChannelOptions.password !== undefined) {
+      channel.password = await hash(updateChannelOptions.password, 5);
     }
-    channel.mode = patchChannelOptions.mode;
+    channel.mode = updateChannelOptions.mode;
+    this.channelGateway.emitChannel<Channel>(channel.id, 'patch-channel', channel);
     return {
       message: '채널 정보를 수정했습니다.',
     };

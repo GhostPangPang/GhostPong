@@ -34,7 +34,7 @@ import { Channel } from '../repository/model';
 import { ChannelService } from './channel.service';
 import { CreateChannelRequestDto } from './dto/request/create-channel-request.dto';
 import { JoinChannelRequestDto } from './dto/request/join-channel-request.dto';
-import { PatchChannelRequestDto } from './dto/request/patch-channel-request.dto';
+import { UpdateChannelRequestDto } from './dto/request/update-channel-request.dto';
 import { ChannelsListResponseDto } from './dto/response/channels-list-response.dto';
 import { FullChannelInfoResponseDto } from './dto/response/full-channel-info-response.dto';
 
@@ -146,12 +146,12 @@ export class ChannelController {
   @ApiHeaders([{ name: 'x-my-id', description: '내 auth 아이디 (임시값)' }])
   @ApiParam({ name: 'channelId', description: '채널 아이디' })
   @Patch(':channelId')
-  patchChannel(
+  updateChannel(
     @ExtractUserId() myId: number,
     @Param('channelId', IdToChannelPipe) channel: Channel,
-    @Body() patchChannelRequestDto: PatchChannelRequestDto,
+    @Body() patchChannelRequestDto: UpdateChannelRequestDto,
   ): Promise<SuccessResponseDto> {
-    return this.channelService.patchChannel(myId, channel, patchChannelRequestDto);
+    return this.channelService.updateChannel(myId, channel, patchChannelRequestDto);
   }
 
   /**

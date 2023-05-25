@@ -1,10 +1,10 @@
 import { IsIn } from 'class-validator';
 
-import { PatchChannelRequest } from '@/types/channel';
+import { UpdateChannelRequest } from '@/types/channel';
 
 import { IsChannelPassword } from '../decorator/is-password-required.decorator';
 
-export class PatchChannelRequestDto implements PatchChannelRequest {
+export class UpdateChannelRequestDto implements UpdateChannelRequest {
   /**
    * channel 의 모드 (public, protected, private)
    * @example 'public'
