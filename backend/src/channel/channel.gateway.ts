@@ -11,6 +11,8 @@ import {
 import { Cache } from 'cache-manager';
 import { Server, Socket } from 'socket.io';
 
+import { UserId } from '@/types/channel';
+
 import { corsOption } from '../common/option/cors.option';
 import { createWsException } from '../common/util';
 import { ConnectionGateway } from '../connection/connection.gateway';
@@ -20,11 +22,7 @@ import { Channel } from '../repository/model';
 import { ChannelIdDto } from './dto/socket/channelId.dto';
 import ChatDto from './dto/socket/chat.dto';
 
-@UsePipes(
-  new ValidationPipe({
-    exceptionFactory: createWsException,
-  }),
-)
+@UsePipes(new ValidationPipe({ exceptionFactory: createWsException }))
 @WebSocketGateway({ cors: corsOption })
 export class ChannelGateway {
   @WebSocketServer()
@@ -40,8 +38,11 @@ export class ChannelGateway {
 
   logger: Logger = new Logger('ChannelGateway');
 
+  /**
+   * @summary chat하는 event
+   */
   @SubscribeMessage('chat')
-  async handleMessage(@ConnectedSocket() socket: Socket, @MessageBody() data: ChatDto) {
+  async handleChat(@ConnectedSocket() socket: Socket, @MessageBody() data: ChatDto) {
     if (data.senderId !== socket.data.userId) {
       throw new WsException('유저 정보가 일치하지 않습니다.');
     }
@@ -63,6 +64,7 @@ export class ChannelGateway {
     const channel = this.checkExistChannel(data.channelId);
 
     this.connectionGateway.leaveChannel(socket.data.userId, channel, socket);
+    this.emitChannel<UserId>(channel.id, 'user-left-channel', { userId: socket.data.userId });
   }
 
   /**

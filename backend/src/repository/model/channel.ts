@@ -13,7 +13,6 @@ export class ChannelUser {
   nickname: string;
   image?: string;
   role: ChannelRole;
-  isMuted = false;
   isPlayer: boolean;
 }
 

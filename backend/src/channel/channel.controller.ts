@@ -64,6 +64,7 @@ export class ChannelController {
   @ApiNotFoundResponse({ type: ErrorResponseDto, description: '존재하지 않는 채널' })
   @ApiForbiddenResponse({ type: ErrorResponseDto, description: '채널 참여중인 유저 아님' })
   @ApiHeaders([{ name: 'x-my-id', description: '내 auth 아이디 (임시값)' }])
+  @ApiParam({ name: 'channelId', description: '조회할 채널 아이디' })
   @Get(':channelId')
   getChannelInfo(
     @ExtractUserId() myId: number,
@@ -101,6 +102,7 @@ export class ChannelController {
   @ApiNotFoundResponse({ type: ErrorResponseDto, description: '존재하지 않는 채널' })
   @ApiConflictResponse({ type: ErrorResponseDto, description: '다른 채널에 참여 중인 유저' })
   @ApiHeaders([{ name: 'x-my-id', description: '내 auth 아이디 (임시값)' }])
+  @ApiParam({ name: 'channelId', description: '참여할 채널 아이디' })
   @HttpCode(HttpStatus.OK)
   @Post(':channelId')
   joinChannel(
@@ -122,6 +124,7 @@ export class ChannelController {
   })
   @ApiForbiddenResponse({ type: ErrorResponseDto, description: '채널에 참여중인 유저가 아님, 친구가 아님' })
   @ApiHeaders([{ name: 'x-my-id', description: '내 auth 아이디 (임시값)' }])
+  @ApiParam({ name: 'channelId', description: '초대할 채널 아이디' })
   @HttpCode(HttpStatus.OK)
   @Post(':channelId/invite')
   inviteChannel(
@@ -185,5 +188,71 @@ export class ChannelController {
     @Param('channelId', IdToChannelPipe) channel: Channel,
   ): SuccessResponseDto {
     return this.channelService.becomeOwner(myId, channel);
+  }
+
+  /**
+   * @summary mute 하기
+   * @description PATCH /channel/{channelId}/mute
+   */
+  @ApiOperation({ summary: 'mute 하기' })
+  @ApiNotFoundResponse({ type: ErrorResponseDto, description: '존재하지 않는 유저' })
+  @ApiForbiddenResponse({ type: ErrorResponseDto, description: 'mute 권한 없음, 방장 mute할 수 없음' })
+  @ApiConflictResponse({
+    type: ErrorResponseDto,
+    description: '게임 중인 유저를 mute할 수 없음, 자기 자신을 mute할 수 없음',
+  })
+  @ApiHeaders([{ name: 'x-my-id', description: '내 auth 아이디 (임시값)' }])
+  @ApiParam({ name: 'channelId', description: '채널 아이디' })
+  @Patch(':channelId/mute')
+  muteUser(
+    @ExtractUserId() myId: number,
+    @Param('channelId', IdToChannelPipe) channel: Channel,
+    @Body('userId', NonNegativeIntPipe, CheckUserIdPipe) userId: number,
+  ): Promise<SuccessResponseDto> {
+    return this.channelService.muteUser(myId, channel, userId);
+  }
+
+  /**
+   * @summary kick 하기
+   * @description PATCH /channel/{channelId}/kick
+   */
+  @ApiOperation({ summary: 'kick 하기' })
+  @ApiNotFoundResponse({ type: ErrorResponseDto, description: '존재하지 않는 유저' })
+  @ApiForbiddenResponse({ type: ErrorResponseDto, description: 'kick 권한 없음, 방장 kick할 수 없음' })
+  @ApiConflictResponse({
+    type: ErrorResponseDto,
+    description: '게임 중인 유저를 kick할 수 없음, 자기 자신을 kick할 수 없음',
+  })
+  @ApiHeaders([{ name: 'x-my-id', description: '내 auth 아이디 (임시값)' }])
+  @ApiParam({ name: 'channelId', description: '채널 아이디' })
+  @Patch(':channelId/kick')
+  kickUser(
+    @ExtractUserId() myId: number,
+    @Param('channelId', IdToChannelPipe) channel: Channel,
+    @Body('userId', NonNegativeIntPipe, CheckUserIdPipe) userId: number,
+  ): Promise<SuccessResponseDto> {
+    return this.channelService.kickUser(myId, channel, userId);
+  }
+
+  /**
+   * @summary ban 하기
+   * @description PATCH /channel/{channelId}/ban
+   */
+  @ApiOperation({ summary: 'ban 하기' })
+  @ApiNotFoundResponse({ type: ErrorResponseDto, description: '존재하지 않는 유저' })
+  @ApiForbiddenResponse({ type: ErrorResponseDto, description: 'ban 권한 없음, 방장 ban할 수 없음' })
+  @ApiConflictResponse({
+    type: ErrorResponseDto,
+    description: '게임 중인 유저를 ban할 수 없음, 자기 자신을 ban할 수 없음',
+  })
+  @ApiHeaders([{ name: 'x-my-id', description: '내 auth 아이디 (임시값)' }])
+  @ApiParam({ name: 'channelId', description: '채널 아이디' })
+  @Patch(':channelId/ban')
+  banUser(
+    @ExtractUserId() myId: number,
+    @Param('channelId', IdToChannelPipe) channel: Channel,
+    @Body('userId', NonNegativeIntPipe, CheckUserIdPipe) userId: number,
+  ): Promise<SuccessResponseDto> {
+    return this.channelService.banUser(myId, channel, userId);
   }
 }

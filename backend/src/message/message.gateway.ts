@@ -21,6 +21,7 @@ import { SocketIdRepository } from '../repository';
 import { LastMessageViewDto } from './dto/socket/last-message-view.dto';
 import { MesssageDto } from './dto/socket/message.dto';
 
+@UsePipes(new ValidationPipe({ exceptionFactory: createWsException }))
 @WebSocketGateway({ cors: corsOption })
 export class MessageGateway {
   @WebSocketServer()
@@ -45,12 +46,8 @@ export class MessageGateway {
    * @param socket
    * @param data
    */
-  @UsePipes(new ValidationPipe({ exceptionFactory: createWsException }))
   @SubscribeMessage('message')
   async handleMessage(@ConnectedSocket() socket: Socket, @MessageBody() data: MesssageDto): Promise<void> {
-    console.log('friend id is ', data.id);
-    console.log('content is ', data.content);
-    console.log('creatdAt is ', data.createdAt);
     await this.checkExistFriendship(data.id, socket.data.userId, data.receiverId);
     await this.messageRepository.insert({
       senderId: socket.data.userId,
@@ -70,7 +67,6 @@ export class MessageGateway {
    * @param socket
    * @param data
    */
-  @UsePipes(new ValidationPipe({ exceptionFactory: createWsException }))
   @SubscribeMessage('last-message-view')
   async handleLeaveMessageRoom(
     @ConnectedSocket() socket: Socket,
@@ -81,10 +77,6 @@ export class MessageGateway {
       friend: { id: data.friendId }, // 친구 ID를 MessageView의 friend 필드에 저장
       lastViewTime: data.lastViewTime,
     });
-
-    console.log('data.friendId : ', data.friendId);
-    console.log('data lastViewTime : ', data.lastViewTime);
-    // console.log(typeof data.lastViewTime);
   }
 
   /**
