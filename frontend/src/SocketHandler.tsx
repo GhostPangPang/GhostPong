@@ -70,6 +70,26 @@ export const SocketHandler = () => {
       };
     });
   });
+  const updateAdminEvent = useRecoilCallback(({ set }) => (data: UserId) => {
+    // useUserInfo 사용불가
+    console.log('socket admin', data);
+
+    set(channelDataState, (prev) => {
+      const updatedState: ChannelData = { ...prev };
+
+      if (updatedState.rightPlayer?.userId === data.userId) {
+        updatedState.rightPlayer = { ...updatedState.rightPlayer, role: 'admin' };
+      } else {
+        updatedState.observers = updatedState.observers.map((observer) =>
+          observer.userId === data.userId ? { ...observer, role: 'admin' } : observer,
+        );
+      }
+
+      return updatedState;
+    });
+    // if (userInfo.id === data.userId) alert(`${userInfo.nickname}님이 관리자가 되었습니다.`);
+    // 그냥 chat event로 보내주는것도 괜챃을듯
+  });
 
   // Init socket
   useEffect(() => {
@@ -110,7 +130,7 @@ export const SocketHandler = () => {
     // onEvent(ChannelEvent.BAN, updateBanEvent);
     // onEvent(ChannelEvent.MUTE, updateMuteEvent);
     onEvent(ChannelEvent.PLAYER, updatePlayerEvent);
-    // onEvent(ChannelEvent.ADMIN, updateAdminEvent);
+    onEvent(ChannelEvent.ADMIN, updateAdminEvent);
     // onEvent(ChannelEvent.OWNER, updateOwnerEvent);
     return () => {
       offEvent(ChannelEvent.CHAT);
@@ -120,7 +140,7 @@ export const SocketHandler = () => {
       // offEvent(ChannelEvent.BAN);
       // offEvent(ChannelEvent.MUTE);
       offEvent(ChannelEvent.PLAYER);
-      // offEvent(ChannelEvent.ADMIN);
+      offEvent(ChannelEvent.ADMIN);
       // offEvent(ChannelEvent.OWNER);
     };
     // register channel socket on event

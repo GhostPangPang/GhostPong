@@ -7,10 +7,9 @@ import { useUserInfo } from '../user';
 export const useChat = () => {
   const channelId = useRecoilValue(channelIdState);
   const setNewChannelData = useSetRecoilState(channelDataState);
+  const { userInfo } = useUserInfo();
 
   const sendChat = (content: string) => {
-    const { userInfo } = useUserInfo();
-
     const data: Chat = {
       channelId,
       senderId: userInfo.id,

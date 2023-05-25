@@ -1,4 +1,4 @@
-import { get, post, ApiResponse, ApiError, LocationResponse, patch } from '@/libs/api';
+import { get, post, patch, ApiResponse, ApiError, LocationResponse } from '@/libs/api';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { ChannelsListResponse, FullChannelInfoResponse } from '@/dto/channel/response';
 import { CreateChannelRequest, JoinChannelRequest } from '@/dto/channel/request';
@@ -15,6 +15,12 @@ interface useChannelProps {
 
 interface postJoinChannelProps extends JoinChannelRequest {
   id: string;
+}
+
+interface patchBeAdminProps {
+  // dto가 없네?
+  channelId: string;
+  userId: number;
 }
 
 let previousTotal = 0;
@@ -62,6 +68,9 @@ const postJoinChannel = async ({ mode, password, id }: postJoinChannelProps) => 
 const patchBePlayer = async (id: string) => {
   return await patch<ApiResponse>(CHANNEL + `/${id}/player`);
 };
+const patchBeAdmin = async ({ channelId, userId }: patchBeAdminProps) => {
+  return await patch<ApiResponse>(CHANNEL + `/${channelId}/admin`, { userId });
+};
 
 export const useChannel = (id: string) => {
   const navigate = useNavigate();
@@ -79,7 +88,7 @@ export const useChannel = (id: string) => {
     queryKey: [CHANNEL, id],
     queryFn: () => getChannelInfo(id),
     keepPreviousData: true,
-    staleTime: Infinity,
+    staleTime: 0,
     suspense: true,
     enabled: !!id,
     retry: false,
@@ -162,9 +171,14 @@ export const useChannelMutation = () => {
     },
   });
 
-  const { mutate: registerPlayer } = useMutation(patchBePlayer, {
+  const { mutate: becomePlayer } = useMutation(patchBePlayer, {
     onSuccess: (data: ApiResponse, id: string) => {
       queryClient.invalidateQueries([CHANNEL, id]);
+    },
+  });
+
+  const { mutate: becomeAdmin } = useMutation(patchBeAdmin, {
+    onSuccess: (data: ApiResponse) => {
       alert(data.message);
     },
     onError: (error: ApiError) => {
@@ -172,5 +186,5 @@ export const useChannelMutation = () => {
     },
   });
 
-  return { joinChannel, createChannel, registerPlayer };
+  return { joinChannel, createChannel, becomePlayer, becomeAdmin };
 };
