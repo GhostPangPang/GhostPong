@@ -24,6 +24,7 @@ export const GameReadyPage = () => {
 
   useEffect(() => {
     const channelId = pathname.replace('/channel/', '');
+    console.log('channelId', channelId);
     setChannelId(channelId);
 
     // socket 통신 받아서 navigate 하기
@@ -75,6 +76,7 @@ export const GameReadyPage = () => {
 
     window.addEventListener('beforeunload', handleBeforeUnload);
     window.onpopstate = function () {
+      console.log('123', channelId);
       leaveChannel(channelId);
       alert('뒤로가기를 누르면 채널에서 나가집니다.');
     };
@@ -82,7 +84,7 @@ export const GameReadyPage = () => {
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
-  }, []);
+  }, [channelId]);
 
   const items = itemGenerator();
 
