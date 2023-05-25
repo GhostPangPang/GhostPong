@@ -130,8 +130,6 @@ export const SocketHandler = () => {
     // onEvent(ChannelEvent.BAN, updateBanEvent);
     // onEvent(ChannelEvent.MUTE, updateMuteEvent);
     onEvent(ChannelEvent.PLAYER, updatePlayerEvent);
-    // onEvent(ChannelEvent.ADMIN, updateAdminEvent);
-    // onEvent(ChannelEvent.PLAYER, updatePlayerEvent);
     onEvent(ChannelEvent.ADMIN, updateAdminEvent);
     // onEvent(ChannelEvent.OWNER, updateOwnerEvent);
     return () => {
@@ -142,8 +140,6 @@ export const SocketHandler = () => {
       // offEvent(ChannelEvent.BAN);
       // offEvent(ChannelEvent.MUTE);
       offEvent(ChannelEvent.PLAYER);
-      // offEvent(ChannelEvent.ADMIN);
-      // offEvent(ChannelEvent.PLAYER);
       offEvent(ChannelEvent.ADMIN);
       // offEvent(ChannelEvent.OWNER);
     };

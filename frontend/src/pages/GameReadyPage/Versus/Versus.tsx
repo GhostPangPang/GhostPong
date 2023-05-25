@@ -4,6 +4,8 @@ import { ReactComponent as Crown } from '@/svgs/crown.svg';
 import { MemberInfo } from '@/dto/channel/socket';
 import { useUserInfo } from '@/hooks/user';
 import { useRecoilValue } from 'recoil';
+import { channelIdState } from '@/stores';
+import { useChannelMutation } from '@/hooks/channel';
 // import { newChannelDataState } from '@/stores';
 import { Items, Item } from '@/libs/utils/itemgenerator';
 // import { PlayerInfo } from '../mock-data';

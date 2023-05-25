@@ -1,6 +1,6 @@
 import { useChannelMutation } from '@/hooks/channel';
 import { useRecoilValue } from 'recoil';
-import { newChannelDataState } from '@/stores';
+import { channelDataState, channelIdState } from '@/stores';
 import { useUserInfo } from '@/hooks/user';
 import { MemberInfo } from '@/dto/channel';
 
@@ -18,7 +18,8 @@ export interface Items {
 // 이걸 리코일에 넣을까
 export const itemGenerator = (): Items => {
   const { becomeAdmin } = useChannelMutation();
-  const newChannelData = useRecoilValue(newChannelDataState);
+  const newChannelData = useRecoilValue(channelDataState);
+  const channelId = useRecoilValue(channelIdState);
   const { userInfo } = useUserInfo();
 
   const getCommonItems = (userId: number) =>
@@ -54,7 +55,7 @@ export const itemGenerator = (): Items => {
             label: '관리자 등록',
             onClick: () =>
               becomeAdmin({
-                channelId: newChannelData.channelId,
+                channelId: channelId,
                 userId: userId,
               }),
           },
