@@ -14,7 +14,7 @@ import { Game } from '../repository/model';
 import { GameGateway } from './game.gateway';
 
 const ENGINE_INTERVAL = 10;
-const SYNC_INTERVAL = 500;
+const SYNC_INTERVAL = 50;
 
 @Injectable()
 export class GameEngineService {

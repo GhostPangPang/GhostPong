@@ -1,4 +1,5 @@
 import {
+  BALL_ACCERELATION,
   BALL_INITIAL_SPEED,
   CANVASE_HEIGHT,
   CANVASE_WIDTH,
@@ -32,7 +33,7 @@ export function modifyBallDirection(ball: Ball, player: Player, direction: 1 | -
   ball.vx = Math.round(Math.cos(angle) * ball.speed * direction * 100) / 100;
   // 바 위쪽에 맞으면 음수, 바 아래쪽에 맞으면 양수
   ball.vy = Math.round(Math.sin(angle) * ball.speed * 100) / 100;
-  ball.speed += 0.1;
+  ball.speed += BALL_ACCERELATION;
 }
 
 /**
