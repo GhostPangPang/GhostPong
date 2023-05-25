@@ -262,7 +262,7 @@ export class ChannelService {
     this.checkOperationAuthority(myId, channel, targetId);
     await this.cacheManager.del(`mute-${targetId}`);
     this.channelGateway.emitChannel<UserId>(channel.id, 'kicked', { userId: targetId });
-    this.connectionGateway.leaveChannel(targetId, channel, undefined);
+    this.connectionGateway.leaveChannel(targetId, channel);
     return { message: 'kick 되었습니다.' };
   }
 
@@ -274,7 +274,7 @@ export class ChannelService {
     await this.cacheManager.del(`mute-${targetId}`);
     channel.bannedUserIdList.push(targetId);
     this.channelGateway.emitChannel<UserId>(channel.id, 'banned', { userId: targetId });
-    this.connectionGateway.leaveChannel(targetId, channel, undefined);
+    this.connectionGateway.leaveChannel(targetId, channel);
     return { message: 'ban 되었습니다.' };
   }
 
