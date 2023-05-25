@@ -11,7 +11,7 @@ import {
 import { Cache } from 'cache-manager';
 import { Server, Socket } from 'socket.io';
 
-import { NewChat, UserId } from '@/types/channel';
+import { UserId } from '@/types/channel';
 
 import { corsOption } from '../common/option/cors.option';
 import { createWsException } from '../common/util';
@@ -48,12 +48,9 @@ export class ChannelGateway {
     if (sender === undefined) {
       throw new WsException('채널에 참여하지 않은 유저입니다.');
     }
-    this.emitChannel<NewChat>(
-      data.channelId,
-      'new-chat',
-      { senderId: sender.id, senderNickname: sender.nickname, content: data.content },
-      socket.id,
-    );
+    socket
+      .to(data.channelId)
+      .emit('new-chat', { senderId: sender.id, senderNickname: sender.nickname, content: data.content });
   }
 
   /**
