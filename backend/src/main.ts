@@ -22,7 +22,7 @@ async function bootstrap() {
   );
   app.useGlobalFilters(new HttpExceptionFilter());
   app.use(cookieParser());
-  app.setGlobalPrefix('/api/v1/');
+  app.setGlobalPrefix('/api/v1');
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle('GhostPong API')
