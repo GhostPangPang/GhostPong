@@ -66,7 +66,7 @@ export const SocketHandler = () => {
       return {
         ...prev,
         observers: prev.observers.filter((observer) => observer.userId !== data.userId),
-        leftPlayer: { userId: data.userId, nickname, image, role },
+        rightPlayer: { userId: data.userId, nickname, image, role },
       };
     });
   });
