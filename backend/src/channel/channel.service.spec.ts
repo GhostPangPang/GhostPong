@@ -705,4 +705,60 @@ describe('ChannelService', () => {
       });
     });
   });
+
+  describe('updateChannel', () => {
+    it('방장이 아닌 경우', async () => {
+      const user: ChannelUser = {
+        id: 1,
+        nickname: 'test',
+        image: '/asset/profile-1.png',
+        role: 'member',
+        isMuted: false,
+        isPlayer: false,
+      };
+      const channel: Channel = {
+        id: 'aaa',
+        mode: 'public',
+        name: 'test',
+        isInGame: false,
+        users: new Map([[1, user]]),
+        bannedUserIdList: [],
+      };
+      try {
+        await service.updateChannel(1, channel, {
+          mode: 'public',
+        });
+      } catch (e) {
+        expect(e).toBeInstanceOf(ForbiddenException);
+        expect(e.message).toEqual('방장만 수정 가능합니다.');
+      }
+    });
+
+    it('성공적으로 채널 정보 업데이트', async () => {
+      const user: ChannelUser = {
+        id: 1,
+        nickname: 'test',
+        image: '/asset/profile-1.png',
+        role: 'owner',
+        isMuted: false,
+        isPlayer: false,
+      };
+      const channel: Channel = {
+        id: 'aaa',
+        mode: 'public',
+        name: 'test',
+        isInGame: false,
+        users: new Map([[1, user]]),
+        bannedUserIdList: [],
+      };
+      expect(
+        await service.updateChannel(1, channel, {
+          mode: 'protected',
+          password: '1234',
+        }),
+      ).toEqual({
+        message: '채널 정보를 수정했습니다.',
+      });
+    });
+  });
 });

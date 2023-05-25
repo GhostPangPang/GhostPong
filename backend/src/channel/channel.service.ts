@@ -180,7 +180,7 @@ export class ChannelService {
   ): Promise<SuccessResponseDto> {
     const user = this.findExistChannelUser(myId, channel);
     if (user.role !== 'owner') {
-      throw new ForbiddenException('방장만 수정할 수 있습니다.');
+      throw new ForbiddenException('방장만 수정 가능합니다.');
     }
     if (channel.isInGame === true) {
       throw new ForbiddenException('게임 진행중에 처리할 수 없습니다.');
