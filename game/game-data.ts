@@ -7,6 +7,7 @@ export const CANVASE_HEIGHT = 50;
 
 export const BALL_RADIUS = 1;
 export const BALL_INITIAL_SPEED = 0.5;
+export const BALL_ACCERELATION = 0.05;
 
 export const DEGREE = Math.PI / 4; // 45도
 
