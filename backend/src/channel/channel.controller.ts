@@ -149,9 +149,9 @@ export class ChannelController {
   updateChannel(
     @ExtractUserId() myId: number,
     @Param('channelId', IdToChannelPipe) channel: Channel,
-    @Body() patchChannelRequestDto: UpdateChannelRequestDto,
+    @Body() updateChannelOptions: UpdateChannelRequestDto,
   ): Promise<SuccessResponseDto> {
-    return this.channelService.updateChannel(myId, channel, patchChannelRequestDto);
+    return this.channelService.updateChannel(myId, channel, updateChannelOptions);
   }
 
   /**
