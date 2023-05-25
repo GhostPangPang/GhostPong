@@ -34,6 +34,7 @@ import { Channel } from '../repository/model';
 import { ChannelService } from './channel.service';
 import { CreateChannelRequestDto } from './dto/request/create-channel-request.dto';
 import { JoinChannelRequestDto } from './dto/request/join-channel-request.dto';
+import { PatchChannelRequestDto } from './dto/request/patch-channel-request.dto';
 import { ChannelsListResponseDto } from './dto/response/channels-list-response.dto';
 import { FullChannelInfoResponseDto } from './dto/response/full-channel-info-response.dto';
 
@@ -136,6 +137,24 @@ export class ChannelController {
   }
 
   /**
+   * @summary 채널 모드 또는 비밀번호 변경하기
+   * @description PATCH /channel/:channelId
+   */
+  @ApiOperation({ summary: '채널 모드 또는 비밀번호 변경하기' })
+  @ApiNotFoundResponse({ type: ErrorResponseDto, description: '존재하지 않는 채널' })
+  @ApiForbiddenResponse({ type: ErrorResponseDto, description: '채널에 참여중인 유저가 아님, 방장 아님, 게임 진행중' })
+  @ApiHeaders([{ name: 'x-my-id', description: '내 auth 아이디 (임시값)' }])
+  @ApiParam({ name: 'channelId', description: '채널 아이디' })
+  @Patch(':channelId')
+  patchChannel(
+    @ExtractUserId() myId: number,
+    @Param('channelId', IdToChannelPipe) channel: Channel,
+    @Body() patchChannelRequestDto: PatchChannelRequestDto,
+  ): Promise<SuccessResponseDto> {
+    return this.channelService.patchChannel(myId, channel, patchChannelRequestDto);
+  }
+
+  /**
    * @summary 채널에서 플레이어 되기
    * @description PATCH /channel/:channelId/player
    */
@@ -172,7 +191,7 @@ export class ChannelController {
 
   /**
    * @summary 채널에서 방장되기
-   * @description POST /channel/:channelId/owner
+   * @description PATCH /channel/:channelId/owner
    */
   @ApiOperation({ summary: '채널에서 방장되기' })
   @ApiConflictResponse({ type: ErrorResponseDto, description: '이미 본인이 방장, 방장 존재' })

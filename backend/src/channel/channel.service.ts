@@ -32,6 +32,7 @@ import { ChannelUser, Channel } from '../repository/model';
 import { ChannelGateway } from './channel.gateway';
 import { CreateChannelRequestDto } from './dto/request/create-channel-request.dto';
 import { JoinChannelRequestDto } from './dto/request/join-channel-request.dto';
+import { PatchChannelRequestDto } from './dto/request/patch-channel-request.dto';
 import { ChannelsListResponseDto } from './dto/response/channels-list-response.dto';
 import { FullChannelInfoResponseDto } from './dto/response/full-channel-info-response.dto';
 
@@ -166,6 +167,30 @@ export class ChannelService {
 
     return {
       message: '채널 초대에 성공했습니다.',
+    };
+  }
+
+  /**
+   * @description 채널 정보(mode, password) 수정하기
+   */
+  async patchChannel(
+    myId: number,
+    channel: Channel,
+    patchChannelOptions: PatchChannelRequestDto,
+  ): Promise<SuccessResponseDto> {
+    const user = this.findExistChannelUser(myId, channel);
+    if (user.role !== 'owner') {
+      throw new ForbiddenException('방장만 수정할 수 있습니다.');
+    }
+    if (channel.isInGame === true) {
+      throw new ForbiddenException('게임 진행중에 처리할 수 없습니다.');
+    }
+    if (patchChannelOptions.mode === 'protected' && patchChannelOptions.password !== undefined) {
+      channel.password = await hash(patchChannelOptions.password, 5);
+    }
+    channel.mode = patchChannelOptions.mode;
+    return {
+      message: '채널 정보를 수정했습니다.',
     };
   }
 
