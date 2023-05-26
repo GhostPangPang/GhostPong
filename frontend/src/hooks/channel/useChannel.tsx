@@ -31,6 +31,11 @@ interface patchBanProps {
   userId: number;
 }
 
+interface patchMuteProps {
+  channelId: string;
+  userId: number;
+}
+
 let previousTotal = 0;
 
 const initialChannelListData: ChannelsListResponse = {
@@ -84,6 +89,10 @@ const patchKick = async ({ channelId, userId }: patchKickProps) => {
 
 const patchBan = async ({ channelId, userId }: patchBanProps) => {
   return await patch<ApiResponse>(CHANNEL + `/${channelId}/ban`, { userId });
+};
+
+const patchMute = async ({ channelId, userId }: patchMuteProps) => {
+  return await patch<ApiResponse>(CHANNEL + `/${channelId}/mute`, { userId });
 };
 
 export const useChannel = (id: string) => {
@@ -239,5 +248,15 @@ export const useChannelMutation = () => {
     },
   });
 
-  return { joinChannel, createChannel, becomePlayer, becomeAdmin, becomeOwner, kick, ban };
+  const { mutate: mute } = useMutation(patchMute, {
+    onSuccess: (data: ApiResponse, { channelId: id }) => {
+      queryClient.invalidateQueries([CHANNEL, id]);
+      alert(data.message);
+    },
+    onError: (error: ApiError) => {
+      alert(error.message);
+    },
+  });
+
+  return { joinChannel, createChannel, becomePlayer, becomeAdmin, becomeOwner, kick, ban, mute };
 };
