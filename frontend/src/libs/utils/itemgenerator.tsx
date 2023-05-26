@@ -17,7 +17,7 @@ export interface Items {
 
 // 이걸 리코일에 넣을까
 export const itemGenerator = (newChannelData: ChannelData): Items => {
-  const { becomeAdmin } = useChannelMutation();
+  const { becomeAdmin, kick, ban } = useChannelMutation();
   const currentRole = useRecoilValue(currentRoleSelector);
   const channelId = useRecoilValue(channelIdState);
   const { userInfo } = useUserInfo();
@@ -39,11 +39,29 @@ export const itemGenerator = (newChannelData: ChannelData): Items => {
       ? []
       : [
           // eslint-disable-next-line @typescript-eslint/no-empty-function
-          { label: 'KICK', onClick: () => {} },
-          // eslint-disable-next-line @typescript-eslint/no-empty-function
-          { label: 'MUTE', onClick: () => {} },
-          // eslint-disable-next-line @typescript-eslint/no-empty-function
-          { label: 'BAN', onClick: () => {} },
+          {
+            label: 'KICK',
+            onClick: () => {
+              kick({
+                channelId: channelId,
+                userId: userId,
+              });
+            },
+          },
+          {
+            label: 'MUTE',
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            onClick: () => {},
+          },
+          {
+            label: 'BAN',
+            onClick: () => {
+              ban({
+                channelId: channelId,
+                userId: userId,
+              });
+            },
+          },
           ...getCommonItems(userId),
         ];
 
