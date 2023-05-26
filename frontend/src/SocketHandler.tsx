@@ -4,7 +4,7 @@ import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { newMessageIdListState, newMessagesState, channelDataState, ChannelData } from './stores';
 import { socketState } from './stores/socketState';
 import { Message } from '@/dto/message/socket';
-import { MemberInfo, UserId, Chat } from '@/dto/channel/socket';
+import { MemberInfo, UserId, NewChat as Chat } from '@/dto/channel/socket';
 import { MessageEvent, ChannelEvent } from './constants';
 
 export const SocketHandler = () => {

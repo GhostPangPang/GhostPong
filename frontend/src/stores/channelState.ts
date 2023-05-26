@@ -1,5 +1,5 @@
 import { atom, selector } from 'recoil';
-import { Chat, MemberInfo } from '@/dto/channel/socket';
+import { NewChat as Chat, MemberInfo } from '@/dto/channel/socket';
 
 export type ChannelData = {
   name: string;
