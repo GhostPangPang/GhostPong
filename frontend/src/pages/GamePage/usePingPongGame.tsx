@@ -7,6 +7,7 @@ import {
   gameIdState,
   gameDataState,
   gameStatusState,
+  gameResultState,
 } from '@/stores/gameState';
 import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
 import { updateBall, checkPlayerCollision, checkWallCollision, checkGameEnded } from '@/game/utils';
@@ -15,7 +16,12 @@ import { useEffect } from 'react';
 import { emitEvent, offEvent, onEvent } from '@/libs/api';
 import { GameEvent } from '@/constants';
 import { Player, GameData, BAR_PADDING, BAR_WIDTH, CANVASE_WIDTH } from '@/game/game-data';
-import { GameEnd } from '@/dto/game';
+import { GameEnd, BarMoved } from '@/dto/game';
+
+import wallSound from '@/assets/sounds/wall.mp3';
+import hitSound from '@/assets/sounds/hit.mp3';
+import endSound from '@/assets/sounds/end.mp3';
+import { useSound } from '@/hooks';
 
 const NET_WIDTH = 1;
 const NET_HEIGHT = 3;
@@ -40,10 +46,15 @@ export const usePingPongGame = () => {
   const gamePlayer = useRecoilValue(gamePlayerState);
 
   const [gameStatus, setGameStatus] = useRecoilState(gameStatusState);
-
   const [gameData, setGameData] = useRecoilState(gameDataState);
+  const [gameResult, setGameResult] = useRecoilState(gameResultState);
   const [canvasSize, setCanvasSize] = useRecoilState(canvasSizeState);
   const canvasRatio = useRecoilValue(canvasRatioState);
+
+  // sounds
+  const playWallSound = useSound(wallSound);
+  const playHitSound = useSound(hitSound);
+  const playEndSound = useSound(endSound);
 
   // recoil reset
   const resetGameId = useResetRecoilState(gameIdState);
@@ -61,7 +72,7 @@ export const usePingPongGame = () => {
     if (!gameId || !gamePlayer.leftPlayer || !gamePlayer.rightPlayer) {
       console.log('게임을 제대로 시작할 수 없습니다.');
       return;
-    } // error 메세지 생각해보기 이거 소켓 연결하면 실행하기
+    }
 
     // init game data
     const { leftPlayer: leftUser, rightPlayer: rightUser } = gamePlayer;
@@ -78,14 +89,29 @@ export const usePingPongGame = () => {
       setGameStatus('playing');
     }, 1000);
 
-    // update game data
+    // game data event
     onEvent(GameEvent.GAMEDATA, (data: GameData) => {
-      // setGameData(data); // 얘 되는지 확인하기
-      setGameData((prev) => ({ ...prev, ...data }));
+      setGameData(data); // 밑에 애랑 성능비교해보기
+      // setGameData((prev) => ({ ...prev, ...data }));
     });
+
+    // game bar moved
+    onEvent(GameEvent.MOVEBAR, (data: BarMoved) => {
+      const { userId, y } = data;
+
+      if (userId === leftPlayer.userId) {
+        setGameData((prev) => ({ ...prev, leftPlayer: { ...prev.leftPlayer, y } }));
+      } else if (userId === rightPlayer.userId) {
+        setGameData((prev) => ({ ...prev, rightPlayer: { ...prev.rightPlayer, y } }));
+      }
+    });
+
+    // game end event
     onEvent(GameEvent.GAMEEND, (data: GameEnd) => {
       console.log('GAMEEND', data);
+      playEndSound();
       setGameStatus('end');
+      setGameResult(data);
     });
 
     emitEvent(GameEvent.PLAYERREADY, { gameId });
@@ -99,7 +125,8 @@ export const usePingPongGame = () => {
       resetCanvasSize();
       resetCanvasRatio();
       offEvent(GameEvent.GAMEDATA);
-      // offEvent(GameEvent.GAMEEND);
+      offEvent(GameEvent.MOVEBAR);
+      offEvent(GameEvent.GAMEEND);
     };
   }, []);
 
@@ -108,7 +135,10 @@ export const usePingPongGame = () => {
     if (!context || !width || !height) return;
 
     // clear the canvas
-    drawRect(context, 0, 0, width, height, theme.color.gray500);
+    // drawRect(context, 0, 0, width, height, theme.color.gray500);
+    context.clearRect(0, 0, width, height);
+
+    if (gameStatus === 'end') return; // 이 로직도 확인해보기
 
     // draw user1 score to the left
     drawText(context, leftPlayer.score.toString(), width / 4, height / 5, theme.color.gray100);
@@ -120,7 +150,8 @@ export const usePingPongGame = () => {
     drawNet(context);
 
     // draw the ball
-    drawArc(context, ball.x * ratio, ball.y * ratio, ball.radius * ratio, theme.color.secondary);
+    drawBall(context);
+    // drawArc(context, ball.x * ratio, ball.y * ratio, ball.radius * ratio, theme.color.secondary);
 
     // draw leftPlayer paddle
     drawBar(
@@ -162,6 +193,30 @@ export const usePingPongGame = () => {
     context.fill();
   };
 
+  const drawBall = (context: CanvasRenderingContext2D) => {
+    // wall sound
+    // if (
+    //   ball.x - ball.radius < 0 ||
+    //   ball.x + ball.radius > width ||
+    //   ball.y - ball.radius < 0 ||
+    //   ball.y + ball.radius > height
+    // ) {
+    //   playWallSound();
+    // }
+    // // hit sound
+    // if (
+    //   (ball.x + ball.radius > rightPlayer.x &&
+    //     ball.y < rightPlayer.y + rightPlayer.height / 2 &&
+    //     ball.y > rightPlayer.y - rightPlayer.height / 2) ||
+    //   (ball.x - ball.radius < leftPlayer.x + BAR_WIDTH &&
+    //     ball.y < leftPlayer.y + leftPlayer.height / 2 &&
+    //     ball.y > leftPlayer.y - leftPlayer.height / 2)
+    // ) {
+    //   playHitSound();
+    // }
+    drawArc(context, ball.x * ratio, ball.y * ratio, ball.radius * ratio, theme.color.secondary);
+  };
+
   const moveBar = (playerType: MemberType, y: number) => {
     if (playerType === 'leftPlayer') {
       const normalY = y / ratio - leftPlayer.height / 2;
@@ -183,13 +238,6 @@ export const usePingPongGame = () => {
       rightPlayer: { ...rightPlayer },
       ball: { ...ball },
     };
-    // setGameData((prev) => {
-    //   updateBall(prev);
-    //   checkPlayerCollision(prev);
-    //   checkWallCollision(prev.ball);
-    //   checkGameEnded(prev);
-    //   return prev;
-    // });
     updateBall(updateData);
     // checkPlayerCollision(updateData);
     checkWallCollision(updateData.ball);

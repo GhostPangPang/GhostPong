@@ -1,6 +1,7 @@
 import { MemberInfo } from '@/dto/channel/socket';
 import { Ball, Player, GameData } from '@/game/game-data';
 import { DefaultValue, atom, selector } from 'recoil';
+import { GameEnd } from '@/dto/game/';
 
 const UNIT = 100;
 
@@ -80,7 +81,6 @@ type GamePlayerData = {
   rightPlayer: MemberInfo | null;
 };
 
-// 타입 일관성 없음 MemberInfo 인지 User 인지, MemberInfo 로 일단 구현
 export const gamePlayerState = atom<GamePlayerData>({
   key: 'gamePlayerState',
   default: {
@@ -94,4 +94,19 @@ type GameStatus = 'ready' | 'playing' | 'end';
 export const gameStatusState = atom<GameStatus>({
   key: 'gameStatusState',
   default: 'ready',
+});
+
+export const gameResultState = atom<GameEnd>({
+  key: 'gameResultState',
+  default: {
+    id: '',
+    winner: {
+      id: -1,
+      score: 0,
+    },
+    loser: {
+      id: -1,
+      score: 0,
+    },
+  },
 });
