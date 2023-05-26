@@ -186,9 +186,19 @@ export class ChannelService {
       throw new ForbiddenException('게임 진행중에 처리할 수 없습니다.');
     }
     const socketId = this.findExistSocket(myId);
+
+    if (channel.mode !== updateChannelOptions.mode) {
+      if (channel.mode === 'private') {
+        this.visibleChannelRepository.insert(channel);
+        this.invisibleChannelRepository.delete(channel.id);
+      } else if (updateChannelOptions.mode === 'private') {
+        this.invisibleChannelRepository.insert(channel);
+        this.visibleChannelRepository.delete(channel.id);
+      }
+    }
     if (updateChannelOptions.mode === 'protected' && updateChannelOptions.password !== undefined) {
       channel.password = await hash(updateChannelOptions.password, 5);
-    } else if (updateChannelOptions.mode !== 'protected' && channel.password !== undefined) {
+    } else if (channel.mode === 'protected') {
       channel.password = undefined;
     }
     channel.mode = updateChannelOptions.mode;
