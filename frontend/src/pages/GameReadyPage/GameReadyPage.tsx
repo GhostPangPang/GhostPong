@@ -32,7 +32,6 @@ export const GameReadyPage = () => {
 
   useEffect(() => {
     const channelId = pathname.replace('/channel/', '');
-    console.log('channelId', channelId);
     setChannelId(channelId);
 
     return () => {
@@ -84,7 +83,6 @@ export const GameReadyPage = () => {
 
   const channelDataLoadable = useRecoilValueLoadable(channelDataState);
 
-  console.log('loadable', channelDataLoadable);
   let items = itemGenerator(channelData);
 
   if (channelDataLoadable.state === 'hasValue') {
