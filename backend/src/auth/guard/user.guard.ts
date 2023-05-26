@@ -13,6 +13,10 @@ export class UserGuard extends AuthGuard('user') implements CanActivate {
   }
 
   canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
+    const skipUserGuard = this.reflector.get<boolean>('skipUserGuard', context.getHandler());
+    if (skipUserGuard) {
+      return true;
+    }
     // 개발 환경에서는 토큰 검증을 하지 않음
     if (this.appConfigService.env === 'development') {
       const request: Request = context.switchToHttp().getRequest<Request>();
@@ -23,11 +27,6 @@ export class UserGuard extends AuthGuard('user') implements CanActivate {
       request.user = {
         userId: +userId,
       };
-      return true;
-    }
-
-    const skipUserGuard = this.reflector.get<boolean>('skipUserGuard', context.getHandler());
-    if (skipUserGuard) {
       return true;
     }
     return super.canActivate(context);
