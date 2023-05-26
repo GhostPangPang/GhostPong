@@ -37,8 +37,7 @@ export const ChatContent = ({ inputFocus }: ChatContentProps) => {
     >
       {[...chats].reverse().map((message, index) => (
         <ChatBubble key={index}>
-          {message.senderId}: {message.content}
-          {/* sender Id -> nickname으로 바꿔야함 어디서 찾을지 벡엔드와 협의중 */}
+          {message.senderNickname}: {message.content}
         </ChatBubble>
       ))}
     </Box>

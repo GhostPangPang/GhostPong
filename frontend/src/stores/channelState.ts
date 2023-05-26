@@ -1,5 +1,5 @@
 import { atom, selector } from 'recoil';
-import { NewChat as Chat, MemberInfo } from '@/dto/channel/socket';
+import { NewChat, MemberInfo } from '@/dto/channel/socket';
 
 export type ChannelData = {
   name: string;
@@ -8,7 +8,7 @@ export type ChannelData = {
   observers: MemberInfo[];
   isInGame: boolean;
   currentRole: 'owner' | 'admin' | 'member' | undefined;
-  chats: Chat[];
+  chats: NewChat[];
 };
 
 export const channelIdState = atom<string>({
@@ -29,7 +29,7 @@ export const channelDataState = atom<ChannelData>({
   },
 });
 
-export const chatSelector = selector<Chat[]>({
+export const chatSelector = selector<NewChat[]>({
   key: '/chat/selector',
   get: ({ get }) => {
     const { chats } = get(channelDataState);
