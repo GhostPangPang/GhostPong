@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { connectSocket, disconnectSocket, emitEvent, offEvent, onEvent } from '@/libs/api';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { newMessageIdListState, newMessagesState, channelDataState, ChannelData } from './stores';
