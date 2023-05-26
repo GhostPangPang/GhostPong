@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { connectSocket, disconnectSocket, emitEvent, offEvent, onEvent } from '@/libs/api';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { newMessageIdListState, newMessagesState, channelDataState, ChannelData } from './stores';
@@ -6,10 +6,15 @@ import { socketState } from './stores/socketState';
 import { Message } from '@/dto/message/socket';
 import { MemberInfo, UserId, NewChat } from '@/dto/channel/socket';
 import { MessageEvent, ChannelEvent } from './constants';
+import { useUserInfo } from './hooks/user';
+import { useNavigate } from 'react-router-dom';
 
 export const SocketHandler = () => {
   const socket = useRecoilValue(socketState);
+  const { userInfo } = useUserInfo();
   const newMessages = useRecoilValue(newMessagesState);
+  const navigate = useNavigate();
+
   const updateMessageEvent = useRecoilCallback(({ snapshot, set }) => (data: Message) => {
     console.log('socket message', data);
     const current = snapshot.getLoadable(newMessagesState).getValue().friend;
@@ -70,8 +75,8 @@ export const SocketHandler = () => {
       };
     });
   });
+
   const updateAdminEvent = useRecoilCallback(({ set }) => (data: UserId) => {
-    // useUserInfo 사용불가
     console.log('socket admin', data);
 
     set(channelDataState, (prev) => {
@@ -87,8 +92,7 @@ export const SocketHandler = () => {
 
       return updatedState;
     });
-    // if (userInfo.id === data.userId) alert(`${userInfo.nickname}님이 관리자가 되었습니다.`);
-    // 그냥 chat event로 보내주는것도 괜챃을듯
+    if (userInfo.id === data.userId) alert(`${userInfo.nickname}님이 관리자가 되었습니다.`);
   });
 
   const updateOwnerEvent = useRecoilCallback(({ set }) => (data: UserId) => {
@@ -109,6 +113,34 @@ export const SocketHandler = () => {
         rightPlayer: isRightPlayer ? null : prev.rightPlayer,
       };
     });
+  });
+
+  const updateKickEvent = useRecoilCallback(({ set }) => (data: UserId) => {
+    console.log('socket kick', data);
+    set(channelDataState, (prev) => ({
+      ...prev,
+      observers: prev.observers.filter((observer) => observer.userId !== data.userId),
+      leftPlayer: prev.leftPlayer?.userId === data.userId ? null : prev.leftPlayer,
+      rightPlayer: prev.rightPlayer?.userId === data.userId ? null : prev.rightPlayer,
+    }));
+    if (userInfo.id === data.userId) {
+      navigate('/channel/list');
+      alert('강퇴되었습니다.');
+    }
+  });
+
+  const updateBanEvent = useRecoilCallback(({ set }) => (data: UserId) => {
+    console.log('socket ban', data);
+    set(channelDataState, (prev) => ({
+      ...prev,
+      observers: prev.observers.filter((observer) => observer.userId !== data.userId),
+      leftPlayer: prev.leftPlayer?.userId === data.userId ? null : prev.leftPlayer,
+      rightPlayer: prev.rightPlayer?.userId === data.userId ? null : prev.rightPlayer,
+    }));
+    if (userInfo.id === data.userId) {
+      navigate('/channel/list');
+      alert('차단당했습니다.');
+    }
   });
 
   // Init socket
@@ -146,8 +178,8 @@ export const SocketHandler = () => {
     onEvent(ChannelEvent.CHAT, updateChatEvent);
     onEvent(ChannelEvent.JOIN, updateJoinEvent);
     onEvent(ChannelEvent.LEAVE, updateLeaveEvent);
-    // onEvent(ChannelEvent.KICK, updateKickEvent);
-    // onEvent(ChannelEvent.BAN, updateBanEvent);
+    onEvent(ChannelEvent.KICK, updateKickEvent);
+    onEvent(ChannelEvent.BAN, updateBanEvent);
     // onEvent(ChannelEvent.MUTE, updateMuteEvent);
     onEvent(ChannelEvent.PLAYER, updatePlayerEvent);
     onEvent(ChannelEvent.ADMIN, updateAdminEvent);
