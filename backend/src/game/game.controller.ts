@@ -39,6 +39,9 @@ export class GameController {
     return this.gameService.joinGameQueue(userId);
   }
 
+  @ApiOperation({ summary: '랜덤 게임 참가 취소' })
+  @ApiNotFoundResponse({ description: '게임 대기열에 참여하지 않은 경우' })
+  @HttpCode(HttpStatus.OK)
   @Post('random/cancle')
   cancelGameQueue(@ExtractUserId() userId: number): SuccessResponseDto {
     return this.gameService.cancelGameQueue(userId);
