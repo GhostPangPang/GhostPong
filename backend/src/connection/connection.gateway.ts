@@ -14,7 +14,6 @@ import { Repository } from 'typeorm';
 import { corsOption } from '../common/option/cors.option';
 import { AppConfigService } from '../config/app/configuration.service';
 import { Friendship } from '../entity/friendship.entity';
-
 import {
   InvisibleChannelRepository,
   SocketIdRepository,

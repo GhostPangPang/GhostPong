@@ -13,7 +13,7 @@ import { hash, compare } from 'bcrypt';
 import { Cache } from 'cache-manager';
 import { Repository } from 'typeorm';
 
-import { ChannelRole, MemberInfo, UserId } from '@/types/channel';
+import { ChannelRole, MemberInfo, UpdatedMode, UserId } from '@/types/channel';
 
 import { MUTE_EXPIRES_IN, PARTICIPANT_LIMIT } from '../common/constant';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
@@ -32,6 +32,7 @@ import { ChannelUser, Channel } from '../repository/model';
 import { ChannelGateway } from './channel.gateway';
 import { CreateChannelRequestDto } from './dto/request/create-channel-request.dto';
 import { JoinChannelRequestDto } from './dto/request/join-channel-request.dto';
+import { UpdateChannelRequestDto } from './dto/request/update-channel-request.dto';
 import { ChannelsListResponseDto } from './dto/response/channels-list-response.dto';
 import { FullChannelInfoResponseDto } from './dto/response/full-channel-info-response.dto';
 
@@ -166,6 +167,44 @@ export class ChannelService {
 
     return {
       message: '채널 초대에 성공했습니다.',
+    };
+  }
+
+  /**
+   * @description 채널 정보(mode, password) 수정하기
+   */
+  async updateChannel(
+    myId: number,
+    channel: Channel,
+    updateChannelOptions: UpdateChannelRequestDto,
+  ): Promise<SuccessResponseDto> {
+    const user = this.findExistChannelUser(myId, channel);
+    if (user.role !== 'owner') {
+      throw new ForbiddenException('방장만 수정 가능합니다.');
+    }
+    if (channel.isInGame === true) {
+      throw new ForbiddenException('게임 진행중에 처리할 수 없습니다.');
+    }
+    const socketId = this.findExistSocket(myId);
+
+    if (channel.mode !== updateChannelOptions.mode) {
+      if (channel.mode === 'private') {
+        this.visibleChannelRepository.insert(channel);
+        this.invisibleChannelRepository.delete(channel.id);
+      } else if (updateChannelOptions.mode === 'private') {
+        this.invisibleChannelRepository.insert(channel);
+        this.visibleChannelRepository.delete(channel.id);
+      }
+    }
+    if (updateChannelOptions.mode === 'protected' && updateChannelOptions.password !== undefined) {
+      channel.password = await hash(updateChannelOptions.password, 5);
+    } else if (channel.mode === 'protected') {
+      channel.password = undefined;
+    }
+    channel.mode = updateChannelOptions.mode;
+    this.channelGateway.emitChannel<UpdatedMode>(channel.id, 'channel-updated', { mode: channel.mode }, socketId);
+    return {
+      message: '채널 정보를 수정했습니다.',
     };
   }
 

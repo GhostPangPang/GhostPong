@@ -19,6 +19,7 @@ import { ChannelGateway } from './channel.gateway';
 import { ChannelService } from './channel.service';
 import { CreateChannelRequestDto } from './dto/request/create-channel-request.dto';
 import { compare } from 'bcrypt';
+import { ConnectionGateway } from '../connection/connection.gateway';
 
 describe('ChannelService', () => {
   let service: ChannelService;
@@ -29,6 +30,7 @@ describe('ChannelService', () => {
   let socketIdRepository: SocketIdRepository;
   let channelGateway: ChannelGateway;
   let friendshipRepository: Repository<Friendship>;
+  let connectionGateway: ConnectionGateway;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -39,6 +41,7 @@ describe('ChannelService', () => {
         InvitationRepository,
         SocketIdRepository,
         ChannelGateway,
+        ConnectionGateway,
         {
           provide: getRepositoryToken(User),
           useValue: {
@@ -60,6 +63,12 @@ describe('ChannelService', () => {
           useValue: {
             joinChannel: jest.fn(),
             emitChannel: jest.fn(),
+            emitUser: jest.fn(),
+          },
+        },
+        {
+          provide: ConnectionGateway,
+          useValue: {
             emitUser: jest.fn(),
           },
         },
@@ -703,6 +712,65 @@ describe('ChannelService', () => {
       expect(await service.becomeOwner(1, channel)).toEqual({
         message: '방장이 되었습니다.',
       });
+    });
+  });
+
+  describe('updateChannel', () => {
+    it('방장이 아닌 경우', async () => {
+      const user: ChannelUser = {
+        id: 1,
+        nickname: 'test',
+        image: '/asset/profile-1.png',
+        role: 'member',
+        isPlayer: false,
+      };
+      const channel: Channel = {
+        id: 'aaa',
+        mode: 'public',
+        name: 'test',
+        isInGame: false,
+        users: new Map([[1, user]]),
+        bannedUserIdList: [],
+      };
+      try {
+        await service.updateChannel(1, channel, {
+          mode: 'public',
+        });
+      } catch (e) {
+        expect(e).toBeInstanceOf(ForbiddenException);
+        expect(e.message).toEqual('방장만 수정 가능합니다.');
+      }
+    });
+
+    it('성공적으로 채널 정보 업데이트', async () => {
+      const user: ChannelUser = {
+        id: 1,
+        nickname: 'test',
+        image: '/asset/profile-1.png',
+        role: 'owner',
+        isPlayer: false,
+      };
+      const channel: Channel = {
+        id: 'aaa',
+        mode: 'private',
+        name: 'test',
+        isInGame: false,
+        users: new Map([[1, user]]),
+        bannedUserIdList: [],
+      };
+      expect(
+        await service.updateChannel(1, channel, {
+          mode: 'protected',
+          password: '1234',
+        }),
+      ).toEqual({
+        message: '채널 정보를 수정했습니다.',
+      });
+
+      expect(invisibleChannelRepository.find(channel.id)).toEqual(undefined);
+      expect(visibleChannelRepository.find(channel.id)).toEqual(channel);
+      expect(channel.mode).toEqual('protected');
+      expect(await compare('1234', channel.password!)).toBe(true);
     });
   });
 });

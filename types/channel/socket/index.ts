@@ -3,3 +3,4 @@ export * from './member-info.interface';
 export * from './channelId.interface';
 export * from './userId.interface';
 export * from './new-chat.interface';
+export * from './updated-mode.interface';
