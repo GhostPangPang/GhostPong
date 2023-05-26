@@ -14,7 +14,7 @@ const createSocketInstance = () => {
   } else {
     return io(import.meta.env.VITE_BASE_URL, {
       autoConnect: false,
-      extraHeaders: { Authorization: `${token ?? ''}` },
+      auth: { token: `${token ?? ''}` },
       withCredentials: true,
     });
   }
