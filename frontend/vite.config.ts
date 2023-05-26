@@ -47,10 +47,9 @@ export default ({ mode }) => {
     },
     server: {
       proxy: {
-        '/api': {
-          target: process.env.VITE_API_URL,
+        '/api/v1': {
+          target: process.env.VITE_BASE_URL,
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api/, ''),
         },
         '/asset': {
           target: process.env.VITE_ASSET_URL,

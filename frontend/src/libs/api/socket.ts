@@ -6,13 +6,13 @@ const createSocketInstance = () => {
   const token = getAccessToken();
 
   if (isDev) {
-    return io(import.meta.env.VITE_API_URL, {
+    return io(import.meta.env.VITE_BASE_URL, {
       autoConnect: false,
       extraHeaders: { 'x-my-id': token ?? '1' },
       withCredentials: true,
     });
   } else {
-    return io(import.meta.env.VITE_API_URL, {
+    return io(import.meta.env.VITE_BASE_URL, {
       autoConnect: false,
       extraHeaders: { Authorization: `${token ?? ''}` },
       withCredentials: true,
