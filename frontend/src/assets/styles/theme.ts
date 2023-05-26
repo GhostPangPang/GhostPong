@@ -60,6 +60,8 @@ const boxShadow = {
   lg: '0px 8px 16px rgba(0, 0, 0, 0.25)',
 };
 
+const textShadow = boxShadow;
+
 const padding = {
   sm: '0.8rem',
   md: '1.6rem',
@@ -76,6 +78,7 @@ const theme = {
   fontSize,
   borderRadius,
   boxShadow,
+  textShadow,
   padding,
 };
 
