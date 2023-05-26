@@ -19,7 +19,12 @@ export const useChat = () => {
       ...prev,
       chats: [...prev.chats, { senderId: userInfo.id, senderNickname: '나', content: content }],
     }));
-    emitEvent('send-chat', data);
+    emitEvent('send-chat', data, (data: { message: string }) => {
+      setNewChannelData((prev) => ({
+        ...prev,
+        chats: [...prev.chats, { senderId: userInfo.id, senderNickname: '관리자', content: data.message }],
+      }));
+    });
   };
 
   return { sendChat };
