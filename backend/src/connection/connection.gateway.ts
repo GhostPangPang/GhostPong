@@ -14,13 +14,13 @@ import { Repository } from 'typeorm';
 import { corsOption } from '../common/option/cors.option';
 import { AppConfigService } from '../config/app/configuration.service';
 import { Friendship } from '../entity/friendship.entity';
-import { GameQueue } from '../game/game.queue';
 import {
   InvisibleChannelRepository,
   SocketIdRepository,
   UserStatusRepository,
   VisibleChannelRepository,
 } from '../repository';
+import { GameQueue } from '../repository/game-queue';
 import { Channel, Status } from '../repository/model';
 
 @WebSocketGateway({ cors: corsOption })

@@ -9,7 +9,7 @@ import { GameMode } from '@/types/game';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
 import { User } from '../entity/user.entity';
 import { GameRepository, VisibleChannelRepository, InvisibleChannelRepository } from '../repository';
-import { GameQueue } from '../repository/game-queue.repository';
+import { GameQueue } from '../repository/game-queue';
 import { ChannelUser, Game } from '../repository/model';
 
 import { CreateGameRequestDto } from './dto/request/create-game-request.dto';
