@@ -26,8 +26,8 @@ export const GameEvent = {
 export const ChannelEvent = {
   JOIN: 'new-member',
   LEAVE: 'user-left-channel',
-  KICK: 'kick',
-  BAN: 'ban',
+  KICK: 'kicked',
+  BAN: 'banned',
   MUTE: 'mute',
   PLAYER: 'player',
   ADMIN: 'admin',

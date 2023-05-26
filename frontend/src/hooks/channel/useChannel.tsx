@@ -17,7 +17,16 @@ interface postJoinChannelProps extends JoinChannelRequest {
 }
 
 interface patchBeAdminProps {
-  // dto가 없네?
+  channelId: string;
+  userId: number;
+}
+
+interface patchKickProps {
+  channelId: string;
+  userId: number;
+}
+
+interface patchBanProps {
   channelId: string;
   userId: number;
 }
@@ -74,6 +83,14 @@ const patchBeAdmin = async ({ channelId, userId }: patchBeAdminProps) => {
 
 const patchBeOwner = async (id: string) => {
   return await patch<ApiResponse>(CHANNEL + `/${id}/owner`);
+};
+
+const patchKick = async ({ channelId, userId }: patchKickProps) => {
+  return await patch<ApiResponse>(CHANNEL + `/${channelId}/kick`, { userId });
+};
+
+const patchBan = async ({ channelId, userId }: patchBanProps) => {
+  return await patch<ApiResponse>(CHANNEL + `/${channelId}/ban`, { userId });
 };
 
 export const useChannel = (id: string) => {
@@ -209,5 +226,25 @@ export const useChannelMutation = () => {
     },
   });
 
-  return { joinChannel, createChannel, becomePlayer, becomeAdmin, becomeOwner };
+  const { mutate: kick } = useMutation(patchKick, {
+    onSuccess: (data: ApiResponse, { channelId }) => {
+      queryClient.invalidateQueries([CHANNEL, channelId]);
+      alert(data.message);
+    },
+    onError: (error: ApiError) => {
+      alert(error.message);
+    },
+  });
+
+  const { mutate: ban } = useMutation(patchBan, {
+    onSuccess: (data: ApiResponse, { channelId }) => {
+      queryClient.invalidateQueries([CHANNEL, channelId]);
+      alert(data.message);
+    },
+    onError: (error: ApiError) => {
+      alert(error.message);
+    },
+  });
+
+  return { joinChannel, createChannel, becomePlayer, becomeAdmin, becomeOwner, kick, ban };
 };
