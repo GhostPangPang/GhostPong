@@ -94,7 +94,7 @@ export const useChannel = (id: string) => {
   const resetChannelData = useResetRecoilState(channelDataState);
 
   const {
-    data: channel = initialChannelInfoData,
+    data: channel = null,
     refetch: refetchChannel,
     isFetching,
     isError,
