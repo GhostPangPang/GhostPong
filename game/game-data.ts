@@ -1,4 +1,7 @@
+import { GameMode } from '../types/game';
+
 export const BAR_HEIGHT = 10;
+export const BAR_STUPID_HEIGHT = 5;
 export const BAR_WIDTH = 1;
 export const BAR_PADDING = 3;
 
@@ -6,26 +9,30 @@ export const CANVASE_WIDTH = 100;
 export const CANVASE_HEIGHT = 50;
 
 export const BALL_RADIUS = 1;
-export const BALL_INITIAL_SPEED = 0.5;
+export const BALL_STUPID_RADIUS = 5;
+export const BALL_BASIC_SPEED = 0.5;
+export const BALL_BOOST_SPEED = 1;
 export const BALL_ACCERELATION = 0.05;
 
 export const DEGREE = Math.PI / 4; // 45도
 
 export class Ball {
-  constructor() {
+  constructor(mode: GameMode) {
     this.x = CANVASE_WIDTH / 2;
     this.y = CANVASE_HEIGHT / 2;
+    this.initialSpeed = mode === 'speed' ? BALL_BASIC_SPEED : BALL_BOOST_SPEED;
+    this.speed = this.initialSpeed;
     const angle = Math.random() * DEGREE;
-    this.vx = Math.round(Math.cos(angle) * BALL_INITIAL_SPEED * (Math.random() > 0.5 ? 1 : -1) * 100) / 100;
-    this.vy = Math.round(Math.sin(angle) * BALL_INITIAL_SPEED * 100) / 100;
-    this.speed = BALL_INITIAL_SPEED;
-    this.radius = BALL_RADIUS;
+    this.vx = Math.round(Math.cos(angle) * this.initialSpeed * (Math.random() > 0.5 ? 1 : -1) * 100) / 100;
+    this.vy = Math.round(Math.sin(angle) * this.initialSpeed * 100) / 100;
+    this.radius = mode === 'stupid' ? BALL_STUPID_RADIUS : BALL_RADIUS;
   }
   x: number;
   y: number;
   vx: number;
   vy: number;
   speed: number;
+  initialSpeed: number;
   radius: number;
 }
 
@@ -48,14 +55,16 @@ export class Player {
 }
 
 export class GameData {
-  constructor(id: string, leftUserId: number, rightUserId: number) {
+  constructor(id: string, mode: GameMode, leftUserId: number, rightUserId: number) {
     this.id = id;
-    this.ball = new Ball();
+    this.mode = mode;
+    this.ball = new Ball(mode);
     this.leftPlayer = new Player(leftUserId, BAR_PADDING);
     this.rightPlayer = new Player(rightUserId, CANVASE_WIDTH - BAR_PADDING);
   }
 
   id: string;
+  mode: GameMode;
   ball: Ball;
   leftPlayer: Player;
   rightPlayer: Player;

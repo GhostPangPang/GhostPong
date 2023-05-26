@@ -1,4 +1,4 @@
-import { MemberInfo } from '../channel';
+import { MemberInfo } from '../../channel';
 
 export interface GameStart {
   gameId: string;

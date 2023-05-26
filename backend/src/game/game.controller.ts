@@ -4,7 +4,7 @@ import { ApiConflictResponse, ApiForbiddenResponse, ApiHeaders, ApiOperation, Ap
 import { ExtractUserId } from '../common/decorator/extract-user-id.decorator';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
 
-import { PlayerReadyDto } from './dto/player-ready';
+import { CreateGameRequestDto } from './dto/request/create-game-request.dto';
 import { GameService } from './game.service';
 
 @ApiTags('game')
@@ -18,7 +18,7 @@ export class GameController {
   @ApiHeaders([{ name: 'x-my-id' }])
   @HttpCode(HttpStatus.OK)
   @Post()
-  createGame(@ExtractUserId() userId: number, @Body() { gameId }: PlayerReadyDto): SuccessResponseDto {
-    return this.gameService.createGame(gameId, userId);
+  createGame(@ExtractUserId() userId: number, @Body() gameOptions: CreateGameRequestDto): SuccessResponseDto {
+    return this.gameService.createGame(userId, gameOptions);
   }
 }

@@ -1,6 +1,6 @@
 export type GameMode = 'normal' | 'speed' | 'stupid';
 
 export interface CreateGameRequest {
-  channelId: string;
+  gameId: string;
   mode: GameMode;
 }
