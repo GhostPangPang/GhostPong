@@ -178,8 +178,7 @@ export const useChannelMutation = () => {
 
   const { mutate: joinChannel } = useMutation(postJoinChannel, {
     onSuccess: (data: ApiResponse, { id }) => {
-      alert(data.message);
-
+      queryClient.invalidateQueries([CHANNEL, id]);
       navigate('/channel/' + id);
     },
     onError: (error: ApiError) => {
