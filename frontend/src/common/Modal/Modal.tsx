@@ -4,14 +4,16 @@ import { Box } from '../Box';
 import { ReactComponent as CloseSvg } from '@/svgs/close.svg';
 import { IconButton } from '../Button/IconButton';
 
+export type ModalComponent = ({ children, isOpen, onClose, style }: ModalProps) => JSX.Element | null;
+
 export interface ModalProps {
   children: React.ReactNode;
   isOpen: boolean;
-  onClose: () => void;
+  onClose?: () => void;
   style?: React.CSSProperties;
 }
 
-export const Modal = ({ children, isOpen, onClose, style }: ModalProps) => {
+export const Modal: ModalComponent = ({ children, isOpen, onClose, style }: ModalProps) => {
   if (!isOpen) return null;
   return (
     <ModalPortal>
@@ -23,7 +25,6 @@ export const Modal = ({ children, isOpen, onClose, style }: ModalProps) => {
           backgroundColor="gray300"
           padding="sm"
           height="80%"
-          minWidth="80rem"
           style={style}
         >
           <IconButton onClick={onClose} style={{ position: 'absolute', right: '0.5rem' }}>
