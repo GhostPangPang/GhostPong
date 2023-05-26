@@ -3,15 +3,18 @@ import { Grid, Text, RankBadge, Avatar } from '@/common';
 import { InfoBox } from './InfoBox';
 import { AchievementBox } from './AchievementBox';
 import { HistroyBox } from './HistoryBox';
-import { useMemo } from 'react';
+import { useMemo, useEffect, useState } from 'react';
 import { ReactComponent as Achievement1 } from '@/svgs/achievment1.svg';
 import { ReactComponent as Achievement2 } from '@/svgs/achievment2.svg';
 import { useProfileData } from '@/hooks/user/useProfileData';
+import { useLocation } from 'react-router-dom';
 
 export const ProfilePage = () => {
-  // const { userInfo } = useUserInfo();
-  // 여기서 userId를 받아와야함 userInfo에는 id가 없음
-  const userId = 1;
+  const { pathname } = useLocation();
+  const [userId, setUserId] = useState(0);
+  useEffect(() => {
+    setUserId(Number(pathname.replace('/profile/', '')));
+  }, []);
 
   // useQuery는 컴포넌트가 마운트될 때 자동으로 데이터를 조회하므로 따로 useEffect를 사용하여 데이터를 조회할 필요는 없습니다.
   const data = useProfileData(userId);
