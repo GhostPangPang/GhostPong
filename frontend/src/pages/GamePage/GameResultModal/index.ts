@@ -1,0 +1,1 @@
+export * fron './GameResultModal'
