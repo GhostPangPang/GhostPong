@@ -14,6 +14,7 @@ import { Repository } from 'typeorm';
 import { corsOption } from '../common/option/cors.option';
 import { AppConfigService } from '../config/app/configuration.service';
 import { Friendship } from '../entity/friendship.entity';
+import { GameQueue } from '../game/game.queue';
 import {
   InvisibleChannelRepository,
   SocketIdRepository,
@@ -34,6 +35,7 @@ export class ConnectionGateway implements OnGatewayConnection, OnGatewayDisconne
     private readonly userStatusRepository: UserStatusRepository,
     private readonly visibleChannelRepository: VisibleChannelRepository,
     private readonly invisibleChannelRepository: InvisibleChannelRepository,
+    private readonly gameQueue: GameQueue,
     private readonly jwtService: JwtService,
     private readonly appConfigService: AppConfigService,
   ) {}
@@ -64,6 +66,9 @@ export class ConnectionGateway implements OnGatewayConnection, OnGatewayDisconne
     if (channel !== undefined) {
       this.leaveChannel(userId, channel, socket);
       this.server.to(channel.id).emit('user-left-channel', { userId });
+    }
+    if (this.gameQueue.exist(userId) === true) {
+      this.gameQueue.delete(userId);
     }
     this.userStatusRepository.delete(userId);
     this.socketIdRepository.delete(userId);
