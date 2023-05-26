@@ -37,7 +37,6 @@ export class FtStrategy extends PassportStrategy(Strategy, 'ft') {
   async validate(accessToken: string, refreshToken: string, profile: LoginInfo) {
     const auth = await this.authRepository.findOneBy({ email: profile.email });
 
-    // if (auth === null || (await this.userRepository.findOneBy({ id: auth.id })) === null) {
     if (auth === null || auth.status === AuthStatus.UNREGISTERD) {
       profile.id = null;
     } else {

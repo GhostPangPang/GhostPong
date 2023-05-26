@@ -12,9 +12,11 @@ export class FtGuard extends AuthGuard('ft') implements CanActivate {
 
     for (let retry = 0; retry < maxRetries; ++retry) {
       try {
+        console.log('FtGuard canActivate() try:', retry);
         return super.canActivate(context);
       } catch (err) {
         // do nothing
+        console.log('FtGuard canActivate() error:', err);
       }
     }
     throw new Error('Max retries exceeded. Unable to activate guard.');
