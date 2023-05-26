@@ -19,6 +19,7 @@ import { ChannelGateway } from './channel.gateway';
 import { ChannelService } from './channel.service';
 import { CreateChannelRequestDto } from './dto/request/create-channel-request.dto';
 import { compare } from 'bcrypt';
+import { ConnectionGateway } from '../connection/connection.gateway';
 
 describe('ChannelService', () => {
   let service: ChannelService;
@@ -29,6 +30,7 @@ describe('ChannelService', () => {
   let socketIdRepository: SocketIdRepository;
   let channelGateway: ChannelGateway;
   let friendshipRepository: Repository<Friendship>;
+  let connectionGateway: ConnectionGateway;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -39,6 +41,7 @@ describe('ChannelService', () => {
         InvitationRepository,
         SocketIdRepository,
         ChannelGateway,
+        ConnectionGateway,
         {
           provide: getRepositoryToken(User),
           useValue: {
@@ -60,6 +63,12 @@ describe('ChannelService', () => {
           useValue: {
             joinChannel: jest.fn(),
             emitChannel: jest.fn(),
+            emitUser: jest.fn(),
+          },
+        },
+        {
+          provide: ConnectionGateway,
+          useValue: {
             emitUser: jest.fn(),
           },
         },
@@ -713,7 +722,6 @@ describe('ChannelService', () => {
         nickname: 'test',
         image: '/asset/profile-1.png',
         role: 'member',
-        isMuted: false,
         isPlayer: false,
       };
       const channel: Channel = {
@@ -740,12 +748,11 @@ describe('ChannelService', () => {
         nickname: 'test',
         image: '/asset/profile-1.png',
         role: 'owner',
-        isMuted: false,
         isPlayer: false,
       };
       const channel: Channel = {
         id: 'aaa',
-        mode: 'public',
+        mode: 'private',
         name: 'test',
         isInGame: false,
         users: new Map([[1, user]]),
@@ -759,6 +766,11 @@ describe('ChannelService', () => {
       ).toEqual({
         message: '채널 정보를 수정했습니다.',
       });
+
+      expect(invisibleChannelRepository.find(channel.id)).toEqual(undefined);
+      expect(visibleChannelRepository.find(channel.id)).toEqual(channel);
+      expect(channel.mode).toEqual('protected');
+      expect(await compare('1234', channel.password!)).toBe(true);
     });
   });
 });
