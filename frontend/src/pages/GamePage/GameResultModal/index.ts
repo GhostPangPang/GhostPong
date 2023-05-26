@@ -1,1 +1,1 @@
-export * fron './GameResultModal'
+export * from './GameResultModal';
