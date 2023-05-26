@@ -88,6 +88,14 @@ export class GameService {
     return { message: '랜덤 게임 대기열에 참여했습니다.' };
   }
 
+  cancelGameQueue(userId: number): SuccessResponseDto {
+    if (this.gameQueue.exist(userId) === false) {
+      throw new NotFoundException('게임 대기열에 참여하지 않았습니다.');
+    }
+    this.gameQueue.delete(userId);
+    return { message: '게임 대기열에서 나왔습니다.' };
+  }
+
   private createGame(
     gameId: string,
     leftPlayer: Omit<ChannelUser, 'isPlayer'>,
