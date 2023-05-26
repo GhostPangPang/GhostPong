@@ -1,11 +1,11 @@
 import {
   BALL_ACCERELATION,
+  BAR_WIDTH,
   CANVASE_HEIGHT,
   CANVASE_WIDTH,
   DEGREE,
-  GameData,
-  BAR_WIDTH,
   Ball,
+  GameData,
   Player,
 } from './game-data';
 
