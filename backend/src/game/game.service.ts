@@ -6,6 +6,7 @@ import { SuccessResponseDto } from '../common/dto/success-response.dto';
 import { GameRepository, VisibleChannelRepository, InvisibleChannelRepository } from '../repository';
 import { ChannelUser, Game } from '../repository/model';
 
+import { CreateGameRequestDto } from './dto/request/create-game-request.dto';
 import { GameGateway } from './game.gateway';
 
 @Injectable()
@@ -17,7 +18,7 @@ export class GameService {
     private readonly gameGateway: GameGateway,
   ) {}
 
-  createGame(gameId: string, userId: number): SuccessResponseDto {
+  createGame(userId: number, { gameId, mode }: CreateGameRequestDto): SuccessResponseDto {
     let channel = this.visibleChannelRepository.find(gameId);
     if (channel === undefined && (channel = this.invisibleChannelRepository.find(gameId)) === undefined) {
       throw new NotFoundException('채널이 존재하지 않습니다.');
@@ -46,13 +47,12 @@ export class GameService {
       throw new ForbiddenException('플레이어가 2명 이상이어야 게임을 시작할 수 있습니다.');
     }
 
-    const game = new Game(gameId, leftPlayer.id, rightPlayer.id);
+    const game = new Game(gameId, mode, leftPlayer.id, rightPlayer.id);
     this.gameRepository.insert(game);
-
     this.gameGateway.updateUserStatus(leftPlayer.id, 'game');
     this.gameGateway.updateUserStatus(rightPlayer.id, 'game');
-
     channel.isInGame = true;
+
     const leftMemberInfo: MemberInfo = {
       userId: leftPlayer.id,
       nickname: leftPlayer.nickname,

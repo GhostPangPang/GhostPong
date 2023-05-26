@@ -1,12 +1,11 @@
 import {
   BALL_ACCERELATION,
-  BALL_INITIAL_SPEED,
+  BAR_WIDTH,
   CANVASE_HEIGHT,
   CANVASE_WIDTH,
   DEGREE,
-  GameData,
-  BAR_WIDTH,
   Ball,
+  GameData,
   Player,
 } from './game-data';
 
@@ -14,9 +13,9 @@ export function resetBallData(ball: Ball) {
   ball.x = CANVASE_WIDTH / 2;
   ball.y = CANVASE_HEIGHT / 2;
   const angle = Math.random() * DEGREE;
-  ball.vx = Math.round(Math.cos(angle) * BALL_INITIAL_SPEED * (Math.random() > 0.5 ? 1 : -1) * 100) / 100;
-  ball.vy = Math.round(Math.sin(angle) * BALL_INITIAL_SPEED * 100) / 100;
-  ball.speed = BALL_INITIAL_SPEED;
+  ball.vx = Math.round(Math.cos(angle) * ball.initialSpeed * (Math.random() > 0.5 ? 1 : -1) * 100) / 100;
+  ball.vy = Math.round(Math.sin(angle) * ball.initialSpeed * 100) / 100;
+  ball.speed = ball.initialSpeed;
 }
 
 /**
