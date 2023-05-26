@@ -1,7 +1,6 @@
 import { get, post, patch, ApiResponse, ApiError, LocationResponse } from '@/libs/api';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
-import { ChannelsListResponse, FullChannelInfoResponse } from '@/dto/channel/response';
-import { CreateChannelRequest, JoinChannelRequest } from '@/dto/channel/request';
+import { ChannelsListResponse, FullChannelInfoResponse, CreateChannelRequest, JoinChannelRequest } from '@/dto/channel';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
@@ -68,8 +67,13 @@ const postJoinChannel = async ({ mode, password, id }: postJoinChannelProps) => 
 const patchBePlayer = async (id: string) => {
   return await patch<ApiResponse>(CHANNEL + `/${id}/player`);
 };
+
 const patchBeAdmin = async ({ channelId, userId }: patchBeAdminProps) => {
   return await patch<ApiResponse>(CHANNEL + `/${channelId}/admin`, { userId });
+};
+
+const patchBeOwner = async (id: string) => {
+  return await patch<ApiResponse>(CHANNEL + `/${id}/owner`);
 };
 
 export const useChannel = (id: string) => {
@@ -87,11 +91,12 @@ export const useChannel = (id: string) => {
   } = useQuery<FullChannelInfoResponse, ApiError>({
     queryKey: [CHANNEL, id],
     queryFn: () => getChannelInfo(id),
-    keepPreviousData: true,
+    keepPreviousData: false,
     staleTime: 0,
     suspense: true,
     enabled: !!id,
     retry: false,
+    refetchOnWindowFocus: false,
     useErrorBoundary: true,
     onError: (error) => {
       alert(error.message);
@@ -106,9 +111,8 @@ export const useChannel = (id: string) => {
 
   useEffect(() => {
     if (channel) {
-      const currentUserRole = channel.players
-        .concat(channel.observers)
-        .find((user) => user.userId === currentUserId)?.role;
+      const currentUserRole =
+        channel.players.concat(channel.observers).find((user) => user.userId === currentUserId)?.role || null;
       const leftPlayer = channel.players.find((player) => player.role === 'owner');
       const rightPlayer = channel.players.filter((player) => player.role !== 'owner');
 
@@ -131,6 +135,8 @@ export const useChannel = (id: string) => {
 };
 
 export const useChannelList = ({ cursor = 0 }: useChannelProps) => {
+  const queryClient = useQueryClient();
+
   const { data: channels = initialChannelListData, refetch: refetchChannel } = useQuery<ChannelsListResponse>({
     queryKey: [CHANNEL, cursor],
     queryFn: () => getChannels(cursor),
@@ -142,6 +148,7 @@ export const useChannelList = ({ cursor = 0 }: useChannelProps) => {
     },
   });
 
+  queryClient.invalidateQueries([CHANNEL, cursor]);
   return { channels, refetchChannel };
 };
 
@@ -174,11 +181,6 @@ export const useChannelMutation = () => {
   const { mutate: becomePlayer } = useMutation(patchBePlayer, {
     onSuccess: (data: ApiResponse, id: string) => {
       queryClient.invalidateQueries([CHANNEL, id]);
-    },
-  });
-
-  const { mutate: becomeAdmin } = useMutation(patchBeAdmin, {
-    onSuccess: (data: ApiResponse) => {
       alert(data.message);
     },
     onError: (error: ApiError) => {
@@ -186,5 +188,25 @@ export const useChannelMutation = () => {
     },
   });
 
-  return { joinChannel, createChannel, becomePlayer, becomeAdmin };
+  const { mutate: becomeAdmin } = useMutation(patchBeAdmin, {
+    onSuccess: (data: ApiResponse, { channelId: id }) => {
+      queryClient.invalidateQueries([CHANNEL, id]);
+      alert(data.message);
+    },
+    onError: (error: ApiError) => {
+      alert(error.message);
+    },
+  });
+
+  const { mutate: becomeOwner } = useMutation(patchBeOwner, {
+    onSuccess: (data: ApiResponse, id: string) => {
+      queryClient.invalidateQueries([CHANNEL, id]);
+      alert(data.message);
+    },
+    onError: (error: ApiError) => {
+      alert(error.message);
+    },
+  });
+
+  return { joinChannel, createChannel, becomePlayer, becomeAdmin, becomeOwner };
 };
