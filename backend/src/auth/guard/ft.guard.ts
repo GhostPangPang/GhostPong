@@ -1,4 +1,4 @@
-import { Injectable, CanActivate, ExecutionContext, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext, InternalServerErrorException, Logger } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Observable } from 'rxjs';
 
@@ -7,6 +7,8 @@ export class FtGuard extends AuthGuard('ft') implements CanActivate {
   constructor() {
     super();
   }
+  logger: Logger = new Logger('FtGuard');
+
   canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
     const maxRetries = 5;
 
@@ -16,7 +18,7 @@ export class FtGuard extends AuthGuard('ft') implements CanActivate {
         return super.canActivate(context);
       } catch (err) {
         // do nothing
-        console.log('FtGuard canActivate() error:', err);
+        this.logger.error('FtGuard canActivate() error:', err);
       }
     }
     throw new InternalServerErrorException('Max retries exceeded. Unable to activate guard.');
