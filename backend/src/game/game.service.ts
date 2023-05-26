@@ -105,13 +105,13 @@ export class GameService {
       userId: leftPlayer.id,
       nickname: leftPlayer.nickname,
       image: leftPlayer.image,
-      role: leftPlayer.role ?? 'member',
+      role: leftPlayer.role,
     };
     const rightPlayerInfo: MemberInfo = {
       userId: rightPlayer.id,
       nickname: rightPlayer.nickname,
       image: rightPlayer.image,
-      role: leftPlayer.role ?? 'member',
+      role: leftPlayer.role,
     };
 
     const game = new Game(gameId, mode, leftPlayer.id, rightPlayer.id);
