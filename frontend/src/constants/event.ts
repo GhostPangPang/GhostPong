@@ -29,7 +29,7 @@ export const ChannelEvent = {
   LEAVE: 'user-left-channel',
   KICK: 'kicked',
   BAN: 'banned',
-  MUTE: 'mute',
+  UPDATE: 'channel-updated',
   PLAYER: 'player',
   ADMIN: 'admin',
   OWNER: 'owner',
