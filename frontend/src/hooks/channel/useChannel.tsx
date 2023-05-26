@@ -111,8 +111,9 @@ export const useChannel = (id: string) => {
 
   useEffect(() => {
     if (channel) {
-      const currentUserRole =
-        channel.players.concat(channel.observers).find((user) => user.userId === currentUserId)?.role || null;
+      const currentUserRole = channel.players
+        .concat(channel.observers)
+        .find((user) => user.userId === currentUserId)?.role;
       const leftPlayer = channel.players.find((player) => player.role === 'owner');
       const rightPlayer = channel.players.filter((player) => player.role !== 'owner');
 
