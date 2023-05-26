@@ -111,7 +111,7 @@ export class GameService {
       userId: rightPlayer.id,
       nickname: rightPlayer.nickname,
       image: rightPlayer.image,
-      role: leftPlayer.role,
+      role: rightPlayer.role,
     };
 
     const game = new Game(gameId, mode, leftPlayer.id, rightPlayer.id);
