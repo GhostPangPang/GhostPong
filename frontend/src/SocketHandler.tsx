@@ -91,6 +91,26 @@ export const SocketHandler = () => {
     // 그냥 chat event로 보내주는것도 괜챃을듯
   });
 
+  const updateOwnerEvent = useRecoilCallback(({ set }) => (data: UserId) => {
+    console.log('socket owner', data);
+    set(channelDataState, (prev: ChannelData) => {
+      // user가 observer / rightPlayer
+      const user =
+        prev.observers.find((observer) => observer.userId === data.userId) ||
+        (prev.rightPlayer?.userId === data.userId ? prev.rightPlayer : undefined);
+      const isRightPlayer = user === prev.rightPlayer;
+
+      return {
+        ...prev,
+        observers: prev.observers.filter((observer) => observer.userId !== data.userId),
+        leftPlayer: user
+          ? ({ userId: data.userId, nickname: user.nickname, image: user.image, role: 'owner' } as MemberInfo)
+          : null,
+        rightPlayer: isRightPlayer ? null : prev.rightPlayer,
+      };
+    });
+  });
+
   // Init socket
   useEffect(() => {
     connectSocket();
@@ -131,7 +151,7 @@ export const SocketHandler = () => {
     // onEvent(ChannelEvent.MUTE, updateMuteEvent);
     onEvent(ChannelEvent.PLAYER, updatePlayerEvent);
     onEvent(ChannelEvent.ADMIN, updateAdminEvent);
-    // onEvent(ChannelEvent.OWNER, updateOwnerEvent);
+    onEvent(ChannelEvent.OWNER, updateOwnerEvent);
     return () => {
       offEvent(ChannelEvent.CHAT);
       offEvent(ChannelEvent.JOIN);
@@ -141,7 +161,7 @@ export const SocketHandler = () => {
       // offEvent(ChannelEvent.MUTE);
       offEvent(ChannelEvent.PLAYER);
       offEvent(ChannelEvent.ADMIN);
-      // offEvent(ChannelEvent.OWNER);
+      offEvent(ChannelEvent.OWNER);
     };
     // register channel socket on event
   }, [socket]);

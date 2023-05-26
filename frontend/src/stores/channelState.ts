@@ -24,7 +24,7 @@ export const channelDataState = atom<ChannelData>({
     rightPlayer: null,
     observers: [],
     isInGame: false,
-    currentRole: undefined,
+    currentRole: 'member',
     chats: [],
   },
 });
@@ -34,5 +34,13 @@ export const chatSelector = selector<NewChat[]>({
   get: ({ get }) => {
     const { chats } = get(channelDataState);
     return [...chats].reverse();
+  },
+});
+
+export const currentRoleSelector = selector({
+  key: 'currentRoleSelector',
+  get: ({ get }) => {
+    const channelData = get(channelDataState);
+    return channelData.currentRole;
   },
 });

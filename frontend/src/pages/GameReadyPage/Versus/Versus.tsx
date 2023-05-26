@@ -62,15 +62,14 @@ const GhostBox = ({ player, item }: GhostBoxProps) => {
 
 export const Versus = ({ leftPlayer, rightPlayer, items }: VersusProps) => {
   const channelId = useRecoilValue(channelIdState);
-  const { becomePlayer } = useChannelMutation();
+  const { becomePlayer, becomeOwner } = useChannelMutation();
 
   const handleBecomePlayer = () => {
     becomePlayer(channelId);
   };
 
   const handleBecomeOwner = () => {
-    // becomeOwner(channelId);
-    console.log('becomeOwner');
+    becomeOwner(channelId);
   };
 
   return (

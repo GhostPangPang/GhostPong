@@ -3,7 +3,7 @@ import { Versus } from './Versus';
 import { ChatBox } from './ChatBox';
 import { ObserverBox } from './ObserverBox';
 import { Grid, GameButton } from '@/common';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState, useResetRecoilState, useRecoilValueLoadable } from 'recoil';
 import { channelIdState, channelDataState, socketState } from '@/stores';
 import { useChannel, useLeaveChannel } from '@/hooks/channel';
 import { useLocation } from 'react-router-dom';
@@ -16,12 +16,15 @@ export const GameReadyPage = () => {
   const { pathname } = useLocation();
   const { leaveChannel } = useLeaveChannel();
   const [channelId, setChannelId] = useRecoilState(channelIdState);
+  const resetChannelId = useResetRecoilState(channelIdState);
+
   // const { startGame } = useGameMutation();
 
   const { refetchChannel } = useChannel(channelId);
   const channelData = useRecoilValue(channelDataState);
   const { isInGame, leftPlayer, rightPlayer } = channelData;
 
+  console.log('sdf', channelData);
   useEffect(() => {
     const channelId = pathname.replace('/channel/', '');
     console.log('channelId', channelId);
@@ -35,6 +38,9 @@ export const GameReadyPage = () => {
     //     isInGame: true,
     //   });
     // });
+    return () => {
+      resetChannelId();
+    };
   }, []);
 
   const handleStartGame = () => {
@@ -85,8 +91,19 @@ export const GameReadyPage = () => {
     };
   }, [channelId]);
 
-  const items = itemGenerator();
+  // 그냥 socket liesten을 여기서 하면 구조가 괜찮을지도?
+  // 렌더링 전에 한 번 실행
 
+  // const items = itemGenerator(channelData);
+
+  const channelDataLoadable = useRecoilValueLoadable(channelDataState);
+
+  console.log('loadable', channelDataLoadable);
+  let items = itemGenerator(channelData);
+
+  if (channelDataLoadable.state === 'hasValue') {
+    items = itemGenerator(channelData);
+  }
   return (
     <>
       <Grid container="flex" direction="row" alignItems="center" justifyContent="center" flexGrow={1}>
