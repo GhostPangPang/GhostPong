@@ -1,8 +1,9 @@
 import { atom, selector } from 'recoil';
-import { NewChat, MemberInfo } from '@/dto/channel/socket';
+import { NewChat, MemberInfo, ChannelMode } from '@/dto/channel';
 
 export type ChannelData = {
   name: string;
+  mode: ChannelMode;
   leftPlayer: MemberInfo | null;
   rightPlayer: MemberInfo | null;
   observers: MemberInfo[];
@@ -20,6 +21,7 @@ export const channelDataState = atom<ChannelData>({
   key: '/channel',
   default: {
     name: '',
+    mode: 'public',
     leftPlayer: null,
     rightPlayer: null,
     observers: [],
