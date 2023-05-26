@@ -32,5 +32,5 @@ export const ChannelEvent = {
   PLAYER: 'player',
   ADMIN: 'admin',
   OWNER: 'owner',
-  CHAT: 'chat',
+  CHAT: 'new-chat',
 };

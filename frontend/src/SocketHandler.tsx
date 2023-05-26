@@ -4,7 +4,7 @@ import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { newMessageIdListState, newMessagesState, channelDataState, ChannelData } from './stores';
 import { socketState } from './stores/socketState';
 import { Message } from '@/dto/message/socket';
-import { MemberInfo, UserId, NewChat as Chat } from '@/dto/channel/socket';
+import { MemberInfo, UserId, NewChat } from '@/dto/channel/socket';
 import { MessageEvent, ChannelEvent } from './constants';
 
 export const SocketHandler = () => {
@@ -28,7 +28,7 @@ export const SocketHandler = () => {
     }
   });
 
-  const updateChatEvent = useRecoilCallback(({ set }) => (data: Chat) => {
+  const updateChatEvent = useRecoilCallback(({ set }) => (data: NewChat) => {
     console.log('socket chat', data);
     set(channelDataState, (prev) => ({
       ...prev,
