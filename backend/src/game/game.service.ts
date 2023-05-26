@@ -4,15 +4,16 @@ import { nanoid } from 'nanoid';
 import { Repository } from 'typeorm';
 
 import { MemberInfo } from '@/types/channel';
+import { GameMode } from '@/types/game';
 
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
 import { User } from '../entity/user.entity';
 import { GameRepository, VisibleChannelRepository, InvisibleChannelRepository } from '../repository';
+import { GameQueue } from '../repository/game-queue.repository';
 import { ChannelUser, Game } from '../repository/model';
 
 import { CreateGameRequestDto } from './dto/request/create-game-request.dto';
 import { GameGateway } from './game.gateway';
-import { GameQueue } from './game.queue';
 
 @Injectable()
 export class GameService {
@@ -54,7 +55,7 @@ export class GameService {
     if (rightPlayer === null) {
       throw new ForbiddenException('플레이어가 2명 이상이어야 게임을 시작할 수 있습니다.');
     }
-    this.createGame(gameId, leftPlayer, rightPlayer);
+    this.createGame(gameId, mode, leftPlayer, rightPlayer);
     channel.isInGame = true;
     return { message: '게임이 생성되었습니다.' };
   }
@@ -83,7 +84,7 @@ export class GameService {
       const leftPlayer = userIds[0] === users[0].id ? users[0] : users[1];
       const rightPlayer = leftPlayer === users[0] ? users[1] : users[0];
 
-      this.createGame(gameId, { ...leftPlayer, role: 'member' }, { ...rightPlayer, role: 'member' });
+      this.createGame(gameId, 'normal', { ...leftPlayer, role: 'member' }, { ...rightPlayer, role: 'member' });
     }
     return { message: '랜덤 게임 대기열에 참여했습니다.' };
   }
@@ -98,6 +99,7 @@ export class GameService {
 
   private createGame(
     gameId: string,
+    mode: GameMode,
     leftPlayer: Omit<ChannelUser, 'isPlayer'>,
     rightPlayer: Omit<ChannelUser, 'isPlayer'>,
   ): void {
