@@ -3,9 +3,10 @@ import profile from '@/svgs/default-profile.svg';
 import { Color } from '@/types/style';
 
 export type AvatarProps = {
-  size?: 'sm' | 'md' | 'lg' | 'xl';
+  size?: 'sm' | 'md' | 'lg' | 'llg' | 'xl';
   borderColor?: Color;
   onClick?: React.MouseEventHandler;
+  style?: React.CSSProperties;
 } & React.ComponentPropsWithoutRef<'img'>;
 
 const StyledAvatar = styled.img<AvatarProps>`
@@ -32,6 +33,12 @@ const StyledAvatar = styled.img<AvatarProps>`
           width: 6.4rem;
           height: 6.4rem;
         `;
+      case 'llg':
+        return css`
+          ${props.borderColor && 'border-width: 0.3rem; border-style: solid;'}
+          width: 10rem;
+          height: 10rem;
+        `;
       case 'xl':
         return css`
           ${props.borderColor && 'border-width: 0.5rem; border-style: solid;'}
@@ -54,6 +61,6 @@ const StyledAvatar = styled.img<AvatarProps>`
   }}
 `;
 
-export const Avatar = ({ size = 'md', src = profile, onClick, borderColor, ...props }: AvatarProps) => {
-  return <StyledAvatar as="img" size={size} src={src} onClick={onClick} borderColor={borderColor} {...props} />;
+export const Avatar = ({ size = 'md', src = profile, onClick, borderColor, style, ...props }: AvatarProps) => {
+  return <StyledAvatar size={size} src={src} onClick={onClick} borderColor={borderColor} style={style} {...props} />;
 };
