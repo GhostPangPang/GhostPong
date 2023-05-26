@@ -12,8 +12,12 @@ export const RoomInfo = () => {
   const navigate = useNavigate();
   const { leaveChannel } = useLeaveChannel();
   const handleOut = () => {
-    leaveChannel(channelId);
-    navigate('/channel/list');
+    if (confirm('정말로 나가시겠습니까?')) {
+      leaveChannel(channelId);
+      navigate('/channel/list');
+    } else {
+      return;
+    }
   };
 
   return (
