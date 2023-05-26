@@ -1,5 +1,22 @@
-import { Injectable, CanActivate } from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { Observable } from 'rxjs';
 
 @Injectable()
-export class FtGuard extends AuthGuard('ft') implements CanActivate {}
+export class FtGuard extends AuthGuard('ft') implements CanActivate {
+  constructor() {
+    super();
+  }
+  canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
+    const maxRetries = 5;
+
+    for (let retry = 0; retry < maxRetries; ++retry) {
+      try {
+        return super.canActivate(context);
+      } catch (err) {
+        // do nothing
+      }
+    }
+    throw new Error('Max retries exceeded. Unable to activate guard.');
+  }
+}
