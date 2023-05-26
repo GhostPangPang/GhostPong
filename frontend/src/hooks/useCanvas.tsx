@@ -6,6 +6,7 @@ export interface CanvasProps {
   height: number;
 }
 
+// fps
 export const useCanvas = (draw: (ctx: CanvasRenderingContext2D) => void, shouldStopAnimation = false) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const animationFrameId = useRef<number | null>(null);
