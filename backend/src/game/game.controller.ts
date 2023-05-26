@@ -18,7 +18,12 @@ export class GameController {
   @ApiHeaders([{ name: 'x-my-id' }])
   @HttpCode(HttpStatus.OK)
   @Post()
-  createGame(@ExtractUserId() userId: number, @Body() gameOptions: CreateGameRequestDto): SuccessResponseDto {
-    return this.gameService.createGame(userId, gameOptions);
+  startGame(@ExtractUserId() userId: number, @Body() gameOptions: CreateGameRequestDto): SuccessResponseDto {
+    return this.gameService.startGame(userId, gameOptions);
+  }
+
+  @Post('random')
+  joinGameQueue(@ExtractUserId() userId: number): Promise<SuccessResponseDto> {
+    return this.gameService.joinGameQueue(userId);
   }
 }
