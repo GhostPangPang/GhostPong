@@ -22,7 +22,6 @@ export const GameLoadingPage = () => {
     onGameStart: () => {
       console.log('random game start');
       setGameType('random');
-      navigate(`/game/${gameId}`);
     },
   });
 
@@ -30,9 +29,13 @@ export const GameLoadingPage = () => {
     window.onpopstate = function (event) {
       event.preventDefault();
       cancelRandomGame();
-      navigate('/');
+      navigate('/', { replace: true });
     };
   }, []);
+
+  useEffect(() => {
+    if (gameId) navigate(`/game/${gameId}`, { replace: true });
+  }, [gameId]);
 
   return (
     <Grid container="flex" direction="column" alignItems="center" gap={2}>
