@@ -9,7 +9,7 @@ import { useChannel, useLeaveChannel } from '@/hooks/channel';
 import { useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import { itemGenerator } from '@/libs/utils/itemgenerator';
-import { useGameStart } from '@/hooks/game';
+import { useGameMutation, useGameStart } from '@/hooks/game';
 // useItem hook 으로 빼기
 
 export const GameReadyPage = () => {
@@ -19,7 +19,7 @@ export const GameReadyPage = () => {
   const [channelId, setChannelId] = useRecoilState(channelIdState);
   const resetChannelId = useResetRecoilState(channelIdState);
 
-  // const { startGame } = useGameMutation();
+  const { startGame } = useGameMutation();
 
   const { refetchChannel } = useChannel(channelId);
   const [channelData, setChannelData] = useRecoilState(channelDataState);
@@ -36,14 +36,6 @@ export const GameReadyPage = () => {
     console.log('channelId', channelId);
     setChannelId(channelId);
 
-    // socket 통신 받아서 navigate 하기
-    // onEvent(GameEvent.GAMESTART, (data: { gameId: string }) => {
-    //   console.log('game-start 이벤트왔다', data);
-    //   setChannelData({
-    //     ...channelData,
-    //     isInGame: true,
-    //   });
-    // });
     return () => {
       resetChannelId();
     };
@@ -51,25 +43,12 @@ export const GameReadyPage = () => {
 
   const handleStartGame = () => {
     // 임시로 새로 채널 정보 가져오게 하기
-    refetchChannel();
+    startGame({ id: channelId, mode: 'normal' });
 
     if (!channelData.leftPlayer || !channelData.rightPlayer) {
       alert('플레이어가 없습니다.');
       return;
     }
-
-    // 성공했을 때만 설정하고 싶은뎅 고민해보기
-    // startGame(channelId, {
-    //   onSuccess: (data: ApiResponse) => {
-    //     console.log(data);
-
-    //     setGamePlayer({
-    //       leftUser: channelData.leftPlayer,
-    //       rightUser: channelData.rightPlayer,
-    //     });
-    //     setGameId(channelId);
-    //   },
-    // });
   };
 
   useEffect(() => {

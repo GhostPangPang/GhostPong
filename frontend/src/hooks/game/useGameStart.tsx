@@ -5,13 +5,18 @@ import { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 import { GameStart } from '@/dto/game';
 
-export const useGameStart = ({ onGameStart }: { onGameStart: () => void }) => {
+interface Props {
+  onGameStart: () => void;
+}
+
+export const useGameStart = ({ onGameStart }: Props) => {
   const [gameId, setGameId] = useRecoilState(gameIdState);
   const [gamePlayer, setGamePlayer] = useRecoilState(gamePlayerState);
 
   useEffect(() => {
+    console.log('game start hook');
     onEvent(GameEvent.GAMESTART, (data: GameStart) => {
-      console.log(data);
+      console.log('game-start', data);
       setGameId(data.gameId);
       setGamePlayer({
         leftPlayer: data.leftPlayer,

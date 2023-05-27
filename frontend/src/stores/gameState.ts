@@ -90,7 +90,11 @@ export const gamePlayerState = atom<GamePlayerData>({
   },
 });
 
-type GameStatus = 'ready' | 'playing' | 'end';
+export type READY = 'ready';
+export type PLAYING = 'playing';
+export type END = 'end';
+
+type GameStatus = READY | PLAYING | END;
 
 export const gameStatusState = atom<GameStatus>({
   key: 'gameStatusState',

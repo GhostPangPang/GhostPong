@@ -17,9 +17,8 @@ export const PingPongGame = ({ type = 'rightPlayer' }: GamePageProps) => {
   const setSocket = useSetRecoilState(socketState);
 
   const { gameStatus, setCanvasSize, playGame, moveBar } = usePingPongGame();
-  const [isEnd, setIsEnd] = useState(true);
 
-  const canvasRef = useCanvas(playGame, isEnd);
+  const canvasRef = useCanvas(playGame, gameStatus !== 'playing');
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -30,11 +29,11 @@ export const PingPongGame = ({ type = 'rightPlayer' }: GamePageProps) => {
     return () => setSocket((prev) => ({ ...prev, game: false }));
   }, []);
 
-  useEffect(() => {
-    if (gameStatus === 'end') {
-      setIsEnd(true);
-    }
-  }, [gameStatus]);
+  // useEffect(() => {
+  //   if (gameStatus === 'end') {
+  //     setIsEnd(true);
+  //   }
+  // }, [gameStatus]);
 
   const handleMouseMove = (e: MouseEvent) => {
     const canvas = canvasRef.current;
@@ -55,7 +54,7 @@ export const PingPongGame = ({ type = 'rightPlayer' }: GamePageProps) => {
         onMouseMove={handleMouseMove}
         style={{ aspectRatio: '2 / 1', width: '90rem', borderRadius: '4px', backgroundColor: theme.color.gray500 }}
       ></canvas>
-      <GameResultModal isEnd={isEnd} />
+      <GameResultModal isEnd={gameStatus === 'end'} />
     </div>
   );
 };
