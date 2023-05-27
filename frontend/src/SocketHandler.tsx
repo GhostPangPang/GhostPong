@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { connectSocket, disconnectSocket, emitEvent, offEvent, onEvent } from '@/libs/api';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { newMessageIdListState, newMessagesState, channelDataState, ChannelData } from './stores';
@@ -180,7 +180,6 @@ export const SocketHandler = () => {
     onEvent(ChannelEvent.LEAVE, updateLeaveEvent);
     onEvent(ChannelEvent.KICK, updateKickEvent);
     onEvent(ChannelEvent.BAN, updateBanEvent);
-    // onEvent(ChannelEvent.MUTE, updateMuteEvent);
     onEvent(ChannelEvent.PLAYER, updatePlayerEvent);
     onEvent(ChannelEvent.ADMIN, updateAdminEvent);
     onEvent(ChannelEvent.OWNER, updateOwnerEvent);
@@ -188,9 +187,8 @@ export const SocketHandler = () => {
       offEvent(ChannelEvent.CHAT);
       offEvent(ChannelEvent.JOIN);
       offEvent(ChannelEvent.LEAVE);
-      // offEvent(ChannelEvent.KICK);
-      // offEvent(ChannelEvent.BAN);
-      // offEvent(ChannelEvent.MUTE);
+      offEvent(ChannelEvent.KICK);
+      offEvent(ChannelEvent.BAN);
       offEvent(ChannelEvent.PLAYER);
       offEvent(ChannelEvent.ADMIN);
       offEvent(ChannelEvent.OWNER);

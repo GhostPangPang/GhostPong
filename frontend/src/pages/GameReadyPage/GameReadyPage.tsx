@@ -5,7 +5,7 @@ import { ObserverBox } from './ObserverBox';
 import { Grid, GameButton } from '@/common';
 import { useRecoilState, useRecoilValueLoadable, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { channelIdState, channelDataState, socketState } from '@/stores';
-import { useChannel, useLeaveChannel } from '@/hooks/channel';
+import { useChannel } from '@/hooks/channel';
 import { useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import { itemGenerator } from '@/libs/utils/itemgenerator';
@@ -15,7 +15,6 @@ import { useGameMutation, useGameStart } from '@/hooks/game';
 export const GameReadyPage = () => {
   const setSocket = useSetRecoilState(socketState);
   const { pathname } = useLocation();
-  const { leaveChannel } = useLeaveChannel();
   const [channelId, setChannelId] = useRecoilState(channelIdState);
   const resetChannelId = useResetRecoilState(channelIdState);
 
@@ -33,7 +32,6 @@ export const GameReadyPage = () => {
 
   useEffect(() => {
     const channelId = pathname.replace('/channel/', '');
-    console.log('channelId', channelId);
     setChannelId(channelId);
 
     return () => {
@@ -64,11 +62,13 @@ export const GameReadyPage = () => {
       event.returnValue = '';
       return '';
     };
-
     window.addEventListener('beforeunload', handleBeforeUnload);
-    window.onpopstate = function () {
-      leaveChannel(channelId);
-      alert('뒤로가기를 누르면 채널에서 나가집니다.');
+
+    // 뒤로가기 막기
+    history.pushState(null, location.href);
+    window.onpopstate = function (event) {
+      event.preventDefault();
+      history.go(1);
     };
 
     return () => {
@@ -83,7 +83,6 @@ export const GameReadyPage = () => {
 
   const channelDataLoadable = useRecoilValueLoadable(channelDataState);
 
-  console.log('loadable', channelDataLoadable);
   let items = itemGenerator(channelData);
 
   if (channelDataLoadable.state === 'hasValue') {
@@ -92,7 +91,7 @@ export const GameReadyPage = () => {
   return (
     <>
       <Grid container="flex" direction="row" alignItems="center" justifyContent="center" flexGrow={1}>
-        <RoomInfo name={channelData.name} />
+        <RoomInfo />
       </Grid>
 
       <Grid container="flex" direction="row" alignItems="center" justifyContent="center" flexGrow={1}>

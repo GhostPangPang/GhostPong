@@ -30,8 +30,12 @@ export const onEvent = <T>(event: string, cb: (data: T) => void) => {
   return socket.on(event, cb);
 };
 
-export const emitEvent = <T>(event: string, data?: T) => {
-  return socket.emit(event, data);
+export const emitEvent = <T, U>(event: string, data?: T, callback?: (response: U) => void) => {
+  if (callback) {
+    socket.emit(event, data, callback);
+  } else {
+    socket.emit(event, data);
+  }
 };
 
 export const offEvent = (event: string) => {

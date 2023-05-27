@@ -17,7 +17,7 @@ export interface Items {
 
 // 이걸 리코일에 넣을까
 export const itemGenerator = (newChannelData: ChannelData): Items => {
-  const { becomeAdmin, kick, ban } = useChannelMutation();
+  const { becomeAdmin, kick, ban, mute } = useChannelMutation();
   const currentRole = useRecoilValue(currentRoleSelector);
   const channelId = useRecoilValue(channelIdState);
   const { userInfo } = useUserInfo();
@@ -51,7 +51,12 @@ export const itemGenerator = (newChannelData: ChannelData): Items => {
           {
             label: 'MUTE',
             // eslint-disable-next-line @typescript-eslint/no-empty-function
-            onClick: () => {},
+            onClick: () => {
+              mute({
+                channelId: channelId,
+                userId: userId,
+              });
+            },
           },
           {
             label: 'BAN',
