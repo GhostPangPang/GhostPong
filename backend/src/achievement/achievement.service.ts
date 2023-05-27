@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { EntityManager } from 'typeorm';
 
 import { Achievement } from '../entity/achievement.entity';
+import { UserRecord } from '../entity/user-record.entity';
 
 /**
  * 1 : 첫 승리					// 첫 승리 축하드립니다!!
@@ -24,5 +25,47 @@ export class AchievementService {
     } else if (count === 42) {
       await manager.save(Achievement, { user: { id: userId }, achievement: 7 });
     }
+  }
+
+  async getWinAchievement(userId: number, count: number, manager: EntityManager): Promise<void> {
+    if (count === 1) {
+      await manager.save(Achievement, { user: { id: userId }, achievement: 1 });
+    } else if (count === 100) {
+      await manager.save(Achievement, { user: { id: userId }, achievement: 2 });
+    }
+  }
+
+  async getLoseAchievement(userId: number, count: number, manager: EntityManager): Promise<void> {
+    if (count === 42) {
+      await manager.save(Achievement, { user: { id: userId }, achievement: 4 });
+    }
+  }
+
+  async getTotalGameAchievement(userId: number, count: number, manager: EntityManager): Promise<void> {
+    if (count === 42) {
+      await manager.save(Achievement, { user: { id: userId }, achievement: 3 });
+    }
+  }
+
+  async checkWinnerAchievement(userId: number, manager: EntityManager): Promise<void> {
+    const result = await manager.findOneBy(UserRecord, { user: { id: userId } });
+    if (result === null) {
+      return;
+    }
+    // await this.getWinAchievement(userId, result.winCount, manager);
+    await this.getWinAchievement(userId, 1, manager);
+    // await this.getTotalGameAchievement(userId, result.winCount + result.loseCount, manager);
+    await this.getTotalGameAchievement(userId, 42, manager);
+  }
+
+  async checkLoserAchievement(userId: number, manager: EntityManager): Promise<void> {
+    const result = await manager.findOneBy(UserRecord, { user: { id: userId } });
+    if (result === null) {
+      return;
+    }
+    // await this.getLoseAchievement(userId, result.loseCount, manager);
+    await this.getLoseAchievement(userId, 42, manager);
+    // await this.getTotalGameAchievement(userId, result.winCount + result.loseCount, manager);
+    await this.getTotalGameAchievement(userId, 42, manager);
   }
 }
