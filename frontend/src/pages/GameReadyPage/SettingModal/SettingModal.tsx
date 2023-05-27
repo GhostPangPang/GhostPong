@@ -1,11 +1,11 @@
 import { useChannelMutation } from '@/hooks/channel';
 import { Grid, Text, InputBox, GameButton } from '@/common';
-import { SettingDropdown } from './SettingDropdown';
+import { Dropdown } from '@/common/Dropdown';
 import { validatePassword } from '@/libs/utils/validate';
 import { useState } from 'react';
 import { useInput } from '@/hooks';
 import { useRecoilValue } from 'recoil';
-import { channelIdState } from '@/stores';
+import { channelDataState, channelIdState } from '@/stores';
 
 interface SettingModalProps {
   setIsOpen: (value: boolean) => void;
@@ -13,19 +13,24 @@ interface SettingModalProps {
 
 interface TypeSettingProps {
   onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+  selectedOption: 'public' | 'protected' | 'private';
 }
 interface PasswordSettingProps {
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   errorMessage: string;
 }
 
-const TypeSetting = ({ onChange: handleSelectedChange }: TypeSettingProps) => {
+const TypeSetting = ({ onChange: handleSelectedChange, selectedOption }: TypeSettingProps) => {
   return (
     <Grid container="flex" direction="row" justifyContent="space-between" alignItems="center">
       <Text size="md" weight="bold">
         Type
       </Text>
-      <SettingDropdown onChange={handleSelectedChange} />
+      <Dropdown onChange={handleSelectedChange} value={selectedOption}>
+        <Text as="option">public</Text>
+        <Text as="option">protected</Text>
+        <Text as="option">private</Text>
+      </Dropdown>
     </Grid>
   );
 };
@@ -49,8 +54,9 @@ const PasswordSetting = ({ onChange: onChangePassword, errorMessage: errorPasswo
 export const SettingModal = ({ setIsOpen }: SettingModalProps) => {
   const { updateChannel } = useChannelMutation();
   const channelId = useRecoilValue(channelIdState);
+  const channelData = useRecoilValue(channelDataState);
   // mode info 추가되면 current mode로 초기화시킬에정
-  const [selectedOption, setSelectedOption] = useState<'public' | 'protected' | 'private'>('public');
+  const [selectedOption, setSelectedOption] = useState<'public' | 'protected' | 'private'>(channelData.mode);
   const handleSelectedChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedOption(event.target.value as 'public' | 'protected' | 'private');
   };
@@ -65,7 +71,7 @@ export const SettingModal = ({ setIsOpen }: SettingModalProps) => {
       <Text size="xl" weight="bold">
         Create a new game
       </Text>
-      <TypeSetting onChange={handleSelectedChange} />
+      <TypeSetting onChange={handleSelectedChange} selectedOption={selectedOption} />
       {selectedOption === 'protected' && (
         <PasswordSetting onChange={onChangePassword} errorMessage={errorPasswordMessage} />
       )}

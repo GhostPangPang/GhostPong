@@ -39,7 +39,7 @@ export const RoomInfo = () => {
         <Out />
       </IconButton>
       <Grid container="flex" direction="row" alignItems="center" justifyContent="end" gap={1}>
-        <Lock />
+        {channelData.mode !== 'protected' ? null : <Lock />}
         <Text size="lg">{channelData.name}</Text>
         {currentRole === 'owner' ? (
           <>

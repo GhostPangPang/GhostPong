@@ -154,6 +154,7 @@ export const useChannel = (id: string) => {
       setChannelData({
         ...channelData,
         name: channel.name,
+        mode: channel.mode,
         leftPlayer: leftPlayer || null,
         rightPlayer: rightPlayer[0] || null,
         observers: channel.observers,
