@@ -18,7 +18,7 @@ const GameContainer = ({ children }: GameContainerProps) => {
       style={{ position: 'relative', height: '100%' }}
     >
       <GameSideBar />
-      <Grid container="flex" direction="column" justifyContent="center" size={{ height: '100%' }}>
+      <Grid container="flex" direction="column" alignItems="center" justifyContent="center" size={{ height: '100%' }}>
         {children}
       </Grid>
     </Grid>
