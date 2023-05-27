@@ -77,9 +77,8 @@ export class UserController {
     @Res() res: Response,
   ): Promise<void> {
     const token = await this.userService.createUser(myId, nickname);
-    const clientUrl = this.appConfigService.clientUrl;
 
-    res.clearCookie('jwt-for-unregistered').redirect(`${clientUrl}/auth?token=${token}`);
+    res.clearCookie('jwt-for-unregistered').send({ token });
   }
 
   @ApiOperation({ summary: '이미지 업로드' })
