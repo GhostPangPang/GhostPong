@@ -13,7 +13,6 @@ import { useGameMutation, useGameStart } from '@/hooks/game';
 import { Dropdown } from '@/common/Dropdown';
 import { GameMode } from '@/dto/game';
 import { PingPongGame } from '../GamePage';
-// useItem hook 으로 빼기
 
 export const GameReadyPage = () => {
   const setSocket = useSetRecoilState(socketState);
@@ -85,11 +84,6 @@ export const GameReadyPage = () => {
     };
   }, [channelId]);
 
-  // 그냥 socket liesten을 여기서 하면 구조가 괜찮을지도?
-  // 렌더링 전에 한 번 실행
-
-  // const items = itemGenerator(channelData);
-
   const handleModeChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const modeString = e.target.value;
     switch (modeString) {
@@ -105,13 +99,8 @@ export const GameReadyPage = () => {
     }
   };
 
-  const channelDataLoadable = useRecoilValueLoadable(channelDataState);
+  const items = itemGenerator(channelData);
 
-  let items = itemGenerator(channelData);
-
-  if (channelDataLoadable.state === 'hasValue') {
-    items = itemGenerator(channelData);
-  }
   return (
     <>
       <Grid container="flex" direction="row" alignItems="center" justifyContent="center" flexGrow={1}>

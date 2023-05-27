@@ -20,6 +20,7 @@ import { AuthHandler } from './AuthHandler';
 import { SocketHandler } from './SocketHandler';
 import { QueryErrorResetBoundary } from '@tanstack/react-query';
 import { useRecoilSnapshot } from 'recoil';
+import { GameLoadingPage } from './pages/GameLoadingPage';
 
 function DebugObserver() {
   const snapshot = useRecoilSnapshot();
@@ -55,6 +56,7 @@ function App() {
                 <Route element={<GameLayout />}>
                   <Route path="/channel/:gameId" element={<GameReadyPage />} />
                   <Route path="/game/:gameId" element={<PingPongGame />} />
+                  <Route path="/game/loading" element={<GameLoadingPage />} />
                 </Route>
                 <Route path="/pre" element={<PrePage />} />
                 <Route path="/auth?/" element={<AuthHandler />} />

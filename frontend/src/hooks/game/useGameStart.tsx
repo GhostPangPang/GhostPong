@@ -6,7 +6,7 @@ import { useRecoilState } from 'recoil';
 import { GameStart } from '@/dto/game';
 
 interface Props {
-  onGameStart: () => void;
+  onGameStart?: () => void;
 }
 
 export const useGameStart = ({ onGameStart }: Props) => {
@@ -22,7 +22,7 @@ export const useGameStart = ({ onGameStart }: Props) => {
         leftPlayer: data.leftPlayer,
         rightPlayer: data.rightPlayer,
       });
-      onGameStart();
+      onGameStart && onGameStart();
     });
 
     return () => {
