@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { EntityManager } from 'typeorm';
 
 import { Achievement } from '../entity/achievement.entity';
 
@@ -16,19 +15,14 @@ import { Achievement } from '../entity/achievement.entity';
 
 @Injectable()
 export class AchievementService {
-  constructor(
-    @InjectRepository(Achievement)
-    private readonly achievementRepository: Repository<Achievement>,
-  ) {}
-
   // SECTION: public
-  getFriendAchievement(userId: number, count: number): void {
+  getFriendAchievement(userId: number, count: number, manager: EntityManager): void {
     if (count === 1) {
-      this.achievementRepository.save({ user: { id: userId }, achievement: 5 });
+      manager.save(Achievement, { user: { id: userId }, achievement: 5 });
     } else if (count == 10) {
-      this.achievementRepository.save({ user: { id: userId }, achievement: 6 });
+      manager.save(Achievement, { user: { id: userId }, achievement: 6 });
     } else if (count == 42) {
-      this.achievementRepository.save({ user: { id: userId }, achievement: 7 });
+      manager.save(Achievement, { user: { id: userId }, achievement: 7 });
     }
   }
 }

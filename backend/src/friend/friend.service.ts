@@ -5,8 +5,8 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { DataSource, Repository } from 'typeorm';
 
 import { AchievementService } from '../achievement/achievement.service';
 import { FRIEND_LIMIT } from '../common/constant';
@@ -29,6 +29,8 @@ export class FriendService {
     private readonly userStatusRepository: UserStatusRepository,
     private readonly friendGateway: FriendGateway,
     private readonly achievementService: AchievementService,
+    @InjectDataSource()
+    private readonly dataSource: DataSource,
   ) {}
 
   // SECTION: public
@@ -142,11 +144,11 @@ export class FriendService {
     }
     const myFriendsCount = await this.checkFriendLimit(friendship.receiver.id, '나');
     const senderFriendsCount = await this.checkFriendLimit(friendship.senderId, '상대방');
-
-    await this.friendshipRepository.update({ id: friendId }, { accept: true });
-    this.achievementService.getFriendAchievement(myId, myFriendsCount + 1);
-    this.achievementService.getFriendAchievement(friendship.senderId, senderFriendsCount + 1);
-
+    this.dataSource.manager.transaction(async (manager) => {
+      await manager.update(Friendship, friendId, { accept: true });
+      this.achievementService.getFriendAchievement(myId, myFriendsCount + 1, manager);
+      this.achievementService.getFriendAchievement(friendship.senderId, senderFriendsCount + 1, manager);
+    });
     this.friendGateway.addFriendToRoom(friendship.senderId, friendship.receiver.id);
     this.friendGateway.emitFriendAccepted(friendship);
     return { message: '친구 추가 되었습니다.' };
