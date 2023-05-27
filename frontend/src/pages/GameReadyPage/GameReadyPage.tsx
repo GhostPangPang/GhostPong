@@ -12,6 +12,7 @@ import { itemGenerator } from '@/libs/utils/itemgenerator';
 import { useGameMutation, useGameStart } from '@/hooks/game';
 import { Dropdown } from '@/common/Dropdown';
 import { GameMode } from '@/dto/game';
+import { PingPongGame } from '../GamePage';
 // useItem hook 으로 빼기
 
 export const GameReadyPage = () => {
@@ -20,6 +21,7 @@ export const GameReadyPage = () => {
   const [channelId, setChannelId] = useRecoilState(channelIdState);
   const resetChannelId = useResetRecoilState(channelIdState);
 
+  const { refetchChannel } = useChannel(channelId);
   const [channelData, setChannelData] = useRecoilState(channelDataState);
   const { isInGame, leftPlayer, rightPlayer } = channelData;
 
@@ -113,13 +115,7 @@ export const GameReadyPage = () => {
 
       <Grid container="flex" direction="row" alignItems="center" justifyContent="center" flexGrow={1}>
         {isInGame && leftPlayer && rightPlayer ? (
-          <>
-            {/* // <PingPongGame
-          //   type={
-          //     leftPlayer.userId === userId ? 'leftPlayer' : rightPlayer.userId === userId ? 'rightPlayer' : 'observer'
-          //   }
-          // /> */}
-          </>
+          <PingPongGame />
         ) : (
           <Versus leftPlayer={channelData.leftPlayer} rightPlayer={channelData.rightPlayer} items={items} />
         )}
@@ -131,7 +127,7 @@ export const GameReadyPage = () => {
         <Grid container="flex" flexGrow={1} alignItems="center" size={{ padding: 'md' }}>
           <ObserverBox observers={channelData.observers} items={items} />
         </Grid>
-        <Grid container="flex" flexGrow={1} alignItems="center" justifyContent="end" size={{ padding: 'md' }}>
+        <Grid container="flex" flexGrow={1} alignItems="center" justifyContent="end" gap={2} size={{ padding: 'md' }}>
           {channelData.isInGame ? null : channelData.currentRole === 'owner' ? ( // gmaeReady 중인 owner 만 start 버튼 보이게
             <>
               <Dropdown onChange={handleModeChange}>
