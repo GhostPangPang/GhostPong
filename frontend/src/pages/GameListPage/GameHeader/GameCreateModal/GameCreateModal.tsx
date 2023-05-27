@@ -1,9 +1,9 @@
 import { GameButton, Grid, InputBox, Text } from '@/common';
-import { GameDropdown } from './GameDropdown';
 import { validatePassword, validateTitle } from '@/libs/utils/validate';
 import { useState } from 'react';
 import { useInput } from '@/hooks';
 import { useChannelMutation } from '@/hooks/channel';
+import { Dropdown } from '@/common/Dropdown';
 
 interface GameTypeSettingProps {
   onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
@@ -25,7 +25,11 @@ const GameTypeSetting = ({ onChange: handleSelectedChange }: GameTypeSettingProp
       <Text size="md" weight="bold">
         Type
       </Text>
-      <GameDropdown onChange={handleSelectedChange} />
+      <Dropdown onChange={handleSelectedChange}>
+        <Text as="option">public</Text>
+        <Text as="option">protected</Text>
+        <Text as="option">private</Text>
+      </Dropdown>
     </Grid>
   );
 };
