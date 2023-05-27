@@ -2,14 +2,17 @@ import { RoomInfo } from './RoomInfo';
 import { Versus } from './Versus';
 import { ChatBox } from './ChatBox';
 import { ObserverBox } from './ObserverBox';
-import { Grid, GameButton } from '@/common';
+import { Grid, GameButton, Text } from '@/common';
 import { useRecoilState, useRecoilValueLoadable, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { channelIdState, channelDataState, socketState } from '@/stores';
 import { useChannel } from '@/hooks/channel';
 import { useLocation } from 'react-router-dom';
-import { useEffect } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { itemGenerator } from '@/libs/utils/itemgenerator';
 import { useGameMutation, useGameStart } from '@/hooks/game';
+import { Dropdown } from '@/common/Dropdown';
+import { GameMode } from '@/dto/game';
+import { PingPongGame } from '../GamePage';
 // useItem hook 으로 빼기
 
 export const GameReadyPage = () => {
@@ -18,11 +21,12 @@ export const GameReadyPage = () => {
   const [channelId, setChannelId] = useRecoilState(channelIdState);
   const resetChannelId = useResetRecoilState(channelIdState);
 
-  const { startGame } = useGameMutation();
-
   const { refetchChannel } = useChannel(channelId);
   const [channelData, setChannelData] = useRecoilState(channelDataState);
   const { isInGame, leftPlayer, rightPlayer } = channelData;
+
+  const { startGame } = useGameMutation();
+  const [mode, setMode] = useState<GameMode>('normal');
 
   useGameStart({
     onGameStart: () => {
@@ -41,7 +45,7 @@ export const GameReadyPage = () => {
 
   const handleStartGame = () => {
     // 임시로 새로 채널 정보 가져오게 하기
-    startGame({ id: channelId, mode: 'normal' });
+    startGame({ id: channelId, mode: mode });
 
     if (!channelData.leftPlayer || !channelData.rightPlayer) {
       alert('플레이어가 없습니다.');
@@ -81,6 +85,21 @@ export const GameReadyPage = () => {
 
   // const items = itemGenerator(channelData);
 
+  const handleModeChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    const modeString = e.target.value;
+    switch (modeString) {
+      case '노멀모드':
+        setMode('normal');
+        break;
+      case '스피드모드':
+        setMode('speed');
+        break;
+      case '바보모드':
+        setMode('stupid');
+        break;
+    }
+  };
+
   const channelDataLoadable = useRecoilValueLoadable(channelDataState);
 
   let items = itemGenerator(channelData);
@@ -96,13 +115,7 @@ export const GameReadyPage = () => {
 
       <Grid container="flex" direction="row" alignItems="center" justifyContent="center" flexGrow={1}>
         {isInGame && leftPlayer && rightPlayer ? (
-          <>
-            {/* // <PingPongGame
-          //   type={
-          //     leftPlayer.userId === userId ? 'leftPlayer' : rightPlayer.userId === userId ? 'rightPlayer' : 'observer'
-          //   }
-          // /> */}
-          </>
+          <PingPongGame />
         ) : (
           <Versus leftPlayer={channelData.leftPlayer} rightPlayer={channelData.rightPlayer} items={items} />
         )}
@@ -114,11 +127,18 @@ export const GameReadyPage = () => {
         <Grid container="flex" flexGrow={1} alignItems="center" size={{ padding: 'md' }}>
           <ObserverBox observers={channelData.observers} items={items} />
         </Grid>
-        <Grid container="flex" flexGrow={1} alignItems="center" justifyContent="end" size={{ padding: 'md' }}>
+        <Grid container="flex" flexGrow={1} alignItems="center" justifyContent="end" gap={2} size={{ padding: 'md' }}>
           {channelData.isInGame ? null : channelData.currentRole === 'owner' ? ( // gmaeReady 중인 owner 만 start 버튼 보이게
-            <GameButton size="md" onClick={handleStartGame}>
-              START
-            </GameButton>
+            <>
+              <Dropdown onChange={handleModeChange}>
+                <Text as="option">노멀모드</Text>
+                <Text as="option">스피드모드</Text>
+                <Text as="option">바보모드</Text>
+              </Dropdown>
+              <GameButton size="md" onClick={handleStartGame}>
+                START
+              </GameButton>
+            </>
           ) : null}
         </Grid>
       </Grid>

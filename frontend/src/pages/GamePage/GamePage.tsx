@@ -5,22 +5,32 @@ import { usePingPongGame } from './usePingPongGame';
 import { useSetRecoilState } from 'recoil';
 import { socketState } from '@/stores';
 import { GameResultModal } from './GameResultModal/GameResultModal';
+import { useUserInfo } from '@/hooks/user';
 
 export type MemberType = 'leftPlayer' | 'rightPlayer' | 'observer';
 
-export interface GamePageProps {
-  type: MemberType;
-}
-
-// default member 로 바꾸어야함
-export const PingPongGame = ({ type = 'rightPlayer' }: GamePageProps) => {
+export const PingPongGame = () => {
   const setSocket = useSetRecoilState(socketState);
+  const {
+    userInfo: { id: userId },
+  } = useUserInfo();
 
-  const { gameStatus, setCanvasSize, playGame, moveBar } = usePingPongGame();
+  const [type, setType] = useState<MemberType>('observer');
+  const { gamePlayer, gameStatus, setCanvasSize, playGame, moveBar } = usePingPongGame();
 
   const canvasRef = useCanvas(playGame, gameStatus !== 'playing');
 
   useEffect(() => {
+    if (!gamePlayer.leftPlayer || !gamePlayer.rightPlayer) return;
+
+    if (gamePlayer.leftPlayer.userId === userId) {
+      setType('leftPlayer');
+    } else if (gamePlayer.rightPlayer.userId === userId) {
+      setType('rightPlayer');
+    } else {
+      setType('observer');
+    }
+
     const canvas = canvasRef.current;
     if (canvas) {
       setSocket((prev) => ({ ...prev, game: true }));
@@ -28,12 +38,6 @@ export const PingPongGame = ({ type = 'rightPlayer' }: GamePageProps) => {
     }
     return () => setSocket((prev) => ({ ...prev, game: false }));
   }, []);
-
-  // useEffect(() => {
-  //   if (gameStatus === 'end') {
-  //     setIsEnd(true);
-  //   }
-  // }, [gameStatus]);
 
   const handleMouseMove = (e: MouseEvent) => {
     const canvas = canvasRef.current;

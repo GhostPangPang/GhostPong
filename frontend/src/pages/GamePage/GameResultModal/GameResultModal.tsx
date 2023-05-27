@@ -1,10 +1,14 @@
-import { gamePlayerState, gameResultState } from '@/stores';
+import { channelDataState, gamePlayerState, gameResultState } from '@/stores';
 import { useEffect, useState } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { MemberInfo } from '@/dto/channel/socket';
 import { Grid, WideModal, Text, Avatar, GameButton } from '@/common';
+import { useNavigate } from 'react-router-dom';
 
 export const GameResultModal = ({ isEnd }: { isEnd: boolean }) => {
+  const navigate = useNavigate();
+  const setChannelData = useSetRecoilState(channelDataState);
+
   const gamePlayer = useRecoilValue(gamePlayerState);
   const gameResult = useRecoilValue(gameResultState);
 
@@ -29,6 +33,14 @@ export const GameResultModal = ({ isEnd }: { isEnd: boolean }) => {
       }
     }
   }, [gameResult]); // depth 고민해보기
+
+  const handleLeave = () => {
+    navigate('/');
+  };
+
+  const handleGoToWaitingPage = () => {
+    setChannelData((prev) => ({ ...prev, isInGame: false }));
+  };
 
   return (
     <WideModal isOpen={isEnd}>
@@ -68,10 +80,12 @@ export const GameResultModal = ({ isEnd }: { isEnd: boolean }) => {
           <UserGameProfile nickname={loser.nickname} image={loser?.image} style={{ filter: 'grayscale(100%)' }} />
         </Grid>
         <Grid container="flex" justifyContent="center" alignItems="center" gap={2}>
-          <GameButton size="md" color="foreground">
+          <GameButton size="md" color="foreground" onClick={handleLeave}>
             나가기
           </GameButton>
-          <GameButton size="md">대기페이지로</GameButton>
+          <GameButton size="md" onClick={handleGoToWaitingPage}>
+            대기페이지로
+          </GameButton>
         </Grid>
       </Grid>
     </WideModal>

@@ -74,7 +74,7 @@ export const usePingPongGame = () => {
       return;
     }
 
-    // init game dat기
+    // init game date
     const { leftPlayer: leftUser, rightPlayer: rightUser } = gamePlayer;
 
     // 이거 괜찮은지 확인하기
@@ -235,5 +235,5 @@ export const usePingPongGame = () => {
     updateGame();
   };
 
-  return { gameStatus, setCanvasSize, playGame, moveBar, drawCountDown };
+  return { gamePlayer, gameResult, gameStatus, setCanvasSize, playGame, moveBar, drawCountDown };
 };
