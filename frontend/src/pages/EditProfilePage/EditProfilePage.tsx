@@ -94,7 +94,9 @@ export const EditProfilePage = () => {
       <EditForm desc="Two-factor authentication" label="2FA" value="Verify">
         {data.twoFa ? (
           <Grid container="flex" direction="row" justifyContent="space-between" alignItems="center">
-            <InputBox sizes="sm" value={data.twoFa} disabled />
+            <Text size="md" color="primary">
+              {data.twoFa}
+            </Text>
             <IconButton onClick={handleDeleteSubmit}>
               <TrashIcon />
             </IconButton>
