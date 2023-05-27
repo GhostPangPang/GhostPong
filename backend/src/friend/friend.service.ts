@@ -144,10 +144,10 @@ export class FriendService {
     }
     const myFriendsCount = await this.checkFriendLimit(friendship.receiver.id, '나');
     const senderFriendsCount = await this.checkFriendLimit(friendship.senderId, '상대방');
-    this.dataSource.manager.transaction(async (manager) => {
+    await this.dataSource.manager.transaction(async (manager) => {
       await manager.update(Friendship, friendId, { accept: true });
-      this.achievementService.getFriendAchievement(myId, myFriendsCount + 1, manager);
-      this.achievementService.getFriendAchievement(friendship.senderId, senderFriendsCount + 1, manager);
+      await this.achievementService.getFriendAchievement(myId, myFriendsCount + 1, manager);
+      await this.achievementService.getFriendAchievement(friendship.senderId, senderFriendsCount + 1, manager);
     });
     this.friendGateway.addFriendToRoom(friendship.senderId, friendship.receiver.id);
     this.friendGateway.emitFriendAccepted(friendship);
@@ -179,13 +179,11 @@ export class FriendService {
    * @param userType 유저의 타입 ( 나 or 상대방 )
    */
   private async checkFriendLimit(userId: number, userType: string): Promise<number> {
-    let count: number;
-    if (
-      (count = await this.friendshipRepository.countBy([
-        { receiverId: userId, accept: true },
-        { senderId: userId, accept: true },
-      ])) >= FRIEND_LIMIT
-    ) {
+    const count = await this.friendshipRepository.countBy([
+      { receiverId: userId, accept: true },
+      { senderId: userId, accept: true },
+    ]);
+    if (count >= FRIEND_LIMIT) {
       throw new ForbiddenException(`${userType}의 친구 정원이 꽉 찼습니다.`);
     }
     return count;

@@ -16,13 +16,13 @@ import { Achievement } from '../entity/achievement.entity';
 @Injectable()
 export class AchievementService {
   // SECTION: public
-  getFriendAchievement(userId: number, count: number, manager: EntityManager): void {
+  async getFriendAchievement(userId: number, count: number, manager: EntityManager): Promise<void> {
     if (count === 1) {
-      manager.save(Achievement, { user: { id: userId }, achievement: 5 });
-    } else if (count == 10) {
-      manager.save(Achievement, { user: { id: userId }, achievement: 6 });
-    } else if (count == 42) {
-      manager.save(Achievement, { user: { id: userId }, achievement: 7 });
+      await manager.save(Achievement, { user: { id: userId }, achievement: 5 });
+    } else if (count === 10) {
+      await manager.save(Achievement, { user: { id: userId }, achievement: 6 });
+    } else if (count === 42) {
+      await manager.save(Achievement, { user: { id: userId }, achievement: 7 });
     }
   }
 }
