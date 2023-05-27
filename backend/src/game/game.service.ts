@@ -121,6 +121,8 @@ export class GameService {
     this.gameGateway.updateUserStatus(leftPlayer.id, 'game');
     this.gameGateway.updateUserStatus(rightPlayer.id, 'game');
 
-    this.gameGateway.broadcastGameStart(game.gameData.id, leftPlayerInfo, rightPlayerInfo);
+    setTimeout(() => {
+      this.gameGateway.broadcastGameStart(game.gameData.id, leftPlayerInfo, rightPlayerInfo);
+    }, 1000);
   }
 }
