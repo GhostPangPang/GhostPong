@@ -20,6 +20,7 @@ import {
   UserStatusRepository,
   VisibleChannelRepository,
 } from '../repository';
+import { GameQueue } from '../repository/game-queue';
 import { Channel, Status } from '../repository/model';
 
 @WebSocketGateway({ cors: corsOption })
@@ -34,6 +35,7 @@ export class ConnectionGateway implements OnGatewayConnection, OnGatewayDisconne
     private readonly userStatusRepository: UserStatusRepository,
     private readonly visibleChannelRepository: VisibleChannelRepository,
     private readonly invisibleChannelRepository: InvisibleChannelRepository,
+    private readonly gameQueue: GameQueue,
     private readonly jwtService: JwtService,
     private readonly appConfigService: AppConfigService,
   ) {}
@@ -65,6 +67,7 @@ export class ConnectionGateway implements OnGatewayConnection, OnGatewayDisconne
       this.leaveChannel(userId, channel, socket);
       this.server.to(channel.id).emit('user-left-channel', { userId });
     }
+    this.gameQueue.delete(userId);
     this.userStatusRepository.delete(userId);
     this.socketIdRepository.delete(userId);
 

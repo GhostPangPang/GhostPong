@@ -17,7 +17,7 @@ import { GameData, Player } from '@/game/game-data';
 
 import { corsOption } from '../common/option/cors.option';
 import { createWsException } from '../common/util';
-import { GameRepository, UserStatusRepository } from '../repository';
+import { GameRepository, SocketIdRepository, UserStatusRepository } from '../repository';
 import { Status } from '../repository/model';
 
 import { MoveBarDto } from './dto/move-bar.dto';
@@ -37,6 +37,7 @@ export class GameGateway {
   constructor(
     private readonly gameRepository: GameRepository,
     private readonly userStatusRepository: UserStatusRepository,
+    private readonly socketIdRepository: SocketIdRepository,
     @Inject(forwardRef(() => GameEngineService))
     private readonly gameEngine: GameEngineService,
   ) {}
@@ -78,6 +79,17 @@ export class GameGateway {
     }
     const moveBar: BarMoved = { userId: socket.data.userId, y };
     socket.to(gameId).emit('bar-moved', moveBar);
+  }
+
+  joinUserToGameRoom(userIds: number[], gameId: string): boolean {
+    const leftUserSocketId = this.socketIdRepository.find(userIds[0]);
+    const rightUserSocketId = this.socketIdRepository.find(userIds[1]);
+    if (leftUserSocketId === undefined || rightUserSocketId === undefined) {
+      return false;
+    }
+    this.server.in(leftUserSocketId.socketId).socketsJoin(gameId);
+    this.server.in(rightUserSocketId.socketId).socketsJoin(gameId);
+    return true;
   }
 
   /**
