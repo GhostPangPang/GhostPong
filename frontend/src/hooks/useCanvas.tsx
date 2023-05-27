@@ -10,7 +10,6 @@ export interface CanvasProps {
 export const useCanvas = (draw: (ctx: CanvasRenderingContext2D) => void, shouldStopAnimation = false) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const animationFrameId = useRef<number | null>(null);
-  // const [context, setContext] = useState<CanvasRenderingContext2D | null>(null);
 
   // initialize canvas size
   useLayoutEffect(() => {
