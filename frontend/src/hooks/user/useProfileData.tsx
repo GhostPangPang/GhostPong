@@ -21,6 +21,7 @@ export const useProfileData = (userId: number) => {
     queryFn: () => getProfile(userId),
     retryOnMount: true,
     suspense: true,
+    enabled: userId !== 0,
     staleTime: Infinity,
   });
 
