@@ -12,10 +12,11 @@ import {
   leftPlayerState,
   rightPlayerState,
   gameModeState,
+  gameTypeState,
+  gameMemberTypeState,
 } from '@/stores/gameState';
 import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
 import { updateBall, checkWallCollision } from '@/game/utils';
-import { MemberType } from './GamePage';
 import { useEffect } from 'react';
 import { emitEvent, offEvent, onEvent } from '@/libs/api';
 import { GameEvent } from '@/constants';
@@ -52,6 +53,7 @@ export const usePingPongGame = () => {
   const gamePlayer = useRecoilValue(gamePlayerState);
 
   const [gameStatus, setGameStatus] = useRecoilState(gameStatusState);
+  const [gameMemberType, setGameMemberType] = useRecoilState(gameMemberTypeState);
   const [gameData, setGameData] = useRecoilState(gameDataState);
   const [ball, setBall] = useRecoilState(ballState);
   const [leftPlayer, setLeftPlayer] = useRecoilState(leftPlayerState);
@@ -106,19 +108,6 @@ export const usePingPongGame = () => {
       // setGameData((prev) => ({ ...prev, ...data }));
     });
 
-    // game bar moved
-    onEvent(GameEvent.BARMOVED, (data: BarMoved) => {
-      const { userId, y } = data;
-
-      if (userId === leftPlayer.userId) {
-        // setGameData((prev) => ({ ...prev, leftPlayer: { ...prev.leftPlayer, y } }));
-        setLeftPlayer((prev) => ({ ...prev, y }));
-      } else if (userId === rightPlayer.userId) {
-        // setGameData((prev) => ({ ...prev, rightPlayer: { ...prev.rightPlayer, y } }));
-        setRightPlayer((prev) => ({ ...prev, y }));
-      }
-    });
-
     // game end event
     onEvent(GameEvent.GAMEEND, (data: GameEnd) => {
       console.log('GAMEEND', data);
@@ -163,7 +152,6 @@ export const usePingPongGame = () => {
     drawNet(context);
 
     // draw the ball
-    // drawBall(context);
     drawArc(context, ball.x * ratio, ball.y * ratio, ball.radius * ratio, theme.color.secondary);
 
     // draw leftPlayer paddle
@@ -210,13 +198,13 @@ export const usePingPongGame = () => {
     emitEvent(GameEvent.MOVEBAR, { gameId, y });
   }, 500);
 
-  const moveBar = (playerType: MemberType, y: number) => {
+  const moveBar = (y: number) => {
     let normalY: number;
-    if (playerType === 'leftPlayer') {
+    if (gameMemberType === 'leftPlayer') {
       normalY = y / ratio - leftPlayer.height / 2;
       setLeftPlayer((prev) => ({ ...prev, y: normalY }));
       moveBarEvent(normalY);
-    } else if (playerType === 'rightPlayer') {
+    } else if (gameMemberType === 'rightPlayer') {
       normalY = y / ratio - rightPlayer.height / 2;
       setRightPlayer((prev) => ({ ...prev, y: normalY }));
       moveBarEvent(normalY);

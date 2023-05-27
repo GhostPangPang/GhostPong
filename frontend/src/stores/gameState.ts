@@ -49,6 +49,13 @@ export const gameIdState = atom<string>({
   default: '',
 });
 
+export type MemberType = 'leftPlayer' | 'rightPlayer' | 'observer';
+
+export const gameMemberTypeState = atom<MemberType>({
+  key: 'gameMemberType',
+  default: 'observer',
+});
+
 export const gameModeState = atom<GameMode>({
   key: 'gameModeState',
   default: 'normal',
@@ -86,14 +93,17 @@ export const gameDataState = selector<GameData>({
       rightPlayer,
     };
   },
-  set: ({ set }, newValue) => {
+  set: ({ set, get }, newValue) => {
     if (newValue instanceof DefaultValue) return;
+    const gameMemberType = get(gameMemberTypeState);
     const { id, mode, ball, leftPlayer, rightPlayer } = newValue;
     set(gameIdState, id);
     set(gameModeState, mode);
     set(ballState, ball);
-    set(leftPlayerState, leftPlayer);
-    set(rightPlayerState, rightPlayer);
+    if (gameMemberType === 'leftPlayer') set(leftPlayerState, (prev) => ({ ...prev, score: leftPlayer.score }));
+    else set(leftPlayerState, leftPlayer);
+    if (gameMemberType === 'rightPlayer') set(rightPlayerState, (prev) => ({ ...prev, score: rightPlayer.score }));
+    else set(rightPlayerState, rightPlayer);
   },
 });
 

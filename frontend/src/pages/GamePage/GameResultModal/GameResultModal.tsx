@@ -43,6 +43,9 @@ export const GameResultModal = ({ isEnd }: { isEnd: boolean }) => {
       if (gameResult.winner.id === gamePlayer.leftPlayer.userId) {
         setWinner(gamePlayer.leftPlayer);
         setLoser(gamePlayer.rightPlayer);
+      } else {
+        setWinner(gamePlayer.rightPlayer);
+        setLoser(gamePlayer.leftPlayer);
       }
     }
   }, [gameResult]); // depth 고민해보기

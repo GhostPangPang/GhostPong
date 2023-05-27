@@ -1,11 +1,11 @@
 import { Grid, Loading, Text } from '@/common';
 import { useGameStart } from '@/hooks/game';
 import { post } from '@/libs/api';
-import { gameIdState, gameTypeState } from '@/stores';
+import { gameTypeState } from '@/stores';
 import { useMutation } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import styled, { keyframes } from 'styled-components';
 
 const postCancelRandomGame = async () => {
@@ -15,10 +15,9 @@ const postCancelRandomGame = async () => {
 export const GameLoadingPage = () => {
   const navigate = useNavigate();
   const setGameType = useSetRecoilState(gameTypeState);
-  const gameId = useRecoilValue(gameIdState);
   const { mutate: cancelRandomGame } = useMutation(postCancelRandomGame);
 
-  useGameStart({
+  const { gameId } = useGameStart({
     onGameStart: () => {
       console.log('random game start');
       setGameType('random');
