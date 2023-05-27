@@ -14,10 +14,9 @@ export const AuthHandler = () => {
       setAccessToken(token);
       window.location.replace('/');
     } else {
-      console.log('navigate to /pre');
       navigate('/pre', { replace: true });
     }
   }, []);
 
-  return <></>;
+  return null;
 };
