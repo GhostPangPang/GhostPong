@@ -1,6 +1,5 @@
 import { createGlobalStyle } from 'styled-components';
 import { normalize } from 'styled-normalize';
-import bg from '@/assets/svgs/bg.svg';
 import theme from './theme';
 
 export const GlobalStyle = createGlobalStyle<{ theme: typeof theme }>`
@@ -30,7 +29,7 @@ export const GlobalStyle = createGlobalStyle<{ theme: typeof theme }>`
     font-family: 'normal', 'game', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     font-size: 62.5%;
 
-    background-image: url(${bg});
+    background-image: url('/svg/bg.svg');
     background-repeat: repeat;
   }
 
