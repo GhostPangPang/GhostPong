@@ -8,6 +8,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
+import { AchievementService } from '../achievement/achievement.service';
 import { FRIEND_LIMIT } from '../common/constant';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
 import { BlockedUser } from '../entity/blocked-user.entity';
@@ -27,6 +28,7 @@ export class FriendService {
     private readonly blockedUserRepository: Repository<BlockedUser>,
     private readonly userStatusRepository: UserStatusRepository,
     private readonly friendGateway: FriendGateway,
+    private readonly achievementService: AchievementService,
   ) {}
 
   // SECTION: public
@@ -138,9 +140,13 @@ export class FriendService {
     if (friendship.receiver.id !== myId) {
       throw new ForbiddenException('친구 신청을 받은 유저만 수락할 수 있습니다.');
     }
-    await this.checkFriendLimit(friendship.receiver.id, '나');
-    await this.checkFriendLimit(friendship.senderId, '상대방');
+    const myFriendsCount = await this.checkFriendLimit(friendship.receiver.id, '나');
+    const senderFriendsCount = await this.checkFriendLimit(friendship.senderId, '상대방');
+
     await this.friendshipRepository.update({ id: friendId }, { accept: true });
+    this.achievementService.getFriendAchievement(myId, myFriendsCount + 1);
+    this.achievementService.getFriendAchievement(friendship.senderId, senderFriendsCount + 1);
+
     this.friendGateway.addFriendToRoom(friendship.senderId, friendship.receiver.id);
     this.friendGateway.emitFriendAccepted(friendship);
     return { message: '친구 추가 되었습니다.' };
@@ -170,15 +176,17 @@ export class FriendService {
    * @param userId 친구 수를 체크할 유저
    * @param userType 유저의 타입 ( 나 or 상대방 )
    */
-  private async checkFriendLimit(userId: number, userType: string): Promise<void> {
+  private async checkFriendLimit(userId: number, userType: string): Promise<number> {
+    let count: number;
     if (
-      (await this.friendshipRepository.countBy([
+      (count = await this.friendshipRepository.countBy([
         { receiverId: userId, accept: true },
         { senderId: userId, accept: true },
       ])) >= FRIEND_LIMIT
     ) {
       throw new ForbiddenException(`${userType}의 친구 정원이 꽉 찼습니다.`);
     }
+    return count;
   }
 
   /**
