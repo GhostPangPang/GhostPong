@@ -1,4 +1,4 @@
-import { channelDataState, gamePlayerState, gameResultState } from '@/stores';
+import { channelDataState, gamePlayerState, gameResultState, gameTypeState } from '@/stores';
 import { useEffect, useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { MemberInfo } from '@/dto/channel/socket';
@@ -9,6 +9,7 @@ export const GameResultModal = ({ isEnd }: { isEnd: boolean }) => {
   const navigate = useNavigate();
   const setChannelData = useSetRecoilState(channelDataState);
 
+  const gameType = useRecoilValue(gameTypeState);
   const gamePlayer = useRecoilValue(gamePlayerState);
   const gameResult = useRecoilValue(gameResultState);
 
@@ -83,9 +84,11 @@ export const GameResultModal = ({ isEnd }: { isEnd: boolean }) => {
           <GameButton size="md" color="foreground" onClick={handleLeave}>
             나가기
           </GameButton>
-          <GameButton size="md" onClick={handleGoToWaitingPage}>
-            대기페이지로
-          </GameButton>
+          {gameType === 'normal' && (
+            <GameButton size="md" onClick={handleGoToWaitingPage}>
+              대기페이지로
+            </GameButton>
+          )}
         </Grid>
       </Grid>
     </WideModal>
