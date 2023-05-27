@@ -3,6 +3,7 @@ import styled from 'styled-components';
 export interface DropdownProps {
   onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
   children: React.ReactNode;
+  value?: string;
 }
 
 const DropdownSelect = styled.select`
@@ -13,8 +14,12 @@ const DropdownSelect = styled.select`
   cursor: pointer;
 `;
 
-export const Dropdown = ({ onChange, children }: DropdownProps) => {
-  return <DropdownSelect onChange={onChange}>{children}</DropdownSelect>;
+export const Dropdown = ({ onChange, children, value = undefined }: DropdownProps) => {
+  return (
+    <DropdownSelect onChange={onChange} value={value}>
+      {children}
+    </DropdownSelect>
+  );
 };
 
 export default Dropdown;
