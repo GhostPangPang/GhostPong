@@ -1,8 +1,9 @@
 import { ApiError, post } from '@/libs/api';
+import { GameMode } from '@/dto/game';
 import { useMutation } from '@tanstack/react-query';
 
-const postGameStart = async (id: string) => {
-  return await post('/game', { gameId: id });
+const postGameStart = async ({ id, mode }: { id: string; mode: GameMode }) => {
+  return await post('/game', { gameId: id, mode: mode });
 };
 
 export const useGameMutation = () => {

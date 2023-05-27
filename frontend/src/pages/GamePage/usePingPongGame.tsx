@@ -74,9 +74,10 @@ export const usePingPongGame = () => {
       return;
     }
 
-    // init game data
+    // init game dat기
     const { leftPlayer: leftUser, rightPlayer: rightUser } = gamePlayer;
 
+    // 이거 괜찮은지 확인하기
     setGameData((prev) => ({
       ...prev,
       id: gameId,
@@ -151,8 +152,8 @@ export const usePingPongGame = () => {
     drawNet(context);
 
     // draw the ball
-    drawBall(context);
-    // drawArc(context, ball.x * ratio, ball.y * ratio, ball.radius * ratio, theme.color.secondary);
+    // drawBall(context);
+    drawArc(context, ball.x * ratio, ball.y * ratio, ball.radius * ratio, theme.color.secondary);
 
     // draw leftPlayer paddle
     drawBar(
@@ -194,30 +195,6 @@ export const usePingPongGame = () => {
     context.fill();
   };
 
-  const drawBall = (context: CanvasRenderingContext2D) => {
-    // wall sound
-    // if (
-    //   ball.x - ball.radius < 0 ||
-    //   ball.x + ball.radius > width ||
-    //   ball.y - ball.radius < 0 ||
-    //   ball.y + ball.radius > height
-    // ) {
-    //   playWallSound();
-    // }
-    // // hit sound
-    // if (
-    //   (ball.x + ball.radius > rightPlayer.x &&
-    //     ball.y < rightPlayer.y + rightPlayer.height / 2 &&
-    //     ball.y > rightPlayer.y - rightPlayer.height / 2) ||
-    //   (ball.x - ball.radius < leftPlayer.x + BAR_WIDTH &&
-    //     ball.y < leftPlayer.y + leftPlayer.height / 2 &&
-    //     ball.y > leftPlayer.y - leftPlayer.height / 2)
-    // ) {
-    //   playHitSound();
-    // }
-    drawArc(context, ball.x * ratio, ball.y * ratio, ball.radius * ratio, theme.color.secondary);
-  };
-
   const moveBar = (playerType: MemberType, y: number) => {
     if (playerType === 'leftPlayer') {
       const normalY = y / ratio - leftPlayer.height / 2;
@@ -244,6 +221,12 @@ export const usePingPongGame = () => {
     // checkPlayerCollision(updateData);
     checkWallCollision(updateData.ball);
     // checkGameEnded(updateData);
+
+    // play sound
+    if (updateData.ball.vy * ball.vy < 0) {
+      if (updateData.ball.vx * ball.vx < 0) playHitSound();
+      else playWallSound();
+    }
     setGameData(updateData);
   };
 
