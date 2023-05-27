@@ -30,7 +30,6 @@ export const GameReadyPage = () => {
   const [mode, setMode] = useState<GameMode>('normal');
   const navigate = useNavigate();
 
-  console.log('hihi');
   useGameStart({
     onGameStart: () => {
       setChannelData((prev) => ({ ...prev, isInGame: true }));
