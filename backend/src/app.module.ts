@@ -5,6 +5,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { AchievementModule } from './achievement/achievement.module';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { UserGuard } from './auth/guard/user.guard';
@@ -40,6 +41,7 @@ import { UserModule } from './user/user.module';
     ChannelModule,
     ConnectionModule,
     GameModule,
+    AchievementModule,
   ],
   providers: [AppService, { provide: APP_GUARD, useClass: UserGuard }],
 })
