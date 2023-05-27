@@ -13,7 +13,7 @@ import { hash, compare } from 'bcrypt';
 import { Cache } from 'cache-manager';
 import { Repository } from 'typeorm';
 
-import { ChannelRole, MemberInfo, UpdatedMode, UserId } from '@/types/channel';
+import { ChannelRole, FullChannelInfoResponse, MemberInfo, UpdatedMode, UserId } from '@/types/channel';
 
 import { MUTE_EXPIRES_IN, PARTICIPANT_LIMIT } from '../common/constant';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
@@ -34,7 +34,6 @@ import { CreateChannelRequestDto } from './dto/request/create-channel-request.dt
 import { JoinChannelRequestDto } from './dto/request/join-channel-request.dto';
 import { UpdateChannelRequestDto } from './dto/request/update-channel-request.dto';
 import { ChannelsListResponseDto } from './dto/response/channels-list-response.dto';
-import { FullChannelInfoResponseDto } from './dto/response/full-channel-info-response.dto';
 
 @Injectable()
 export class ChannelService {
@@ -70,7 +69,7 @@ export class ChannelService {
   /**
    * @summary 채널 정보 조회하기
    */
-  getChannelInfo(myId: number, channel: Channel): FullChannelInfoResponseDto {
+  getChannelInfo(myId: number, channel: Channel): FullChannelInfoResponse {
     this.findExistChannelUser(myId, channel);
     const users = [...channel.users.values()];
     const players: MemberInfo[] = users
@@ -98,6 +97,7 @@ export class ChannelService {
       observers,
       isInGame: channel.isInGame,
       name: channel.name,
+      mode: channel.mode,
     };
   }
 

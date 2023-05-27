@@ -23,6 +23,8 @@ import {
 } from '@nestjs/swagger';
 import { Response } from 'express';
 
+import { FullChannelInfoResponse } from '@/types/channel';
+
 import { ExtractUserId } from '../common/decorator/extract-user-id.decorator';
 import { ErrorResponseDto } from '../common/dto/error-response.dto';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
@@ -36,7 +38,6 @@ import { CreateChannelRequestDto } from './dto/request/create-channel-request.dt
 import { JoinChannelRequestDto } from './dto/request/join-channel-request.dto';
 import { UpdateChannelRequestDto } from './dto/request/update-channel-request.dto';
 import { ChannelsListResponseDto } from './dto/response/channels-list-response.dto';
-import { FullChannelInfoResponseDto } from './dto/response/full-channel-info-response.dto';
 
 @ApiTags('channel')
 @Controller('channel')
@@ -70,7 +71,7 @@ export class ChannelController {
   getChannelInfo(
     @ExtractUserId() myId: number,
     @Param('channelId', IdToChannelPipe) channel: Channel,
-  ): FullChannelInfoResponseDto {
+  ): FullChannelInfoResponse {
     return this.channelService.getChannelInfo(myId, channel);
   }
 
