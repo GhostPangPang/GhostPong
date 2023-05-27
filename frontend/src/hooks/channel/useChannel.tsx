@@ -22,6 +22,11 @@ interface postJoinChannelProps extends JoinChannelRequest {
   id: string;
 }
 
+interface postInviteChannelProps {
+  channelId: string;
+  userId: number;
+}
+
 interface patchBeAdminProps {
   channelId: string;
   userId: number;
@@ -84,6 +89,10 @@ const postJoinChannel = async ({ mode, password, id }: postJoinChannelProps) => 
 
 const patchUpdateChannel = async ({ channelId, mode, password }: patchUpdateChannelProps) => {
   return await patch<ApiResponse>(CHANNEL + `/${channelId}`, { mode, password });
+};
+
+const postInviteChannel = async ({ channelId, userId }: postInviteChannelProps) => {
+  return await post<ApiResponse>(CHANNEL + `/${channelId}/invite`, { userId });
 };
 
 const patchBePlayer = async (id: string) => {
@@ -224,6 +233,18 @@ export const useChannelMutation = () => {
     },
   });
 
+  const { mutate: inviteChannel } = useMutation(postInviteChannel, {
+    onSuccess: (data: ApiResponse, { channelId, userId }) => {
+      console.log('sdfsdfsdfsdfsdfsdfsd', userId);
+      queryClient.invalidateQueries([CHANNEL, channelId]);
+      // alert(data.message);
+    },
+    onError: (error: ApiError) => {
+      console.log('sdfs');
+      alert(error.message);
+    },
+  });
+
   const { mutate: becomePlayer } = useMutation(patchBePlayer, {
     onSuccess: (data: ApiResponse, id: string) => {
       queryClient.invalidateQueries([CHANNEL, id]);
@@ -282,5 +303,16 @@ export const useChannelMutation = () => {
     },
   });
 
-  return { joinChannel, createChannel, updateChannel, becomePlayer, becomeAdmin, becomeOwner, kick, ban, mute };
+  return {
+    joinChannel,
+    createChannel,
+    updateChannel,
+    inviteChannel,
+    becomePlayer,
+    becomeAdmin,
+    becomeOwner,
+    kick,
+    ban,
+    mute,
+  };
 };
