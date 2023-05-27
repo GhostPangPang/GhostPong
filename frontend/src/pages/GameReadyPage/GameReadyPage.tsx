@@ -5,8 +5,8 @@ import { ObserverBox } from './ObserverBox';
 import { Grid, GameButton, Text } from '@/common';
 import { useRecoilState, useRecoilValueLoadable, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { channelIdState, channelDataState, socketState } from '@/stores';
-import { useChannel } from '@/hooks/channel';
-import { useLocation } from 'react-router-dom';
+import { useChannel, useLeaveChannel } from '@/hooks/channel';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { itemGenerator } from '@/libs/utils/itemgenerator';
 import { useGameMutation, useGameStart } from '@/hooks/game';
@@ -24,9 +24,11 @@ export const GameReadyPage = () => {
   const { refetchChannel } = useChannel(channelId);
   const [channelData, setChannelData] = useRecoilState(channelDataState);
   const { isInGame, leftPlayer, rightPlayer } = channelData;
+  const { leaveChannel } = useLeaveChannel();
 
   const { startGame } = useGameMutation();
   const [mode, setMode] = useState<GameMode>('normal');
+  const navigate = useNavigate();
 
   useGameStart({
     onGameStart: () => {
@@ -56,7 +58,9 @@ export const GameReadyPage = () => {
   useEffect(() => {
     setSocket((prev) => ({ ...prev, channel: true })); // 이것도 리팩토링 고민해보기
 
-    return () => setSocket((prev) => ({ ...prev, channel: false }));
+    return () => {
+      setSocket((prev) => ({ ...prev, channel: false }));
+    };
   }, []);
 
   // unload 이벤트는 브라우저가 닫히거나 페이지를 떠날 때 발생합니다.
@@ -68,11 +72,12 @@ export const GameReadyPage = () => {
     };
     window.addEventListener('beforeunload', handleBeforeUnload);
 
-    // 뒤로가기 막기
     history.pushState(null, location.href);
-    window.onpopstate = function (event) {
-      event.preventDefault();
-      history.go(1);
+    window.onpopstate = function () {
+      if (window.confirm('뒤로 가시겠습니까?')) {
+        leaveChannel(channelId);
+        navigate('/channel/list');
+      }
     };
 
     return () => {
