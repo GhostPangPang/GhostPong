@@ -96,6 +96,13 @@ export type END = 'end';
 
 type GameStatus = READY | PLAYING | END;
 
+type GameType = 'random' | 'normal';
+
+export const gameTypeState = atom<GameType>({
+  key: 'gameTypeState',
+  default: 'normal',
+});
+
 export const gameStatusState = atom<GameStatus>({
   key: 'gameStatusState',
   default: 'ready',
