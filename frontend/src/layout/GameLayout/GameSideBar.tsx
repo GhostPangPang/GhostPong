@@ -1,11 +1,16 @@
 import { useState } from 'react';
 import { Text, Box, Grid, Avatar, GameButton, Badge, Dropbox } from '@/common';
 import { ReactComponent as SideBarIcon } from '@/assets/svgs/sidebar.svg';
-import { friendMockData } from '@/pages/GameReadyPage/mock-data';
+// import { friendMockData } from '@/pages/GameReadyPage/mock-data';
 import { UserInfo } from '@/dto/user';
 import styled from 'styled-components';
+import { useFriend } from '@/hooks/friend';
+import { useNavigate } from 'react-router-dom';
+import { useChannelMutation, useLeaveChannel } from '@/hooks/channel';
+import { useRecoilValue } from 'recoil';
+import { channelIdState } from '@/stores';
 
-const { friends } = friendMockData;
+// const { friends } = friendMockData;
 // friend hook으로 업데이트 해야함
 
 const StyledSideBarButton = styled.button`
@@ -53,8 +58,21 @@ interface FriendsListItemProps {
 }
 
 const FirendsListItem = ({ status, player }: FriendsListItemProps) => {
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  const dropboxItems = [{ label: '프로필', onClick: () => {} }];
+  const navigate = useNavigate();
+  const { leaveChannel } = useLeaveChannel();
+  const { inviteChannel } = useChannelMutation();
+  const channelId = useRecoilValue(channelIdState);
+  const dropboxItems = [
+    {
+      label: '프로필',
+      onClick: () => {
+        if (confirm('프로필 페이지로 이동하시겠습니까?')) {
+          leaveChannel(channelId);
+          navigate(`/profile/${player.id}`);
+        }
+      },
+    },
+  ];
 
   return (
     <Grid container="flex" direction="row" alignItems="center" justifyContent="space-around" gap={1}>
@@ -66,7 +84,7 @@ const FirendsListItem = ({ status, player }: FriendsListItemProps) => {
       <Text size="xxxs" weight="bold">
         {status}
       </Text>
-      <GameButton size="sm">
+      <GameButton size="sm" onClick={() => inviteChannel({ channelId, userId: player.id })}>
         <Text size="xxxs" weight="bold">
           초대하기
         </Text>
@@ -76,6 +94,7 @@ const FirendsListItem = ({ status, player }: FriendsListItemProps) => {
 };
 
 const FriendsList = () => {
+  const { friends } = useFriend();
   return (
     <Grid container="flex" direction="column" alignItems="center" justifyContent="center" gap={0.5}>
       <Text size="lg" weight="bold">
