@@ -8,7 +8,7 @@ import { checkPlayerCollision, checkWallCollision, checkGameEnded, updateBall } 
 import { GameHistory } from '../entity/game-history.entity';
 import { UserRecord } from '../entity/user-record.entity';
 import { User } from '../entity/user.entity';
-import { ChannelRepository, GameRepository } from '../repository';
+import { GameRepository, InvisibleChannelRepository, VisibleChannelRepository } from '../repository';
 import { Game } from '../repository/model';
 
 import { GameGateway } from './game.gateway';
@@ -20,7 +20,8 @@ const SYNC_INTERVAL = 50;
 export class GameEngineService {
   constructor(
     private readonly gameRepository: GameRepository,
-    private readonly channelRepository: ChannelRepository,
+    private readonly invisibleChannelRepository: InvisibleChannelRepository,
+    private readonly visibleChannelRepository: VisibleChannelRepository,
     @Inject(forwardRef(() => GameGateway))
     private readonly gameGateway: GameGateway,
     @InjectDataSource()
@@ -49,7 +50,10 @@ export class GameEngineService {
     const { gameData } = game;
     this.gameGateway.updateUserStatus(gameData.leftPlayer.userId, 'online');
     this.gameGateway.updateUserStatus(gameData.rightPlayer.userId, 'online');
-    this.channelRepository.update(gameData.id, { isInGame: false });
+    if (this.visibleChannelRepository.update(gameData.id, { isInGame: false }) === undefined) {
+      this.invisibleChannelRepository.update(gameData.id, { isInGame: false });
+    }
+
     this.gameRepository.delete(gameData.id);
     const winner = gameData.leftPlayer.score > gameData.rightPlayer.score ? gameData.leftPlayer : gameData.rightPlayer;
     const loser = winner === gameData.leftPlayer ? gameData.rightPlayer : gameData.leftPlayer;
