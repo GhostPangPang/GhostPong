@@ -67,9 +67,7 @@ export class ConnectionGateway implements OnGatewayConnection, OnGatewayDisconne
       this.leaveChannel(userId, channel, socket);
       this.server.to(channel.id).emit('user-left-channel', { userId });
     }
-    if (this.gameQueue.exist(userId) === true) {
-      this.gameQueue.delete(userId);
-    }
+    this.gameQueue.delete(userId);
     this.userStatusRepository.delete(userId);
     this.socketIdRepository.delete(userId);
 
