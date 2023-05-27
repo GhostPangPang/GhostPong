@@ -2,7 +2,7 @@ import { Grid, Text, Box, Modal, InputBox, GameButton } from '@/common';
 import styled from 'styled-components';
 import image1 from '@/assets/svgs/ChannelBackground1.png';
 import image2 from '@/assets/svgs/ChannelBackground2.png';
-import { ReactComponent as LockIcon } from '@/svgs/lock.svg';
+import { ReactComponent as LockIcon } from '@/svgs/black_lock.svg';
 import { ReactComponent as PeopleIcon } from '@/svgs/people.svg';
 import { ChannelInfo } from '@/dto/channel/response';
 import { useInput } from '@/hooks';

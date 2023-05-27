@@ -4,7 +4,7 @@ import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { newMessageIdListState, newMessagesState, channelDataState, ChannelData } from './stores';
 import { socketState } from './stores/socketState';
 import { Message } from '@/dto/message/socket';
-import { MemberInfo, UserId, NewChat } from '@/dto/channel/socket';
+import { MemberInfo, UserId, NewChat, UpdatedMode } from '@/dto/channel/socket';
 import { MessageEvent, ChannelEvent } from './constants';
 import { useUserInfo } from './hooks/user';
 import { useNavigate } from 'react-router-dom';
@@ -143,6 +143,15 @@ export const SocketHandler = () => {
     }
   });
 
+  const updateUpdateEvent = useRecoilCallback(({ set }) => (data: UpdatedMode) => {
+    console.log('socket update', data);
+    set(channelDataState, (prev) => ({
+      ...prev,
+      mode: data.mode,
+    }));
+  });
+  // TODO : get channel info에 mode 추가되면 patch 해줘야함
+
   // Init socket
   useEffect(() => {
     connectSocket();
@@ -183,6 +192,7 @@ export const SocketHandler = () => {
     onEvent(ChannelEvent.PLAYER, updatePlayerEvent);
     onEvent(ChannelEvent.ADMIN, updateAdminEvent);
     onEvent(ChannelEvent.OWNER, updateOwnerEvent);
+    onEvent(ChannelEvent.UPDATE, updateUpdateEvent);
     return () => {
       offEvent(ChannelEvent.CHAT);
       offEvent(ChannelEvent.JOIN);
@@ -192,6 +202,7 @@ export const SocketHandler = () => {
       offEvent(ChannelEvent.PLAYER);
       offEvent(ChannelEvent.ADMIN);
       offEvent(ChannelEvent.OWNER);
+      offEvent(ChannelEvent.UPDATE);
     };
     // register channel socket on event
   }, [socket]);

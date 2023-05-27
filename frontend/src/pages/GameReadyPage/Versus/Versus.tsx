@@ -74,23 +74,27 @@ export const Versus = ({ leftPlayer, rightPlayer, items }: VersusProps) => {
 
   return (
     <Grid container="flex" direction="row" alignItems="center" justifyContent="center">
-      {leftPlayer ? (
-        <GhostBox player={leftPlayer} item={items.leftPlayer} />
-      ) : (
-        <GameButton size="md" onClick={handleBecomeOwner}>
-          방장되기
-        </GameButton>
-      )}
-      <Text size="xxl" weight="bold">
+      <Grid container="flex" direction="column" alignItems="center" justifyContent="center" flexGrow={1}>
+        {leftPlayer ? (
+          <GhostBox player={leftPlayer} item={items.leftPlayer} />
+        ) : (
+          <GameButton size="md" onClick={handleBecomeOwner}>
+            방장되기
+          </GameButton>
+        )}
+      </Grid>
+      <Text size="xxl" weight="bold" fontFamily="game">
         VS
       </Text>
-      {rightPlayer ? (
-        <GhostBox player={rightPlayer} item={items.rightPlayer} />
-      ) : (
-        <GameButton size="md" onClick={handleBecomePlayer}>
-          참여하기
-        </GameButton>
-      )}
+      <Grid container="flex" direction="column" alignItems="center" justifyContent="center" flexGrow={1}>
+        {rightPlayer ? (
+          <GhostBox player={rightPlayer} item={items.rightPlayer} />
+        ) : (
+          <GameButton size="md" onClick={handleBecomePlayer}>
+            참여하기
+          </GameButton>
+        )}
+      </Grid>
     </Grid>
   );
 };

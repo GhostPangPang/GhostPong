@@ -1,6 +1,12 @@
 import { get, post, patch, ApiResponse, ApiError, LocationResponse } from '@/libs/api';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
-import { ChannelsListResponse, FullChannelInfoResponse, CreateChannelRequest, JoinChannelRequest } from '@/dto/channel';
+import {
+  ChannelsListResponse,
+  FullChannelInfoResponse,
+  CreateChannelRequest,
+  JoinChannelRequest,
+  ChannelMode,
+} from '@/dto/channel';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
@@ -34,6 +40,11 @@ interface patchBanProps {
 interface patchMuteProps {
   channelId: string;
   userId: number;
+}
+interface patchUpdateChannelProps {
+  channelId: string;
+  mode: ChannelMode;
+  password?: string;
 }
 
 let previousTotal = 0;
@@ -69,6 +80,10 @@ const postCreateChannel = async (request: CreateChannelRequest) => {
 
 const postJoinChannel = async ({ mode, password, id }: postJoinChannelProps) => {
   return await post<ApiResponse>(CHANNEL + `/${id}`, { mode, password });
+};
+
+const patchUpdateChannel = async ({ channelId, mode, password }: patchUpdateChannelProps) => {
+  return await patch<ApiResponse>(CHANNEL + `/${channelId}`, { mode, password });
 };
 
 const patchBePlayer = async (id: string) => {
@@ -197,6 +212,16 @@ export const useChannelMutation = () => {
     },
   });
 
+  const { mutate: updateChannel } = useMutation(patchUpdateChannel, {
+    onSuccess: (data: ApiResponse, { channelId }) => {
+      queryClient.invalidateQueries([CHANNEL, channelId]);
+      alert(data.message);
+    },
+    onError: (error: ApiError) => {
+      alert(error.message);
+    },
+  });
+
   const { mutate: becomePlayer } = useMutation(patchBePlayer, {
     onSuccess: (data: ApiResponse, id: string) => {
       queryClient.invalidateQueries([CHANNEL, id]);
@@ -257,5 +282,5 @@ export const useChannelMutation = () => {
     },
   });
 
-  return { joinChannel, createChannel, becomePlayer, becomeAdmin, becomeOwner, kick, ban, mute };
+  return { joinChannel, createChannel, updateChannel, becomePlayer, becomeAdmin, becomeOwner, kick, ban, mute };
 };
