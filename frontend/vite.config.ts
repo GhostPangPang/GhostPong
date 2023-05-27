@@ -46,16 +46,18 @@ export default ({ mode }) => {
       },
     },
     server: {
+      origin: process.env.VITE_BASE_URL,
       proxy: {
-        '/api/v1': {
+        '/api/': {
           target: process.env.VITE_BASE_URL,
           changeOrigin: true,
         },
-        '/asset': {
+        '^/asset/.*': {
           target: process.env.VITE_ASSET_URL,
           changeOrigin: true,
         },
       },
+      cors: true,
     },
     test: {
       globals: true,
