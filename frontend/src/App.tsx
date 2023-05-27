@@ -54,7 +54,7 @@ function App() {
                 </Route>
                 <Route element={<GameLayout />}>
                   <Route path="/channel/:gameId" element={<GameReadyPage />} />
-                  <Route path="/game/:gameId" element={<PingPongGame type={'leftPlayer'} />} />
+                  <Route path="/game/:gameId" element={<PingPongGame />} />
                 </Route>
                 <Route path="/pre" element={<PrePage />} />
                 <Route path="/auth?/" element={<AuthHandler />} />
