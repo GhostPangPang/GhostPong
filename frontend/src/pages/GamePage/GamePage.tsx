@@ -1,46 +1,40 @@
 import theme from '@/assets/styles/theme';
-// import { GamePageWrapper } from '../GameReadyPage/GameReadyPage';
-import { MouseEvent, useEffect } from 'react';
+import { MouseEvent, useEffect, useState } from 'react';
 import { useCanvas } from '@/hooks';
 import { usePingPongGame } from './usePingPongGame';
 import { useSetRecoilState } from 'recoil';
 import { socketState } from '@/stores';
-import { emitEvent } from '@/libs/api';
-import { GameEvent } from '@/constants';
+import { GameResultModal } from './GameResultModal/GameResultModal';
 
 export type MemberType = 'leftPlayer' | 'rightPlayer' | 'observer';
 
 export interface GamePageProps {
   type: MemberType;
-  channelId: string;
 }
 
-export const GamePage = ({ type = 'rightPlayer', channelId = '1' }: GamePageProps) => {
+// default member 로 바꾸어야함
+export const PingPongGame = ({ type = 'rightPlayer' }: GamePageProps) => {
   const setSocket = useSetRecoilState(socketState);
-  const { setCanvasSize, playGame, moveBar, drawCountDown } = usePingPongGame({
-    channelId,
-    leftPlayerId: 2,
-    rightPlayerId: 1,
-  });
-  const canvasRef = useCanvas(playGame);
+
+  const { gameStatus, setCanvasSize, playGame, moveBar } = usePingPongGame();
+  const [isEnd, setIsEnd] = useState(true);
+
+  const canvasRef = useCanvas(playGame, isEnd);
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
-    const context = canvas.getContext('2d');
-    if (!context) return;
-
-    setSocket((prev) => ({ ...prev, game: true }));
-
-    drawCountDown(context, canvas.width, canvas.height);
-    setTimeout(() => {
-      // 이거 두개는 합쳐도 될듯
-      setCanvasSize({ width: canvas.width, height: canvas.height });
-      emitEvent(GameEvent.GAMESTART, { gameId: channelId });
-    }, 3000);
-
+    if (canvas) {
+      setSocket((prev) => ({ ...prev, game: true }));
+      setCanvasSize({ width: canvas.clientWidth, height: canvas.clientHeight });
+    }
     return () => setSocket((prev) => ({ ...prev, game: false }));
   }, []);
+
+  useEffect(() => {
+    if (gameStatus === 'end') {
+      setIsEnd(true);
+    }
+  }, [gameStatus]);
 
   const handleMouseMove = (e: MouseEvent) => {
     const canvas = canvasRef.current;
@@ -58,11 +52,10 @@ export const GamePage = ({ type = 'rightPlayer', channelId = '1' }: GamePageProp
     <div>
       <canvas
         ref={canvasRef}
-        width={900}
-        height={450}
         onMouseMove={handleMouseMove}
-        style={{ borderRadius: '4px', backgroundColor: theme.color.gray500 }}
+        style={{ aspectRatio: '2 / 1', width: '90rem', borderRadius: '4px', backgroundColor: theme.color.gray500 }}
       ></canvas>
+      <GameResultModal isEnd={isEnd} />
     </div>
   );
 };

@@ -1,7 +1,6 @@
 export function drawArc(context: CanvasRenderingContext2D, x: number, y: number, r: number, color: string) {
   context.fillStyle = color;
   context.beginPath();
-  console.log(x, y);
   context.arc(x, y, r, 0, Math.PI * 2, true);
   context.closePath();
   context.fill();

@@ -8,6 +8,7 @@ export const GLOBALEVENT = {
 };
 
 export const GameEvent = {
+  PLAYERREADY: 'player-ready',
   GAMESTART: 'game-start',
   GAMEDATA: 'game-data',
   GAMEEND: 'game-end',

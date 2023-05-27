@@ -6,6 +6,7 @@ export type FontSize = keyof Theme['fontSize'];
 export type FontWeight = keyof Theme['fontWeight'];
 export type BorderRadius = keyof Theme['borderRadius'];
 export type BoxShadow = keyof Theme['boxShadow'];
+export type TextShadow = keyof Theme['textShadow'];
 export type Padding = keyof Theme['padding'];
 
 export type ContainerProps = {

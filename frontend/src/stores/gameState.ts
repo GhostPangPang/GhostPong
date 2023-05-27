@@ -1,6 +1,7 @@
 import { MemberInfo } from '@/dto/channel/socket';
 import { Ball, Player, GameData } from '@/game/game-data';
 import { DefaultValue, atom, selector } from 'recoil';
+import { GameEnd } from '@/dto/game/';
 
 const UNIT = 100;
 
@@ -45,17 +46,17 @@ export const canvasSizeState = selector<{ width: number; height: number }>({
 
 export const ballState = atom<Ball>({
   key: 'ballState',
-  default: new Ball(),
+  default: new Ball('normal'),
 });
 
 export const leftPlayerState = atom<Player>({
   key: 'leftPlayerState',
-  default: new Player(1, 1),
+  default: new Player(1, 1, 'normal'),
 });
 
 export const rightPlayerState = atom<Player>({
   key: 'rightPlayerState',
-  default: new Player(2, 99),
+  default: new Player(2, 99, 'normal'),
 });
 
 // game socket event 받고 나서 gameState 업데이트
@@ -63,9 +64,10 @@ export const gameDataState = atom<GameData>({
   key: 'gameState',
   default: {
     id: '',
-    ball: new Ball(),
-    leftPlayer: new Player(0, 0),
-    rightPlayer: new Player(0, 0),
+    mode: 'normal',
+    ball: new Ball('normal'),
+    leftPlayer: new Player(0, 0, 'normal'),
+    rightPlayer: new Player(0, 0, 'normal'),
   },
 });
 
@@ -76,16 +78,15 @@ export const gameIdState = atom<string>({
 
 // game player data
 type GamePlayerData = {
-  leftUser: MemberInfo | null;
-  rightUser: MemberInfo | null;
+  leftPlayer: MemberInfo | null;
+  rightPlayer: MemberInfo | null;
 };
 
-// 타입 일관성 없음 MemberInfo 인지 User 인지, MemberInfo 로 일단 구현
 export const gamePlayerState = atom<GamePlayerData>({
   key: 'gamePlayerState',
   default: {
-    leftUser: null,
-    rightUser: null,
+    leftPlayer: null,
+    rightPlayer: null,
   },
 });
 
@@ -94,4 +95,19 @@ type GameStatus = 'ready' | 'playing' | 'end';
 export const gameStatusState = atom<GameStatus>({
   key: 'gameStatusState',
   default: 'ready',
+});
+
+export const gameResultState = atom<GameEnd>({
+  key: 'gameResultState',
+  default: {
+    id: '',
+    winner: {
+      id: -1,
+      score: 0,
+    },
+    loser: {
+      id: -1,
+      score: 0,
+    },
+  },
 });

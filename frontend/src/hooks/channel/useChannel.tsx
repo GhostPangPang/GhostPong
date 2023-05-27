@@ -33,13 +33,6 @@ interface patchBanProps {
 
 let previousTotal = 0;
 
-const initialChannelInfoData: FullChannelInfoResponse = {
-  players: [],
-  observers: [],
-  isInGame: false,
-  name: '',
-};
-
 const initialChannelListData: ChannelsListResponse = {
   total: 0,
   channels: [
@@ -101,7 +94,7 @@ export const useChannel = (id: string) => {
   const resetChannelData = useResetRecoilState(channelDataState);
 
   const {
-    data: channel = initialChannelInfoData,
+    data: channel = null,
     refetch: refetchChannel,
     isFetching,
     isError,

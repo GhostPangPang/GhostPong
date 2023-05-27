@@ -3,12 +3,13 @@ import { Versus } from './Versus';
 import { ChatBox } from './ChatBox';
 import { ObserverBox } from './ObserverBox';
 import { Grid, GameButton } from '@/common';
-import { useRecoilState, useRecoilValue, useSetRecoilState, useResetRecoilState, useRecoilValueLoadable } from 'recoil';
+import { useRecoilState, useRecoilValueLoadable, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { channelIdState, channelDataState, socketState } from '@/stores';
 import { useChannel, useLeaveChannel } from '@/hooks/channel';
 import { useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import { itemGenerator } from '@/libs/utils/itemgenerator';
+import { useGameStart } from '@/hooks/game';
 // useItem hook 으로 빼기
 
 export const GameReadyPage = () => {
@@ -21,10 +22,15 @@ export const GameReadyPage = () => {
   // const { startGame } = useGameMutation();
 
   const { refetchChannel } = useChannel(channelId);
-  const channelData = useRecoilValue(channelDataState);
+  const [channelData, setChannelData] = useRecoilState(channelDataState);
   const { isInGame, leftPlayer, rightPlayer } = channelData;
 
-  console.log('sdf', channelData);
+  useGameStart({
+    onGameStart: () => {
+      setChannelData((prev) => ({ ...prev, isInGame: true }));
+    },
+  });
+
   useEffect(() => {
     const channelId = pathname.replace('/channel/', '');
     console.log('channelId', channelId);

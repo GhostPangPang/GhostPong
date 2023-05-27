@@ -30,6 +30,8 @@ export const useMessages = () => {
   } = useInfiniteQuery<MessageResponse>({
     queryKey: [MESSAGE, newMessages.friend?.id],
     queryFn: ({ pageParam = 0 }) => getMessages(newMessages.friend!.id, pageParam),
+    staleTime: Infinity,
+    cacheTime: 0,
     enabled: !!newMessages.friend?.id,
     getNextPageParam: (lastPage) => {
       if (lastPage.length < MESSAGE_SIZE) return undefined;
