@@ -5,7 +5,7 @@ import { newMessageIdListState, newMessagesState, channelDataState, ChannelData 
 import { socketState } from './stores/socketState';
 import { Message } from '@/dto/message/socket';
 import { MemberInfo, UserId, NewChat, UpdatedMode } from '@/dto/channel/socket';
-import { MessageEvent, ChannelEvent } from './constants';
+import { MessageEvent, ChannelEvent, GLOBALEVENT } from './constants';
 import { useUserInfo } from './hooks/user';
 import { useNavigate } from 'react-router-dom';
 import { Friend } from './types';
@@ -183,6 +183,17 @@ export const SocketHandler = () => {
     return () => {
       disconnectSocket();
       console.log('socket disconnect');
+    };
+  }, []);
+
+  useEffect(() => {
+    console.log('hee');
+    onEvent(GLOBALEVENT.INVITE_CHANNEL, (data) => {
+      console.log('socket invite', data);
+      alert('초대되었습니다.');
+    });
+    return () => {
+      offEvent(GLOBALEVENT.INVITE_CHANNEL);
     };
   }, []);
 
