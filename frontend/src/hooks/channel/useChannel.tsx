@@ -134,6 +134,7 @@ export const useChannel = (id: string) => {
     useErrorBoundary: true,
     onError: (error) => {
       alert(error.message);
+      navigate('/channel/list');
     },
   });
 
