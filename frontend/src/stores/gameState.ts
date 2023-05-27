@@ -1,7 +1,7 @@
 import { MemberInfo } from '@/dto/channel/socket';
 import { Ball, Player, GameData } from '@/game/game-data';
 import { DefaultValue, atom, selector } from 'recoil';
-import { GameEnd } from '@/dto/game/';
+import { GameEnd, GameMode } from '@/dto/game/';
 
 const UNIT = 100;
 
@@ -44,6 +44,16 @@ export const canvasSizeState = selector<{ width: number; height: number }>({
   },
 });
 
+export const gameIdState = atom<string>({
+  key: 'gameIdState',
+  default: '',
+});
+
+export const gameModeState = atom<GameMode>({
+  key: 'gameModeState',
+  default: 'normal',
+});
+
 export const ballState = atom<Ball>({
   key: 'ballState',
   default: new Ball('normal'),
@@ -51,29 +61,52 @@ export const ballState = atom<Ball>({
 
 export const leftPlayerState = atom<Player>({
   key: 'leftPlayerState',
-  default: new Player(1, 1, 'normal'),
+  default: new Player(0, 0, 'normal'),
 });
 
 export const rightPlayerState = atom<Player>({
   key: 'rightPlayerState',
-  default: new Player(2, 99, 'normal'),
+  default: new Player(0, 0, 'normal'),
 });
 
 // game socket event 받고 나서 gameState 업데이트
-export const gameDataState = atom<GameData>({
-  key: 'gameState',
-  default: {
-    id: '',
-    mode: 'normal',
-    ball: new Ball('normal'),
-    leftPlayer: new Player(0, 0, 'normal'),
-    rightPlayer: new Player(0, 0, 'normal'),
-  },
-});
+// export const gameDataState = atom<GameData>({
+//   key: 'gameState',
+//   default: {
+//     id: '',
+//     mode: 'normal',
+//     ball: new Ball('normal'),
+//     leftPlayer: new Player(0, 0, 'normal'),
+//     rightPlayer: new Player(0, 0, 'normal'),
+//   },
+// });
 
-export const gameIdState = atom<string>({
-  key: 'gameIdState',
-  default: '',
+export const gameDataState = selector<GameData>({
+  key: 'gameDataState',
+  get: ({ get }) => {
+    const gameId = get(gameIdState);
+    const mode = get(gameModeState);
+    const ball = get(ballState);
+    const leftPlayer = get(leftPlayerState);
+    const rightPlayer = get(rightPlayerState);
+
+    return {
+      id: gameId,
+      mode,
+      ball,
+      leftPlayer,
+      rightPlayer,
+    };
+  },
+  set: ({ set }, newValue) => {
+    if (newValue instanceof DefaultValue) return;
+    const { id, mode, ball, leftPlayer, rightPlayer } = newValue;
+    set(gameIdState, id);
+    set(gameModeState, mode);
+    set(ballState, ball);
+    set(leftPlayerState, leftPlayer);
+    set(rightPlayerState, rightPlayer);
+  },
 });
 
 // game player data
