@@ -1,25 +1,18 @@
 import { Injectable, CanActivate, ExecutionContext, BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { PassportStrategy } from '@nestjs/passport';
 import { Request } from 'express';
-import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Observable } from 'rxjs';
 
 import { AppConfigService } from '../../config/app/configuration.service';
 import { JwtConfigService } from '../../config/auth/jwt/configuration.service';
 
 @Injectable()
-export class GuestGuard extends PassportStrategy(Strategy) implements CanActivate {
+export class GuestGuard implements CanActivate {
   constructor(
     private readonly appConfigService: AppConfigService,
     private readonly jwtService: JwtService,
     private readonly jwtConfigService: JwtConfigService,
-  ) {
-    super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: jwtConfigService.authSecretKey,
-    });
-  }
+  ) {}
 
   canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
     if (this.appConfigService.env === 'development') {
