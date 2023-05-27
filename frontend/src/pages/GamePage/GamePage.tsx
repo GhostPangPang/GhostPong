@@ -18,7 +18,8 @@ export const PingPongGame = () => {
   const [type, setType] = useState<MemberType>('observer');
   const { gamePlayer, gameStatus, setCanvasSize, playGame, moveBar } = usePingPongGame();
 
-  const canvasRef = useCanvas(playGame, gameStatus !== 'playing');
+  const isEnd = gameStatus === 'end';
+  const canvasRef = useCanvas(playGame, isEnd);
 
   useEffect(() => {
     if (!gamePlayer.leftPlayer || !gamePlayer.rightPlayer) return;
