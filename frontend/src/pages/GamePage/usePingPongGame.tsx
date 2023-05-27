@@ -64,7 +64,7 @@ export const usePingPongGame = () => {
   const resetCanvasRatio = useResetRecoilState(canvasRatioState);
 
   // variables
-  const { leftPlayer, rightPlayer, ball } = gameData;
+  const { mode, leftPlayer, rightPlayer, ball } = gameData;
   const { width, height } = canvasSize;
   const { ratio } = canvasRatio;
 
@@ -80,8 +80,9 @@ export const usePingPongGame = () => {
     setGameData((prev) => ({
       ...prev,
       id: gameId,
-      leftPlayer: new Player(leftUser?.userId ?? 1, BAR_PADDING),
-      rightPlayer: new Player(rightUser?.userId ?? 2, CANVASE_WIDTH - BAR_PADDING - BAR_WIDTH), // width 신경쓰기
+      mode: 'normal',
+      leftPlayer: new Player(leftUser?.userId ?? 1, BAR_PADDING, 'normal'),
+      rightPlayer: new Player(rightUser?.userId ?? 2, CANVASE_WIDTH - BAR_PADDING - BAR_WIDTH, 'normal'), // width 신경쓰기
     }));
 
     // gameStatus 바꾸기
@@ -234,6 +235,7 @@ export const usePingPongGame = () => {
   const updateGame = () => {
     const updateData: GameData = {
       id: gameId,
+      mode: mode,
       leftPlayer: { ...leftPlayer },
       rightPlayer: { ...rightPlayer },
       ball: { ...ball },

@@ -46,17 +46,17 @@ export const canvasSizeState = selector<{ width: number; height: number }>({
 
 export const ballState = atom<Ball>({
   key: 'ballState',
-  default: new Ball(),
+  default: new Ball('normal'),
 });
 
 export const leftPlayerState = atom<Player>({
   key: 'leftPlayerState',
-  default: new Player(1, 1),
+  default: new Player(1, 1, 'normal'),
 });
 
 export const rightPlayerState = atom<Player>({
   key: 'rightPlayerState',
-  default: new Player(2, 99),
+  default: new Player(2, 99, 'normal'),
 });
 
 // game socket event 받고 나서 gameState 업데이트
@@ -64,9 +64,10 @@ export const gameDataState = atom<GameData>({
   key: 'gameState',
   default: {
     id: '',
-    ball: new Ball(),
-    leftPlayer: new Player(0, 0),
-    rightPlayer: new Player(0, 0),
+    mode: 'normal',
+    ball: new Ball('normal'),
+    leftPlayer: new Player(0, 0, 'normal'),
+    rightPlayer: new Player(0, 0, 'normal'),
   },
 });
 
