@@ -430,6 +430,7 @@ describe('ChannelService', () => {
         observers: [{ userId: 2, nickname: 'test', image: '/asset/profile-1.png', role: 'member' }],
         isInGame: false,
         name: 'test',
+        mode: 'public',
       });
     });
   });
