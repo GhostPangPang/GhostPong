@@ -53,13 +53,13 @@ export const PingPongGame = () => {
   };
 
   return (
-    <div>
+    <>
       <canvas
         ref={canvasRef}
         onMouseMove={handleMouseMove}
         style={{ aspectRatio: '2 / 1', width: '90rem', borderRadius: '4px', backgroundColor: theme.color.gray500 }}
       ></canvas>
       <GameResultModal isEnd={gameStatus === 'end'} />
-    </div>
+    </>
   );
 };

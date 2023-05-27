@@ -69,18 +69,6 @@ export const rightPlayerState = atom<Player>({
   default: new Player(0, 0, 'normal'),
 });
 
-// game socket event 받고 나서 gameState 업데이트
-// export const gameDataState = atom<GameData>({
-//   key: 'gameState',
-//   default: {
-//     id: '',
-//     mode: 'normal',
-//     ball: new Ball('normal'),
-//     leftPlayer: new Player(0, 0, 'normal'),
-//     rightPlayer: new Player(0, 0, 'normal'),
-//   },
-// });
-
 export const gameDataState = selector<GameData>({
   key: 'gameDataState',
   get: ({ get }) => {

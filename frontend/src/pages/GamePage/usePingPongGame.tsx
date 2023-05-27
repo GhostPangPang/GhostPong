@@ -210,7 +210,7 @@ export const usePingPongGame = () => {
     emitEvent(GameEvent.MOVEBAR, { gameId, y });
   }, 500);
 
-  const moveBar = debounce((playerType: MemberType, y: number) => {
+  const moveBar = (playerType: MemberType, y: number) => {
     let normalY: number;
     if (playerType === 'leftPlayer') {
       normalY = y / ratio - leftPlayer.height / 2;
@@ -221,7 +221,7 @@ export const usePingPongGame = () => {
       setRightPlayer((prev) => ({ ...prev, y: normalY }));
       moveBarEvent(normalY);
     }
-  }, 500);
+  };
 
   const updateGame = () => {
     const updateData: GameData = {
