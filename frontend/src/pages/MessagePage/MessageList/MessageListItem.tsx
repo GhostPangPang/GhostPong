@@ -7,6 +7,9 @@ import { formatRelativeDate } from '@/libs/utils';
 import { Friend } from '@/types/entity';
 import theme from '@/assets/styles/theme';
 import { useNewMessages } from '@/hooks/message/useNewMessages';
+import { useFriendMutation } from '@/hooks/friend';
+import { useBlockedMutation } from '@/hooks/blocked';
+import { useNavigate } from 'react-router-dom';
 
 export interface MessageListItemProps {
   friend: Friend;
@@ -19,12 +22,15 @@ const compareDate = (date1: string | Date, date2: string | Date) => {
 };
 
 export const MessageListItem = ({ friend }: MessageListItemProps) => {
+  const navigate = useNavigate();
   const { currentFriend, changeMessageRoom, newMessageIdList, viewMessage } = useNewMessages();
+  const { deleteFriend } = useFriendMutation();
+  const { updateBlocked } = useBlockedMutation();
 
   const items = [
-    { label: '친구추가', onClick: () => console.log('친구추가') },
-    { label: '차단', onClick: () => console.log('차단') },
-    { label: '프로필', onClick: () => console.log('프로필') },
+    { label: '친구삭제', onClick: () => deleteFriend(friend.id) },
+    { label: '친구차단', onClick: () => updateBlocked(friend.user.id) },
+    { label: '프로필', onClick: () => navigate(`/profile/${friend.user.id}`) },
   ];
 
   const handleClick = () => {

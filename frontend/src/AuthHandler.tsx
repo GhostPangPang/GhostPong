@@ -4,16 +4,23 @@ import { setAccessToken } from './libs/api/auth';
 
 export const AuthHandler = () => {
   const location = useLocation();
+  const urlParams = new URLSearchParams(location.search);
+  const token = urlParams.get('token');
   const navigate = useNavigate();
 
   useEffect(() => {
-    const urlParams = new URLSearchParams(location.search);
-    const token = urlParams.get('token');
     console.log('AuthHandler', token);
-
     if (token) setAccessToken(token);
-    window.location.replace('/');
   }, []);
+
+  useEffect(() => {
+    if (token) {
+      navigate('/');
+    }
+    if (!token) {
+      navigate('/pre');
+    }
+  }, [token]);
 
   return <></>;
 };

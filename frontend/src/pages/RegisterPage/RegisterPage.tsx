@@ -33,7 +33,6 @@ export const RegisterPage = () => {
   };
 
   const handleRegister = () => {
-    console.log('Register');
     registerUser(nickname);
     if (isSuccess) window.location.replace('/');
   };

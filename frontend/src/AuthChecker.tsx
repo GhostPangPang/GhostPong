@@ -8,6 +8,9 @@ export const AuthChecker = () => {
   const token = getAccessToken();
 
   useLayoutEffect(() => {
+    if (token) {
+      navigate('/');
+    }
     if (!token) {
       navigate('/pre');
     }

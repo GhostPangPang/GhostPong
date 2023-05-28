@@ -1,22 +1,32 @@
 import { Grid, Text, GameInput, GameButton } from '@/common';
 import { useInput } from '@/hooks';
-import { post } from '@/libs/api';
+import { ApiError, post } from '@/libs/api';
 import { useMutation } from '@tanstack/react-query';
+import { TokenResponse } from '@/dto/auth';
+import { setAccessToken } from '@/libs/api/auth';
+import { useEffect } from 'react';
 
 const postVerifyCode = async (code: string) => {
-  return await post('/auth/42login/2fa', { code });
+  return await post<TokenResponse>('/auth/42login/2fa', { code });
 };
 
 export const TwoFactorLoginPage = () => {
   const { value: code, onChange: handleCodeChange } = useInput('');
-  const { mutate: verifyCode } = useMutation(postVerifyCode, {
-    onSuccess: () => {
-      console.log('2차 인증 성공');
+  const { mutate: verifyCode, isSuccess } = useMutation(postVerifyCode, {
+    onSuccess: (data: TokenResponse) => {
+      const { token } = data;
+      if (token) {
+        setAccessToken(token);
+      }
     },
-    onError: () => {
-      console.log('2차 인증 실패');
+    onError: (error: ApiError) => {
+      alert(error.message);
     },
   });
+
+  useEffect(() => {
+    if (isSuccess) window.location.replace('/');
+  }, [isSuccess]);
 
   const handleVerify = () => {
     verifyCode(code);
