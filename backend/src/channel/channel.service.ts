@@ -159,7 +159,7 @@ export class ChannelService {
   /**
    * 채널 초대하기
    */
-  async inviteChannel(myId: number, userId: number, channel: Channel): Promise<SuccessResponseDto> {
+  async inviteChannel(myId: number, targetId: number, channel: Channel): Promise<SuccessResponseDto> {
     const user = await this.userRepository.findOne({
       where: { id: myId },
       select: ['nickname'],
@@ -168,9 +168,9 @@ export class ChannelService {
       throw new NotFoundException('존재하지 않는 유저입니다.');
     }
     this.findExistChannelUser(myId, channel);
-    const userSocketId = this.findExistSocket(userId);
-    await this.checkExistFriendship(myId, userId);
-    this.invitationRepository.insert({ userId: userId, channelId: channel.id });
+    const userSocketId = this.findExistSocket(targetId);
+    await this.checkExistFriendship(myId, targetId);
+    this.invitationRepository.insert({ userId: targetId, channelId: channel.id });
     this.channelGateway.emitUser<UserNickname>(userSocketId, 'channel-invited', { nickname: user.nickname });
 
     return {
