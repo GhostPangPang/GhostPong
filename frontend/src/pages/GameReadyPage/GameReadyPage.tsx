@@ -8,7 +8,7 @@ import { channelIdState, channelDataState, socketState } from '@/stores';
 import { useChannel, useLeaveChannel } from '@/hooks/channel';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ChangeEvent, useEffect, useState } from 'react';
-import { itemGenerator } from '@/libs/utils/itemgenerator';
+import { useItemGenerator, Items } from '@/libs/utils/itemgenerator';
 import { useGameMutation, useGameStart } from '@/hooks/game';
 import { Dropdown } from '@/common/Dropdown';
 import { GameMode } from '@/dto/game';
@@ -27,6 +27,11 @@ export const GameReadyPage = () => {
 
   const { startGame } = useGameMutation();
   const [mode, setMode] = useState<GameMode>('normal');
+  const [items, setItems] = useState<Items>({
+    leftPlayer: [],
+    rightPlayer: [],
+    observers: [],
+  });
   const navigate = useNavigate();
 
   useGameStart({
@@ -43,6 +48,12 @@ export const GameReadyPage = () => {
       resetChannelId();
     };
   }, []);
+
+  const itemsGenerator = useItemGenerator();
+
+  useEffect(() => {
+    setItems(itemsGenerator);
+  }, [channelData]);
 
   const handleStartGame = () => {
     // 임시로 새로 채널 정보 가져오게 하기
@@ -98,8 +109,6 @@ export const GameReadyPage = () => {
     }
   };
 
-  const items = itemGenerator(channelData);
-
   return (
     <>
       <Grid container="flex" direction="row" alignItems="center" justifyContent="center" flexGrow={1}>
@@ -107,18 +116,14 @@ export const GameReadyPage = () => {
       </Grid>
 
       <Grid container="flex" direction="row" alignItems="center" justifyContent="center" flexGrow={1}>
-        {isInGame && leftPlayer && rightPlayer ? (
-          <PingPongGame />
-        ) : (
-          <Versus leftPlayer={channelData.leftPlayer} rightPlayer={channelData.rightPlayer} items={items} />
-        )}
+        {isInGame && leftPlayer && rightPlayer ? <PingPongGame /> : <Versus items={items} />}
       </Grid>
       <Grid container="flex" direction="row" alignItems="end" justifyContent="center" flexGrow={1}>
         <Grid container="flex" flexGrow={1} alignItems="center" size={{ padding: 'md' }}>
           <ChatBox />
         </Grid>
         <Grid container="flex" flexGrow={1} alignItems="center" size={{ padding: 'md' }}>
-          <ObserverBox observers={channelData.observers} items={items} />
+          <ObserverBox items={items} />
         </Grid>
         <Grid container="flex" flexGrow={1} alignItems="center" justifyContent="end" gap={2} size={{ padding: 'md' }}>
           {channelData.isInGame ? null : channelData.currentRole === 'owner' ? ( // gmaeReady 중인 owner 만 start 버튼 보이게
