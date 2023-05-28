@@ -53,7 +53,7 @@ export default ({ mode }) => {
           target: process.env.VITE_BASE_URL,
           changeOrigin: true,
         },
-        '^/profile/.*': {
+        '^/img/.*': {
           target: process.env.VITE_ASSET_URL,
           changeOrigin: true,
         },
