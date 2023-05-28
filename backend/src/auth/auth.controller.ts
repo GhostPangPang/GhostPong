@@ -23,7 +23,6 @@ import { CodeVerificationRequestDto } from './dto/request/code-verification-requ
 import { TwoFactorAuthRequestDto } from './dto/request/two-factor-auth-request.dto';
 import { TwoFactorAuthResponseDto } from './dto/response/two-factor-auth-response.dto';
 import { FtGuard } from './guard/ft.guard';
-import { SkipLoggedInUserGuard } from './guard/skip-logged-in-user.guard';
 import { TwoFaGuard } from './guard/two-fa.guard';
 import { UserGuard } from './guard/user.guard';
 import { LoginInfo } from './type/login-info';
@@ -39,7 +38,7 @@ export class AuthController {
    */
   @ApiOperation({ summary: '42 로그인' })
   @SkipUserGuard()
-  @UseGuards(SkipLoggedInUserGuard, FtGuard) // strategy.constructor
+  @UseGuards(FtGuard) // strategy.constructor
   @Get('42login')
   login(): void {
     return;
