@@ -13,7 +13,7 @@ import { MemberInfo } from '@/types/channel';
 import { BarMoved, GameEnd, GameStart } from '@/types/game';
 import { UserStatus } from '@/types/user';
 
-import { GameData, Player } from '@/game/game-data';
+import { CANVASE_HEIGHT, GameData, Player } from '@/game/game-data';
 
 import { corsOption } from '../common/option/cors.option';
 import { createWsException } from '../common/util';
@@ -69,6 +69,12 @@ export class GameGateway {
     const game = this.gameRepository.find(gameId);
     if (game === undefined) {
       throw new WsException('게임이 존재하지 않습니다.');
+    }
+
+    if (y < 0 + game.gameData.leftPlayer.height / 2) {
+      y = 0 + game.gameData.leftPlayer.height / 2;
+    } else if (y > CANVASE_HEIGHT - game.gameData.leftPlayer.height / 2) {
+      y = CANVASE_HEIGHT - game.gameData.leftPlayer.height / 2;
     }
     if (game.gameData.leftPlayer.userId === socket.data.userId) {
       game.gameData.leftPlayer.y = y;
