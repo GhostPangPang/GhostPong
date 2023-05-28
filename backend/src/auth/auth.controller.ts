@@ -10,8 +10,6 @@ import {
 } from '@nestjs/swagger';
 import { Response } from 'express';
 
-import { TokenResponse } from '@/types/auth/response';
-
 import { COOKIE_OPTIONS } from '../common/constant';
 import { ExtractUserId } from '../common/decorator/extract-user-id.decorator';
 import { ErrorResponseDto } from '../common/dto/error-response.dto';
@@ -91,9 +89,10 @@ export class AuthController {
   async twoFactorAuthLogin(
     @ExtractUserId() myId: number,
     @Body() { code }: CodeVerificationRequestDto,
-  ): Promise<TokenResponse> {
+    @Res() res: Response,
+  ): Promise<void> {
     const token = await this.authService.twoFactorAuthSignIn(myId, code);
-    return { token };
+    res.clearCookie('jwt-for-2fa').send({ token });
   }
 
   /**
