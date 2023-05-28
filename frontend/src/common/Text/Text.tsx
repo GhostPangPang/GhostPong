@@ -17,4 +17,5 @@ export const Text = styled.span<TextProps>`
   font-weight: ${(props) => props.theme.fontWeight[props.weight || 'regular']};
   text-shadow: ${(props) => props.theme.textShadow[props.shadow || 'none']};
   line-height: 1.5;
+  overflow-wrap: break-word;
 `;
