@@ -12,7 +12,7 @@ const initialData = {
   exp: 0,
   winCount: 0,
   loseCount: 0,
-  achievements: 0,
+  achievements: [],
 };
 
 export const useProfileData = (userId: number) => {
