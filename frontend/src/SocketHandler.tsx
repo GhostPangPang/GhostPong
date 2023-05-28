@@ -93,6 +93,9 @@ export const SocketHandler = () => {
           observer.userId === data.userId ? { ...observer, role: 'admin' } : observer,
         );
       }
+      if (userInfo.id === data.userId) {
+        updatedState.currentRole = 'admin';
+      }
 
       return updatedState;
     });
@@ -102,20 +105,23 @@ export const SocketHandler = () => {
   const updateOwnerEvent = useRecoilCallback(({ set }) => (data: UserId) => {
     console.log('socket owner', data);
     set(channelDataState, (prev: ChannelData) => {
+      const updatedState: ChannelData = { ...prev };
       // user가 observer / rightPlayer
       const user =
         prev.observers.find((observer) => observer.userId === data.userId) ||
         (prev.rightPlayer?.userId === data.userId ? prev.rightPlayer : undefined);
       const isRightPlayer = user === prev.rightPlayer;
 
-      return {
-        ...prev,
-        observers: prev.observers.filter((observer) => observer.userId !== data.userId),
-        leftPlayer: user
-          ? ({ userId: data.userId, nickname: user.nickname, image: user.image, role: 'owner' } as MemberInfo)
-          : null,
-        rightPlayer: isRightPlayer ? null : prev.rightPlayer,
-      };
+      updatedState.observers = prev.observers.filter((observer) => observer.userId !== data.userId);
+      updatedState.leftPlayer = user
+        ? ({ userId: data.userId, nickname: user.nickname, image: user.image, role: 'owner' } as MemberInfo)
+        : null;
+      updatedState.rightPlayer = isRightPlayer ? null : prev.rightPlayer;
+      if (userInfo.id === data.userId) {
+        updatedState.currentRole = 'owner';
+      }
+
+      return updatedState;
     });
   });
 
@@ -129,7 +135,7 @@ export const SocketHandler = () => {
     }));
     if (userInfo.id === data.userId) {
       navigate('/channel/list');
-      alert('강퇴되었습니다.');
+      alert('Kick 되었습니다.');
     }
   });
 
@@ -143,7 +149,7 @@ export const SocketHandler = () => {
     }));
     if (userInfo.id === data.userId) {
       navigate('/channel/list');
-      alert('차단당했습니다.');
+      alert('Ban 당했습니다.');
     }
   });
 
