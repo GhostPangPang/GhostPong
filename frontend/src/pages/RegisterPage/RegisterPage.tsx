@@ -2,7 +2,7 @@ import { GameButton, Text, Grid, GameInput } from '@/common';
 import { ApiError, post } from '@/libs/api';
 import { setAccessToken } from '@/libs/api/auth';
 import { useMutation } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 type TokenResponse = {
   token: string;
@@ -27,6 +27,10 @@ export const RegisterPage = () => {
     },
   });
 
+  useEffect(() => {
+    if (isSuccess) window.location.replace('/');
+  }, [isSuccess]);
+
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.target.value = e.target.value.toLowerCase();
     setNickname(e.target.value);
@@ -34,7 +38,6 @@ export const RegisterPage = () => {
 
   const handleRegister = () => {
     registerUser(nickname);
-    if (isSuccess) window.location.replace('/');
   };
 
   return (

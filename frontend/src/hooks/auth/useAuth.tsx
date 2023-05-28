@@ -35,9 +35,6 @@ export const useAuth = () => {
     staleTime: Infinity,
     useErrorBoundary: false,
     retry: 0,
-    onError: () => {
-      location.replace('/pre');
-    },
   });
 
   useEffect(() => {

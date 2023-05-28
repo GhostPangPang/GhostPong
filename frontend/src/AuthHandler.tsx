@@ -9,13 +9,15 @@ export const AuthHandler = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log('AuthHandler', token);
-    if (token) setAccessToken(token);
+    if (token) {
+      console.log('authHandler', token);
+      setAccessToken(token);
+    }
   }, []);
 
   useEffect(() => {
     if (token) {
-      navigate('/');
+      window.location.replace('/');
     }
     if (!token) {
       navigate('/pre');
