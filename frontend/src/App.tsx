@@ -21,11 +21,13 @@ import { QueryErrorResetBoundary } from '@tanstack/react-query';
 import { GameLoadingPage } from './pages/GameLoadingPage';
 import { TwoFactorLoginPage } from './pages/TwoFactorLoginPage';
 import { ProtectedRoute } from './ProtectedRoute';
+import { DebugObserver } from './DebugObserver';
 
 function App() {
   return (
     <BrowserRouter>
       <Suspense fallback={<Loading />}>
+        {/* <DebugObserver /> */}
         <QueryErrorResetBoundary>
           {({ reset }) => (
             <ErrorBoundary FallbackComponent={FallbackComponent} onError={logError} onReset={reset}>
