@@ -20,7 +20,6 @@ import { AuthHandler } from './AuthHandler';
 import { QueryErrorResetBoundary } from '@tanstack/react-query';
 import { GameLoadingPage } from './pages/GameLoadingPage';
 import { useRecoilSnapshot } from 'recoil';
-import { AuthChecker } from './AuthChecker';
 import { TwoFactorLoginPage } from './pages/TwoFactorLoginPage';
 
 function App() {
@@ -32,21 +31,19 @@ function App() {
           {({ reset }) => (
             <ErrorBoundary FallbackComponent={FallbackComponent} onError={logError} onReset={reset}>
               <Routes>
-                <Route element={<AuthChecker />}>
-                  <Route element={<MainLayout />}>
-                    <Route path="/" element={<LobbyPage />} />
-                    <Route path="/message" element={<MessagePage />} />
-                    <Route path="/channel/list" element={<GameListPage />} />
-                    <Route element={<FooterLayout />}>
-                      <Route path="/profile/:userId" element={<ProfilePage />} />
-                      <Route path="/profile/edit" element={<EditProfilePage />} />
-                    </Route>
+                <Route element={<MainLayout />}>
+                  <Route path="/" element={<LobbyPage />} />
+                  <Route path="/message" element={<MessagePage />} />
+                  <Route path="/channel/list" element={<GameListPage />} />
+                  <Route element={<FooterLayout />}>
+                    <Route path="/profile/:userId" element={<ProfilePage />} />
+                    <Route path="/profile/edit" element={<EditProfilePage />} />
                   </Route>
-                  <Route element={<GameLayout />}>
-                    <Route path="/channel/:gameId" element={<GameReadyPage />} />
-                    <Route path="/game/:gameId" element={<PingPongGame />} />
-                    <Route path="/game/loading" element={<GameLoadingPage />} />
-                  </Route>
+                </Route>
+                <Route element={<GameLayout />}>
+                  <Route path="/channel/:gameId" element={<GameReadyPage />} />
+                  <Route path="/game/:gameId" element={<PingPongGame />} />
+                  <Route path="/game/loading" element={<GameLoadingPage />} />
                 </Route>
                 <Route path="/pre" element={<PrePage />} />
                 <Route path="/auth?/" element={<AuthHandler />} />
