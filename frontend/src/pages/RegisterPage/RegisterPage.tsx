@@ -14,12 +14,12 @@ const postRegisterUser = async (nickname: string) => {
 
 export const RegisterPage = () => {
   const [nickname, setNickname] = useState<string>('');
-  const { mutate: registerUser } = useMutation(postRegisterUser, {
+  const { mutate: registerUser, isSuccess } = useMutation(postRegisterUser, {
     onSuccess: (data: TokenResponse) => {
+      console.log('register', data);
       const { token } = data;
       if (token) {
         setAccessToken(token);
-        window.location.replace('/');
       }
     },
     onError: (error: ApiError) => {
@@ -33,7 +33,9 @@ export const RegisterPage = () => {
   };
 
   const handleRegister = () => {
+    console.log('Register');
     registerUser(nickname);
+    if (isSuccess) window.location.replace('/');
   };
 
   return (
