@@ -11,6 +11,7 @@ import { JwtConfigModule } from '../config/auth/jwt/configuration.module';
 import { MailerConfigModule } from '../config/auth/mailer/configuration.module';
 import { MailerConfigService } from '../config/auth/mailer/configuration.service';
 import { Auth } from '../entity/auth.entity';
+import { User } from '../entity/user.entity';
 
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
@@ -20,7 +21,7 @@ import { UserStrategy } from './strategy/user.strategy';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Auth]),
+    TypeOrmModule.forFeature([Auth, User]),
     JwtModule.register({}),
     FtAuthConfigModule,
     JwtConfigModule,
