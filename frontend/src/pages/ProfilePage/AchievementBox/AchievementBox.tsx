@@ -20,45 +20,40 @@ interface AchievementProps {
   title: string;
 }
 
-const StyledLink = styled.a`
-  position: relative;
-  display: inline-block;
-`;
-
 const Achievement1 = (props: AchievementProps) => (
-  <StyledLink title={props.title}>
+  <div title={props.title}>
     <Achievement1SVG style={props.style} />
-  </StyledLink>
+  </div>
 );
 const Achievement2 = (props: AchievementProps) => (
-  <StyledLink title={props.title}>
+  <div title={props.title}>
     <Achievement2SVG style={props.style} />
-  </StyledLink>
+  </div>
 );
 const Achievement3 = (props: AchievementProps) => (
-  <StyledLink title={props.title}>
+  <div title={props.title}>
     <Achievement3SVG style={props.style} />
-  </StyledLink>
+  </div>
 );
 const Achievement4 = (props: AchievementProps) => (
-  <StyledLink title={props.title}>
+  <div title={props.title}>
     <Achievement4SVG style={props.style} />
-  </StyledLink>
+  </div>
 );
 const Achievement5 = (props: AchievementProps) => (
-  <StyledLink title={props.title}>
+  <div title={props.title}>
     <Achievement5SVG style={props.style} />
-  </StyledLink>
+  </div>
 );
 const Achievement6 = (props: AchievementProps) => (
-  <StyledLink title={props.title}>
+  <div title={props.title}>
     <Achievement6SVG style={props.style} />
-  </StyledLink>
+  </div>
 );
 const Achievement7 = (props: AchievementProps) => (
-  <StyledLink title={props.title}>
+  <div title={props.title}>
     <Achievement7SVG style={props.style} />
-  </StyledLink>
+  </div>
 );
 
 const achievementsComponents = [
