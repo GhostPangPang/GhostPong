@@ -72,6 +72,7 @@ export const usePingPongGame = () => {
   const resetGameId = useResetRecoilState(gameIdState);
   const resetGamePlayer = useResetRecoilState(gamePlayerState);
   const resetGameData = useResetRecoilState(gameDataState);
+  const resetGameStatus = useResetRecoilState(gameStatusState);
   const resetCanvasSize = useResetRecoilState(canvasSizeState);
   const resetCanvasRatio = useResetRecoilState(canvasRatioState);
 
@@ -135,6 +136,7 @@ export const usePingPongGame = () => {
       resetGameId();
       resetGamePlayer();
       resetGameData();
+      resetGameStatus();
       resetCanvasSize();
       resetCanvasRatio();
       offEvent(GameEvent.GAMEDATA);
