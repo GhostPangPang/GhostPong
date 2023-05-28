@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { get, post, del, ApiResponse, ApiError } from '@/libs/api';
 import { FriendResponse as FriendDto, RequestedFriendsResponse as RequestFriendDto } from '@/dto/friend/response';
+import { QueryProps } from '@/types/query';
 
 type FriendResponse = FriendDto['friends'];
 type RequestFriendResponse = RequestFriendDto['requests'];
@@ -61,13 +62,14 @@ export const useFriend = () => {
  * useFriendRequest
  * @returns friendRequests, refetchFriendRequests
  */
-export const useFriendRequest = () => {
+export const useFriendRequest = ({ enabled = true }: QueryProps = {}) => {
   /**
    * Get friend requests
    */
   const { data: friendRequests = [], refetch: refetchFriendRequests } = useQuery<RequestFriendResponse>({
     queryKey: [FRIEND_REQUEST],
     queryFn: getFriendRequest,
+    enabled: enabled,
     onError: (error) => {
       throw error;
     },

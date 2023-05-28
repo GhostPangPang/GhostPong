@@ -1,6 +1,7 @@
 export const MessageEvent = {
   LASTVIEW: 'last-message-view',
   MESSAGE: 'message',
+  FRIENDACCEPT: 'friend-accepted',
 };
 
 export const GLOBALEVENT = {

@@ -2,6 +2,7 @@ import { Avatar, Box, CommonButton, GameButton, GameInput, Grid, Text, Modal, Mo
 import { useInput } from '@/hooks';
 import { useFriendMutation, useFriendRequest } from '@/hooks/friend';
 import { User } from '@/types/entity';
+import { useEffect } from 'react';
 
 const FriendRequestItem = ({ friendId, friend }: { friendId: number; friend: User }) => {
   const { nickname, image } = friend;
@@ -28,9 +29,13 @@ const FriendRequestItem = ({ friendId, friend }: { friendId: number; friend: Use
 };
 
 export const FriendsModal = ({ isOpen, onClose }: Omit<ModalProps, 'children'>) => {
-  const { friendRequests } = useFriendRequest();
+  const { friendRequests, refetchFriendRequests } = useFriendRequest({ enabled: isOpen });
   const { requestFriend } = useFriendMutation();
   const { value: nickname, setValue: setNickname, onChange: handleNicknameChange } = useInput('');
+
+  useEffect(() => {
+    refetchFriendRequests();
+  }, [isOpen]);
 
   const handleFriendRequest = () => {
     if (!nickname) alert('닉네임을 입력해주세요!');
