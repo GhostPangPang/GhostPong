@@ -1,11 +1,11 @@
 import { Avatar, Box, CommonButton, GameButton, GameInput, Grid, Text, Modal, ModalProps } from '@/common';
 import { useInput } from '@/hooks';
-import { useFriend } from '@/hooks/friend';
+import { useFriendMutation, useFriendRequest } from '@/hooks/friend';
 import { User } from '@/types/entity';
 
 const FriendRequestItem = ({ friendId, friend }: { friendId: number; friend: User }) => {
   const { nickname, image } = friend;
-  const { acceptFriendRequest, rejectFriendRequest } = useFriend();
+  const { acceptFriendRequest, rejectFriendRequest } = useFriendMutation();
 
   return (
     <Box as="li" display="flex" justifyContent="space-between" alignItems="center" padding="sm" width="100%" gap={0.5}>
@@ -28,7 +28,8 @@ const FriendRequestItem = ({ friendId, friend }: { friendId: number; friend: Use
 };
 
 export const FriendsModal = ({ isOpen, onClose }: Omit<ModalProps, 'children'>) => {
-  const { friendRequests, requestFriend } = useFriend();
+  const { friendRequests } = useFriendRequest();
+  const { requestFriend } = useFriendMutation();
   const { value: nickname, setValue: setNickname, onChange: handleNicknameChange } = useInput('');
 
   const handleFriendRequest = () => {

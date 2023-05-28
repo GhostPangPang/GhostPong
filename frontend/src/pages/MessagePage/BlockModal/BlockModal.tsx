@@ -1,11 +1,11 @@
 import { Avatar, Box, CommonButton, GameButton, GameInput, Grid, Text, Modal, ModalProps } from '@/common';
 import { useInput } from '@/hooks';
-import { useBlocked } from '@/hooks/blocked';
+import { useBlocked, useBlockedMutation } from '@/hooks/blocked';
 import { User } from '@/types/entity';
 
 const BlockFriendItem = ({ blocked }: { blocked: User }) => {
   const { id, nickname, image } = blocked;
-  const { deleteBlocked } = useBlocked();
+  const { deleteBlocked } = useBlockedMutation();
 
   return (
     <Box as="li" display="flex" justifyContent="space-between" alignItems="center" padding="sm" width="100%" gap={0.5}>
@@ -25,7 +25,8 @@ const BlockFriendItem = ({ blocked }: { blocked: User }) => {
 };
 
 export const BlockModal = ({ isOpen, onClose }: Omit<ModalProps, 'children'>) => {
-  const { blocked, updateBlocked } = useBlocked();
+  const { blocked } = useBlocked();
+  const { updateBlocked } = useBlockedMutation();
   const { value: nickname, onChange: handleNicknameChange } = useInput('');
 
   return (

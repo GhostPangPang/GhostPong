@@ -37,11 +37,9 @@ const delFriend = async (friendId: number) => {
 
 /**
  * useFriend
- * @brief Get friends, friend requests, and mutate friend requests
+ * @returns friends, refetchFriends
  */
 export const useFriend = () => {
-  const queryClient = useQueryClient();
-
   /**
    * Get friends
    */
@@ -53,6 +51,17 @@ export const useFriend = () => {
     },
   });
 
+  return {
+    friends,
+    refetchFriends,
+  };
+};
+
+/**
+ * useFriendRequest
+ * @returns friendRequests, refetchFriendRequests
+ */
+export const useFriendRequest = () => {
   /**
    * Get friend requests
    */
@@ -64,6 +73,18 @@ export const useFriend = () => {
     },
   });
 
+  return {
+    friendRequests,
+    refetchFriendRequests,
+  };
+};
+
+/**
+ * useFriendMutation
+ * @returns requestFriend, deleteFriend, acceptFriendRequest, rejectFriendRequest
+ */
+export const useFriendMutation = () => {
+  const queryClient = useQueryClient();
   /**
    * Update friend requests
    */
@@ -155,10 +176,6 @@ export const useFriend = () => {
   });
 
   return {
-    friends,
-    refetchFriends,
-    friendRequests,
-    refetchFriendRequests,
     requestFriend,
     deleteFriend,
     acceptFriendRequest,

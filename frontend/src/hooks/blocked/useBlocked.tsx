@@ -25,12 +25,19 @@ const delBlocked = async (userId: number) => {
 };
 
 export const useBlocked = () => {
-  const queryClient = useQueryClient();
-
   const { data = [], refetch: refetchBlocked } = useQuery<BlockedResponse>({
     queryKey: [BLOCKED],
     queryFn: getBlockedList,
   });
+
+  const blocked = data.sort((a, b) => {
+    return a.nickname.localeCompare(b.nickname);
+  });
+  return { blocked, refetchBlocked };
+};
+
+export const useBlockedMutation = () => {
+  const queryClient = useQueryClient();
 
   const { mutate: updateBlocked } = useMutation(postBlocked, {
     onSuccess: async (data, info) => {
@@ -75,8 +82,8 @@ export const useBlocked = () => {
     },
   });
 
-  const blocked = data.sort((a, b) => {
-    return a.nickname.localeCompare(b.nickname);
-  });
-  return { blocked, refetchBlocked, updateBlocked, deleteBlocked };
+  return {
+    updateBlocked,
+    deleteBlocked,
+  };
 };
