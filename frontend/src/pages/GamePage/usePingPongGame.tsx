@@ -8,20 +8,26 @@ import {
   gameDataState,
   gameStatusState,
   gameResultState,
+  ballState,
+  leftPlayerState,
+  rightPlayerState,
+  gameModeState,
+  gameTypeState,
+  gameMemberTypeState,
 } from '@/stores/gameState';
 import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
-import { updateBall, checkPlayerCollision, checkWallCollision, checkGameEnded } from '@/game/utils';
-import { MemberType } from './GamePage';
+import { updateBall, checkWallCollision } from '@/game/utils';
 import { useEffect } from 'react';
 import { emitEvent, offEvent, onEvent } from '@/libs/api';
 import { GameEvent } from '@/constants';
-import { Player, GameData, BAR_PADDING, BAR_WIDTH, CANVASE_WIDTH } from '@/game/game-data';
+import { Player, Ball, GameData, BAR_PADDING, BAR_WIDTH, CANVASE_WIDTH } from '@/game/game-data';
 import { GameEnd, BarMoved } from '@/dto/game';
 
 import wallSound from '@/assets/sounds/wall.mp3';
 import hitSound from '@/assets/sounds/hit.mp3';
 import endSound from '@/assets/sounds/end.mp3';
-import { useSound } from '@/hooks';
+import { debounce } from '@/libs/utils/debounce';
+import { AudioManager } from '@/libs/utils/sound';
 
 const NET_WIDTH = 1;
 const NET_HEIGHT = 3;
@@ -43,18 +49,24 @@ export interface GameHook {
 export const usePingPongGame = () => {
   // recoil game states
   const gameId = useRecoilValue(gameIdState);
+  const gameMode = useRecoilValue(gameModeState);
   const gamePlayer = useRecoilValue(gamePlayerState);
 
   const [gameStatus, setGameStatus] = useRecoilState(gameStatusState);
+  const [gameMemberType, setGameMemberType] = useRecoilState(gameMemberTypeState);
   const [gameData, setGameData] = useRecoilState(gameDataState);
+  const [ball, setBall] = useRecoilState(ballState);
+  const [leftPlayer, setLeftPlayer] = useRecoilState(leftPlayerState);
+  const [rightPlayer, setRightPlayer] = useRecoilState(rightPlayerState);
+
   const [gameResult, setGameResult] = useRecoilState(gameResultState);
   const [canvasSize, setCanvasSize] = useRecoilState(canvasSizeState);
   const canvasRatio = useRecoilValue(canvasRatioState);
 
   // sounds
-  const playWallSound = useSound(wallSound);
-  const playHitSound = useSound(hitSound);
-  const playEndSound = useSound(endSound);
+  const playWallSound = AudioManager.getInstance(wallSound);
+  const playHitSound = AudioManager.getInstance(hitSound);
+  const playEndSound = AudioManager.getInstance(endSound);
 
   // recoil reset
   const resetGameId = useResetRecoilState(gameIdState);
@@ -64,7 +76,6 @@ export const usePingPongGame = () => {
   const resetCanvasRatio = useResetRecoilState(canvasRatioState);
 
   // variables
-  const { mode, leftPlayer, rightPlayer, ball } = gameData;
   const { width, height } = canvasSize;
   const { ratio } = canvasRatio;
 
@@ -77,13 +88,13 @@ export const usePingPongGame = () => {
     // init game date
     const { leftPlayer: leftUser, rightPlayer: rightUser } = gamePlayer;
 
-    // 이거 괜찮은지 확인하기
     setGameData((prev) => ({
       ...prev,
       id: gameId,
-      mode: 'normal',
-      leftPlayer: new Player(leftUser?.userId ?? 1, BAR_PADDING, 'normal'),
-      rightPlayer: new Player(rightUser?.userId ?? 2, CANVASE_WIDTH - BAR_PADDING - BAR_WIDTH, 'normal'), // width 신경쓰기
+      mode: gameMode,
+      ball: new Ball(gameMode),
+      leftPlayer: new Player(leftUser.userId, BAR_PADDING, gameMode),
+      rightPlayer: new Player(rightUser.userId, CANVASE_WIDTH - BAR_PADDING - BAR_WIDTH, gameMode), // width 신경쓰기
     }));
 
     // gameStatus 바꾸기
@@ -98,20 +109,20 @@ export const usePingPongGame = () => {
     });
 
     // game bar moved
-    onEvent(GameEvent.MOVEBAR, (data: BarMoved) => {
+    onEvent(GameEvent.BARMOVED, (data: BarMoved) => {
       const { userId, y } = data;
 
-      if (userId === leftPlayer.userId) {
-        setGameData((prev) => ({ ...prev, leftPlayer: { ...prev.leftPlayer, y } }));
-      } else if (userId === rightPlayer.userId) {
-        setGameData((prev) => ({ ...prev, rightPlayer: { ...prev.rightPlayer, y } }));
+      if (gameMemberType !== 'leftPlayer' && userId === leftPlayer.userId) {
+        setLeftPlayer((prev) => ({ ...prev, y }));
+      } else if (gameMemberType !== 'rightPlayer' && userId === rightPlayer.userId) {
+        setRightPlayer((prev) => ({ ...prev, y }));
       }
     });
 
     // game end event
     onEvent(GameEvent.GAMEEND, (data: GameEnd) => {
       console.log('GAMEEND', data);
-      playEndSound();
+      playEndSound.play();
       setGameStatus('end');
       setGameResult(data);
     });
@@ -127,7 +138,7 @@ export const usePingPongGame = () => {
       resetCanvasSize();
       resetCanvasRatio();
       offEvent(GameEvent.GAMEDATA);
-      offEvent(GameEvent.MOVEBAR);
+      offEvent(GameEvent.BARMOVED);
       offEvent(GameEvent.GAMEEND);
     };
   }, []);
@@ -152,7 +163,6 @@ export const usePingPongGame = () => {
     drawNet(context);
 
     // draw the ball
-    // drawBall(context);
     drawArc(context, ball.x * ratio, ball.y * ratio, ball.radius * ratio, theme.color.secondary);
 
     // draw leftPlayer paddle
@@ -195,44 +205,45 @@ export const usePingPongGame = () => {
     context.fill();
   };
 
-  const moveBar = (playerType: MemberType, y: number) => {
-    if (playerType === 'leftPlayer') {
-      const normalY = y / ratio - leftPlayer.height / 2;
-      // leftPlayer.y = normalY;
-      setGameData((prev) => ({ ...prev, leftPlayer: { ...prev.leftPlayer, y: normalY } }));
-      emitEvent(GameEvent.MOVEBAR, { gameId, y: normalY });
-    } else if (playerType === 'rightPlayer') {
-      const normalY = y / ratio - rightPlayer.height / 2;
-      // rightPlayer.y = normalY;
-      setGameData((prev) => ({ ...prev, rightPlayer: { ...prev.rightPlayer, y: normalY } }));
-      emitEvent(GameEvent.MOVEBAR, { gameId, y: normalY });
+  const moveBarEvent = debounce((y: number) => {
+    emitEvent(GameEvent.MOVEBAR, { gameId, y });
+  }, 10);
+
+  const moveBar = (y: number) => {
+    let normalY: number;
+    if (gameMemberType === 'leftPlayer') {
+      normalY = y / ratio - leftPlayer.height / 2;
+      setLeftPlayer((prev) => ({ ...prev, y: normalY }));
+      moveBarEvent(normalY);
+    } else if (gameMemberType === 'rightPlayer') {
+      normalY = y / ratio - rightPlayer.height / 2;
+      setRightPlayer((prev) => ({ ...prev, y: normalY }));
+      moveBarEvent(normalY);
     }
   };
 
   const updateGame = () => {
     const updateData: GameData = {
       id: gameId,
-      mode: mode,
+      mode: gameMode,
       leftPlayer: { ...leftPlayer },
       rightPlayer: { ...rightPlayer },
       ball: { ...ball },
     };
     updateBall(updateData);
-    // checkPlayerCollision(updateData);
     checkWallCollision(updateData.ball);
-    // checkGameEnded(updateData);
 
     // play sound
     if (updateData.ball.vy * ball.vy < 0) {
-      if (updateData.ball.vx * ball.vx < 0) playHitSound();
-      else playWallSound();
+      if (updateData.ball.vx * ball.vx < 0) playHitSound.play();
+      else playWallSound.play();
     }
     setGameData(updateData);
   };
 
   const playGame = (context: CanvasRenderingContext2D) => {
     draw(context);
-    updateGame();
+    updateGame(); //이게 계속 되는듯
   };
 
   return { gamePlayer, gameResult, gameStatus, setCanvasSize, playGame, moveBar, drawCountDown };

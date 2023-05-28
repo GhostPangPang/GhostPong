@@ -1,27 +1,40 @@
-import { channelDataState, gamePlayerState, gameResultState } from '@/stores';
+import {
+  channelDataState,
+  gameIdState,
+  gamePlayerState,
+  gameResultState,
+  gameStatusState,
+  gameTypeState,
+} from '@/stores';
 import { useEffect, useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { MemberInfo } from '@/dto/channel/socket';
 import { Grid, WideModal, Text, Avatar, GameButton } from '@/common';
 import { useNavigate } from 'react-router-dom';
+import { useLeaveChannel } from '@/hooks/channel';
 
 export const GameResultModal = ({ isEnd }: { isEnd: boolean }) => {
   const navigate = useNavigate();
   const setChannelData = useSetRecoilState(channelDataState);
+  const setGameStatue = useSetRecoilState(gameStatusState);
 
+  const gameId = useRecoilValue(gameIdState);
+  const gameType = useRecoilValue(gameTypeState);
   const gamePlayer = useRecoilValue(gamePlayerState);
   const gameResult = useRecoilValue(gameResultState);
 
+  const { leaveChannel } = useLeaveChannel();
+
   const [winner, setWinner] = useState<MemberInfo>({
     userId: 0,
-    nickname: 'nkim',
-    image: 'https://avatars.githubusercontent.com/u/51353146?s=400&u=5dac46f1a37fee992df5da1b537262e917f5de42&v=4',
+    nickname: '',
+    image: '',
     role: 'admin',
   });
   const [loser, setLoser] = useState<MemberInfo>({
     userId: 0,
-    nickname: 'hannkim',
-    image: 'https://avatars.githubusercontent.com/u/51353146?s=400&u=5dac46f1a37fee992df5da1b537262e917f5de42&v=4',
+    nickname: '',
+    image: '',
     role: 'admin',
   });
 
@@ -30,16 +43,21 @@ export const GameResultModal = ({ isEnd }: { isEnd: boolean }) => {
       if (gameResult.winner.id === gamePlayer.leftPlayer.userId) {
         setWinner(gamePlayer.leftPlayer);
         setLoser(gamePlayer.rightPlayer);
+      } else {
+        setWinner(gamePlayer.rightPlayer);
+        setLoser(gamePlayer.leftPlayer);
       }
     }
   }, [gameResult]); // depth 고민해보기
 
   const handleLeave = () => {
+    leaveChannel(gameId);
     navigate('/');
   };
 
   const handleGoToWaitingPage = () => {
     setChannelData((prev) => ({ ...prev, isInGame: false }));
+    setGameStatue('ready');
   };
 
   return (
@@ -83,9 +101,11 @@ export const GameResultModal = ({ isEnd }: { isEnd: boolean }) => {
           <GameButton size="md" color="foreground" onClick={handleLeave}>
             나가기
           </GameButton>
-          <GameButton size="md" onClick={handleGoToWaitingPage}>
-            대기페이지로
-          </GameButton>
+          {gameType === 'normal' && (
+            <GameButton size="md" onClick={handleGoToWaitingPage}>
+              대기페이지로
+            </GameButton>
+          )}
         </Grid>
       </Grid>
     </WideModal>
