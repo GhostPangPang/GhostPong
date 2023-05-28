@@ -4,7 +4,7 @@ import { post } from '@/libs/api';
 import { useMutation } from '@tanstack/react-query';
 
 const postVerifyCode = async (code: string) => {
-  return await post('auth/2fa', { code });
+  return await post('/auth/42login/2fa', { code });
 };
 
 export const TwoFactorLoginPage = () => {
