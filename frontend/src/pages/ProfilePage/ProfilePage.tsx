@@ -4,8 +4,6 @@ import { InfoBox } from './InfoBox';
 import { AchievementBox } from './AchievementBox';
 import { HistroyBox } from './HistoryBox';
 import { useMemo, useEffect, useState } from 'react';
-import { ReactComponent as Achievement1 } from '@/svgs/achievment1.svg';
-import { ReactComponent as Achievement2 } from '@/svgs/achievment2.svg';
 import { useProfileData } from '@/hooks/user/useProfileData';
 import { useLocation } from 'react-router-dom';
 
@@ -28,7 +26,6 @@ export const ProfilePage = () => {
       ).toFixed(1),
     [data.winCount, data.loseCount],
   );
-
   // 자신의 id인지 확인하는 절차가 필요함
   return (
     // media query 100rem 이하일 때
@@ -43,10 +40,7 @@ export const ProfilePage = () => {
         <InfoBox title="경험치" desc={(data.exp * 100).toString()} subDesc="exp" />
       </Grid>
       <Grid container="flex" direction="row" justifyContent="start" alignItems="center">
-        <AchievementBox>
-          <Achievement1 height="inherit" />
-          <Achievement2 height="inherit" />
-        </AchievementBox>
+        <AchievementBox achievements={data.achievements} />
       </Grid>
       <Grid container="flex" direction="column">
         <HistroyBox userId={userId} />
