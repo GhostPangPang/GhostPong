@@ -32,7 +32,6 @@ const MUTE_EXPIRES_IN = 1000 * 60;
 const COOKIE_OPTIONS: CookieOptions = {
   maxAge: COOKIE_EXPIRES_IN,
   httpOnly: true,
-  secure: true,
   sameSite: 'lax',
 };
 
