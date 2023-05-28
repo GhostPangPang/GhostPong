@@ -1,8 +1,11 @@
-import { useChannelMutation } from '@/hooks/channel';
+import { useChannelMutation, useLeaveChannel } from '@/hooks/channel';
+import { useFriendMutation } from '@/hooks/friend';
+import { useBlockedMutation } from '@/hooks/blocked';
 import { useRecoilValue } from 'recoil';
 import { channelIdState, channelDataState, currentRoleSelector } from '@/stores';
 import { useUserInfo } from '@/hooks/user';
 import { MemberInfo } from '@/dto/channel';
+import { useNavigate } from 'react-router-dom';
 
 export interface Item {
   label: string;
@@ -18,21 +21,47 @@ export interface Items {
 // 이걸 리코일에 넣을까
 export const useItemGenerator = (): Items => {
   const { becomeAdmin, kick, ban, mute } = useChannelMutation();
+  const { requestFriend } = useFriendMutation();
+  const { updateBlocked } = useBlockedMutation();
+  const { leaveChannel } = useLeaveChannel();
   const newChannelData = useRecoilValue(channelDataState);
   const currentRole = useRecoilValue(currentRoleSelector);
   const channelId = useRecoilValue(channelIdState);
   const { userInfo } = useUserInfo();
+  const navigate = useNavigate();
 
   const getCommonItems = (userId: number) =>
     userId === userInfo.id
       ? []
       : [
           // eslint-disable-next-line @typescript-eslint/no-empty-function
-          { label: '친구추가', onClick: () => {} },
+          {
+            label: '친구추가',
+            onClick: () => {
+              requestFriend(userId);
+            },
+          },
           // eslint-disable-next-line @typescript-eslint/no-empty-function
-          { label: '차단', onClick: () => {} },
+          {
+            label: '차단',
+            onClick: () => {
+              updateBlocked(userId, {
+                onSuccess: () => {
+                  alert('차단되었습니다.');
+                },
+              });
+            },
+          },
           // eslint-disable-next-line @typescript-eslint/no-empty-function
-          { label: '프로필', onClick: () => {} },
+          {
+            label: '프로필',
+            onClick: () => {
+              if (confirm('프로필 페이지로 이동하시겠습니까?')) {
+                leaveChannel(channelId);
+                navigate(`/profile/${userId}`);
+              }
+            },
+          },
         ];
 
   const getAdminItems = (userId: number) =>
