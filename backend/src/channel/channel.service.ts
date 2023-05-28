@@ -14,6 +14,7 @@ import { Cache } from 'cache-manager';
 import { Repository } from 'typeorm';
 
 import { ChannelRole, FullChannelInfoResponse, MemberInfo, UpdatedMode, UserId } from '@/types/channel';
+import { UserNickname } from '@/types/user';
 
 import { MUTE_EXPIRES_IN, PARTICIPANT_LIMIT } from '../common/constant';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
@@ -159,11 +160,18 @@ export class ChannelService {
    * 채널 초대하기
    */
   async inviteChannel(myId: number, userId: number, channel: Channel): Promise<SuccessResponseDto> {
+    const user = await this.userRepository.findOne({
+      where: { id: myId },
+      select: ['nickname'],
+    });
+    if (user === null) {
+      throw new NotFoundException('존재하지 않는 유저입니다.');
+    }
     this.findExistChannelUser(myId, channel);
-    const socketId = this.findExistSocket(myId);
+    const userSocketId = this.findExistSocket(userId);
     await this.checkExistFriendship(myId, userId);
     this.invitationRepository.insert({ userId: userId, channelId: channel.id });
-    this.channelGateway.emitUser<UserId>(socketId, 'invite-channel', { userId: myId });
+    this.channelGateway.emitUser<UserNickname>(userSocketId, 'channel-invited', { nickname: user.nickname });
 
     return {
       message: '채널 초대에 성공했습니다.',
