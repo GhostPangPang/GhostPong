@@ -31,6 +31,7 @@ export const useHistoryData = (userId: number) => {
     retryOnMount: true,
     suspense: true,
     staleTime: Infinity,
+    enabled: userId !== 0,
     getNextPageParam: (lastPage, allPages) => {
       console.log(allPages);
       const { total } = lastPage;

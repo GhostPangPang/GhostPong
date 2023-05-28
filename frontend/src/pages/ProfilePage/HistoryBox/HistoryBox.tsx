@@ -79,8 +79,11 @@ const HistoryItem = ({ color, winner, loser, winnerScore, loserScore, createdAt 
   );
 };
 
-export const HistroyBox = () => {
-  const userId = 1;
+interface HistoryBoxProps {
+  userId: number;
+}
+
+export const HistroyBox = ({ userId }: HistoryBoxProps) => {
   console.log(userId);
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useHistoryData(userId);
 
