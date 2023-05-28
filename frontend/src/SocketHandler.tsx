@@ -11,16 +11,17 @@ import { useNavigate } from 'react-router-dom';
 import { Friend } from './types';
 import { useQueryClient } from '@tanstack/react-query';
 import { FRIEND } from './hooks/friend';
+import { BlockedUsersSelector } from '@/stores/userInfoState';
 
 export const SocketHandler = () => {
   const socket = useRecoilValue(socketState);
   const { userInfo } = useUserInfo();
+  const BlockedUsers = useRecoilValue(BlockedUsersSelector);
   const newMessages = useRecoilValue(newMessagesState);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   const updateMessageEvent = useRecoilCallback(({ snapshot, set }) => (data: Message) => {
-    console.log('socket message', data);
     const current = snapshot.getLoadable(newMessagesState).getValue().friend;
     if (!current) return;
     if (current.id === data.id) {
@@ -38,7 +39,7 @@ export const SocketHandler = () => {
   });
 
   const updateChatEvent = useRecoilCallback(({ set }) => (data: NewChat) => {
-    console.log('socket chat', data);
+    if (BlockedUsers.find((user: number) => user === data.senderId)) return;
     set(channelDataState, (prev) => ({
       ...prev,
       chats: [...prev.chats, data],
