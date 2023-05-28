@@ -20,7 +20,6 @@ import { AuthHandler } from './AuthHandler';
 import { QueryErrorResetBoundary } from '@tanstack/react-query';
 import { GameLoadingPage } from './pages/GameLoadingPage';
 import { useRecoilSnapshot } from 'recoil';
-import { AuthChecker } from './AuthChecker';
 import { TwoFactorLoginPage } from './pages/TwoFactorLoginPage';
 
 function App() {
