@@ -3,7 +3,7 @@ import { Versus } from './Versus';
 import { ChatBox } from './ChatBox';
 import { ObserverBox } from './ObserverBox';
 import { Grid, GameButton, Text } from '@/common';
-import { useRecoilState, useRecoilValueLoadable, useResetRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { channelIdState, channelDataState, socketState } from '@/stores';
 import { useChannel, useLeaveChannel } from '@/hooks/channel';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -46,12 +46,11 @@ export const GameReadyPage = () => {
 
   const handleStartGame = () => {
     // 임시로 새로 채널 정보 가져오게 하기
-    startGame({ id: channelId, mode: mode });
-
     if (!channelData.leftPlayer || !channelData.rightPlayer) {
       alert('플레이어가 없습니다.');
       return;
     }
+    startGame({ id: channelId, mode: mode });
   };
 
   useEffect(() => {
