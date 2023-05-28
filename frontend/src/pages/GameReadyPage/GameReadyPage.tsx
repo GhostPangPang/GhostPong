@@ -13,12 +13,14 @@ import { useGameMutation, useGameStart } from '@/hooks/game';
 import { Dropdown } from '@/common/Dropdown';
 import { GameMode } from '@/dto/game';
 import { PingPongGame } from '../GamePage';
+import { useBlocked } from '@/hooks/blocked';
 
 export const GameReadyPage = () => {
   const setSocket = useSetRecoilState(socketState);
   const { pathname } = useLocation();
   const [channelId, setChannelId] = useRecoilState(channelIdState);
   const resetChannelId = useResetRecoilState(channelIdState);
+  const { blocked, setBlocked } = useBlocked();
 
   const { refetchChannel } = useChannel(channelId);
   const [channelData, setChannelData] = useRecoilState(channelDataState);
