@@ -1,6 +1,4 @@
-import React, { useState } from 'react';
 import { Grid, Box, Text } from '@/common';
-import styled from 'styled-components';
 import { ReactComponent as Achievement1SVG } from '@/svgs/achievment1.svg';
 import { ReactComponent as Achievement2SVG } from '@/svgs/achievment2.svg';
 import { ReactComponent as Achievement3SVG } from '@/svgs/achievment3.svg';
