@@ -23,6 +23,18 @@ services:
       - 3000:3000
     networks:
       - ghostnetwork
+  client:
+    container_name: ghostclient
+    depends_on:
+      - server
+    image: client
+    build:
+      context: .
+      dockerfile: ./frontend/Dockerfile
+    ports:
+      - 80:80
+    networks:
+      - ghostnetwork
 
 networks:
   ghostnetwork:
