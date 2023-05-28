@@ -20,7 +20,7 @@ export const GameReadyPage = () => {
   const { pathname } = useLocation();
   const [channelId, setChannelId] = useRecoilState(channelIdState);
   const resetChannelId = useResetRecoilState(channelIdState);
-  const { blocked, setBlocked } = useBlocked();
+  const { blocked } = useBlocked();
 
   const { refetchChannel } = useChannel(channelId);
   const [channelData, setChannelData] = useRecoilState(channelDataState);
