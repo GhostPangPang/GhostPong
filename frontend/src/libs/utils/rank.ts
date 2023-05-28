@@ -1,12 +1,3 @@
-import Iron from '@/svgs/iron.svg';
-import Bronze from '@/svgs/bronze.svg';
-import Silver from '@/svgs/silver.svg';
-import Gold from '@/svgs/gold.svg';
-import Platinum from '@/svgs/platinum.svg';
-import Diamond from '@/svgs/diamond.svg';
-
-export { Iron, Bronze, Silver, Gold, Platinum, Diamond };
-
 const IRON_MAX = 22;
 const BRONZE_MAX = 42;
 const SILVER_MAX = 84;

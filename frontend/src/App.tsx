@@ -20,18 +20,6 @@ import { AuthHandler } from './AuthHandler';
 import { QueryErrorResetBoundary } from '@tanstack/react-query';
 import { GameLoadingPage } from './pages/GameLoadingPage';
 import { useRecoilSnapshot } from 'recoil';
-
-// function DebugObserver() {
-//   const snapshot = useRecoilSnapshot();
-//   useEffect(() => {
-//     console.debug('The following atoms were modified:');
-//     for (const node of snapshot.getNodes_UNSTABLE({ isModified: true })) {
-//       console.debug(node.key, snapshot.getLoadable(node));
-//     }
-//   }, [snapshot]);
-
-//   return null;
-// }
 import { AuthChecker } from './AuthChecker';
 import { TwoFactorLoginPage } from './pages/TwoFactorLoginPage';
 
