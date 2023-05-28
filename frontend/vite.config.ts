@@ -23,7 +23,6 @@ export default ({ mode }) => {
         filename: 'analyse.html',
       }),
     ],
-    assetsInclude: ['**/*.svg', '**/*.png', '**/*.jpg', '**/*.jpeg', '**/*.gif', '**/*.riv'],
     resolve: {
       extensions: ['.ts', '.tsx', '.js', '.jsx', '.json', '.wasm'],
       alias: {
@@ -47,7 +46,6 @@ export default ({ mode }) => {
       },
     },
     server: {
-      origin: process.env.VITE_BASE_URL,
       proxy: {
         '/api/': {
           target: process.env.VITE_BASE_URL,
@@ -58,7 +56,6 @@ export default ({ mode }) => {
           changeOrigin: true,
         },
       },
-      cors: true,
     },
     test: {
       globals: true,
