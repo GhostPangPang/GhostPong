@@ -10,6 +10,8 @@ import {
 } from '@nestjs/swagger';
 import { Response } from 'express';
 
+import { TokenResponse } from '@/types/auth/response';
+
 import { COOKIE_OPTIONS } from '../common/constant';
 import { ExtractUserId } from '../common/decorator/extract-user-id.decorator';
 import { ErrorResponseDto } from '../common/dto/error-response.dto';
@@ -38,8 +40,8 @@ export class AuthController {
    * @description GET /auth/login
    */
   @ApiOperation({ summary: '42 로그인' })
-  @UseGuards(SkipLoggedInUserGuard, FtGuard) // strategy.constructor
   @SkipUserGuard()
+  @UseGuards(SkipLoggedInUserGuard, FtGuard) // strategy.constructor
   @Get('42login')
   login(): void {
     return;
@@ -50,8 +52,8 @@ export class AuthController {
    * @description GET /auth/login/callback
    */
   @ApiOperation({ summary: '42 로그인 callback' })
-  @UseGuards(FtGuard) // strategy.validate() -> return 값 기반으로 request 객체 담아줌
   @SkipUserGuard()
+  @UseGuards(FtGuard) // strategy.validate() -> return 값 기반으로 request 객체 담아줌
   @Get('42login/callback')
   async callbackLogin(@ExtractUser() user: LoginInfo, @Res() res: Response): Promise<void> {
     // 또는 @ReqUser('email') email: string console.log('42 Login Callback!');
@@ -82,18 +84,16 @@ export class AuthController {
   @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
   @ApiForbiddenResponse({ type: ErrorResponseDto, description: '유효하지 않은 인증 코드' })
   @ApiBadRequestResponse({ type: ErrorResponseDto, description: '잘못된 인증 코드' })
-  @UseGuards(TwoFaGuard)
   @SkipUserGuard()
+  @UseGuards(TwoFaGuard)
   @HttpCode(HttpStatus.OK)
   @Post('42login/2fa')
   async twoFactorAuthLogin(
     @ExtractUserId() myId: number,
     @Body() { code }: CodeVerificationRequestDto,
-    @Res() res: Response,
-  ): Promise<void> {
+  ): Promise<TokenResponse> {
     const token = await this.authService.twoFactorAuthSignIn(myId, code);
-    const clientUrl = this.appConfigService.clientUrl;
-    res.redirect(`${clientUrl}/auth?token=${token}`);
+    return { token };
   }
 
   /**
