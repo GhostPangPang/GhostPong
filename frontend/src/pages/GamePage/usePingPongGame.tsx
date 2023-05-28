@@ -207,7 +207,7 @@ export const usePingPongGame = () => {
 
   const moveBarEvent = debounce((y: number) => {
     emitEvent(GameEvent.MOVEBAR, { gameId, y });
-  }, 500);
+  }, 10);
 
   const moveBar = (y: number) => {
     let normalY: number;

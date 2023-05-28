@@ -22,22 +22,22 @@ import { QueryErrorResetBoundary } from '@tanstack/react-query';
 import { useRecoilSnapshot } from 'recoil';
 import { GameLoadingPage } from './pages/GameLoadingPage';
 
-function DebugObserver() {
-  const snapshot = useRecoilSnapshot();
-  useEffect(() => {
-    console.debug('The following atoms were modified:');
-    for (const node of snapshot.getNodes_UNSTABLE({ isModified: true })) {
-      console.debug(node.key, snapshot.getLoadable(node));
-    }
-  }, [snapshot]);
+// function DebugObserver() {
+//   const snapshot = useRecoilSnapshot();
+//   useEffect(() => {
+//     console.debug('The following atoms were modified:');
+//     for (const node of snapshot.getNodes_UNSTABLE({ isModified: true })) {
+//       console.debug(node.key, snapshot.getLoadable(node));
+//     }
+//   }, [snapshot]);
 
-  return null;
-}
+//   return null;
+// }
 
 function App() {
   return (
     <BrowserRouter>
-      <DebugObserver />
+      {/* <DebugObserver /> */}
       <Suspense fallback={<Loading />}>
         <QueryErrorResetBoundary>
           {({ reset }) => (
