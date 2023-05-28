@@ -1,5 +1,12 @@
 import styled from 'styled-components';
-import { Rank, Iron, Bronze, Silver, Gold, Platinum, Diamond } from '@/libs/utils/rank';
+import { Rank } from '@/libs/utils';
+
+const Iron = '/svg/iron.svg';
+const Bronze = '/svg/bronze.svg';
+const Silver = '/svg/silver.svg';
+const Gold = '/svg/gold.svg';
+const Platinum = '/svg/platinum.svg';
+const Diamond = '/svg/diamond.svg';
 
 export interface RankBadgeProps {
   rank: Rank;

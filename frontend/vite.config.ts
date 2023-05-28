@@ -23,6 +23,7 @@ export default ({ mode }) => {
         filename: 'analyse.html',
       }),
     ],
+    assetsInclude: ['**/*.svg', '**/*.png', '**/*.jpg', '**/*.jpeg', '**/*.gif', '**/*.riv'],
     resolve: {
       extensions: ['.ts', '.tsx', '.js', '.jsx', '.json', '.wasm'],
       alias: {
@@ -52,7 +53,7 @@ export default ({ mode }) => {
           target: process.env.VITE_BASE_URL,
           changeOrigin: true,
         },
-        '^/asset/.*': {
+        '^/profile/.*': {
           target: process.env.VITE_ASSET_URL,
           changeOrigin: true,
         },
