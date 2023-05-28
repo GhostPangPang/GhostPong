@@ -146,8 +146,8 @@ export class FriendService {
     const senderFriendsCount = await this.checkFriendLimit(friendship.senderId, '상대방');
     await this.dataSource.manager.transaction(async (manager) => {
       await manager.update(Friendship, friendId, { accept: true });
-      await this.achievementService.getFriendAchievement(myId, myFriendsCount + 1, manager);
-      await this.achievementService.getFriendAchievement(friendship.senderId, senderFriendsCount + 1, manager);
+      await this.achievementService.checkFriendAchievement(myId, myFriendsCount + 1, manager);
+      await this.achievementService.checkFriendAchievement(friendship.senderId, senderFriendsCount + 1, manager);
     });
     this.friendGateway.addFriendToRoom(friendship.senderId, friendship.receiver.id);
     this.friendGateway.emitFriendAccepted(friendship);

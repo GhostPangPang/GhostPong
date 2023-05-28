@@ -5,6 +5,7 @@ import { DataSource } from 'typeorm';
 import { Player } from '@/game/game-data';
 import { checkPlayerCollision, checkWallCollision, checkGameEnded, updateBall } from '@/game/utils';
 
+import { AchievementService } from '../achievement/achievement.service';
 import { GameHistory } from '../entity/game-history.entity';
 import { UserRecord } from '../entity/user-record.entity';
 import { User } from '../entity/user.entity';
@@ -26,6 +27,7 @@ export class GameEngineService {
     private readonly gameGateway: GameGateway,
     @InjectDataSource()
     private readonly dataSource: DataSource,
+    private readonly achievementService: AchievementService,
   ) {}
 
   logger: Logger = new Logger('GameEngine');
@@ -84,7 +86,9 @@ export class GameEngineService {
         { exp: () => `case when exp > ${point} then exp - ${point} else 0 end` },
       );
       await manager.update(UserRecord, { id: winner.userId }, { winCount: () => `winCount + 1` });
+      await this.achievementService.checkWinnerAchievement(winner.userId, manager);
       await manager.update(UserRecord, { id: loser.userId }, { loseCount: () => `loseCount + 1` });
+      await this.achievementService.checkLoserAchievement(loser.userId, manager);
     });
   }
 
