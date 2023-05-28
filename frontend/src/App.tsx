@@ -1,5 +1,5 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { Suspense, useEffect } from 'react';
+import { Suspense } from 'react';
 import { MainLayout, FooterLayout, GameLayout } from '@/layout';
 import {
   LobbyPage,
@@ -18,8 +18,8 @@ import { Loading } from '@/common';
 import { ErrorBoundary } from 'react-error-boundary';
 import { AuthHandler } from './AuthHandler';
 import { QueryErrorResetBoundary } from '@tanstack/react-query';
-import { useRecoilSnapshot } from 'recoil';
 import { GameLoadingPage } from './pages/GameLoadingPage';
+import { useRecoilSnapshot } from 'recoil';
 
 // function DebugObserver() {
 //   const snapshot = useRecoilSnapshot();
@@ -33,6 +33,7 @@ import { GameLoadingPage } from './pages/GameLoadingPage';
 //   return null;
 // }
 import { AuthChecker } from './AuthChecker';
+import { TwoFactorLoginPage } from './pages/TwoFactorLoginPage';
 
 function App() {
   return (
@@ -62,7 +63,7 @@ function App() {
                 <Route path="/pre" element={<PrePage />} />
                 <Route path="/auth?/" element={<AuthHandler />} />
                 <Route path="/auth/register" element={<RegisterPage />} />
-                <Route path="/auth/2fa" element={<h1>2fa</h1>} />
+                <Route path="/auth/2fa" element={<TwoFactorLoginPage />} />
               </Routes>
             </ErrorBoundary>
           )}
