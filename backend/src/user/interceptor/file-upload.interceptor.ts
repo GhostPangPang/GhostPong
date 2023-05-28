@@ -26,7 +26,7 @@ export class FileUploadInterceptor implements NestInterceptor<void, void> {
         cb(null, true);
       },
       storage: diskStorage({
-        destination: 'public/profile',
+        destination: 'public/img',
         filename: (req, file, cb) => {
           const myId: number = ctx.getRequest().user.userId;
           const extArray = file.mimetype.split('/');
