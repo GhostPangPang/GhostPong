@@ -29,7 +29,7 @@ import { UserModule } from './user/user.module';
     }),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', '..', '..', 'public'),
-      renderPath: '/image',
+      renderPath: '/profile',
       serveStaticOptions: { index: false, redirect: false },
     }),
     FriendModule,
