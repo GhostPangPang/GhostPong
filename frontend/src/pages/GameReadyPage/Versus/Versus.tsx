@@ -4,15 +4,13 @@ import { ReactComponent as Crown } from '@/svgs/crown.svg';
 import { MemberInfo } from '@/dto/channel/socket';
 import { useUserInfo } from '@/hooks/user';
 import { useRecoilValue } from 'recoil';
-import { channelIdState } from '@/stores';
+import { channelIdState, channelDataState } from '@/stores';
 import { useChannelMutation } from '@/hooks/channel';
 // import { newChannelDataState } from '@/stores';
 import { Items, Item } from '@/libs/utils/itemgenerator';
 // import { PlayerInfo } from '../mock-data';
 
 interface VersusProps {
-  leftPlayer: MemberInfo | null;
-  rightPlayer: MemberInfo | null;
   items: Items;
 }
 interface GhostBoxProps {
@@ -60,8 +58,9 @@ const GhostBox = ({ player, item }: GhostBoxProps) => {
   );
 };
 
-export const Versus = ({ leftPlayer, rightPlayer, items }: VersusProps) => {
+export const Versus = ({ items }: VersusProps) => {
   const channelId = useRecoilValue(channelIdState);
+  const { leftPlayer, rightPlayer } = useRecoilValue(channelDataState);
   const { becomePlayer, becomeOwner } = useChannelMutation();
 
   const handleBecomePlayer = () => {

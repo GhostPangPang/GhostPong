@@ -131,7 +131,7 @@ export const useChannel = (id: string) => {
     enabled: !!id,
     retry: false,
     refetchOnWindowFocus: false,
-    useErrorBoundary: true,
+    useErrorBoundary: false,
     onError: (error) => {
       alert(error.message);
       navigate('/channel/list');

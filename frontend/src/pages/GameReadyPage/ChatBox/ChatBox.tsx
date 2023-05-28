@@ -15,7 +15,12 @@ export const ChatBox = () => {
   };
 
   return (
-    <Grid container="flex" direction="column-reverse" overflowY="hidden" style={{ transition: 'height 0.3s ease-out' }}>
+    <Grid
+      container="flex"
+      direction="column-reverse"
+      overflowY="hidden"
+      style={{ transition: 'height 0.3s ease-out', maxWidth: '100rem' }}
+    >
       <ChatInput onFocus={handleInputFocus} onBlur={handleInputBlur} />
       <ChatContent inputFocus={inputFocus} />
     </Grid>

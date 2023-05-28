@@ -389,7 +389,7 @@ export class ChannelService {
       throw new ForbiddenException('비밀번호가 일치하지 않습니다.');
     }
     if (bannedUserIdList.find((elem) => elem === myId) !== undefined) {
-      throw new ForbiddenException('차단되어 입장이 불가능한 채널입니다.');
+      throw new ForbiddenException('Ban 되어 입장이 불가능한 채널입니다.');
     }
     if (users.size >= PARTICIPANT_LIMIT) {
       throw new ForbiddenException('채널 정원이 초과되었습니다.');

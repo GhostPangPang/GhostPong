@@ -1,6 +1,7 @@
 import styled, { css } from 'styled-components';
-import profile from '@/svgs/default-profile.svg';
 import { Color } from '@/types/style';
+
+const profile = '/svg/default-profile.svg';
 
 export type AvatarProps = {
   size?: 'sm' | 'md' | 'lg' | 'llg' | 'xl';
@@ -62,5 +63,8 @@ const StyledAvatar = styled.img<AvatarProps>`
 `;
 
 export const Avatar = ({ size = 'md', src = profile, onClick, borderColor, style, ...props }: AvatarProps) => {
-  return <StyledAvatar size={size} src={src} onClick={onClick} borderColor={borderColor} style={style} {...props} />;
+  const avatarSrc = src || profile;
+  return (
+    <StyledAvatar size={size} src={avatarSrc} onClick={onClick} borderColor={borderColor} style={style} {...props} />
+  );
 };

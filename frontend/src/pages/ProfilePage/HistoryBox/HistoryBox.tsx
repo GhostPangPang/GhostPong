@@ -45,9 +45,9 @@ const VersusBox = ({ winner, loser }: { winner: UserInfo; loser: UserInfo }) => 
   return (
     <Grid container="flex" direction="row" justifyContent="center" alignItems="center" columnGap={3}>
       <RightPlayerInfo player={winner} />
-      <Avatar size="lg" />
+      <Avatar size="lg" src={winner.image} />
       <Text size="sm">VS</Text>
-      <Avatar size="lg" />
+      <Avatar size="lg" src={loser.image} />
       <LeftPlayerInfo player={loser} />
     </Grid>
   );
@@ -79,8 +79,11 @@ const HistoryItem = ({ color, winner, loser, winnerScore, loserScore, createdAt 
   );
 };
 
-export const HistroyBox = () => {
-  const userId = 1;
+interface HistoryBoxProps {
+  userId: number;
+}
+
+export const HistroyBox = ({ userId }: HistoryBoxProps) => {
   console.log(userId);
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useHistoryData(userId);
 

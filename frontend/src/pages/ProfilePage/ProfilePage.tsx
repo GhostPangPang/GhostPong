@@ -49,7 +49,7 @@ export const ProfilePage = () => {
         </AchievementBox>
       </Grid>
       <Grid container="flex" direction="column">
-        <HistroyBox />
+        <HistroyBox userId={userId} />
       </Grid>
     </Grid>
   );

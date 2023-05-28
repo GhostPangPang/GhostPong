@@ -1,4 +1,4 @@
-import { get, post, del } from '@/libs/api';
+import { get, post, del, ApiError } from '@/libs/api';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { BlockedUserResponse } from '@/dto/blocked/response';
 import { FRIEND } from '../friend/useFriend';
@@ -53,9 +53,8 @@ export const useBlockedMutation = () => {
       }
       queryClient.invalidateQueries([FRIEND]);
     },
-    onError: (error) => {
-      if (error instanceof Error) alert(error.message);
-      else console.log(error);
+    onError: (error: ApiError) => {
+      alert(error.message);
     },
   });
 
@@ -68,7 +67,6 @@ export const useBlockedMutation = () => {
       const updatedBlocked = previousBlocked?.filter((user) => user.id !== userId);
 
       queryClient.setQueryData<BlockedResponse>([BLOCKED], updatedBlocked);
-
       return { previousBlocked };
     },
     onError: (error, info, context) => {

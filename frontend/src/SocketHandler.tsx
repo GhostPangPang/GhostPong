@@ -11,16 +11,17 @@ import { useNavigate } from 'react-router-dom';
 import { Friend } from './types';
 import { useQueryClient } from '@tanstack/react-query';
 import { FRIEND } from './hooks/friend';
+import { BlockedUsersSelector } from '@/stores/userInfoState';
 
 export const SocketHandler = () => {
   const socket = useRecoilValue(socketState);
   const { userInfo } = useUserInfo();
+  const BlockedUsers = useRecoilValue(BlockedUsersSelector);
   const newMessages = useRecoilValue(newMessagesState);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   const updateMessageEvent = useRecoilCallback(({ snapshot, set }) => (data: Message) => {
-    console.log('socket message', data);
     const current = snapshot.getLoadable(newMessagesState).getValue().friend;
     if (!current) return;
     if (current.id === data.id) {
@@ -38,7 +39,7 @@ export const SocketHandler = () => {
   });
 
   const updateChatEvent = useRecoilCallback(({ set }) => (data: NewChat) => {
-    console.log('socket chat', data);
+    if (BlockedUsers.find((user: number) => user === data.senderId)) return;
     set(channelDataState, (prev) => ({
       ...prev,
       chats: [...prev.chats, data],
@@ -93,6 +94,9 @@ export const SocketHandler = () => {
           observer.userId === data.userId ? { ...observer, role: 'admin' } : observer,
         );
       }
+      if (userInfo.id === data.userId) {
+        updatedState.currentRole = 'admin';
+      }
 
       return updatedState;
     });
@@ -102,20 +106,23 @@ export const SocketHandler = () => {
   const updateOwnerEvent = useRecoilCallback(({ set }) => (data: UserId) => {
     console.log('socket owner', data);
     set(channelDataState, (prev: ChannelData) => {
+      const updatedState: ChannelData = { ...prev };
       // user가 observer / rightPlayer
       const user =
         prev.observers.find((observer) => observer.userId === data.userId) ||
         (prev.rightPlayer?.userId === data.userId ? prev.rightPlayer : undefined);
       const isRightPlayer = user === prev.rightPlayer;
 
-      return {
-        ...prev,
-        observers: prev.observers.filter((observer) => observer.userId !== data.userId),
-        leftPlayer: user
-          ? ({ userId: data.userId, nickname: user.nickname, image: user.image, role: 'owner' } as MemberInfo)
-          : null,
-        rightPlayer: isRightPlayer ? null : prev.rightPlayer,
-      };
+      updatedState.observers = prev.observers.filter((observer) => observer.userId !== data.userId);
+      updatedState.leftPlayer = user
+        ? ({ userId: data.userId, nickname: user.nickname, image: user.image, role: 'owner' } as MemberInfo)
+        : null;
+      updatedState.rightPlayer = isRightPlayer ? null : prev.rightPlayer;
+      if (userInfo.id === data.userId) {
+        updatedState.currentRole = 'owner';
+      }
+
+      return updatedState;
     });
   });
 
@@ -129,7 +136,7 @@ export const SocketHandler = () => {
     }));
     if (userInfo.id === data.userId) {
       navigate('/channel/list');
-      alert('강퇴되었습니다.');
+      alert('Kick 되었습니다.');
     }
   });
 
@@ -143,7 +150,7 @@ export const SocketHandler = () => {
     }));
     if (userInfo.id === data.userId) {
       navigate('/channel/list');
-      alert('차단당했습니다.');
+      alert('Ban 당했습니다.');
     }
   });
 
