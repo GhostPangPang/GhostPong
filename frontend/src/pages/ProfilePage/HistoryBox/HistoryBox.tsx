@@ -45,9 +45,9 @@ const VersusBox = ({ winner, loser }: { winner: UserInfo; loser: UserInfo }) => 
   return (
     <Grid container="flex" direction="row" justifyContent="center" alignItems="center" columnGap={3}>
       <RightPlayerInfo player={winner} />
-      <Avatar size="lg" />
+      <Avatar size="lg" src={winner.image} />
       <Text size="sm">VS</Text>
-      <Avatar size="lg" />
+      <Avatar size="lg" src={loser.image} />
       <LeftPlayerInfo player={loser} />
     </Grid>
   );
