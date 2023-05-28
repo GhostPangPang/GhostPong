@@ -13,7 +13,7 @@ const getUserInfo = async () => {
 
 export const useAuth = () => {
   const navigate = useNavigate();
-  const { setUserInfo } = useUserInfo();
+  const { userInfo, setUserInfo } = useUserInfo();
   const {
     data = null,
     isLoading,
@@ -34,5 +34,5 @@ export const useAuth = () => {
     if (isError) navigate('/pre');
   }, [data]);
 
-  return { auth: data, isFetching, isLoading, refetch };
+  return { auth: data, userInfo, isFetching, isLoading, refetch };
 };
