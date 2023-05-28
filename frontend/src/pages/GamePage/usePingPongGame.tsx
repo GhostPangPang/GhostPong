@@ -108,6 +108,17 @@ export const usePingPongGame = () => {
       // setGameData((prev) => ({ ...prev, ...data }));
     });
 
+    // game bar moved
+    onEvent(GameEvent.BARMOVED, (data: BarMoved) => {
+      const { userId, y } = data;
+
+      if (gameMemberType !== 'leftPlayer' && userId === leftPlayer.userId) {
+        setLeftPlayer((prev) => ({ ...prev, y }));
+      } else if (gameMemberType !== 'rightPlayer' && userId === rightPlayer.userId) {
+        setRightPlayer((prev) => ({ ...prev, y }));
+      }
+    });
+
     // game end event
     onEvent(GameEvent.GAMEEND, (data: GameEnd) => {
       console.log('GAMEEND', data);
