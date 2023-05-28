@@ -17,7 +17,7 @@ import { UserRecord } from '../entity/user-record.entity';
 @Injectable()
 export class AchievementService {
   // SECTION: public
-  async getFriendAchievement(userId: number, count: number, manager: EntityManager): Promise<void> {
+  async checkFriendAchievement(userId: number, count: number, manager: EntityManager): Promise<void> {
     if (count === 1) {
       await manager.save(Achievement, { user: { id: userId }, achievement: 5 });
     } else if (count === 10) {
@@ -27,33 +27,13 @@ export class AchievementService {
     }
   }
 
-  async getWinAchievement(userId: number, count: number, manager: EntityManager): Promise<void> {
-    if (count === 1) {
-      await manager.save(Achievement, { user: { id: userId }, achievement: 1 });
-    } else if (count === 100) {
-      await manager.save(Achievement, { user: { id: userId }, achievement: 2 });
-    }
-  }
-
-  async getLoseAchievement(userId: number, count: number, manager: EntityManager): Promise<void> {
-    if (count === 42) {
-      await manager.save(Achievement, { user: { id: userId }, achievement: 4 });
-    }
-  }
-
-  async getTotalGameAchievement(userId: number, count: number, manager: EntityManager): Promise<void> {
-    if (count === 42) {
-      await manager.save(Achievement, { user: { id: userId }, achievement: 3 });
-    }
-  }
-
   async checkWinnerAchievement(userId: number, manager: EntityManager): Promise<void> {
     const result = await manager.findOneBy(UserRecord, { user: { id: userId } });
     if (result === null) {
       return;
     }
-    await this.getWinAchievement(userId, result.winCount, manager);
-    await this.getTotalGameAchievement(userId, result.winCount + result.loseCount, manager);
+    await this.checkWinAchievement(userId, result.winCount, manager);
+    await this.checkTotalGameAchievement(userId, result.winCount + result.loseCount, manager);
   }
 
   async checkLoserAchievement(userId: number, manager: EntityManager): Promise<void> {
@@ -61,7 +41,27 @@ export class AchievementService {
     if (result === null) {
       return;
     }
-    await this.getLoseAchievement(userId, result.loseCount, manager);
-    await this.getTotalGameAchievement(userId, result.winCount + result.loseCount, manager);
+    await this.checkLoseAchievement(userId, result.loseCount, manager);
+    await this.checkTotalGameAchievement(userId, result.winCount + result.loseCount, manager);
+  }
+
+  private async checkWinAchievement(userId: number, count: number, manager: EntityManager): Promise<void> {
+    if (count === 1) {
+      await manager.save(Achievement, { user: { id: userId }, achievement: 1 });
+    } else if (count === 100) {
+      await manager.save(Achievement, { user: { id: userId }, achievement: 2 });
+    }
+  }
+
+  private async checkLoseAchievement(userId: number, count: number, manager: EntityManager): Promise<void> {
+    if (count === 42) {
+      await manager.save(Achievement, { user: { id: userId }, achievement: 4 });
+    }
+  }
+
+  private async checkTotalGameAchievement(userId: number, count: number, manager: EntityManager): Promise<void> {
+    if (count === 42) {
+      await manager.save(Achievement, { user: { id: userId }, achievement: 3 });
+    }
   }
 }
