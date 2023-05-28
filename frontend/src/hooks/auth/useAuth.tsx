@@ -11,19 +11,11 @@ const getUserInfo = async () => {
   return await get<UserInfoResponse>(API);
 };
 
-const initialData: UserInfoResponse = {
-  id: -1,
-  nickname: '',
-  image: '',
-  exp: 0,
-  blockedUsers: [],
-};
-
 export const useAuth = () => {
   const navigate = useNavigate();
-  const { userInfo, setUserInfo } = useUserInfo();
+  const { setUserInfo } = useUserInfo();
   const {
-    data = initialData,
+    data = null,
     isLoading,
     isFetching,
     isError,
@@ -42,5 +34,5 @@ export const useAuth = () => {
     if (isError) navigate('/pre');
   }, [data]);
 
-  return { userInfo, isLoading, refetch };
+  return { auth: data, isFetching, isLoading, refetch };
 };
