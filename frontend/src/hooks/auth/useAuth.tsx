@@ -26,20 +26,23 @@ export const useAuth = () => {
     data = initialData,
     isLoading,
     isFetching,
+    isError,
     refetch,
   } = useQuery<UserInfoResponse>({
     queryKey: [API],
     queryFn: getUserInfo,
     retryOnMount: true,
     staleTime: Infinity,
-    onError: (error) => {
-      console.log('I can catch now', error);
+    useErrorBoundary: false,
+    retry: 0,
+    onError: () => {
+      location.replace('/pre');
     },
   });
 
   useEffect(() => {
     if (!isFetching && data) setUserInfo(data);
-    else navigate('/pre');
+    if (isError) navigate('/pre');
   }, [data]);
 
   return { userInfo, isLoading, refetch };

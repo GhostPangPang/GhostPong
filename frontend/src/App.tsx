@@ -1,5 +1,5 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { Suspense, useEffect } from 'react';
+import { Suspense } from 'react';
 import { MainLayout, FooterLayout, GameLayout } from '@/layout';
 import {
   LobbyPage,
@@ -17,10 +17,9 @@ import {
 import { Loading } from '@/common';
 import { ErrorBoundary } from 'react-error-boundary';
 import { AuthHandler } from './AuthHandler';
-import { SocketHandler } from './SocketHandler';
 import { QueryErrorResetBoundary } from '@tanstack/react-query';
-import { useRecoilSnapshot } from 'recoil';
 import { GameLoadingPage } from './pages/GameLoadingPage';
+import { useRecoilSnapshot } from 'recoil';
 
 // function DebugObserver() {
 //   const snapshot = useRecoilSnapshot();
@@ -33,6 +32,8 @@ import { GameLoadingPage } from './pages/GameLoadingPage';
 
 //   return null;
 // }
+import { AuthChecker } from './AuthChecker';
+import { TwoFactorLoginPage } from './pages/TwoFactorLoginPage';
 
 function App() {
   return (
@@ -42,26 +43,27 @@ function App() {
         <QueryErrorResetBoundary>
           {({ reset }) => (
             <ErrorBoundary FallbackComponent={FallbackComponent} onError={logError} onReset={reset}>
-              <SocketHandler />
               <Routes>
-                <Route element={<MainLayout />}>
-                  <Route path="/" element={<LobbyPage />} />
-                  <Route path="/message" element={<MessagePage />} />
-                  <Route path="/channel/list" element={<GameListPage />} />
-                  <Route element={<FooterLayout />}>
-                    <Route path="/profile/:userId" element={<ProfilePage />} />
-                    <Route path="/profile/edit" element={<EditProfilePage />} />
+                <Route element={<AuthChecker />}>
+                  <Route element={<MainLayout />}>
+                    <Route path="/" element={<LobbyPage />} />
+                    <Route path="/message" element={<MessagePage />} />
+                    <Route path="/channel/list" element={<GameListPage />} />
+                    <Route element={<FooterLayout />}>
+                      <Route path="/profile/:userId" element={<ProfilePage />} />
+                      <Route path="/profile/edit" element={<EditProfilePage />} />
+                    </Route>
                   </Route>
-                </Route>
-                <Route element={<GameLayout />}>
-                  <Route path="/channel/:gameId" element={<GameReadyPage />} />
-                  <Route path="/game/:gameId" element={<PingPongGame />} />
-                  <Route path="/game/loading" element={<GameLoadingPage />} />
+                  <Route element={<GameLayout />}>
+                    <Route path="/channel/:gameId" element={<GameReadyPage />} />
+                    <Route path="/game/:gameId" element={<PingPongGame />} />
+                    <Route path="/game/loading" element={<GameLoadingPage />} />
+                  </Route>
                 </Route>
                 <Route path="/pre" element={<PrePage />} />
                 <Route path="/auth?/" element={<AuthHandler />} />
                 <Route path="/auth/register" element={<RegisterPage />} />
-                <Route path="/auth/2fa" element={<h1>2fa</h1>} />
+                <Route path="/auth/2fa" element={<TwoFactorLoginPage />} />
               </Routes>
             </ErrorBoundary>
           )}

@@ -9,14 +9,10 @@ export const AuthHandler = () => {
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const token = urlParams.get('token');
+    console.log('AuthHandler', token);
 
-    if (token) {
-      setAccessToken(token);
-      window.location.replace('/');
-    } else {
-      console.log('navigate to /pre');
-      navigate('/pre', { replace: true });
-    }
+    if (token) setAccessToken(token);
+    window.location.replace('/');
   }, []);
 
   return <></>;
