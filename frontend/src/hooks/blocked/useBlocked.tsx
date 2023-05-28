@@ -2,6 +2,7 @@ import { get, post, del } from '@/libs/api';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { BlockedUserResponse } from '@/dto/blocked/response';
 import { FRIEND } from '../friend/useFriend';
+import { QueryProps } from '@/types/query';
 
 type BlockedResponse = BlockedUserResponse['blocked'];
 
@@ -24,10 +25,11 @@ const delBlocked = async (userId: number) => {
   return await del(`/blocked/${userId}`);
 };
 
-export const useBlocked = () => {
+export const useBlocked = ({ enabled = true }: QueryProps = {}) => {
   const { data = [], refetch: refetchBlocked } = useQuery<BlockedResponse>({
     queryKey: [BLOCKED],
     queryFn: getBlockedList,
+    enabled: enabled,
   });
 
   const blocked = data.sort((a, b) => {

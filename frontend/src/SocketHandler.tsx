@@ -8,12 +8,16 @@ import { MemberInfo, UserId, NewChat, UpdatedMode } from '@/dto/channel/socket';
 import { MessageEvent, ChannelEvent } from './constants';
 import { useUserInfo } from './hooks/user';
 import { useNavigate } from 'react-router-dom';
+import { Friend } from './types';
+import { useQueryClient } from '@tanstack/react-query';
+import { FRIEND } from './hooks/friend';
 
 export const SocketHandler = () => {
   const socket = useRecoilValue(socketState);
   const { userInfo } = useUserInfo();
   const newMessages = useRecoilValue(newMessagesState);
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const updateMessageEvent = useRecoilCallback(({ snapshot, set }) => (data: Message) => {
     console.log('socket message', data);
@@ -172,8 +176,11 @@ export const SocketHandler = () => {
     if (!socket.message) return;
     // onEvent(MessageEvent.MESSAGE, updateMessageEvent);
     onEvent(MessageEvent.MESSAGE, (data: Message) => {
-      console.log('socket message fuckfuck', data);
       updateMessageEvent(data);
+    });
+    onEvent(MessageEvent.FRIENDACCEPT, (data: Friend) => {
+      console.log('friend-accepted', data);
+      queryClient.invalidateQueries([FRIEND]);
     });
     return () => {
       offEvent(MessageEvent.MESSAGE);

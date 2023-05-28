@@ -2,6 +2,7 @@ import { Avatar, Box, CommonButton, GameButton, GameInput, Grid, Text, Modal, Mo
 import { useInput } from '@/hooks';
 import { useBlocked, useBlockedMutation } from '@/hooks/blocked';
 import { User } from '@/types/entity';
+import { useEffect } from 'react';
 
 const BlockFriendItem = ({ blocked }: { blocked: User }) => {
   const { id, nickname, image } = blocked;
@@ -25,9 +26,13 @@ const BlockFriendItem = ({ blocked }: { blocked: User }) => {
 };
 
 export const BlockModal = ({ isOpen, onClose }: Omit<ModalProps, 'children'>) => {
-  const { blocked } = useBlocked();
+  const { blocked, refetchBlocked } = useBlocked({ enabled: isOpen });
   const { updateBlocked } = useBlockedMutation();
   const { value: nickname, onChange: handleNicknameChange } = useInput('');
+
+  useEffect(() => {
+    refetchBlocked();
+  }, [isOpen]);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
