@@ -1,8 +1,8 @@
 import { Matches } from 'class-validator';
 
-import { UserNicknameRequest } from '@/types/user/request';
+import { UserNickname } from '@/types/user/request';
 
-export class UserNicknameRequestDto implements UserNicknameRequest {
+export class UserNicknameRequestDto implements UserNickname {
   /**
    * nickname
    * @example 'san1'
