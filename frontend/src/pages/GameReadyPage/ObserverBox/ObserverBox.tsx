@@ -1,14 +1,11 @@
 import styled from 'styled-components';
 import { Grid, Avatar as BaseAvatar, Dropbox } from '@/common';
-import { MemberInfo } from '@/dto/channel/socket';
 import { useUserInfo } from '@/hooks/user';
-// import { useRecoilValue } from 'recoil';
-// import { newChannelDataState } from '@/stores';
+import { useRecoilValue } from 'recoil';
+import { channelDataState } from '@/stores';
 import { Items } from '@/libs/utils/itemgenerator';
-// import { PlayerInfo } from '../mock-data';
 
 interface ObserverBoxProps {
-  observers: MemberInfo[];
   items: Items;
 }
 
@@ -21,8 +18,9 @@ const Avatar = styled(BaseAvatar)`
   }
 `;
 
-export const ObserverBox = ({ observers, items }: ObserverBoxProps) => {
+export const ObserverBox = ({ items }: ObserverBoxProps) => {
   const { userInfo } = useUserInfo();
+  const { observers } = useRecoilValue(channelDataState);
 
   return (
     <Grid container="flex" direction="row" alignItems="center" justifyContent="start" gap={1}>
