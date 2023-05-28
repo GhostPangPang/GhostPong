@@ -9,6 +9,7 @@ export const AuthChecker = () => {
   const [isAuth, setIsAuth] = useState(false);
 
   useEffect(() => {
+    console.log('AuthChecker');
     if (token) setIsAuth(true);
   }, []);
 
