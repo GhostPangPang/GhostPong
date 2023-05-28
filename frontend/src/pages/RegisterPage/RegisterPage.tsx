@@ -1,21 +1,39 @@
 import { GameButton, Text, Grid, GameInput } from '@/common';
-import { post } from '@/libs/api';
+import { ApiError, post } from '@/libs/api';
+import { setAccessToken } from '@/libs/api/auth';
+import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
+
+type TokenResponse = {
+  token: string;
+};
+
+const postRegisterUser = async (nickname: string) => {
+  return await post<TokenResponse>('user', { nickname });
+};
 
 export const RegisterPage = () => {
   const [nickname, setNickname] = useState<string>('');
+  const { mutate: registerUser } = useMutation(postRegisterUser, {
+    onSuccess: (data: TokenResponse) => {
+      const { token } = data;
+      if (token) {
+        setAccessToken(token);
+        window.location.replace('/');
+      }
+    },
+    onError: (error: ApiError) => {
+      alert(error.message);
+    },
+  });
 
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.target.value = e.target.value.toLowerCase();
     setNickname(e.target.value);
   };
 
-  const handleRegister = async () => {
-    try {
-      await post('user', { nickname });
-    } catch (e) {
-      console.log('error', e);
-    }
+  const handleRegister = () => {
+    registerUser(nickname);
   };
 
   return (
