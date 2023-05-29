@@ -34,6 +34,8 @@ export const ChatContent = ({ inputFocus }: ChatContentProps) => {
       height={inputFocus ? '20rem' : '5rem'}
       backgroundColor="surfaceMix"
       overflowY="auto"
+      width="50rem"
+      word-break="break-all"
     >
       {[...chats].reverse().map((message, index) => (
         <ChatBubble key={index}>

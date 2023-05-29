@@ -19,7 +19,7 @@ export const ChatBox = () => {
       container="flex"
       direction="column-reverse"
       overflowY="hidden"
-      style={{ transition: 'height 0.3s ease-out', maxWidth: '100rem' }}
+      style={{ transition: 'height 0.3s ease-out', maxWidth: '50rem' }}
     >
       <ChatInput onFocus={handleInputFocus} onBlur={handleInputBlur} />
       <ChatContent inputFocus={inputFocus} />

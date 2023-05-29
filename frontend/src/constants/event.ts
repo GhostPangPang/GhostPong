@@ -6,6 +6,7 @@ export const MessageEvent = {
 
 export const GLOBALEVENT = {
   USER_STATUS: 'user-status',
+  INVITE_CHANNEL: 'channel-invited',
 };
 
 export const GameEvent = {

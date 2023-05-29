@@ -13,6 +13,7 @@ import { useChannel, useLeaveChannel } from '@/hooks/channel';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { Items, useItemGenerator } from '@/libs/utils/itemgenerator';
 import { useBlocked } from '@/hooks/blocked';
+import { GameSideBar } from '@/layout/GameLayout/GameSideBar';
 
 export const GameReadyPage = () => {
   const setSocket = useSetRecoilState(socketState);
@@ -112,36 +113,44 @@ export const GameReadyPage = () => {
   };
 
   return (
-    <>
-      <Grid container="flex" direction="row" alignItems="center" justifyContent="center" flexGrow={1}>
-        <RoomInfo />
-      </Grid>
-
-      <Grid container="flex" direction="row" alignItems="center" justifyContent="center" flexGrow={1}>
-        {isInGame && leftPlayer && rightPlayer ? <PingPongGame /> : <Versus items={items} />}
-      </Grid>
-      <Grid container="flex" direction="row" alignItems="end" justifyContent="center" flexGrow={1}>
-        <Grid container="flex" flexGrow={1} alignItems="center" size={{ padding: 'md' }}>
-          <ChatBox />
+    <Grid
+      as="main"
+      container="flex"
+      direction="row"
+      alignItems="center"
+      style={{ position: 'relative', height: '100%' }}
+    >
+      {isInGame ? null : <GameSideBar />}
+      <Grid container="flex" direction="column" alignItems="center" justifyContent="center" size={{ height: '100%' }}>
+        <Grid container="flex" direction="row" alignItems="center" justifyContent="center" flexGrow={1}>
+          <RoomInfo />
         </Grid>
-        <Grid container="flex" flexGrow={1} alignItems="center" size={{ padding: 'md' }}>
-          <ObserverBox items={items} />
+        <Grid container="flex" direction="row" alignItems="center" justifyContent="center" flexGrow={1}>
+          {isInGame && leftPlayer && rightPlayer ? <PingPongGame /> : <Versus items={items} />}
         </Grid>
-        <Grid container="flex" flexGrow={1} alignItems="center" justifyContent="end" gap={2} size={{ padding: 'md' }}>
-          {channelData.isInGame ? null : channelData.currentRole === 'owner' ? ( // gmaeReady 중인 owner 만 start 버튼 보이게
-            <>
-              <Dropdown onChange={handleModeChange}>
-                <Text as="option">노멀모드</Text>
-                <Text as="option">스피드모드</Text>
-                <Text as="option">바보모드</Text>
-              </Dropdown>
-              <GameButton size="md" onClick={handleStartGame} disabled={gameStatus === 'waiting'}>
-                START
-              </GameButton>
-            </>
-          ) : null}
+        <Grid container="flex" direction="row" alignItems="end" justifyContent="center" flexGrow={1}>
+          <Grid container="flex" flexGrow={1} alignItems="center" size={{ padding: 'md' }}>
+            <ChatBox />
+          </Grid>
+          <Grid container="flex" flexGrow={1} alignItems="center" size={{ padding: 'md' }}>
+            <ObserverBox items={items} />
+          </Grid>
+          <Grid container="flex" flexGrow={1} alignItems="center" justifyContent="end" gap={2} size={{ padding: 'md' }}>
+            {channelData.isInGame ? null : channelData.currentRole === 'owner' ? ( // gmaeReady 중인 owner 만 start 버튼 보이게
+              <>
+                <Dropdown onChange={handleModeChange}>
+                  <Text as="option">노멀모드</Text>
+                  <Text as="option">스피드모드</Text>
+                  <Text as="option">바보모드</Text>
+                </Dropdown>
+                <GameButton size="md" onClick={handleStartGame}>
+                  START
+                </GameButton>
+              </>
+            ) : null}
+          </Grid>
         </Grid>
       </Grid>
-    </>
+    </Grid>
   );
 };
