@@ -346,7 +346,7 @@ describe('ChannelService', () => {
         await service.joinChannel(1, { mode: 'public' }, channel);
       } catch (e) {
         expect(e).toBeInstanceOf(ForbiddenException);
-        expect(e.message).toEqual('차단되어 입장이 불가능한 채널입니다.');
+        expect(e.message).toEqual('Ban 되어 입장이 불가능한 채널입니다.');
       }
     });
 
