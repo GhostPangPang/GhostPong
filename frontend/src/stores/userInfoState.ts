@@ -1,5 +1,5 @@
 import { UserInfoResponse } from '@/dto/user/response';
-import { atom, selector, RecoilState } from 'recoil';
+import { atom } from 'recoil';
 
 export const UserInfoState = atom<UserInfoResponse>({
   key: '/userInfo',
@@ -9,13 +9,5 @@ export const UserInfoState = atom<UserInfoResponse>({
     image: '',
     exp: 0,
     blockedUsers: [],
-  },
-});
-
-export const BlockedUsersSelector = selector<Array<number>>({
-  key: '/blockedUsersSelector',
-  get: ({ get }: { get: (arg: RecoilState<UserInfoResponse>) => UserInfoResponse }) => {
-    const userInfo = get(UserInfoState);
-    return userInfo.blockedUsers;
   },
 });

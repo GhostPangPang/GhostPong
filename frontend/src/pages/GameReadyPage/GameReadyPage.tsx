@@ -3,7 +3,7 @@ import { Versus } from './Versus';
 import { ChatBox } from './ChatBox';
 import { ObserverBox } from './ObserverBox';
 import { Grid, GameButton, Text } from '@/common';
-import { useResetRecoilState, useSetRecoilState, useRecoilState } from 'recoil';
+import { useResetRecoilState, useSetRecoilState, useRecoilState, useRecoilCallback } from 'recoil';
 import { channelIdState, channelDataState, socketState, gameModeState, gameStatusState } from '@/stores';
 import { useGameMutation, useGameStart } from '@/hooks/game';
 import { Dropdown } from '@/common/Dropdown';
@@ -12,8 +12,12 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useChannel, useLeaveChannel } from '@/hooks/channel';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { Items, useItemGenerator } from '@/libs/utils/itemgenerator';
-import { useBlocked } from '@/hooks/blocked';
 import { GameSideBar } from '@/layout/GameLayout/GameSideBar';
+import { useBlocked } from '@/hooks/blocked';
+import { offEvent, onEvent } from '@/libs/api';
+import { ChannelEvent } from '@/constants';
+import { User } from '@/types';
+import { NewChat } from '@/dto/channel';
 
 export const GameReadyPage = () => {
   const setSocket = useSetRecoilState(socketState);
@@ -25,7 +29,6 @@ export const GameReadyPage = () => {
   const [channelData, setChannelData] = useRecoilState(channelDataState);
   const [gameMode, setGameMode] = useRecoilState(gameModeState);
 
-  const { blocked } = useBlocked();
   const { refetchChannel } = useChannel(channelId);
   const { isInGame, leftPlayer, rightPlayer } = channelData;
   const { leaveChannel } = useLeaveChannel();
@@ -34,6 +37,14 @@ export const GameReadyPage = () => {
     leftPlayer: [],
     rightPlayer: [],
     observers: [],
+  });
+  const { blocked } = useBlocked();
+  const updateChatEvent = useRecoilCallback(({ set }) => (data: NewChat) => {
+    if (blocked.find((user: User) => user.id === data.senderId)) return;
+    set(channelDataState, (prev) => ({
+      ...prev,
+      chats: [...prev.chats, data],
+    }));
   });
 
   const resetChannelId = useResetRecoilState(channelIdState);
@@ -50,9 +61,13 @@ export const GameReadyPage = () => {
     setSocket((prev) => ({ ...prev, channel: true }));
     if (isInGame) setGameStatus('playing');
 
+    onEvent(ChannelEvent.CHAT, updateChatEvent);
+
     return () => {
       setSocket((prev) => ({ ...prev, channel: false }));
       resetChannelId();
+
+      offEvent(ChannelEvent.CHAT);
     };
   }, []);
 

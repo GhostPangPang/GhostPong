@@ -5,20 +5,18 @@ import { newMessageIdListState, newMessagesState, channelDataState, ChannelData 
 import { socketState } from './stores/socketState';
 import { Message } from '@/dto/message/socket';
 import { ChannelInvited } from '@/dto/user/socket';
-import { MemberInfo, UserId, NewChat, UpdatedMode } from '@/dto/channel/socket';
+import { MemberInfo, UserId, UpdatedMode } from '@/dto/channel/socket';
 import { MessageEvent, ChannelEvent, GLOBALEVENT } from './constants';
 import { useUserInfo } from './hooks/user';
 import { useNavigate } from 'react-router-dom';
 import { Friend } from './types';
 import { useQueryClient } from '@tanstack/react-query';
 import { FRIEND } from './hooks/friend';
-import { BlockedUsersSelector } from '@/stores/userInfoState';
 import { useChannelMutation } from './hooks/channel';
 
 export const SocketHandler = () => {
   const socket = useRecoilValue(socketState);
   const { userInfo } = useUserInfo();
-  const BlockedUsers = useRecoilValue(BlockedUsersSelector);
   const newMessages = useRecoilValue(newMessagesState);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -39,14 +37,6 @@ export const SocketHandler = () => {
 
       set(newMessageIdListState, (prev) => [...prev, data.id]);
     }
-  });
-
-  const updateChatEvent = useRecoilCallback(({ set }) => (data: NewChat) => {
-    if (BlockedUsers.find((user: number) => user === data.senderId)) return;
-    set(channelDataState, (prev) => ({
-      ...prev,
-      chats: [...prev.chats, data],
-    }));
   });
 
   const updateJoinEvent = useRecoilCallback(({ set }) => (data: MemberInfo) => {
@@ -222,7 +212,7 @@ export const SocketHandler = () => {
   // Turn on channel socket event
   useEffect(() => {
     if (!socket.channel) return;
-    onEvent(ChannelEvent.CHAT, updateChatEvent);
+
     onEvent(ChannelEvent.JOIN, updateJoinEvent);
     onEvent(ChannelEvent.LEAVE, updateLeaveEvent);
     onEvent(ChannelEvent.KICK, updateKickEvent);
@@ -232,7 +222,6 @@ export const SocketHandler = () => {
     onEvent(ChannelEvent.OWNER, updateOwnerEvent);
     onEvent(ChannelEvent.UPDATE, updateUpdateEvent);
     return () => {
-      offEvent(ChannelEvent.CHAT);
       offEvent(ChannelEvent.JOIN);
       offEvent(ChannelEvent.LEAVE);
       offEvent(ChannelEvent.KICK);

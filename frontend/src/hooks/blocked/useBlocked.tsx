@@ -3,6 +3,9 @@ import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { BlockedUserResponse } from '@/dto/blocked/response';
 import { FRIEND } from '../friend/useFriend';
 import { QueryProps } from '@/types/query';
+import { useSetRecoilState } from 'recoil';
+import { blockedIdListState } from '@/stores';
+import { useEffect } from 'react';
 
 type BlockedResponse = BlockedUserResponse['blocked'];
 
@@ -30,6 +33,7 @@ export const useBlocked = ({ enabled = true }: QueryProps = {}) => {
     queryKey: [BLOCKED],
     queryFn: getBlockedList,
     enabled: enabled,
+    staleTime: 0,
   });
 
   const blocked = data.sort((a, b) => {
@@ -52,6 +56,7 @@ export const useBlockedMutation = () => {
         });
       }
       queryClient.invalidateQueries([FRIEND]);
+      queryClient.invalidateQueries([BLOCKED]);
     },
     onError: (error: ApiError) => {
       alert(error.message);
