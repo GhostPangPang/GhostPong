@@ -3,8 +3,10 @@ services:
     container_name: ghostgres
     image: postgres:15.3-alpine
     restart: always
-    env_file:
-      - ./backend/.env
+    environment:
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB
     volumes:
       - db_data:/var/lib/postgresql/data
     expose:
@@ -16,6 +18,10 @@ services:
     depends_on:
       - db
     image: server
+    environment:
+      - DB_USER=${POSTGRES_USER}
+      - DB_PASSWORD=${POSTGRES_PASSWORD}
+      - DB_NAME=${POSTGRES_DB}
     build:
       context: .
       dockerfile: ./backend/Dockerfile
