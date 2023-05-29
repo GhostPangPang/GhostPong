@@ -22,6 +22,7 @@ import { GameLoadingPage } from './pages/GameLoadingPage';
 import { TwoFactorLoginPage } from './pages/TwoFactorLoginPage';
 import { ProtectedRoute } from './ProtectedRoute';
 import { DebugObserver } from './DebugObserver';
+import { RouteErrorPage } from './pages/RouteErrorPage';
 
 function App() {
   return (
@@ -53,6 +54,8 @@ function App() {
                 <Route path="/auth?/" element={<AuthHandler />} />
                 <Route path="/auth/register" element={<RegisterPage />} />
                 <Route path="/auth/2fa" element={<TwoFactorLoginPage />} />
+                <Route path="/error" element={<RouteErrorPage code={404} />} />
+                <Route path="*" element={<RouteErrorPage code={404} />} />
               </Routes>
             </ErrorBoundary>
           )}

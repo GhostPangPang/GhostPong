@@ -1,4 +1,7 @@
 import { Grid, Text, CommonButton } from '@/common';
+import { ApiError } from '@/libs/api';
+import { useRouteError } from 'react-router-dom';
+import { RouteErrorPage } from '../RouteErrorPage';
 
 export const logError = (error: Error, info: { componentStack: string }) => {
   // Do something with the error, e.g. log to an external API
@@ -6,17 +9,19 @@ export const logError = (error: Error, info: { componentStack: string }) => {
 };
 
 type FallbackComponentProps = {
-  error: Error;
+  error: ApiError;
   resetErrorBoundary: () => void;
 };
 
 export const FallbackComponent = ({ error, resetErrorBoundary }: FallbackComponentProps) => {
-  // const history = useHistory();
   const goBack = () => {
     resetErrorBoundary();
     window.history.back();
   };
 
+  if (error.statusCode === 404 || error.statusCode === 500) {
+    return <RouteErrorPage code={error.statusCode} message={error.message} />;
+  }
   return (
     <div>
       <Text size="md">{'error : ' + error.message}</Text>
