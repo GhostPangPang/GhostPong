@@ -10,7 +10,7 @@ import {
 import { Server, Socket } from 'socket.io';
 
 import { MemberInfo } from '@/types/channel';
-import { BarMoved, GameEnd, GameStart } from '@/types/game';
+import { BarMoved, GameEnd, GameMode, GameStart } from '@/types/game';
 import { UserStatus } from '@/types/user';
 
 import { CANVASE_HEIGHT, GameData, Player } from '@/game/game-data';
@@ -103,8 +103,8 @@ export class GameGateway {
    *
    * @param gameId
    */
-  broadcastGameStart(gameId: string, leftPlayer: MemberInfo, rightPlayer: MemberInfo): void {
-    const gameStart: GameStart = { gameId, leftPlayer, rightPlayer };
+  broadcastGameStart(gameId: string, mode: GameMode, leftPlayer: MemberInfo, rightPlayer: MemberInfo): void {
+    const gameStart: GameStart = { gameId, mode, leftPlayer, rightPlayer };
     this.server.to(gameId).emit('game-start', gameStart);
   }
 

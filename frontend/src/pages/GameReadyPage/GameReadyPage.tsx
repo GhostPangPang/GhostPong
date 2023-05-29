@@ -3,7 +3,7 @@ import { Versus } from './Versus';
 import { ChatBox } from './ChatBox';
 import { ObserverBox } from './ObserverBox';
 import { Grid, GameButton, Text } from '@/common';
-import { useResetRecoilState, useSetRecoilState, useRecoilState, useRecoilValue } from 'recoil';
+import { useResetRecoilState, useSetRecoilState, useRecoilState } from 'recoil';
 import { channelIdState, channelDataState, socketState, gameModeState, gameStatusState } from '@/stores';
 import { useGameMutation, useGameStart } from '@/hooks/game';
 import { Dropdown } from '@/common/Dropdown';
@@ -12,17 +12,19 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useChannel, useLeaveChannel } from '@/hooks/channel';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { Items, useItemGenerator } from '@/libs/utils/itemgenerator';
+import { useBlocked } from '@/hooks/blocked';
 
 export const GameReadyPage = () => {
   const setSocket = useSetRecoilState(socketState);
   const { pathname } = useLocation();
   const navigate = useNavigate();
 
-  const gameStatus = useRecoilValue(gameStatusState);
+  const [gameStatus, setGameStatus] = useRecoilState(gameStatusState);
   const [channelId, setChannelId] = useRecoilState(channelIdState);
   const [channelData, setChannelData] = useRecoilState(channelDataState);
   const [gameMode, setGameMode] = useRecoilState(gameModeState);
 
+  const { blocked } = useBlocked();
   const { refetchChannel } = useChannel(channelId);
   const { isInGame, leftPlayer, rightPlayer } = channelData;
   const { leaveChannel } = useLeaveChannel();
@@ -45,6 +47,7 @@ export const GameReadyPage = () => {
     const channelId = pathname.replace('/channel/', '');
     setChannelId(channelId);
     setSocket((prev) => ({ ...prev, channel: true }));
+    if (isInGame) setGameStatus('playing');
 
     return () => {
       setSocket((prev) => ({ ...prev, channel: false }));
