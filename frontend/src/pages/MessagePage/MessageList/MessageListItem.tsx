@@ -28,8 +28,20 @@ export const MessageListItem = ({ friend }: MessageListItemProps) => {
   const { updateBlocked } = useBlockedMutation();
 
   const items = [
-    { label: '친구삭제', onClick: () => deleteFriend(friend.id) },
-    { label: '친구차단', onClick: () => updateBlocked(friend.user.id) },
+    {
+      label: '친구삭제',
+      onClick: () => {
+        deleteFriend(friend.id);
+        changeMessageRoom(null);
+      },
+    },
+    {
+      label: '친구차단',
+      onClick: () => {
+        updateBlocked(friend.user.id);
+        changeMessageRoom(null);
+      },
+    },
     { label: '프로필', onClick: () => navigate(`/profile/${friend.user.id}`) },
   ];
 
