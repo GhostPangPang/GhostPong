@@ -9,7 +9,7 @@ interface ChatContentProps {
 }
 
 const ChatBubble = styled.div`
-  background-color: ${(props) => props.theme.color.gray100};
+  background-color: ${(props) => props.theme.color.gray100}; // 여기다
   padding: 0.5rem;
   border-radius: 10px;
   margin-bottom: 0.5rem;
