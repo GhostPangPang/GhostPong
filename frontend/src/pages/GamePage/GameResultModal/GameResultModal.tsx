@@ -80,7 +80,7 @@ export const GameResultModal = ({ isEnd }: { isEnd: boolean }) => {
         >
           Game Result
         </Text>
-        <Grid container="flex" justifyContent="center" alignItems="center" gap={1.5}>
+        <Grid container="flex" justifyContent="center" alignItems="center" gap={2}>
           <UserGameProfile nickname={winner.nickname} image={winner?.image} />
 
           <Text fontFamily="game" size="xxl" color="secondary">

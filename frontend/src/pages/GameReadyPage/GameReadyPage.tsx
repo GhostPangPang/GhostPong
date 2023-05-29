@@ -3,38 +3,39 @@ import { Versus } from './Versus';
 import { ChatBox } from './ChatBox';
 import { ObserverBox } from './ObserverBox';
 import { Grid, GameButton, Text } from '@/common';
-import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
-import { channelIdState, channelDataState, socketState } from '@/stores';
-import { useChannel, useLeaveChannel } from '@/hooks/channel';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { ChangeEvent, useEffect, useState } from 'react';
-import { useItemGenerator, Items } from '@/libs/utils/itemgenerator';
+import { useResetRecoilState, useSetRecoilState, useRecoilState, useRecoilValue } from 'recoil';
+import { channelIdState, channelDataState, socketState, gameModeState, gameStatusState } from '@/stores';
 import { useGameMutation, useGameStart } from '@/hooks/game';
 import { Dropdown } from '@/common/Dropdown';
-import { GameMode } from '@/dto/game';
 import { PingPongGame } from '../GamePage';
 import { useBlocked } from '@/hooks/blocked';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useChannel, useLeaveChannel } from '@/hooks/channel';
+import { ChangeEvent, useEffect, useState } from 'react';
+import { Items, useItemGenerator } from '@/libs/utils/itemgenerator';
 
 export const GameReadyPage = () => {
   const setSocket = useSetRecoilState(socketState);
   const { pathname } = useLocation();
-  const [channelId, setChannelId] = useRecoilState(channelIdState);
-  const resetChannelId = useResetRecoilState(channelIdState);
-  const { blocked } = useBlocked();
+  const navigate = useNavigate();
 
-  const { refetchChannel } = useChannel(channelId);
+  const gameStatus = useRecoilValue(gameStatusState);
+  const [channelId, setChannelId] = useRecoilState(channelIdState);
   const [channelData, setChannelData] = useRecoilState(channelDataState);
+  const [gameMode, setGameMode] = useRecoilState(gameModeState);
+
+  const { blocked } = useBlocked();
+  const { refetchChannel } = useChannel(channelId);
   const { isInGame, leftPlayer, rightPlayer } = channelData;
   const { leaveChannel } = useLeaveChannel();
-
   const { startGame } = useGameMutation();
-  const [mode, setMode] = useState<GameMode>('normal');
   const [items, setItems] = useState<Items>({
     leftPlayer: [],
     rightPlayer: [],
     observers: [],
   });
-  const navigate = useNavigate();
+
+  const resetChannelId = useResetRecoilState(channelIdState);
 
   useGameStart({
     onGameStart: () => {
@@ -45,8 +46,10 @@ export const GameReadyPage = () => {
   useEffect(() => {
     const channelId = pathname.replace('/channel/', '');
     setChannelId(channelId);
+    setSocket((prev) => ({ ...prev, channel: true }));
 
     return () => {
+      setSocket((prev) => ({ ...prev, channel: false }));
       resetChannelId();
     };
   }, []);
@@ -58,21 +61,16 @@ export const GameReadyPage = () => {
   }, [channelData]);
 
   const handleStartGame = () => {
-    // 임시로 새로 채널 정보 가져오게 하기
     if (!channelData.leftPlayer || !channelData.rightPlayer) {
       alert('플레이어가 없습니다.');
       return;
     }
-    startGame({ id: channelId, mode: mode });
+    startGame({ id: channelId, mode: gameMode });
   };
 
   useEffect(() => {
-    setSocket((prev) => ({ ...prev, channel: true })); // 이것도 리팩토링 고민해보기
-
-    return () => {
-      setSocket((prev) => ({ ...prev, channel: false }));
-    };
-  }, []);
+    if (gameStatus === 'ready') refetchChannel();
+  }, [gameStatus]);
 
   // unload 이벤트는 브라우저가 닫히거나 페이지를 떠날 때 발생합니다.
   useEffect(() => {
@@ -100,13 +98,13 @@ export const GameReadyPage = () => {
     const modeString = e.target.value;
     switch (modeString) {
       case '노멀모드':
-        setMode('normal');
+        setGameMode('normal');
         break;
       case '스피드모드':
-        setMode('speed');
+        setGameMode('speed');
         break;
       case '바보모드':
-        setMode('stupid');
+        setGameMode('stupid');
         break;
     }
   };

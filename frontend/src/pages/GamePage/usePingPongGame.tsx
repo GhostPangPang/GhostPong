@@ -12,7 +12,6 @@ import {
   leftPlayerState,
   rightPlayerState,
   gameModeState,
-  gameTypeState,
   gameMemberTypeState,
 } from '@/stores/gameState';
 import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
@@ -23,11 +22,7 @@ import { GameEvent } from '@/constants';
 import { Player, Ball, GameData, BAR_PADDING, BAR_WIDTH, CANVASE_WIDTH } from '@/game/game-data';
 import { GameEnd, BarMoved } from '@/dto/game';
 
-import wallSound from '@/assets/sounds/wall.mp3';
-import hitSound from '@/assets/sounds/hit.mp3';
-import endSound from '@/assets/sounds/end.mp3';
 import { debounce } from '@/libs/utils/debounce';
-import { AudioManager } from '@/libs/utils/sound';
 
 const NET_WIDTH = 1;
 const NET_HEIGHT = 3;
@@ -63,15 +58,10 @@ export const usePingPongGame = () => {
   const [canvasSize, setCanvasSize] = useRecoilState(canvasSizeState);
   const canvasRatio = useRecoilValue(canvasRatioState);
 
-  // sounds
-  const playWallSound = AudioManager.getInstance(wallSound);
-  const playHitSound = AudioManager.getInstance(hitSound);
-  const playEndSound = AudioManager.getInstance(endSound);
-
   // recoil reset
   const resetGameId = useResetRecoilState(gameIdState);
-  const resetGamePlayer = useResetRecoilState(gamePlayerState);
   const resetGameData = useResetRecoilState(gameDataState);
+  const resetGameStatus = useResetRecoilState(gameStatusState);
   const resetCanvasSize = useResetRecoilState(canvasSizeState);
   const resetCanvasRatio = useResetRecoilState(canvasRatioState);
 
@@ -122,7 +112,6 @@ export const usePingPongGame = () => {
     // game end event
     onEvent(GameEvent.GAMEEND, (data: GameEnd) => {
       console.log('GAMEEND', data);
-      playEndSound.play();
       setGameStatus('end');
       setGameResult(data);
     });
@@ -133,8 +122,8 @@ export const usePingPongGame = () => {
     return () => {
       console.log('usePingPong cleanup');
       resetGameId();
-      resetGamePlayer();
       resetGameData();
+      resetGameStatus();
       resetCanvasSize();
       resetCanvasRatio();
       offEvent(GameEvent.GAMEDATA);
@@ -212,11 +201,15 @@ export const usePingPongGame = () => {
   const moveBar = (y: number) => {
     let normalY: number;
     if (gameMemberType === 'leftPlayer') {
-      normalY = y / ratio - leftPlayer.height / 2;
+      const barHeight = leftPlayer.height / 2;
+      normalY = y / ratio - barHeight;
+      if (normalY < barHeight) normalY = barHeight;
       setLeftPlayer((prev) => ({ ...prev, y: normalY }));
       moveBarEvent(normalY);
     } else if (gameMemberType === 'rightPlayer') {
-      normalY = y / ratio - rightPlayer.height / 2;
+      const barHeight = rightPlayer.height / 2;
+      normalY = y / ratio - barHeight;
+      if (normalY < barHeight) normalY = barHeight;
       setRightPlayer((prev) => ({ ...prev, y: normalY }));
       moveBarEvent(normalY);
     }
@@ -232,12 +225,6 @@ export const usePingPongGame = () => {
     };
     updateBall(updateData);
     checkWallCollision(updateData.ball);
-
-    // play sound
-    if (updateData.ball.vy * ball.vy < 0) {
-      if (updateData.ball.vx * ball.vx < 0) playHitSound.play();
-      else playWallSound.play();
-    }
     setGameData(updateData);
   };
 

@@ -17,12 +17,14 @@ export const useGameStart = ({ onGameStart }: Props) => {
     console.log('game start hook');
     onEvent(GameEvent.GAMESTART, (data: GameStart) => {
       console.log('game-start', data);
-      setGameId(data.gameId);
-      setGamePlayer({
-        leftPlayer: data.leftPlayer,
-        rightPlayer: data.rightPlayer,
-      });
-      onGameStart && onGameStart();
+      if (data) {
+        setGameId(data.gameId);
+        setGamePlayer({
+          leftPlayer: data.leftPlayer,
+          rightPlayer: data.rightPlayer,
+        });
+        onGameStart && onGameStart();
+      }
     });
 
     return () => {
