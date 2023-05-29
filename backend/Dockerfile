@@ -8,7 +8,7 @@ COPY ./game /app/game
 
 COPY ./types /app/types
 
-RUN yarn --frozen-lockfile && yarn build
+RUN yarn && yarn build
 
 EXPOSE 3000
 

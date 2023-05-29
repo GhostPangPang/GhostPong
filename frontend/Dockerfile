@@ -8,7 +8,7 @@ COPY ./game /app/game
 
 COPY ./types /app/types
 
-RUN yarn --frozen-lockfile && yarn build
+RUN yarn && yarn build
 
 FROM nginx:1.25.0-alpine
 
