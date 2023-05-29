@@ -12,9 +12,9 @@ import { DatabaseConfigService } from './configuration.service';
       validationSchema: Joi.object({
         DB_HOST: Joi.string(),
         DB_PORT: Joi.number(),
-        POSTGRES_DB: Joi.string(),
-        POSTGRES_USER: Joi.string(),
-        POSTGRES_PASSWORD: Joi.string(),
+        DB_NAME: Joi.string(),
+        DB_USER: Joi.string(),
+        DB_PASSWORD: Joi.string(),
       }),
     }),
   ],
