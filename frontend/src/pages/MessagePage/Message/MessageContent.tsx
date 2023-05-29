@@ -69,7 +69,7 @@ export const MessageContent = () => {
           <MessageContentItem
             key={nanoid()}
             side={data.receiverId == userInfo.id ? 'right' : 'left'}
-            user={data.receiverId == userInfo.id ? userInfo : currentFriend.user}
+            user={data.receiverId == userInfo.id ? currentFriend.user : userInfo}
             content={data.content}
             createdAt={new Date()}
           />
@@ -82,7 +82,7 @@ export const MessageContent = () => {
                 <MessageContentItem
                   key={nanoid()}
                   side={item.senderId === userInfo.id ? 'left' : 'right'}
-                  user={item.senderId == userInfo.id ? currentFriend.user : userInfo}
+                  user={item.senderId == userInfo.id ? userInfo : currentFriend.user}
                   content={item.content}
                   createdAt={item.createdAt}
                 />
