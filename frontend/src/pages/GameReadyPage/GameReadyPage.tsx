@@ -8,7 +8,6 @@ import { channelIdState, channelDataState, socketState, gameModeState, gameStatu
 import { useGameMutation, useGameStart } from '@/hooks/game';
 import { Dropdown } from '@/common/Dropdown';
 import { PingPongGame } from '../GamePage';
-import { useBlocked } from '@/hooks/blocked';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useChannel, useLeaveChannel } from '@/hooks/channel';
 import { ChangeEvent, useEffect, useState } from 'react';
@@ -24,7 +23,6 @@ export const GameReadyPage = () => {
   const [channelData, setChannelData] = useRecoilState(channelDataState);
   const [gameMode, setGameMode] = useRecoilState(gameModeState);
 
-  const { blocked } = useBlocked();
   const { refetchChannel } = useChannel(channelId);
   const { isInGame, leftPlayer, rightPlayer } = channelData;
   const { leaveChannel } = useLeaveChannel();
@@ -69,8 +67,8 @@ export const GameReadyPage = () => {
   };
 
   useEffect(() => {
-    if (gameStatus === 'ready') refetchChannel();
-  }, [gameStatus]);
+    if (channelId && gameStatus === 'ready') refetchChannel();
+  }, [gameStatus, channelId]);
 
   // unload 이벤트는 브라우저가 닫히거나 페이지를 떠날 때 발생합니다.
   useEffect(() => {
