@@ -4,6 +4,7 @@ import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { newMessageIdListState, newMessagesState, channelDataState, ChannelData } from './stores';
 import { socketState } from './stores/socketState';
 import { Message } from '@/dto/message/socket';
+import { UserNickname } from '@/dto/user';
 import { MemberInfo, UserId, NewChat, UpdatedMode } from '@/dto/channel/socket';
 import { MessageEvent, ChannelEvent, GLOBALEVENT } from './constants';
 import { useUserInfo } from './hooks/user';
@@ -188,9 +189,12 @@ export const SocketHandler = () => {
 
   useEffect(() => {
     console.log('hee');
-    onEvent(GLOBALEVENT.INVITE_CHANNEL, (data) => {
+    onEvent(GLOBALEVENT.INVITE_CHANNEL, (data: UserNickname) => {
       console.log('socket invite', data);
-      alert('초대되었습니다.');
+      if (confirm(data.nickname + '가 님을 초대하였습니다.')) {
+        console.log('초대되었습니다');
+        // channel Id 가 와야함
+      }
     });
     return () => {
       offEvent(GLOBALEVENT.INVITE_CHANNEL);
