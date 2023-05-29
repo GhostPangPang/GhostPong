@@ -53,8 +53,13 @@ export const GameResultModal = ({ isEnd }: { isEnd: boolean }) => {
   useEffect(() => {
     if (!isEnd) return;
     if (count === 0) {
-      handleGoToWaitingPage();
-      return;
+      if (gameType === 'normal') {
+        handleGoToWaitingPage();
+        return;
+      } else {
+        handleLeave();
+        return;
+      }
     }
 
     const countdownInterval = setInterval(() => {
