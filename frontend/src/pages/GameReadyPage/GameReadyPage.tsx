@@ -135,7 +135,7 @@ export const GameReadyPage = () => {
                 <Text as="option">스피드모드</Text>
                 <Text as="option">바보모드</Text>
               </Dropdown>
-              <GameButton size="md" onClick={handleStartGame}>
+              <GameButton size="md" onClick={handleStartGame} disabled={gameStatus === 'waiting'}>
                 START
               </GameButton>
             </>
