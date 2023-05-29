@@ -4,7 +4,7 @@ import { BlockedUserResponse } from '@/dto/blocked/response';
 import { FRIEND } from '../friend/useFriend';
 import { QueryProps } from '@/types/query';
 import { useSetRecoilState } from 'recoil';
-import { blockedIdListState } from '@/stores';
+import { blockedIdList } from '@/stores';
 import { useEffect } from 'react';
 
 type BlockedResponse = BlockedUserResponse['blocked'];
@@ -29,12 +29,24 @@ const delBlocked = async (userId: number) => {
 };
 
 export const useBlocked = ({ enabled = true }: QueryProps = {}) => {
-  const { data = [], refetch: refetchBlocked } = useQuery<BlockedResponse>({
+  const setBlockedIdList = useSetRecoilState(blockedIdList);
+  const {
+    data = [],
+    isFetching,
+    refetch: refetchBlocked,
+  } = useQuery<BlockedResponse>({
     queryKey: [BLOCKED],
     queryFn: getBlockedList,
     enabled: enabled,
     staleTime: 0,
   });
+
+  useEffect(() => {
+    if (!isFetching && data) {
+      const blockedIdList = data.map((user) => user.id);
+      setBlockedIdList(blockedIdList);
+    }
+  }, [data]);
 
   const blocked = data.sort((a, b) => {
     return a.nickname.localeCompare(b.nickname);

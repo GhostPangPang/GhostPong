@@ -4,7 +4,7 @@ import { ChatBox } from './ChatBox';
 import { ObserverBox } from './ObserverBox';
 import { Grid, GameButton, Text } from '@/common';
 import { useResetRecoilState, useSetRecoilState, useRecoilState, useRecoilCallback } from 'recoil';
-import { channelIdState, channelDataState, socketState, gameModeState, gameStatusState } from '@/stores';
+import { channelIdState, channelDataState, socketState, gameModeState, gameStatusState, blockedIdList } from '@/stores';
 import { useGameMutation, useGameStart } from '@/hooks/game';
 import { Dropdown } from '@/common/Dropdown';
 import { PingPongGame } from '../GamePage';
@@ -39,8 +39,9 @@ export const GameReadyPage = () => {
     observers: [],
   });
   const { blocked } = useBlocked();
-  const updateChatEvent = useRecoilCallback(({ set }) => (data: NewChat) => {
-    if (blocked.find((user: User) => user.id === data.senderId)) return;
+  const updateChatEvent = useRecoilCallback(({ set, snapshot }) => (data: NewChat) => {
+    const blocked = snapshot.getLoadable(blockedIdList).getValue();
+    if (blocked.find((id: number) => id === data.senderId)) return;
     set(channelDataState, (prev) => ({
       ...prev,
       chats: [...prev.chats, data],

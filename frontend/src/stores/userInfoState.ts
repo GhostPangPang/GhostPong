@@ -11,3 +11,8 @@ export const UserInfoState = atom<UserInfoResponse>({
     blockedUsers: [],
   },
 });
+
+export const blockedIdList = atom<number[]>({
+  key: '/blockedIdList',
+  default: [],
+});
