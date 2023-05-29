@@ -48,7 +48,7 @@ export const ProfilePage = () => {
           <Text size="xxl">{data.nickname}</Text>
         </Grid>
         {id === userId ? (
-          <SettingIcon onClick={() => navigate('/profile/edit')} />
+          <SettingIcon onClick={() => navigate('/profile/edit')} style={{ cursor: 'pointer' }} />
         ) : (
           <Grid container="flex" justifyContent="end" alignItems="end" gap={1}>
             <CommonButton size="sm" onClick={() => requestFriend(userId)}>
