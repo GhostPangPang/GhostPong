@@ -4,7 +4,7 @@ import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { newMessageIdListState, newMessagesState, channelDataState, ChannelData } from './stores';
 import { socketState } from './stores/socketState';
 import { Message } from '@/dto/message/socket';
-import { UserNickname } from '@/dto/user';
+import { ChannelInvited } from '@/dto/user/socket';
 import { MemberInfo, UserId, NewChat, UpdatedMode } from '@/dto/channel/socket';
 import { MessageEvent, ChannelEvent, GLOBALEVENT } from './constants';
 import { useUserInfo } from './hooks/user';
@@ -13,6 +13,7 @@ import { Friend } from './types';
 import { useQueryClient } from '@tanstack/react-query';
 import { FRIEND } from './hooks/friend';
 import { BlockedUsersSelector } from '@/stores/userInfoState';
+import { useChannelMutation } from './hooks/channel';
 
 export const SocketHandler = () => {
   const socket = useRecoilValue(socketState);
@@ -21,6 +22,7 @@ export const SocketHandler = () => {
   const newMessages = useRecoilValue(newMessagesState);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { inviteJoinChannel } = useChannelMutation();
 
   const updateMessageEvent = useRecoilCallback(({ snapshot, set }) => (data: Message) => {
     const current = snapshot.getLoadable(newMessagesState).getValue().friend;
@@ -189,11 +191,10 @@ export const SocketHandler = () => {
 
   useEffect(() => {
     console.log('hee');
-    onEvent(GLOBALEVENT.INVITE_CHANNEL, (data: UserNickname) => {
+    onEvent(GLOBALEVENT.INVITE_CHANNEL, (data: ChannelInvited) => {
       console.log('socket invite', data);
       if (confirm(data.nickname + '가 님을 초대하였습니다.')) {
-        console.log('초대되었습니다');
-        // channel Id 가 와야함
+        inviteJoinChannel({ id: data.channelId });
       }
     });
     return () => {
