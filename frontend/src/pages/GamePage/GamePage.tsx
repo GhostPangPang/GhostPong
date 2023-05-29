@@ -41,7 +41,8 @@ export const PingPongGame = () => {
     if (!canvas) return;
 
     const rect = canvas.getBoundingClientRect();
-    moveBar(e.clientY - rect.top);
+    const y = e.clientY - rect.top;
+    moveBar(y);
   };
 
   return (
