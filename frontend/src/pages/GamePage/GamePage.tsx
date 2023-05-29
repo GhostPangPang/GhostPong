@@ -2,7 +2,7 @@ import theme from '@/assets/styles/theme';
 import { MouseEvent, useEffect } from 'react';
 import { useCanvas } from '@/hooks';
 import { usePingPongGame } from './usePingPongGame';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { gameMemberTypeState, gamePlayerState, socketState } from '@/stores';
 import { GameResultModal } from './GameResultModal/GameResultModal';
 import { useUserInfo } from '@/hooks/user';
@@ -14,8 +14,8 @@ export const PingPongGame = () => {
   const {
     userInfo: { id: userId },
   } = useUserInfo();
-  const { gamePlayer, gameStatus, setCanvasSize, playGame, moveBar } = usePingPongGame();
-  const { leftPlayer, rightPlayer } = gamePlayer;
+  const { gameStatus, setCanvasSize, playGame, moveBar } = usePingPongGame();
+  const { leftPlayer, rightPlayer } = useRecoilValue(gamePlayerState);
 
   const isEnd = gameStatus === 'end';
   const canvasRef = useCanvas(playGame, isEnd);

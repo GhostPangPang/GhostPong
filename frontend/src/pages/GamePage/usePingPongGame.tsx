@@ -12,7 +12,6 @@ import {
   leftPlayerState,
   rightPlayerState,
   gameModeState,
-  gameTypeState,
   gameMemberTypeState,
 } from '@/stores/gameState';
 import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
@@ -134,7 +133,6 @@ export const usePingPongGame = () => {
     return () => {
       console.log('usePingPong cleanup');
       resetGameId();
-      resetGamePlayer();
       resetGameData();
       resetGameStatus();
       resetCanvasSize();
@@ -236,10 +234,10 @@ export const usePingPongGame = () => {
     checkWallCollision(updateData.ball);
 
     // play sound
-    if (updateData.ball.vy * ball.vy < 0) {
-      if (updateData.ball.vx * ball.vx < 0) playHitSound.play();
-      else playWallSound.play();
-    }
+    // if (updateData.ball.vy * ball.vy < 0) {
+    //   if (updateData.ball.vx * ball.vx < 0) playHitSound.play();
+    //   else playWallSound.play();
+    // }
     setGameData(updateData);
   };
 

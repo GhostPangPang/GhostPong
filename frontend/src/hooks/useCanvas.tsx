@@ -24,7 +24,6 @@ export const useCanvas = (draw: (ctx: CanvasRenderingContext2D) => void, shouldS
       const context = canvas.getContext('2d');
       if (context) {
         context.scale(devicePixelRatio, devicePixelRatio);
-        // setContext(canvas.getContext('2d'));
       }
     }
   }, []);

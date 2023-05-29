@@ -33,7 +33,7 @@ export const LobbyPage = () => {
         <GameButton size="md" onClick={() => navigate('/channel/list')}>
           Normal
         </GameButton>
-        <GameButton size="md" onClick={() => playRandomGame()}>
+        <GameButton size="md" color="secondary" onClick={() => playRandomGame()}>
           Random
         </GameButton>
       </Grid>

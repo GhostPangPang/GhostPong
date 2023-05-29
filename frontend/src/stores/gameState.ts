@@ -97,6 +97,7 @@ export const gameDataState = selector<GameData>({
     if (newValue instanceof DefaultValue) return;
     const gameMemberType = get(gameMemberTypeState);
     const { id, mode, ball, leftPlayer, rightPlayer } = newValue;
+
     set(gameIdState, id);
     set(gameModeState, mode);
     set(ballState, ball);
