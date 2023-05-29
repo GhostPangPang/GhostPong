@@ -75,12 +75,6 @@ export const GameReadyPage = () => {
 
   // unload 이벤트는 브라우저가 닫히거나 페이지를 떠날 때 발생합니다.
   useEffect(() => {
-    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-      event.preventDefault();
-      event.returnValue = '';
-      return '';
-    };
-    window.addEventListener('beforeunload', handleBeforeUnload);
     history.pushState(null, location.href);
     window.onpopstate = function () {
       if (window.confirm('뒤로 가시겠습니까?')) {
@@ -91,7 +85,6 @@ export const GameReadyPage = () => {
       }
     };
     return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
       window.onpopstate = null;
     };
   }, [channelId]);
