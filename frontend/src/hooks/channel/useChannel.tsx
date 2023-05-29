@@ -22,6 +22,10 @@ interface postJoinChannelProps extends JoinChannelRequest {
   id: string;
 }
 
+interface postInviteJoinChannelProps {
+  id: string;
+}
+
 interface postInviteChannelProps {
   channelId: string;
   userId: number;
@@ -85,6 +89,10 @@ const postCreateChannel = async (request: CreateChannelRequest) => {
 
 const postJoinChannel = async ({ mode, password, id }: postJoinChannelProps) => {
   return await post<ApiResponse>(CHANNEL + `/${id}`, { mode, password });
+};
+
+const postInviteJoinChannel = async ({ id }: postInviteJoinChannelProps) => {
+  return await post<ApiResponse>(CHANNEL + `/${id}/invited`);
 };
 
 const patchUpdateChannel = async ({ channelId, mode, password }: patchUpdateChannelProps) => {
@@ -212,6 +220,16 @@ export const useChannelMutation = () => {
     },
   });
 
+  const { mutate: inviteJoinChannel } = useMutation(postInviteJoinChannel, {
+    onSuccess: (data: ApiResponse, { id }) => {
+      queryClient.invalidateQueries([CHANNEL, id]);
+      navigate('/channel/' + id);
+    },
+    onError: (error: ApiError) => {
+      alert(error.message);
+    },
+  });
+
   const { mutate: createChannel } = useMutation(postCreateChannel, {
     onSuccess: (data: LocationResponse) => {
       queryClient.invalidateQueries([CHANNEL]);
@@ -305,6 +323,7 @@ export const useChannelMutation = () => {
 
   return {
     joinChannel,
+    inviteJoinChannel,
     createChannel,
     updateChannel,
     inviteChannel,
