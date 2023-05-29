@@ -227,7 +227,6 @@ export const useChannelMutation = () => {
   const { mutate: becomePlayer } = useMutation(patchBePlayer, {
     onSuccess: (data: ApiResponse, id: string) => {
       queryClient.invalidateQueries([CHANNEL, id]);
-      alert(data.message);
     },
     onError: (error: ApiError) => {
       alert(error.message);
@@ -247,7 +246,6 @@ export const useChannelMutation = () => {
   const { mutate: becomeOwner } = useMutation(patchBeOwner, {
     onSuccess: (data: ApiResponse, id: string) => {
       queryClient.invalidateQueries([CHANNEL, id]);
-      alert(data.message);
     },
     onError: (error: ApiError) => {
       alert(error.message);
