@@ -1,15 +1,25 @@
 import { getRank } from '@/libs/utils/rank';
-import { Grid, Text, RankBadge, Avatar } from '@/common';
+import { Grid, Text, RankBadge, Avatar, CommonButton } from '@/common';
 import { InfoBox } from './InfoBox';
 import { AchievementBox } from './AchievementBox';
 import { HistroyBox } from './HistoryBox';
 import { useMemo, useEffect, useState } from 'react';
 import { useProfileData } from '@/hooks/user/useProfileData';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useFriendMutation } from '@/hooks/friend';
+import { useBlockedMutation } from '@/hooks/blocked';
+import { useUserInfo } from '@/hooks/user';
+import { ReactComponent as SettingIcon } from '@/svgs/setting.svg';
 
 export const ProfilePage = () => {
+  const navigate = useNavigate();
   const { pathname } = useLocation();
+  const {
+    userInfo: { id },
+  } = useUserInfo();
   const [userId, setUserId] = useState(0);
+  const { requestFriend } = useFriendMutation();
+  const { updateBlocked } = useBlockedMutation();
 
   useEffect(() => {
     setUserId(Number(pathname.replace('/profile/', '')));
@@ -27,13 +37,28 @@ export const ProfilePage = () => {
       ).toFixed(1),
     [data.winCount, data.loseCount],
   );
+
   // 자신의 id인지 확인하는 절차가 필요함
   return (
     // media query 100rem 이하일 때
     <Grid container="flex" direction="column" rowGap={1.5} size={{ maxWidth: '100rem' }}>
-      <Grid container="flex" justifyContent="start" alignItems="end">
-        <Avatar size="xl" src={data.image} borderColor="gradient" />
-        <Text size="xxl">{data.nickname}</Text>
+      <Grid as="section" container="flex" justifyContent="space-between">
+        <Grid container="flex" justifyContent="start" alignItems="end">
+          <Avatar size="xl" src={data.image} borderColor="gradient" />
+          <Text size="xxl">{data.nickname}</Text>
+        </Grid>
+        {id === userId ? (
+          <SettingIcon onClick={() => navigate('/profile/edit')} />
+        ) : (
+          <Grid container="flex" justifyContent="end" alignItems="end" gap={1}>
+            <CommonButton size="sm" onClick={() => requestFriend(userId)}>
+              친구신청
+            </CommonButton>
+            <CommonButton size="sm" onClick={() => updateBlocked(userId)}>
+              친구차단
+            </CommonButton>
+          </Grid>
+        )}
       </Grid>
       <Grid container="flex" direction="row" justifyContent="space-between" alignItems="center" gap={2}>
         <InfoBox title="랭크" desc={rank} component={<RankBadge rank={rank} size="xl" />} />
