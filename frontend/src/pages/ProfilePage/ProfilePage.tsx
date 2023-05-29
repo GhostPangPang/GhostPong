@@ -10,9 +10,10 @@ import { useLocation } from 'react-router-dom';
 export const ProfilePage = () => {
   const { pathname } = useLocation();
   const [userId, setUserId] = useState(0);
+
   useEffect(() => {
     setUserId(Number(pathname.replace('/profile/', '')));
-  }, []);
+  }, [pathname]);
 
   // useQuery는 컴포넌트가 마운트될 때 자동으로 데이터를 조회하므로 따로 useEffect를 사용하여 데이터를 조회할 필요는 없습니다.
   const data = useProfileData(userId);
