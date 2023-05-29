@@ -1,0 +1,14 @@
+./backend/.husky
+./backend/dist
+./backend/node_modules
+./backend/seeding
+./backend/yarn-error.log
+./backend/test
+
+./frontend/.husky
+./frontend/.storybook
+./frontend/.vscode
+./frontend/dist
+./frontend/node_modules
+./frontend/analyse.html
+
