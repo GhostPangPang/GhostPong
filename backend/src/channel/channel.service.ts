@@ -136,18 +136,9 @@ export class ChannelService {
   async joinChannel(myId: number, joinOptions: JoinChannelRequestDto, channel: Channel): Promise<SuccessResponseDto> {
     this.checkUserAlreadyInChannel(myId);
     await this.checkJoinChannel(myId, joinOptions, channel);
-
     const socketId = this.findExistSocket(myId);
-
-    const user = await this.userRepository.findOne({
-      where: { id: myId },
-      select: ['nickname', 'image'],
-    });
-    if (user === null) {
-      throw new NotFoundException('존재하지 않는 유저입니다.');
-    }
-
     const data = await this.insertNewMember(myId, channel);
+
     this.channelGateway.joinChannel(socketId, channel.id);
     this.channelGateway.emitChannel<MemberInfo>(channel.id, 'new-member', data, socketId);
 
@@ -178,6 +169,25 @@ export class ChannelService {
 
     return {
       message: '채널 초대에 성공했습니다.',
+    };
+  }
+
+  /**
+   * @description 초대된 채널에 참여하기
+   */
+  async joinInvitedChannel(myId: number, channel: Channel): Promise<SuccessResponseDto> {
+    this.checkUserAlreadyInChannel(myId);
+    if (this.invitationRepository.find(myId) === undefined) {
+      throw new NotFoundException('초대가 필요합니다.');
+    }
+    const socketId = this.findExistSocket(myId);
+    const data = await this.insertNewMember(myId, channel);
+
+    this.channelGateway.joinChannel(socketId, channel.id);
+    this.channelGateway.emitChannel<MemberInfo>(channel.id, 'new-member', data, socketId);
+    this.invitationRepository.delete(myId);
+    return {
+      message: '초대된 채널에 참여했습니다.',
     };
   }
 
