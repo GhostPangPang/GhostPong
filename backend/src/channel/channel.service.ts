@@ -14,7 +14,7 @@ import { Cache } from 'cache-manager';
 import { Repository } from 'typeorm';
 
 import { ChannelRole, FullChannelInfoResponse, MemberInfo, UpdatedMode, UserId } from '@/types/channel';
-import { UserNickname } from '@/types/user';
+import { ChannelInvited } from '@/types/user';
 
 import { MUTE_EXPIRES_IN, PARTICIPANT_LIMIT } from '../common/constant';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
@@ -171,7 +171,10 @@ export class ChannelService {
     const userSocketId = this.findExistSocket(targetId);
     await this.checkExistFriendship(myId, targetId);
     this.invitationRepository.insert({ userId: targetId, channelId: channel.id });
-    this.channelGateway.emitUser<UserNickname>(userSocketId, 'channel-invited', { nickname: user.nickname });
+    this.channelGateway.emitUser<ChannelInvited>(userSocketId, 'channel-invited', {
+      channelId: channel.id,
+      nickname: user.nickname,
+    });
 
     return {
       message: '채널 초대에 성공했습니다.',
