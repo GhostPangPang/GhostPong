@@ -78,17 +78,18 @@ export const GameReadyPage = () => {
       return '';
     };
     window.addEventListener('beforeunload', handleBeforeUnload);
-
     history.pushState(null, location.href);
     window.onpopstate = function () {
       if (window.confirm('뒤로 가시겠습니까?')) {
         leaveChannel(channelId);
         navigate('/channel/list');
+      } else {
+        history.pushState(null, document.title, location.href);
       }
     };
-
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.onpopstate = null;
     };
   }, [channelId]);
 
