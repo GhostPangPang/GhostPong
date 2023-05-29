@@ -12,6 +12,9 @@ import path from 'path';
 export default ({ mode }) => {
   process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
   return defineConfig({
+    esbuild: {
+      drop: ['console', 'debugger'],
+    },
     plugins: [
       react(),
       svgr(),
