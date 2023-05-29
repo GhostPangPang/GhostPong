@@ -1,6 +1,6 @@
 import { useChannelMutation, useLeaveChannel } from '@/hooks/channel';
 import { useFriendMutation } from '@/hooks/friend';
-import { useBlockedMutation } from '@/hooks/blocked';
+import { useBlockedMutation, useBlocked } from '@/hooks/blocked';
 import { useRecoilValue } from 'recoil';
 import { channelIdState, channelDataState, currentRoleSelector } from '@/stores';
 import { useUserInfo } from '@/hooks/user';
@@ -28,6 +28,7 @@ export const useItemGenerator = (): Items => {
   const currentRole = useRecoilValue(currentRoleSelector);
   const channelId = useRecoilValue(channelIdState);
   const { userInfo } = useUserInfo();
+  const { refetchBlocked } = useBlocked();
   const navigate = useNavigate();
 
   const getCommonItems = (userId: number) =>
@@ -47,6 +48,7 @@ export const useItemGenerator = (): Items => {
             onClick: () => {
               updateBlocked(userId, {
                 onSuccess: () => {
+                  refetchBlocked();
                   alert('차단되었습니다.');
                 },
               });
