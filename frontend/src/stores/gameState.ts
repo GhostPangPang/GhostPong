@@ -137,8 +137,9 @@ export const gamePlayerState = atom<GamePlayerData>({
 export type READY = 'ready';
 export type PLAYING = 'playing';
 export type END = 'end';
+export type WAITING = 'waiting';
 
-type GameStatus = READY | PLAYING | END;
+type GameStatus = READY | PLAYING | END | WAITING;
 
 type GameType = 'random' | 'normal';
 

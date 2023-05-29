@@ -16,7 +16,7 @@ import { useLeaveChannel } from '@/hooks/channel';
 export const GameResultModal = ({ isEnd }: { isEnd: boolean }) => {
   const navigate = useNavigate();
   const setChannelData = useSetRecoilState(channelDataState);
-  const setGameStatue = useSetRecoilState(gameStatusState);
+  const setGameStatus = useSetRecoilState(gameStatusState);
 
   const gameId = useRecoilValue(gameIdState);
   const gameType = useRecoilValue(gameTypeState);
@@ -24,7 +24,7 @@ export const GameResultModal = ({ isEnd }: { isEnd: boolean }) => {
   const gameResult = useRecoilValue(gameResultState);
 
   const { leaveChannel } = useLeaveChannel();
-
+  const [count, setCount] = useState(5);
   const [winner, setWinner] = useState<MemberInfo>({
     userId: 0,
     nickname: '',
@@ -50,6 +50,20 @@ export const GameResultModal = ({ isEnd }: { isEnd: boolean }) => {
     }
   }, [gameResult]); // depth 고민해보기
 
+  useEffect(() => {
+    if (!isEnd) return;
+    if (count === 0) {
+      handleGoToWaitingPage();
+      return;
+    }
+
+    const countdownInterval = setInterval(() => {
+      setCount(count - 1);
+    }, 1000);
+
+    return () => clearInterval(countdownInterval); // cleanup 함수
+  }, [count, isEnd]);
+
   const handleLeave = () => {
     leaveChannel(gameId);
     navigate('/');
@@ -57,7 +71,11 @@ export const GameResultModal = ({ isEnd }: { isEnd: boolean }) => {
 
   const handleGoToWaitingPage = () => {
     setChannelData((prev) => ({ ...prev, isInGame: false }));
-    setGameStatue('ready');
+    setGameStatus('waiting');
+    // 5초 뒤에 ready로 바꾸기
+    setTimeout(() => {
+      setGameStatus('ready');
+    }, 5000);
   };
 
   return (
@@ -102,8 +120,11 @@ export const GameResultModal = ({ isEnd }: { isEnd: boolean }) => {
             나가기
           </GameButton>
           {gameType === 'normal' && (
-            <GameButton size="md" onClick={handleGoToWaitingPage}>
+            <GameButton size="md" onClick={handleGoToWaitingPage} style={{ display: 'flex', justifyContent: 'center' }}>
               대기페이지로
+              <Text size="xs" color="gray100" style={{ alignItems: 'end', marginLeft: '1.5px' }}>
+                {count.toString()}
+              </Text>
             </GameButton>
           )}
         </Grid>
