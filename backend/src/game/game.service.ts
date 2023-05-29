@@ -122,7 +122,7 @@ export class GameService {
     this.gameGateway.updateUserStatus(rightPlayer.id, 'game');
 
     setTimeout(() => {
-      this.gameGateway.broadcastGameStart(game.gameData.id, leftPlayerInfo, rightPlayerInfo);
+      this.gameGateway.broadcastGameStart(game.gameData.id, mode, leftPlayerInfo, rightPlayerInfo);
     }, 1000);
   }
 }
