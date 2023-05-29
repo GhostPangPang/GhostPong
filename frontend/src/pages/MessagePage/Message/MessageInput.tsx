@@ -9,6 +9,8 @@ const StyledInput = styled.input`
   font-size: 1.2rem;
   font-weight: 300;
   text-decoration: none;
+  overflow-x: 'hidden';
+  flex-grow: 1;
   color: ${(props) => props.theme.color.gray100};
 `;
 
@@ -42,7 +44,8 @@ export const MessageInput = () => {
       <StyledInput
         type="text"
         placeholder="메시지를 입력하세요."
-        style={{ flexGrow: 1 }}
+        size={512}
+        maxLength={512}
         value={content}
         onCompositionStart={() => setIsComposing(true)}
         onCompositionEnd={() => setIsComposing(false)}

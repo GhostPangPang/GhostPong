@@ -40,7 +40,13 @@ export const MessagePage = () => {
       <Grid gridRow="2/3" gridColumn="1/2" size={{ overflowY: 'auto' }}>
         <MessageList />
       </Grid>
-      <Grid gridRow="2/3" gridColumn="2/3" container="flex" direction="column" size={{ overflowY: 'auto' }}>
+      <Grid
+        gridRow="2/3"
+        gridColumn="2/3"
+        container="flex"
+        direction="column"
+        size={{ overflowY: 'auto', overflowX: 'hidden' }}
+      >
         <Suspense fallback={<div>Message</div>}>
           <Message />
         </Suspense>

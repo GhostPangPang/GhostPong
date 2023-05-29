@@ -9,7 +9,7 @@ export const useNewMessages = () => {
   const [newMessagesInfo, setNewMessagesInfo] = useRecoilState(newMessagesState);
   const [newMessageIdList, setNewMessageIdList] = useRecoilState(newMessageIdListState);
 
-  const changeMessageRoom = useRecoilCallback(({ snapshot, set }) => (friend: Friend) => {
+  const changeMessageRoom = useRecoilCallback(({ snapshot, set }) => (friend: Friend | null) => {
     const current = snapshot.getLoadable(newMessagesState).getValue().friend;
 
     if (current) emitEvent(MessageEvent.LASTVIEW, { friendId: current.id, lastViewTime: new Date().toISOString() });

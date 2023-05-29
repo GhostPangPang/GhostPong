@@ -47,6 +47,8 @@ export const ChatInput = ({ onFocus, onBlur }: ChatInputProps) => {
       <StyledInput
         type="text"
         placeholder="메시지를 입력하세요."
+        size={512}
+        maxLength={512}
         style={{ flexGrow: 1 }}
         value={content}
         onCompositionStart={() => setIsComposing(true)}
