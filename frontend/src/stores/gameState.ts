@@ -101,9 +101,21 @@ export const gameDataState = selector<GameData>({
     set(gameIdState, id);
     set(gameModeState, mode);
     set(ballState, ball);
-    if (gameMemberType === 'leftPlayer') set(leftPlayerState, (prev) => ({ ...prev, score: leftPlayer.score }));
+    if (gameMemberType === 'leftPlayer')
+      set(leftPlayerState, (prev) => ({
+        ...prev,
+        score: leftPlayer.score,
+        width: leftPlayer.width,
+        height: leftPlayer.height,
+      }));
     else set(leftPlayerState, leftPlayer);
-    if (gameMemberType === 'rightPlayer') set(rightPlayerState, (prev) => ({ ...prev, score: rightPlayer.score }));
+    if (gameMemberType === 'rightPlayer')
+      set(rightPlayerState, (prev) => ({
+        ...prev,
+        score: rightPlayer.score,
+        width: rightPlayer.width,
+        height: rightPlayer.height,
+      }));
     else set(rightPlayerState, rightPlayer);
   },
 });

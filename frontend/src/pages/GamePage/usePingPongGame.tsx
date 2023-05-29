@@ -35,12 +35,6 @@ export interface PingPongGameConfig {
   rightPlayerId: number;
 }
 
-export interface GameHook {
-  draw: (context: CanvasRenderingContext2D) => void;
-  updateGame: () => void;
-  playGame: () => void;
-}
-
 export const usePingPongGame = () => {
   // recoil game states
   const gameId = useRecoilValue(gameIdState);
@@ -71,12 +65,12 @@ export const usePingPongGame = () => {
   const { ratio } = canvasRatio;
 
   useEffect(() => {
+    // init game date
     if (!gameId || !gamePlayer.leftPlayer || !gamePlayer.rightPlayer) {
       console.log('게임을 제대로 시작할 수 없습니다.');
       return;
     }
 
-    // init game date
     const { leftPlayer: leftUser, rightPlayer: rightUser } = gamePlayer;
 
     setGameData((prev) => ({
@@ -88,11 +82,6 @@ export const usePingPongGame = () => {
       rightPlayer: new Player(rightUser.userId, CANVASE_WIDTH - BAR_PADDING - BAR_WIDTH, gameMode), // width 신경쓰기
     }));
 
-    // gameStatus 바꾸기
-    setTimeout(() => {
-      setGameStatus('playing');
-    }, 1000);
-
     // game data event
     onEvent(GameEvent.GAMEDATA, (data: GameData) => {
       setGameData(data); // 밑에 애랑 성능비교해보기
@@ -102,7 +91,6 @@ export const usePingPongGame = () => {
     // game bar moved
     onEvent(GameEvent.BARMOVED, (data: BarMoved) => {
       const { userId, y } = data;
-
       if (gameMemberType !== 'leftPlayer' && userId === leftPlayer.userId) {
         setLeftPlayer((prev) => ({ ...prev, y }));
       } else if (gameMemberType !== 'rightPlayer' && userId === rightPlayer.userId) {

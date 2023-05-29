@@ -17,8 +17,8 @@ export const PingPongGame = () => {
   const { gameStatus, setCanvasSize, playGame, moveBar } = usePingPongGame();
   const { leftPlayer, rightPlayer } = useRecoilValue(gamePlayerState);
 
-  const isEnd = gameStatus === 'end';
-  const canvasRef = useCanvas(playGame, isEnd);
+  const isStopDrawing = gameStatus !== 'playing';
+  const canvasRef = useCanvas(playGame, isStopDrawing);
 
   useEffect(() => {
     if (!leftPlayer || !rightPlayer) return;
