@@ -54,14 +54,22 @@ export const SocketHandler = () => {
     }));
   });
 
-  const updateLeaveEvent = useRecoilCallback(({ set }) => (data: UserId) => {
+  const updateLeaveEvent = useRecoilCallback(({ set, snapshot }) => (data: UserId) => {
     console.log('socket leave', data);
-    set(channelDataState, (prev) => ({
-      ...prev,
-      observers: prev.observers.filter((observer) => observer.userId !== data.userId),
-      leftPlayer: prev.leftPlayer?.userId === data.userId ? null : prev.leftPlayer,
-      rightPlayer: prev.rightPlayer?.userId === data.userId ? null : prev.rightPlayer,
-    }));
+    const isInGame = snapshot.getLoadable(channelDataState).getValue().isInGame;
+    if (isInGame === true) {
+      set(channelDataState, (prev) => ({
+        ...prev,
+        observers: prev.observers.filter((observer) => observer.userId !== data.userId),
+      }));
+    } else {
+      set(channelDataState, (prev) => ({
+        ...prev,
+        observers: prev.observers.filter((observer) => observer.userId !== data.userId),
+        leftPlayer: prev.leftPlayer?.userId === data.userId ? null : prev.leftPlayer,
+        rightPlayer: prev.rightPlayer?.userId === data.userId ? null : prev.rightPlayer,
+      }));
+    }
   });
 
   const updatePlayerEvent = useRecoilCallback(({ set }) => (data: UserId) => {
