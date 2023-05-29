@@ -34,14 +34,7 @@ const GhostBox = ({ player, item }: GhostBoxProps) => {
 
   return (
     <Grid container="flex" direction="column" alignItems="center" justifyContent="center">
-      <Grid
-        container="flex"
-        direction="row"
-        alignItems="center"
-        justifyContent="center"
-        gap={1}
-        size={{ height: '100%' }}
-      >
+      <Grid container="flex" direction="row" alignItems="center" justifyContent="center" gap={1}>
         {player.role === 'owner' && <Crown />}
         {player.userId == userInfo.id ? (
           <NickNameText size="xxl">{player.nickname}</NickNameText>
