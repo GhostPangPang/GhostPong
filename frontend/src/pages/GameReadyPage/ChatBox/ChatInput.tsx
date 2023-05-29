@@ -14,6 +14,7 @@ const StyledInput = styled.input`
   font-size: 1.2rem;
   font-weight: 300;
   text-decoration: none;
+  overflow-x: hidden;
   color: ${(props) => props.theme.color.gray100};
 `;
 
