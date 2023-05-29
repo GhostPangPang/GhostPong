@@ -116,6 +116,24 @@ export class ChannelController {
   }
 
   /**
+   * @summary 초대된 채널에 참여하기
+   * @description POST /channel/:channelId/invited
+   */
+  @ApiOperation({ summary: '초대된 유저가 채널에 참여하기' })
+  @ApiForbiddenResponse({ type: ErrorResponseDto, description: '초대받지 않은 유저' })
+  @ApiConflictResponse({ type: ErrorResponseDto, description: '이미 채널에 참여 중인 유저' })
+  @ApiHeaders([{ name: 'x-my-id', description: '내 auth 아이디 (임시값)' }])
+  @ApiParam({ name: 'channelId', description: '참여할 채널 아이디' })
+  @HttpCode(HttpStatus.OK)
+  @Post(':channelId/invited')
+  joinInvitedChannel(
+    @ExtractUserId() myId: number,
+    @Param('channelId', IdToChannelPipe) channel: Channel,
+  ): Promise<SuccessResponseDto> {
+    return this.channelService.joinInvitedChannel(myId, channel);
+  }
+
+  /**
    * @summary 채널 초대하기
    * @description POST /channel/:channelId/invite
    */
