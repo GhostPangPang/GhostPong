@@ -174,8 +174,6 @@ export class ChannelService {
     this.channelGateway.emitUser<ChannelInvited>(userSocketId, 'channel-invited', {
       channelId: channel.id,
       nickname: user.nickname,
-      mode: channel.mode,
-      password: channel.password,
     });
 
     return {
