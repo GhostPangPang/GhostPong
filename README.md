@@ -21,7 +21,7 @@
     pong game with ghosts
   </p>
   <a href="https://github.com/othneildrew/Best-README-Template">
-    <img width="1792" alt="image" src="https://github.com/GhostPangPang/GhostPong/assets/51353146/7283de4c-5c10-4fa3-a846-235ff1c00fe1">
+    <img width="800" alt="image" src="https://github.com/GhostPangPang/GhostPong/assets/51353146/7283de4c-5c10-4fa3-a846-235ff1c00fe1">
   </a>
 
  
@@ -32,7 +32,6 @@
 ## Getting Started 🚩
 
 ### 📦 Installation
-Clone the repo
    ```sh
    git clone https://github.com/GhostPangPang/GhostPong
    ```
@@ -43,6 +42,24 @@ Clone the repo
 - <a href="https://github.com/GhostPangPang/GhostPong/issues/174">Frontend Docs</a>
 
 - <a href="https://github.com/GhostPangPang/GhostPong/issues/36">Backend Docs</a>
+
+</br>
+
+## Preview 🔍
+
+| 메인페이지  | 로그인페이지 |
+| ------------- | ------------- |
+| <img width="1792" alt="Screenshot 2023-06-13 at 6 05 03 PM" src="https://github.com/GhostPangPang/GhostPong/assets/51353146/08390b9a-b2bd-46b3-b851-15017493d6b7"> | <img width="1792" alt="Screenshot 2023-06-13 at 6 44 21 PM" src="https://github.com/GhostPangPang/GhostPong/assets/51353146/35483a11-d07b-4ee8-ba2a-a97962f5bd12">  |
+
+
+| 메세지페이지  | 프로필페이지 |
+| ------------- | ------------- |
+| <img width="1792" alt="Screenshot 2023-06-13 at 6 45 11 PM" src="https://github.com/GhostPangPang/GhostPong/assets/51353146/ac1d5cab-59cc-4801-a459-14ef0ccd456d"> | <img width="1792" alt="Screenshot 2023-06-13 at 6 44 48 PM" src="https://github.com/GhostPangPang/GhostPong/assets/51353146/f5c9292f-b34f-4bee-8ed8-8365f99c78d5"> |
+
+
+| 프로필수정페이지  | 게임페이지 |
+| ------------- | ------------- |
+| <img width="1792" alt="Screenshot 2023-06-13 at 6 44 58 PM" src="https://github.com/GhostPangPang/GhostPong/assets/51353146/30c98554-210d-4fd3-a9b5-5ab0f979d0c5">  | <img width="1792" alt="Screenshot 2023-06-13 at 6 52 30 PM" src="https://github.com/GhostPangPang/GhostPong/assets/51353146/65b38d60-f845-4216-90e5-e0f3553a5d66"> |
 
 </br>
 
