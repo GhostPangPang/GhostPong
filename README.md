@@ -57,6 +57,13 @@ Clone the repo
         </a>
         <sub><b>Frontend</b></sub>
        </td>
+             <td align="center">
+        <a href="https://github.com/aLVINlEE9">
+          <img src="https://avatars.githubusercontent.com/u/74805318?v=4" width="100px;" alt=""/>
+          <br /><sub><b>aLVINlEE9</b></br></sub>
+        </a>
+        <sub><b>Frontend</b></sub>
+       </td>
       <td align="center">
         <a href="https://github.com/Kimhan-nah">
           <img src="https://avatars.githubusercontent.com/u/33301153?v=4" width="100px;" alt=""/>
