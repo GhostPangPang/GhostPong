@@ -80,6 +80,14 @@ Clone the repo
         <br />
         <sub><b>Backend</b></sub>
        </td>
+        <td align="center">
+        <a href="https://github.com/jis-kim">
+          <img src="https://avatars.githubusercontent.com/u/71019735?v=4" width="100px;" alt=""/>
+          <br /><sub><b>jis-kim</b></sub>
+        </a>
+        <br />
+        <sub><b>Backend</b></sub>
+       </td>
      </tr>
   </tbody>
 </table>
