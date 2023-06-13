@@ -18,7 +18,7 @@
 <div align="center">
   <h1 align="center">👻 GhostPong</h3>
   <p align="center">
-    pong game with ghosts
+    A web-based PingPong game that allows players to compete against online opponents, aiming to hit the ball past the opponent's paddle while avoiding their own side.
   </p>
   <a href="https://github.com/othneildrew/Best-README-Template">
     <img width="800" alt="image" src="https://github.com/GhostPangPang/GhostPong/assets/51353146/7283de4c-5c10-4fa3-a846-235ff1c00fe1">
