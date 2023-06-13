@@ -72,6 +72,14 @@ Clone the repo
         <br />
         <sub><b>Backend</b></sub>
        </td>
+       <td align="center">
+        <a href="https://github.com/anso33">
+          <img src="https://avatars.githubusercontent.com/u/68376744?s=400&u=23dc240688464522ead9b1fef7677b2196ce4704&v=4" width="100px;" alt=""/>
+          <br /><sub><b>anso33</b></sub>
+        </a>
+        <br />
+        <sub><b>Backend</b></sub>
+       </td>
      </tr>
   </tbody>
 </table>
