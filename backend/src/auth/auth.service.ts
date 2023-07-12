@@ -6,7 +6,7 @@ import { MailerService } from '@nestjs-modules/mailer';
 import { Cache } from 'cache-manager';
 import { Repository } from 'typeorm';
 
-import { AUTH_JWT_EXPIRES_IN, TWO_FA_EXPIRES_IN, USER_JWT_EXPIRES_IN } from '../common/constant';
+import { AUTH_JWT_EXPIRES_IN, TWO_FA_EXPIRES_IN, TWO_FA_JWT_EXPIRES_IN, USER_JWT_EXPIRES_IN } from '../common/constant';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
 import { JwtConfigService } from '../config/auth/jwt/configuration.service';
 import { Auth } from '../entity/auth.entity';
@@ -86,7 +86,7 @@ export class AuthService {
     const payload = { userId: myId };
     const signOptions = {
       secret: this.jwtConfigService.twoFaSecretKey,
-      expiresIn: TWO_FA_EXPIRES_IN,
+      expiresIn: TWO_FA_JWT_EXPIRES_IN,
     };
     return this.jwtService.sign(payload, signOptions);
   }
