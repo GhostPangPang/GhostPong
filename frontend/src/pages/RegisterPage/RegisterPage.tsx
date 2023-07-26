@@ -53,7 +53,7 @@ export const RegisterPage = () => {
       <Text size="xl" weight="black">
         닉네임을 입력해주세요
       </Text>
-      <GameInput sizes="md" color="secondary" placeholder="nickname" onInput={handleInput} value={nickname} />
+      <GameInput sizes="lg" color="secondary" placeholder="nickname" onInput={handleInput} value={nickname} />
       <GameButton size="md" color="primary" onClick={handleRegister}>
         START
       </GameButton>

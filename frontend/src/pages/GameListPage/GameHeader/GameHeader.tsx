@@ -4,7 +4,7 @@ import { ReactComponent as Refresh } from '@/svgs/refresh.svg';
 import { ReactComponent as Left } from '@/svgs/left.svg';
 import { ReactComponent as Right } from '@/svgs/right.svg';
 import { GameCreateModal } from './GameCreateModal';
-import { useChannelList } from '@/hooks/channel/useChannel';
+import { useChannelList } from '@/hooks';
 
 interface GameHeaderProps {
   cursor: number;

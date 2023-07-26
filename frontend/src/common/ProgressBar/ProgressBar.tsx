@@ -53,7 +53,7 @@ export const ProgressBar = ({ percentage, msg }: ProgressBarProps) => {
   return (
     <StyledProgressBar onMouseMoveCapture={handleMouseMove} onMouseLeave={handleMouseLeave}>
       <StyledBar percentage={percentage} />
-      <StyledExp expInfo={expInfo}>{(msg ? `${msg} ,` : '') + Math.round(percentage)}%</StyledExp>
+      <StyledExp expInfo={expInfo}>{(msg ? `${msg}, ` : '') + Math.round(percentage)}%</StyledExp>
     </StyledProgressBar>
   );
 };

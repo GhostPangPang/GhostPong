@@ -1,0 +1,13 @@
+services:
+  db:
+    container_name: ghostgres_dev
+    image: postgres:15.3-alpine
+    restart: on-failure:5
+    env_file:
+      - .env.development
+    volumes:
+      - db_dev_data:/var/lib/postgresql/data
+    ports:
+      - ${POSTGRES_PORT}:5432
+volumes:
+  db_dev_data:

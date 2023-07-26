@@ -2,7 +2,7 @@ import { Box } from '@/common';
 import { MessageContent } from './MessageContent';
 import { MessageInput } from './MessageInput';
 import { Suspense } from 'react';
-import { useNewMessages } from '@/hooks/message';
+import { useNewMessages } from '@/hooks';
 
 export const Message = () => {
   const { currentFriend } = useNewMessages();

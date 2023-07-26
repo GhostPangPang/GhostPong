@@ -12,7 +12,7 @@ export const RankProgressBar = ({ exp = 0 }: RankProgressBarProps) => {
   const [minExp, maxExp] = useMemo(() => getRankRange(rank), [rank]);
   const percentage = useMemo(() => {
     return Math.floor(((exp - minExp) / (maxExp - minExp)) * 100);
-  }, [rank]);
+  }, [exp]);
 
   return (
     <Grid container="flex" alignItems="center">

@@ -7,7 +7,7 @@ import { setAccessToken } from '@/libs/api/auth';
 import { useEffect } from 'react';
 
 const postVerifyCode = async (code: string) => {
-  return await post<TokenResponse>('/auth/42login/2fa', { code });
+  return await post<TokenResponse>('/auth/login/2fa', { code });
 };
 
 export const TwoFactorLoginPage = () => {
@@ -45,7 +45,7 @@ export const TwoFactorLoginPage = () => {
       <Text size="xl" weight="black">
         이메일로 전송된 인증번호를 입력해주세요
       </Text>
-      <GameInput sizes="md" color="secondary" placeholder="인증번호" onInput={handleCodeChange} value={code} />
+      <GameInput sizes="lg" color="secondary" placeholder="인증번호" onInput={handleCodeChange} value={code} />
       <GameButton size="md" color="primary" onClick={handleVerify}>
         인증하기
       </GameButton>

@@ -24,8 +24,8 @@
     <img width="800" alt="image" src="https://github.com/GhostPangPang/GhostPong/assets/51353146/7283de4c-5c10-4fa3-a846-235ff1c00fe1">
   </a>
 
- 
-  
+
+
 </div>
 
 <!-- GETTING STARTED -->
@@ -64,6 +64,7 @@
 </br>
 
 ## Contributors ✨
+### 1️⃣ [Sprint1](https://github.com/GhostPangPang/GhostPong/milestone/3) - [Sprint12](https://github.com/GhostPangPang/GhostPong/milestone/14)
 <table>
   <tbody>
     <tr>
@@ -104,6 +105,37 @@
         </a>
         <br />
         <sub><b>Backend</b></sub>
+       </td>
+     </tr>
+  </tbody>
+</table>
+
+### 2️⃣ [Sprint13](https://github.com/GhostPangPang/GhostPong/milestone/15) ~
+<table>
+  <tbody>
+    <tr>
+      <td align="center">
+        <a href="https://github.com/jis-kim">
+          <img src="https://avatars.githubusercontent.com/u/71019735?v=4" width="100px;" alt=""/>
+          <br /><sub><b>jis-kim</b></sub>
+        </a>
+        <br />
+        <sub><b>Backend</b></sub>
+       </td>
+      <td align="center">
+        <a href="https://github.com/Kimhan-nah">
+          <img src="https://avatars.githubusercontent.com/u/33301153?v=4" width="100px;" alt=""/>
+          <br /><sub><b>Kimhan-nah</b></sub>
+        </a>
+        <br />
+        <sub><b>Backend</b></sub>
+       </td>
+      <td align="center">
+        <a href="https://github.com/nyeoni">
+          <img src="https://avatars.githubusercontent.com/u/51353146?s=400&u=85ebd0837780667df7646367cebd51008a5683ac&v=4" width="100px;" alt=""/>
+          <br /><sub><b>nyeoni</b></br></sub>
+        </a>
+        <sub><b>Frontend</b></sub>
        </td>
      </tr>
   </tbody>

@@ -8,7 +8,6 @@ export interface GameInputProps {
 }
 
 export const GameInput = styled.input<GameInputProps>`
-  min-width: 36rem;
   height: 4.8rem;
   border-radius: 0.8rem;
   padding: 0.8rem 1.6rem;
@@ -43,7 +42,8 @@ export const GameInput = styled.input<GameInputProps>`
         `;
       case 'lg':
         return `
-          width: 32rem;
+          max-width: 28rem;
+          width: 100%;
           height: 4.8rem;
           border-radius: 0.8rem;
           padding: 0.8rem;

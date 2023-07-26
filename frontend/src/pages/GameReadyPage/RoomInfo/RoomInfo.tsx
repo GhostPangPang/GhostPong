@@ -6,7 +6,7 @@ import { useRecoilValue } from 'recoil';
 import { currentRoleSelector, channelDataState, channelIdState } from '@/stores';
 import { useState } from 'react';
 import { SettingModal } from '../SettingModal';
-import { useLeaveChannel } from '@/hooks/channel';
+import { useLeaveChannel } from '@/hooks';
 import { useNavigate } from 'react-router-dom';
 
 export const RoomInfo = () => {
