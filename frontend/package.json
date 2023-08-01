@@ -18,7 +18,7 @@
     "type-check": "tsc --noEmit",
     "chromatic": "chromatic --exit-zero-on-changes",
     "lint": "eslint",
-    "prettier": "prettier"
+    "prettier": "prettier --ignore-path .gitignore --write ."
   },
   "dependencies": {
     "@rive-app/canvas": "^1.1.4",
