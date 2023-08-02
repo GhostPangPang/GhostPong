@@ -4,9 +4,8 @@ import { ReactComponent as SideBarIcon } from '@/assets/svgs/sidebar.svg';
 // import { friendMockData } from '@/pages/GameReadyPage/mock-data';
 import { UserInfo } from '@/dto/user';
 import styled from 'styled-components';
-import { useFriend } from '@/hooks/friend';
+import { useFriend, useChannelMutation, useLeaveChannel } from '@/hooks';
 import { useNavigate } from 'react-router-dom';
-import { useChannelMutation, useLeaveChannel } from '@/hooks/channel';
 import { useRecoilValue } from 'recoil';
 import { channelIdState } from '@/stores';
 

@@ -22,7 +22,6 @@ export const useProfileData = (userId: number) => {
     retryOnMount: true,
     suspense: true,
     enabled: userId !== 0,
-    staleTime: Infinity,
   });
 
   return data;

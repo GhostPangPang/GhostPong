@@ -3,12 +3,12 @@ import { ResponsiveProps } from '@/types/style';
 import { Grid, Avatar, Dropbox, Text, RankProgressBar } from '@/common';
 import { Link, useNavigate } from 'react-router-dom';
 import { removeAccessToken } from '@/libs/api/auth';
-import { useUserInfo } from '@/hooks/user';
+import { useAuth } from '@/hooks';
 
 type HeaderProps = Pick<ResponsiveProps, 'xs' | 'md' | 'lg'>;
 
 export const Header = ({ xs, md, lg }: HeaderProps) => {
-  const { userInfo } = useUserInfo();
+  const { userInfo } = useAuth();
   const navigate = useNavigate();
   const { id, nickname, exp, image } = userInfo;
 

@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router-dom';
 import { SocketHandler } from './SocketHandler';
-import { useAuth } from './hooks/auth';
+import { useAuth } from '@/hooks';
 
 export const ProtectedRoute = () => {
   const { auth } = useAuth();

@@ -1,5 +1,5 @@
 import { Grid, Loading, Text } from '@/common';
-import { useGameStart } from '@/hooks/game';
+import { useGameStart } from '@/hooks';
 import { post } from '@/libs/api';
 import { gameTypeState } from '@/stores';
 import { useMutation } from '@tanstack/react-query';
