@@ -1,19 +1,16 @@
 import theme from '@/assets/styles/theme';
 import { MouseEvent, useEffect } from 'react';
-import { useCanvas } from '@/hooks';
+import { useCanvas, useAuth } from '@/hooks';
 import { usePingPongGame } from './usePingPongGame';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { gameMemberTypeState, gamePlayerState, socketState } from '@/stores';
 import { GameResultModal } from './GameResultModal/GameResultModal';
-import { useUserInfo } from '@/hooks/user';
 import { Avatar, Grid, Text } from '@/common';
 
 export const PingPongGame = () => {
   const setSocket = useSetRecoilState(socketState);
   const setGameMemberType = useSetRecoilState(gameMemberTypeState);
-  const {
-    userInfo: { id: userId },
-  } = useUserInfo();
+  const { userInfo } = useAuth();
   const { gameStatus, setCanvasSize, playGame, moveBar } = usePingPongGame();
   const { leftPlayer, rightPlayer } = useRecoilValue(gamePlayerState);
 
@@ -22,6 +19,7 @@ export const PingPongGame = () => {
 
   useEffect(() => {
     if (!leftPlayer || !rightPlayer) return;
+    const userId = userInfo?.id;
 
     if (userId === leftPlayer.userId) setGameMemberType('leftPlayer');
     else if (userId === rightPlayer.userId) setGameMemberType('rightPlayer');

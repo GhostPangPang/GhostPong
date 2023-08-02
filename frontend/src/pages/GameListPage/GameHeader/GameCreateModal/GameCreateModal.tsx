@@ -1,8 +1,7 @@
 import { GameButton, Grid, InputBox, Text } from '@/common';
 import { validatePassword, validateTitle } from '@/libs/utils/validate';
 import { useState } from 'react';
-import { useInput } from '@/hooks';
-import { useChannelMutation } from '@/hooks/channel';
+import { useInput, useChannelMutation } from '@/hooks';
 import { Dropdown } from '@/common/Dropdown';
 
 interface GameTypeSettingProps {

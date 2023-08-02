@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { Grid, Box, Text, Avatar, RankBadge } from '@/common';
 import { getRank } from '@/libs/utils/rank';
-import { useHistoryData, UserHistoryResponse, UserInfo } from '@/hooks/user/useHistroyData';
+import { useHistoryData, UserHistoryResponse, UserInfo } from '@/hooks';
 import { formatRelativeDate } from '@/libs/utils/date';
 
 type HistoryItem = UserHistoryResponse['histories'][number];

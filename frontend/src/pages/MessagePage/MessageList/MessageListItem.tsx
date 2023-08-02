@@ -6,9 +6,7 @@ import { ReactComponent as More } from '@/svgs/more.svg';
 import { formatRelativeDate } from '@/libs/utils';
 import { Friend } from '@/types/entity';
 import theme from '@/assets/styles/theme';
-import { useNewMessages } from '@/hooks/message/useNewMessages';
-import { useFriendMutation } from '@/hooks/friend';
-import { useBlockedMutation } from '@/hooks/blocked';
+import { useNewMessages, useFriendMutation, useBlockedMutation } from '@/hooks';
 import { useNavigate } from 'react-router-dom';
 
 export interface MessageListItemProps {

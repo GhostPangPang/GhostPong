@@ -1,7 +1,7 @@
 import { Grid, Box } from '@/common';
 import { MessageListItem } from './MessageListItem';
 import { Suspense, useEffect, useState } from 'react';
-import { useFriend } from '@/hooks/friend';
+import { useFriend } from '@/hooks';
 import { offEvent, onEvent } from '@/libs/api';
 import { GLOBALEVENT } from '@/constants';
 
