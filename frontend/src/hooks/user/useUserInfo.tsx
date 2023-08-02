@@ -1,7 +1,7 @@
 import { UserInfoState } from '@/stores';
 import { useRecoilState } from 'recoil';
 
-export const useUserInfo = () => {
+export const useAuth = () => {
   const [userInfo, setUserInfo] = useRecoilState(UserInfoState);
 
   return { userInfo, setUserInfo };

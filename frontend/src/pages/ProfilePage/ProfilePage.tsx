@@ -4,11 +4,8 @@ import { InfoBox } from './InfoBox';
 import { AchievementBox } from './AchievementBox';
 import { HistroyBox } from './HistoryBox';
 import { useMemo, useEffect, useState } from 'react';
-import { useProfileData } from '@/hooks/user/useProfileData';
+import { useProfileData, useFriendMutation, useBlockedMutation, useAuth } from '@/hooks';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useFriendMutation } from '@/hooks/friend';
-import { useBlockedMutation } from '@/hooks/blocked';
-import { useUserInfo } from '@/hooks/user';
 import { ReactComponent as SettingIcon } from '@/svgs/setting.svg';
 
 export const ProfilePage = () => {
@@ -16,7 +13,7 @@ export const ProfilePage = () => {
   const { pathname } = useLocation();
   const {
     userInfo: { id },
-  } = useUserInfo();
+  } = useAuth();
   const [userId, setUserId] = useState(0);
   const { requestFriend } = useFriendMutation();
   const { updateBlocked } = useBlockedMutation();
