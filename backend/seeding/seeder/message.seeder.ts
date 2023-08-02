@@ -1,6 +1,3 @@
-import * as fs from 'fs';
-import * as path from 'path';
-
 import { faker } from '@faker-js/faker';
 import { DataSource, Repository } from 'typeorm';
 
@@ -17,115 +14,89 @@ import messageFactory from '../factory/message.factory';
 import userFactory from '../factory/user.factory';
 
 export default async (dataSource: DataSource) => {
-  const resultDir = path.join(__dirname, '../results');
+  await dataSource.transaction(async (manager) => {
+    const authRepository: Repository<Auth> = manager.getRepository(Auth);
+    const authSeeds = Array(Number(process.argv[2])).fill(null).map(authFactory);
+    authSeeds[0].status = AuthStatus.REGISTERD;
+    authSeeds[1].status = AuthStatus.REGISTERD;
+    authSeeds[2].status = AuthStatus.REGISTERD;
 
-  const authRepository: Repository<Auth> = dataSource.getRepository(Auth);
-  const authSeeds = Array(Number(process.argv[2])).fill(null).map(authFactory);
-  authSeeds[0].status = AuthStatus.REGISTERD;
-  authSeeds[1].status = AuthStatus.REGISTERD;
-  authSeeds[2].status = AuthStatus.REGISTERD;
+    const auths = await authRepository.save(authSeeds);
 
-  const auths = await authRepository.save(authSeeds);
-  console.log('auth ' + auths.length + ' rows created.');
-  fs.mkdir(resultDir, () => {
-    fs.writeFile(path.join(resultDir, 'auths.json'), JSON.stringify(auths), (err) => {
-      if (err) throw err;
-      console.log('created auth information has been saved to results/auths.json\n');
-    });
-  });
+    // generate user
+    const userRepository = manager.getRepository(User);
+    const users = await userRepository.save(auths.filter((auth) => auth.status === 'REGISTERD').map(userFactory));
 
-  // generate user
-  const userRepository = dataSource.getRepository(User);
-  const users = await userRepository.save(auths.filter((auth) => auth.status === 'REGISTERD').map(userFactory));
-  console.log('user ' + users.length + ' rows created.');
+    // generate user record
+    const userRecord = users.map((user) => ({
+      id: user.id,
+    }));
 
-  fs.writeFile(path.join(resultDir, 'users.json'), JSON.stringify(users), (err) => {
-    if (err) throw err;
-    console.log('created user information has been saved to seeding/results/users.json\n');
-  });
+    await manager.getRepository(UserRecord).save(userRecord);
 
-  // generate user record
-  const userRecord = users.map((user) => ({
-    id: user.id,
-  }));
+    // generate friendship
+    // 1/2 확률로 친구관계 생기게, 그 중 1/2 확률로 accept.
+    const friendsSeed = [];
+    for (let i = 0; i < users.length; i++) {
+      for (let j: number = i + 1; j < users.length; j++) {
+        if (i == 0 && j == 1) {
+          friendsSeed.push(frieindshipFactory(users[i], users[j], true, faker.date.past()));
+          continue;
+        } else if (i == 0 && j == 2) {
+          friendsSeed.push(frieindshipFactory(users[i], users[j], false));
+          continue;
+        }
 
-  await dataSource.getRepository(UserRecord).save(userRecord);
-
-  // generate friendship
-  // 1/2 확률로 친구관계 생기게, 그 중 1/2 확률로 accept.
-  const friendsSeed = [];
-  for (let i = 0; i < users.length; i++) {
-    for (let j: number = i + 1; j < users.length; j++) {
-      if (i == 0 && j == 1) {
-        friendsSeed.push(frieindshipFactory(users[i], users[j], true, faker.date.past()));
-        continue;
-      } else if (i == 0 && j == 2) {
-        friendsSeed.push(frieindshipFactory(users[i], users[j], false));
-        continue;
+        const isFirstUserI = faker.datatype.boolean();
+        Math.random() <= 0.1 &&
+          friendsSeed.push(
+            frieindshipFactory(users[isFirstUserI ? i : j], users[isFirstUserI ? j : i], faker.datatype.boolean()),
+          );
       }
-
-      const isFirstUserI = faker.datatype.boolean();
-      Math.random() <= 0.1 &&
-        friendsSeed.push(
-          frieindshipFactory(users[isFirstUserI ? i : j], users[isFirstUserI ? j : i], faker.datatype.boolean()),
-        );
     }
-  }
 
-  const friendshipRepository = dataSource.getRepository(Friendship);
-  const friends = await friendshipRepository.save(friendsSeed);
-  console.log('friendship ' + friends.length + ' rows created.');
+    const friendshipRepository = manager.getRepository(Friendship);
+    const friends = await friendshipRepository.save(friendsSeed);
 
-  fs.writeFile(path.join(resultDir, 'friends.json'), JSON.stringify(friends), (err) => {
-    if (err) throw err;
-    console.log('created friendship information has been saved to seeding/results/friends.json\n');
-  });
+    // generate message
+    // 친구 수락 && 마지막 메세지 시간이 있으면 메세지 생성
+    const messageRepository = manager.getRepository(Message);
 
-  // generate message
-  // 친구 수락 && 마지막 메세지 시간이 있으면 메세지 생성
-  const messageRepository = dataSource.getRepository(Message);
+    const messageSeed: Partial<Message>[] = [];
+    friends
+      .filter((friend) => friend.lastMessageTime !== undefined && friend.accept === true)
+      .map((friend) => {
+        const random = Math.floor(Math.random() * 200);
+        let prevDate: Date | undefined = undefined;
+        for (let i = 0; i < random; i++) {
+          const message = messageFactory(friend, prevDate);
+          messageSeed.push(message);
+          prevDate = new Date(message.createdAt);
+        }
+      });
 
-  const messageSeed: Partial<Message>[] = [];
-  friends
-    .filter((friend) => friend.lastMessageTime !== undefined && friend.accept === true)
-    .map((friend) => {
-      const random = Math.floor(Math.random() * 200);
-      let prevDate: Date | undefined = undefined;
-      for (let i = 0; i < random; i++) {
-        const message = messageFactory(friend, prevDate);
-        messageSeed.push(message);
-        prevDate = new Date(message.createdAt);
+    // insert 할 양이 많으면 error 가 발생하므로 100개씩 나눠서 insert
+    const promises = [];
+    for (let i = 0; i < messageSeed.length; i += 100) {
+      promises.push(messageRepository.save(messageSeed.slice(i, i + 100)));
+    }
+    await Promise.all(promises);
+
+    const gameSeed = [];
+    for (let i = 0; i < users.length; i++) {
+      for (let j: number = i + 1; j < users.length; j++) {
+        const isFirstUserI = faker.datatype.boolean();
+        Math.random() <= 0.1 &&
+          gameSeed.push(gameHistoryFactory(users[isFirstUserI ? i : j], users[isFirstUserI ? j : i]));
       }
-    });
-
-  // insert 할 양이 많으면 error 가 발생하므로 100개씩 나눠서 insert
-  const promises = [];
-  for (let i = 0; i < messageSeed.length; i += 100) {
-    promises.push(messageRepository.save(messageSeed.slice(i, i + 100)));
-  }
-  await Promise.all(promises);
-
-  console.log('message ' + messageSeed.length + ' rows created.\n');
-
-  //fs.writeFile(path.join(resultDir, 'messages.json'), JSON.stringify(messages), (err) => {
-  //  if (err) throw err;
-  //  console.log('created message information has been saved to seeding/results/messages.json\n');
-  //});
-
-  // generate game history
-
-  const gameSeed = [];
-  for (let i = 0; i < users.length; i++) {
-    for (let j: number = i + 1; j < users.length; j++) {
-      const isFirstUserI = faker.datatype.boolean();
-      Math.random() <= 0.1 &&
-        gameSeed.push(gameHistoryFactory(users[isFirstUserI ? i : j], users[isFirstUserI ? j : i]));
     }
-  }
-  const gameHistoryRepository = dataSource.getRepository(GameHistory);
-  await gameHistoryRepository.save(gameSeed);
+    const gameHistoryRepository = manager.getRepository(GameHistory);
+    await gameHistoryRepository.save(gameSeed);
 
-  console.log('game history ' + gameSeed.length + ' rows created.\n');
-
-  dataSource.destroy();
+    console.log('auth ' + auths.length + ' rows created.');
+    console.log('user ' + users.length + ' rows created.');
+    console.log('friendship ' + friends.length + ' rows created.');
+    console.log('message ' + messageSeed.length + ' rows created.\n');
+    console.log('game history ' + gameSeed.length + ' rows created.\n');
+  });
 };

@@ -14,7 +14,9 @@ import { User } from '../src/entity/user.entity';
 
 import seeder from './seeder/message.seeder';
 
-config();
+config({
+  path: '.env.local',
+});
 
 (async () => {
   if (process.argv[2] === undefined) {
@@ -27,7 +29,7 @@ config();
     type: 'postgres',
     host: process.env.DB_HOST,
     port: Number(process.env.DB_PORT),
-    database: process.env.TEST_DB_NAME,
+    database: process.env.DB_NAME,
     username: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     synchronize: true,
@@ -36,7 +38,29 @@ config();
   };
 
   const dataSource = new DataSource(options);
-  await dataSource.initialize();
 
-  await seeder(dataSource);
+  try {
+    await dataSource.initialize();
+  } catch (e) {
+    console.table(e);
+    console.log(e);
+    if (e.code === 'ENOTFOUND') {
+      console.error('Please check the database connection options in the .env file.\n');
+    }
+    await dataSource.destroy();
+    process.exit(1);
+  }
+  try {
+    await seeder(dataSource);
+  } catch (e) {
+    console.error(e);
+    if (e.code === '23505') {
+      console.error(
+        '\nSeeding data already exists.\nYou can either run "yarn seed reset" to reset the seeding or continue with the development process without performing any seeding.\n',
+      );
+    }
+    await dataSource.destroy();
+    process.exit(1);
+  }
+  await dataSource.destroy();
 })();
