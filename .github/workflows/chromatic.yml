@@ -6,7 +6,7 @@ name: "Chromatic"
 # Event for the workflow
 on:
   pull_request:
-    branches: [main]
+    branches: [develop]
     paths: ["**.stories.ts", "**.stories.tsx"]
 
 # List of jobs
