@@ -45,7 +45,7 @@ export const TwoFactorLoginPage = () => {
       <Text size="xl" weight="black">
         이메일로 전송된 인증번호를 입력해주세요
       </Text>
-      <GameInput sizes="md" color="secondary" placeholder="인증번호" onInput={handleCodeChange} value={code} />
+      <GameInput sizes="lg" color="secondary" placeholder="인증번호" onInput={handleCodeChange} value={code} />
       <GameButton size="md" color="primary" onClick={handleVerify}>
         인증하기
       </GameButton>
