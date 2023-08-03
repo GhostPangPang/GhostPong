@@ -1,7 +1,7 @@
 import { GameButton, Grid, IconButton, Text } from '@/common';
 import { ReactComponent as Logo } from '@/svgs/logo-lg.svg';
 import { ReactComponent as GoogleIcon } from '@/svgs/google.svg';
-import { ReactComponent as GithubIcon } from '@/svgs/github.svg';
+import { ReactComponent as GithubIcon } from '@/svgs/github-sm.svg';
 import { ReactComponent as FourtyTwoIcon } from '@/svgs/42.svg';
 
 export const PrePage = () => {
