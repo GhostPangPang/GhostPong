@@ -2,15 +2,12 @@ services:
   db:
     container_name: ghostgres_dev
     image: postgres:15.3-alpine
-    restart: always
-    environment:
-      POSTGRES_DB: ${DB_NAME}
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    restart: on-failure:5
+    env_file:
+      - .env.development
     volumes:
-      - db_data:/var/lib/postgresql/data
+      - db_dev_data:/var/lib/postgresql/data
     ports:
-      - 8000:5432
-
+      - ${POSTGRES_PORT}:5432
 volumes:
-  db_data:
+  db_dev_data:

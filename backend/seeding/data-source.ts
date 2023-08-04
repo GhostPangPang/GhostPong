@@ -15,7 +15,7 @@ import { User } from '../src/entity/user.entity';
 import seeder from './seeder/message.seeder';
 
 config({
-  path: '.env.local',
+  path: '.env.development',
 });
 
 (async () => {
@@ -29,7 +29,7 @@ config({
     type: 'postgres',
     host: process.env.POSTGRES_HOST,
     port: Number(process.env.POSTGRES_PORT),
-    database: process.env.POSTGRES_NAME,
+    database: process.env.POSTGRES_DB,
     username: process.env.POSTGRES_USER,
     password: process.env.POSTGRES_PASSWORD,
     synchronize: true,
