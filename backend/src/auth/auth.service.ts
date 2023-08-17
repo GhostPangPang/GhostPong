@@ -43,10 +43,6 @@ export class AuthService {
   }
 
   async signIn(userId: number): Promise<string> {
-    // CHECK 필요 없을 거 같음 (무조건 user table에 있는 경우에 signIn이 실행됨)
-    // if ((await this.userRepository.findOneBy({ id: userId })) === null) {
-    //   throw new NotFoundException('[Login Error] 존재하지 않는 유저입니다.');
-    // }
     const payload = { userId };
     const signOptions = {
       secret: this.jwtConfigService.userSecretKey,

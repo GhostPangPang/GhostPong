@@ -23,6 +23,7 @@ import { CodeVerificationRequestDto } from './dto/request/code-verification-requ
 import { TwoFactorAuthRequestDto } from './dto/request/two-factor-auth-request.dto';
 import { TwoFactorAuthResponseDto } from './dto/response/two-factor-auth-response.dto';
 import { FtGuard } from './guard/ft.guard';
+import { GoogleGuard } from './guard/google.guard';
 import { TwoFaGuard } from './guard/two-fa.guard';
 import { UserGuard } from './guard/user.guard';
 import { LoginInfo } from './type/login-info';
@@ -53,7 +54,6 @@ export class AuthController {
   @UseGuards(FtGuard) // strategy.validate() -> return 값 기반으로 request 객체 담아줌
   @Get('42login/callback')
   async callbackLogin(@ExtractUser() user: LoginInfo, @Res() res: Response): Promise<void> {
-    // 또는 @ReqUser('email') email: string console.log('42 Login Callback!');
     const clientUrl = this.appConfigService.clientUrl;
 
     if (user.id === null) {
@@ -92,6 +92,37 @@ export class AuthController {
   ): Promise<void> {
     const token = await this.authService.twoFactorAuthSignIn(myId, code);
     res.clearCookie('jwt-for-2fa').send({ token });
+  }
+
+  @Get('login/google')
+  @SkipUserGuard()
+  @UseGuards(GoogleGuard)
+  async googleLogin(): Promise<void> {
+    return;
+  }
+
+  @Get('login/google/callback')
+  @SkipUserGuard()
+  @UseGuards(GoogleGuard)
+  async googleLoginCallback(@ExtractUser() user: LoginInfo, @Res() res: Response): Promise<void> {
+    const clientUrl = this.appConfigService.clientUrl;
+
+    if (user.id === null) {
+      // UNREGSIETERED -> JOIN (sign up)
+      const token = await this.authService.signUp(user);
+      // cookie 또 있음 어케?
+      res.cookie('jwt-for-unregistered', token, COOKIE_OPTIONS).redirect(`${clientUrl}/auth/register`);
+    } else {
+      // REGISTERED -> LOGIN (sign in)
+      const { twoFa } = await this.authService.getTwoFactorAuth(user.id);
+      if (twoFa !== null) {
+        const token = await this.authService.sendAuthCode(user.id, twoFa);
+        res.cookie('jwt-for-2fa', token, COOKIE_OPTIONS).redirect(`${clientUrl}/auth/2fa`);
+      } else {
+        const token = await this.authService.signIn(user.id);
+        res.redirect(`${clientUrl}/auth?token=${token}`);
+      }
+    }
   }
 
   /**

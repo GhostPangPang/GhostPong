@@ -16,6 +16,7 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { UserGuard } from './guard/user.guard';
 import { FtStrategy } from './strategy/ft.strategy';
+import { GoogleStrategy } from './strategy/google.strategy';
 import { UserStrategy } from './strategy/user.strategy';
 
 @Module({
@@ -37,7 +38,7 @@ import { UserStrategy } from './strategy/user.strategy';
       inject: [MailerConfigService],
     }),
   ],
-  providers: [AuthService, FtStrategy, UserStrategy, UserGuard],
+  providers: [AuthService, FtStrategy, UserStrategy, GoogleStrategy, UserGuard],
   controllers: [AuthController],
   exports: [AuthService],
 })

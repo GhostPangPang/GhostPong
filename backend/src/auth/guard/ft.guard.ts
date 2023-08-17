@@ -1,9 +1,9 @@
-import { Injectable, CanActivate, ExecutionContext, InternalServerErrorException, Logger } from '@nestjs/common';
+import { Injectable, ExecutionContext, InternalServerErrorException, Logger } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Observable } from 'rxjs';
 
 @Injectable()
-export class FtGuard extends AuthGuard('ft') implements CanActivate {
+export class FtGuard extends AuthGuard('ft') {
   constructor() {
     super();
   }
