@@ -64,7 +64,7 @@
 </br>
 
 ## Contributors ✨
-### 1️⃣ Sprint0 - Sprint12
+### 1️⃣ [Sprint1](https://github.com/GhostPangPang/GhostPong/milestone/3) - [Sprint12](https://github.com/GhostPangPang/GhostPong/milestone/14)
 <table>
   <tbody>
     <tr>
@@ -110,7 +110,7 @@
   </tbody>
 </table>
 
-### 2️⃣ Sprint13 ~
+### 2️⃣ [Sprint13](https://github.com/GhostPangPang/GhostPong/milestone/15) ~
 <table>
   <tbody>
     <tr>
