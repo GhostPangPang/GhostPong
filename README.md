@@ -24,8 +24,8 @@
     <img width="800" alt="image" src="https://github.com/GhostPangPang/GhostPong/assets/51353146/7283de4c-5c10-4fa3-a846-235ff1c00fe1">
   </a>
 
- 
-  
+
+
 </div>
 
 <!-- GETTING STARTED -->
@@ -136,7 +136,7 @@
           <br /><sub><b>nyeoni</b></br></sub>
         </a>
         <sub><b>Frontend</b></sub>
-       </td>  
+       </td>
      </tr>
   </tbody>
 </table>
