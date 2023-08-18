@@ -14,7 +14,6 @@ import { COOKIE_OPTIONS } from '../common/constant';
 import { ExtractUserId } from '../common/decorator/extract-user-id.decorator';
 import { ErrorResponseDto } from '../common/dto/error-response.dto';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
-import { AppConfigService } from '../config/app/configuration.service';
 
 import { AuthService } from './auth.service';
 import { ExtractUser } from './decorator/extract-user.decorator';
@@ -27,11 +26,12 @@ import { GoogleGuard } from './guard/google.guard';
 import { TwoFaGuard } from './guard/two-fa.guard';
 import { UserGuard } from './guard/user.guard';
 import { LoginInfo } from './type/login-info';
+import { SocialResponseOptions } from './type/social-response-options';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService, private readonly appConfigService: AppConfigService) {}
+  constructor(private readonly authService: AuthService) {}
 
   /**
    * @summary 로그인
@@ -39,7 +39,7 @@ export class AuthController {
    */
   @ApiOperation({ summary: '42 로그인' })
   @SkipUserGuard()
-  @UseGuards(FtGuard) // strategy.constructor
+  @UseGuards(FtGuard)
   @Get('42login')
   login(): void {
     return;
@@ -54,37 +54,43 @@ export class AuthController {
   @UseGuards(FtGuard) // strategy.validate() -> return 값 기반으로 request 객체 담아줌
   @Get('42login/callback')
   async callbackLogin(@ExtractUser() user: LoginInfo, @Res() res: Response): Promise<void> {
-    const clientUrl = this.appConfigService.clientUrl;
+    const responseOptions: SocialResponseOptions = await this.authService.socialAuth(user);
 
-    if (user.id === null) {
-      // UNREGSIETERED -> JOIN (sign up)
-      const token = await this.authService.signUp(user);
-      res.cookie('jwt-for-unregistered', token, COOKIE_OPTIONS).redirect(`${clientUrl}/auth/register`);
-    } else {
-      // REGISTERED -> LOGIN (sign in)
-      const { twoFa } = await this.authService.getTwoFactorAuth(user.id);
-      if (twoFa !== null) {
-        const token = await this.authService.sendAuthCode(user.id, twoFa);
-        res.cookie('jwt-for-2fa', token, COOKIE_OPTIONS).redirect(`${clientUrl}/auth/2fa`);
-      } else {
-        const token = await this.authService.signIn(user.id);
-        res.redirect(`${clientUrl}/auth?token=${token}`);
-      }
+    if (responseOptions.cookieKey !== undefined) {
+      res.cookie(responseOptions.cookieKey, responseOptions.token, COOKIE_OPTIONS);
     }
+    res.redirect(responseOptions.redirectUrl);
+  }
+
+  @SkipUserGuard()
+  @UseGuards(GoogleGuard)
+  @Get('google')
+  async googleLogin(): Promise<void> {
+    return;
+  }
+
+  @SkipUserGuard()
+  @UseGuards(GoogleGuard)
+  @Get('google/callback')
+  async googleCallbackLogin(@ExtractUser() user: LoginInfo, @Res() res: Response): Promise<void> {
+    return this.callbackLogin(user, res);
   }
 
   /**
    * @summary 로그인 2단계 인증
-   * @description POST /auth/42login/2fa
+   * @description POST /auth/login/2fa
+   *
+   * 로그인 시 2fa 설정 되어있는 경우 맞는 인증 코드인지 확인한다.
+   * //NOTE: /42login/2fa -> login/2fa 으로 변경
    */
-  @ApiOperation({ summary: '42 로그인 2단계 인증' })
+  @ApiOperation({ summary: '로그인 2단계 인증' })
   @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
   @ApiForbiddenResponse({ type: ErrorResponseDto, description: '유효하지 않은 인증 코드' })
   @ApiBadRequestResponse({ type: ErrorResponseDto, description: '잘못된 인증 코드' })
   @SkipUserGuard()
   @UseGuards(TwoFaGuard)
   @HttpCode(HttpStatus.OK)
-  @Post('42login/2fa')
+  @Post('login/2fa')
   async twoFactorAuthLogin(
     @ExtractUserId() myId: number,
     @Body() { code }: CodeVerificationRequestDto,
@@ -92,37 +98,6 @@ export class AuthController {
   ): Promise<void> {
     const token = await this.authService.twoFactorAuthSignIn(myId, code);
     res.clearCookie('jwt-for-2fa').send({ token });
-  }
-
-  @Get('login/google')
-  @SkipUserGuard()
-  @UseGuards(GoogleGuard)
-  async googleLogin(): Promise<void> {
-    return;
-  }
-
-  @Get('login/google/callback')
-  @SkipUserGuard()
-  @UseGuards(GoogleGuard)
-  async googleLoginCallback(@ExtractUser() user: LoginInfo, @Res() res: Response): Promise<void> {
-    const clientUrl = this.appConfigService.clientUrl;
-
-    if (user.id === null) {
-      // UNREGSIETERED -> JOIN (sign up)
-      const token = await this.authService.signUp(user);
-      // cookie 또 있음 어케?
-      res.cookie('jwt-for-unregistered', token, COOKIE_OPTIONS).redirect(`${clientUrl}/auth/register`);
-    } else {
-      // REGISTERED -> LOGIN (sign in)
-      const { twoFa } = await this.authService.getTwoFactorAuth(user.id);
-      if (twoFa !== null) {
-        const token = await this.authService.sendAuthCode(user.id, twoFa);
-        res.cookie('jwt-for-2fa', token, COOKIE_OPTIONS).redirect(`${clientUrl}/auth/2fa`);
-      } else {
-        const token = await this.authService.signIn(user.id);
-        res.redirect(`${clientUrl}/auth?token=${token}`);
-      }
-    }
   }
 
   /**

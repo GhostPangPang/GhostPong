@@ -8,11 +8,13 @@ import { Repository } from 'typeorm';
 
 import { AUTH_JWT_EXPIRES_IN, TWO_FA_EXPIRES_IN, TWO_FA_JWT_EXPIRES_IN, USER_JWT_EXPIRES_IN } from '../common/constant';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
+import { AppConfigService } from '../config/app/configuration.service';
 import { JwtConfigService } from '../config/auth/jwt/configuration.service';
 import { Auth } from '../entity/auth.entity';
 
 import { TwoFactorAuthResponseDto } from './dto/response/two-factor-auth-response.dto';
 import { LoginInfo } from './type/login-info';
+import { SocialResponseOptions } from './type/social-response-options';
 import { TwoFactorAuth } from './type/two-factor-auth';
 
 @Injectable()
@@ -22,6 +24,7 @@ export class AuthService {
     private readonly authRepository: Repository<Auth>,
     private readonly jwtService: JwtService,
     private readonly jwtConfigService: JwtConfigService,
+    private readonly appConfigService: AppConfigService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private readonly mailerService: MailerService,
   ) {}
@@ -42,13 +45,35 @@ export class AuthService {
     return this.jwtService.sign(payload, signOptions);
   }
 
-  async signIn(userId: number): Promise<string> {
+  signIn(userId: number): string {
     const payload = { userId };
     const signOptions = {
       secret: this.jwtConfigService.userSecretKey,
       expiresIn: USER_JWT_EXPIRES_IN,
     };
     return this.jwtService.sign(payload, signOptions);
+  }
+
+  async socialAuth(user: LoginInfo): Promise<SocialResponseOptions> {
+    const auth = await this.authRepository.findOneBy({ email: user.email });
+    let token = '';
+    const clientUrl = this.appConfigService.clientUrl;
+
+    if (auth === null) {
+      // unregistered user
+      token = await this.signUp(user);
+      return { cookieKey: 'jwt-for-unregistered', token, redirectUrl: `${clientUrl}/auth/register` };
+    } else {
+      const userId = auth.id;
+      const { twoFa } = await this.getTwoFactorAuth(userId);
+      if (twoFa === null) {
+        token = this.signIn(userId);
+        return { token, redirectUrl: `${clientUrl}/auth?token=${token}` };
+      } else {
+        token = await this.sendAuthCode(userId, twoFa);
+      }
+      return { cookieKey: 'jwt-for-2fa', token, redirectUrl: `${clientUrl}/auth/2fa` };
+    }
   }
 
   async twoFactorAuthSignIn(myId: number, code: string): Promise<string> {
