@@ -7,6 +7,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { TWO_FA_EXPIRES_IN, TWO_FA_MAX } from '../common/constant';
 import { AppConfigModule } from '../config/app/configuration.module';
 import { FtAuthConfigModule } from '../config/auth/ft/configuration.module';
+import { GoogleAuthConfigModule } from '../config/auth/google/configuration.module';
 import { JwtConfigModule } from '../config/auth/jwt/configuration.module';
 import { MailerConfigModule } from '../config/auth/mailer/configuration.module';
 import { MailerConfigService } from '../config/auth/mailer/configuration.service';
@@ -24,6 +25,7 @@ import { UserStrategy } from './strategy/user.strategy';
     TypeOrmModule.forFeature([Auth]),
     JwtModule.register({}),
     FtAuthConfigModule,
+    GoogleAuthConfigModule,
     JwtConfigModule,
     MailerConfigModule,
     AppConfigModule,

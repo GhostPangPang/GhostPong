@@ -1,19 +1,17 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import { config } from 'dotenv';
 import { Profile, Strategy } from 'passport-google-oauth20';
 
+import { GoogleAuthConfigService } from '../../config/auth/google/configuration.service';
 import { LoginInfo } from '../type/login-info';
-
-config();
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
-  constructor() {
+  constructor(googleAuthConfigService: GoogleAuthConfigService) {
     super({
-      clientID: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: 'http://localhost:3000/api/v1/auth/callback/google',
+      clientID: googleAuthConfigService.clientId,
+      clientSecret: googleAuthConfigService.clientSecret,
+      callbackURL: googleAuthConfigService.callbackUrl,
       scope: ['email'],
     });
   }
