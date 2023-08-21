@@ -6,7 +6,11 @@ import { ReactComponent as FourtyTwoIcon } from '@/svgs/42.svg';
 
 export const PrePage = () => {
   const handle42Login = () => {
-    location.href = `${import.meta.env.VITE_API_URL}/auth/42login`;
+    location.href = `${import.meta.env.VITE_API_URL}/auth/login/ft`;
+  };
+
+  const handleGoogleLogin = () => {
+    location.href = `${import.meta.env.VITE_API_URL}/auth/login/google`;
   };
 
   return (
@@ -46,7 +50,7 @@ export const PrePage = () => {
           Or via social media
         </Text>
         <Grid container="flex" justifyContent="center" alignItems="center" gap={1}>
-          <IconButton>
+          <IconButton onClick={handleGoogleLogin}>
             <GoogleIcon />
           </IconButton>
           <IconButton>

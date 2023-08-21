@@ -1,4 +1,4 @@
-import { Injectable, CanActivate, ExecutionContext, BadRequestException } from '@nestjs/common';
+import { Injectable, ExecutionContext, BadRequestException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 import { AppConfigService } from '../../config/app/configuration.service';
 
 @Injectable()
-export class UserGuard extends AuthGuard('user') implements CanActivate {
+export class UserGuard extends AuthGuard('user') {
   constructor(private reflector: Reflector, private readonly appConfigService: AppConfigService) {
     super();
   }
