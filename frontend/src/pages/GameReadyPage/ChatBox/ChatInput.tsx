@@ -1,8 +1,9 @@
 import styled from 'styled-components';
 import { IconButton, Box } from '@/common';
 import { ReactComponent as SendSvg } from '@/svgs/send.svg';
-import { useInput, useChat } from '@/hooks';
+import { useInput } from '@/hooks';
 import { useState } from 'react';
+import { useChat } from '@/hooks/channel/useChat';
 
 interface ChatInputProps {
   onFocus?: () => void;

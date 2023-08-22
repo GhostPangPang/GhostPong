@@ -1,5 +1,6 @@
 import { Avatar, Box, CommonButton, GameButton, GameInput, Grid, Text, Modal, ModalProps } from '@/common';
-import { useInput, useFriendMutation, useFriendRequest } from '@/hooks';
+import { useInput } from '@/hooks';
+import { useFriendMutation, useFriendRequest } from '@/hooks/friend';
 import { User } from '@/types/entity';
 import { useEffect } from 'react';
 

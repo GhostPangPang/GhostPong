@@ -1,8 +1,9 @@
-import { useChannelMutation, useInput } from '@/hooks';
+import { useChannelMutation } from '@/hooks/channel';
 import { Grid, Text, InputBox, GameButton } from '@/common';
 import { Dropdown } from '@/common/Dropdown';
 import { validatePassword } from '@/libs/utils/validate';
 import { useState } from 'react';
+import { useInput } from '@/hooks';
 import { useRecoilValue } from 'recoil';
 import { channelDataState, channelIdState } from '@/stores';
 

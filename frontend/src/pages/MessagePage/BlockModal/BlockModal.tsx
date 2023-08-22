@@ -1,5 +1,6 @@
 import { Avatar, Box, CommonButton, GameButton, GameInput, Grid, Text, Modal, ModalProps } from '@/common';
-import { useInput, useBlocked, useBlockedMutation } from '@/hooks';
+import { useInput } from '@/hooks';
+import { useBlocked, useBlockedMutation } from '@/hooks/blocked';
 import { User } from '@/types/entity';
 import { useEffect } from 'react';
 

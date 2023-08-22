@@ -1,13 +1,9 @@
-import {
-  useChannelMutation,
-  useLeaveChannel,
-  useFriendMutation,
-  useBlockedMutation,
-  useBlocked,
-  useAuth,
-} from '@/hooks';
+import { useChannelMutation, useLeaveChannel } from '@/hooks/channel';
+import { useFriendMutation } from '@/hooks/friend';
+import { useBlockedMutation, useBlocked } from '@/hooks/blocked';
 import { useRecoilValue } from 'recoil';
 import { channelIdState, channelDataState, currentRoleSelector } from '@/stores';
+import { useUserInfo } from '@/hooks/user';
 import { MemberInfo } from '@/dto/channel';
 import { useNavigate } from 'react-router-dom';
 
@@ -31,7 +27,7 @@ export const useItemGenerator = (): Items => {
   const newChannelData = useRecoilValue(channelDataState);
   const currentRole = useRecoilValue(currentRoleSelector);
   const channelId = useRecoilValue(channelIdState);
-  const { userInfo } = useAuth();
+  const { userInfo } = useUserInfo();
   const { refetchBlocked } = useBlocked();
   const navigate = useNavigate();
 

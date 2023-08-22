@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { Grid, Avatar as BaseAvatar, Dropbox } from '@/common';
-import { useAuth } from '@/hooks';
+import { useUserInfo } from '@/hooks/user';
 import { useRecoilValue } from 'recoil';
 import { channelDataState } from '@/stores';
 import { Items } from '@/libs/utils/itemgenerator';
@@ -19,7 +19,7 @@ const Avatar = styled(BaseAvatar)`
 `;
 
 export const ObserverBox = ({ items }: ObserverBoxProps) => {
-  const { userInfo } = useAuth();
+  const { userInfo } = useUserInfo();
   const { observers } = useRecoilValue(channelDataState);
 
   return (

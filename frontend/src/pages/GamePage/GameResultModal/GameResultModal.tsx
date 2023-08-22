@@ -11,11 +11,10 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { MemberInfo } from '@/dto/channel/socket';
 import { Grid, WideModal, Text, Avatar, GameButton } from '@/common';
 import { useNavigate } from 'react-router-dom';
-import { useLeaveChannel, useAuth } from '@/hooks';
+import { useLeaveChannel } from '@/hooks/channel';
 
 export const GameResultModal = ({ isEnd }: { isEnd: boolean }) => {
   const navigate = useNavigate();
-  const { refetch: refetchAuth } = useAuth();
   const setChannelData = useSetRecoilState(channelDataState);
   const setGameStatus = useSetRecoilState(gameStatusState);
 
@@ -38,13 +37,6 @@ export const GameResultModal = ({ isEnd }: { isEnd: boolean }) => {
     image: '',
     role: 'admin',
   });
-
-  useEffect(() => {
-    refetchAuth();
-    return () => {
-      refetchAuth();
-    };
-  }, []);
 
   useEffect(() => {
     if (gameResult && gamePlayer.leftPlayer && gamePlayer.rightPlayer) {

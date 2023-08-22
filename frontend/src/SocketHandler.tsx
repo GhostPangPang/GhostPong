@@ -7,14 +7,16 @@ import { Message } from '@/dto/message/socket';
 import { ChannelInvited } from '@/dto/user/socket';
 import { MemberInfo, UserId, UpdatedMode } from '@/dto/channel/socket';
 import { MessageEvent, ChannelEvent, GLOBALEVENT } from './constants';
-import { useAuth, FRIEND, useChannelMutation } from '@/hooks';
+import { useUserInfo } from './hooks/user';
 import { useNavigate } from 'react-router-dom';
 import { Friend } from './types';
 import { useQueryClient } from '@tanstack/react-query';
+import { FRIEND } from './hooks/friend';
+import { useChannelMutation } from './hooks/channel';
 
 export const SocketHandler = () => {
   const socket = useRecoilValue(socketState);
-  const { userInfo } = useAuth();
+  const { userInfo } = useUserInfo();
   const newMessages = useRecoilValue(newMessagesState);
   const navigate = useNavigate();
   const queryClient = useQueryClient();

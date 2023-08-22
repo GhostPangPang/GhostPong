@@ -5,9 +5,10 @@ import image2 from '@/assets/svgs/ChannelBackground2.png';
 import { ReactComponent as LockIcon } from '@/svgs/black_lock.svg';
 import { ReactComponent as PeopleIcon } from '@/svgs/people.svg';
 import { ChannelInfo } from '@/dto/channel/response';
-import { useInput, useChannelList, useChannelMutation } from '@/hooks';
+import { useInput } from '@/hooks';
 import { validatePassword } from '@/libs/utils/validate';
 import { useState } from 'react';
+import { useChannelList, useChannelMutation } from '@/hooks/channel/useChannel';
 
 interface GameContentProps {
   cursor: number;

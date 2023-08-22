@@ -1,4 +1,5 @@
 import { get } from '@/libs/api';
+import { useUserInfo } from '@/hooks/user/useUserInfo';
 import { UserInfoResponse } from '@/dto/user/response';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
@@ -10,18 +11,11 @@ const getUserInfo = async () => {
   return await get<UserInfoResponse>(API);
 };
 
-const initUserInfo = {
-  id: -1,
-  nickname: '',
-  image: '',
-  exp: 0,
-  blockedUsers: [],
-};
-
 export const useAuth = () => {
   const navigate = useNavigate();
+  const { userInfo, setUserInfo } = useUserInfo();
   const {
-    data = initUserInfo,
+    data = null,
     isLoading,
     isFetching,
     isError,
@@ -29,12 +23,16 @@ export const useAuth = () => {
   } = useQuery<UserInfoResponse>({
     queryKey: [API],
     queryFn: getUserInfo,
-    staleTime: 1000 * 60 * 60 * 24,
+    retryOnMount: true,
+    staleTime: Infinity,
+    useErrorBoundary: false,
+    retry: 0,
   });
 
   useEffect(() => {
+    if (!isFetching && data) setUserInfo(data);
     if (isError) navigate('/pre');
   }, [data]);
 
-  return { auth: data, userInfo: data, isFetching, isLoading, refetch };
+  return { auth: data, userInfo, isFetching, isLoading, refetch };
 };

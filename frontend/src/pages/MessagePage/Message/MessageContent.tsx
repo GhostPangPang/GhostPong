@@ -1,6 +1,8 @@
 import { Avatar, Box, Grid, Text } from '@/common';
 import { Fragment, useEffect, useRef } from 'react';
-import { useAuth, useMessages, useNewMessages, useIntersectObserver } from '@/hooks';
+import { useUserInfo } from '@/hooks/user';
+import { useMessages, useNewMessages } from '@/hooks/message';
+import { useIntersectObserver } from '@/hooks/useIntersectObserver';
 import { Message, User } from '@/types/entity';
 import { formatTime } from '@/libs/utils';
 import { nanoid } from 'nanoid';
@@ -29,7 +31,7 @@ export const MessageContentItem = ({ side, user, content, createdAt = '' }: Mess
 };
 
 export const MessageContent = () => {
-  const { userInfo } = useAuth();
+  const { userInfo } = useUserInfo();
   const { currentFriend, newMessages } = useNewMessages();
   const {
     messages: { pages },

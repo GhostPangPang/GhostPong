@@ -2,9 +2,10 @@ import styled from 'styled-components';
 import { Grid, Text, Dropbox, Ghost, GameButton } from '@/common';
 import { ReactComponent as Crown } from '@/svgs/crown.svg';
 import { MemberInfo } from '@/dto/channel/socket';
-import { useAuth, useChannelMutation } from '@/hooks';
+import { useUserInfo } from '@/hooks/user';
 import { useRecoilValue } from 'recoil';
 import { channelIdState, channelDataState } from '@/stores';
+import { useChannelMutation } from '@/hooks/channel';
 // import { newChannelDataState } from '@/stores';
 import { Items, Item } from '@/libs/utils/itemgenerator';
 // import { PlayerInfo } from '../mock-data';
@@ -29,7 +30,7 @@ const NickNameText = styled(Text)`
 `;
 
 const GhostBox = ({ player, item }: GhostBoxProps) => {
-  const { userInfo } = useAuth();
+  const { userInfo } = useUserInfo();
 
   return (
     <Grid container="flex" direction="column" alignItems="center" justifyContent="center">
