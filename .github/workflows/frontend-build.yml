@@ -4,7 +4,7 @@ name: 'Frontend-Build'
 
 on:
   pull_request:
-    branches: [ develop ]
+    branches: [ main ]
     paths: [ 'frontend/**' ]
 
 jobs:
