@@ -41,7 +41,7 @@ jobs:
     steps:
       - name: Deploy to Server
         run: |
-          ssh-keygen -R {{ secrets.EC2_HOST }}
+          ssh-keygen -R ${{ secrets.EC2_HOST }}
           echo "${{ secrets.SERVER_SSH_KEY }}" > ${{ secrets.EC2_KEY }}
           chmod 600 ${{ secrets.EC2_KEY }}
           scp docker-compose.yml ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:~/docker-compose.yml
