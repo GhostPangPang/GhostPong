@@ -64,7 +64,6 @@
 </br>
 
 ## Contributors ✨
-### 1️⃣ Sprint0 - Sprint12
 <table>
   <tbody>
     <tr>
@@ -106,37 +105,6 @@
         <br />
         <sub><b>Backend</b></sub>
        </td>
-     </tr>
-  </tbody>
-</table>
-
-### 2️⃣ Sprint13 ~
-<table>
-  <tbody>
-    <tr>
-      <td align="center">
-        <a href="https://github.com/jis-kim">
-          <img src="https://avatars.githubusercontent.com/u/71019735?v=4" width="100px;" alt=""/>
-          <br /><sub><b>jis-kim</b></sub>
-        </a>
-        <br />
-        <sub><b>Backend</b></sub>
-       </td>
-      <td align="center">
-        <a href="https://github.com/Kimhan-nah">
-          <img src="https://avatars.githubusercontent.com/u/33301153?v=4" width="100px;" alt=""/>
-          <br /><sub><b>Kimhan-nah</b></sub>
-        </a>
-        <br />
-        <sub><b>Backend</b></sub>
-       </td>
-      <td align="center">
-        <a href="https://github.com/nyeoni">
-          <img src="https://avatars.githubusercontent.com/u/51353146?s=400&u=85ebd0837780667df7646367cebd51008a5683ac&v=4" width="100px;" alt=""/>
-          <br /><sub><b>nyeoni</b></br></sub>
-        </a>
-        <sub><b>Frontend</b></sub>
-       </td>  
      </tr>
   </tbody>
 </table>
