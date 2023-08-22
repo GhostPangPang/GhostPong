@@ -8,7 +8,6 @@ import { FtAuthConfigService } from './configuration.service';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: ['.env.development', '.env'],
       load: [configuration],
       validationSchema: Joi.object({
         FORTYTWO_APP_ID: Joi.string(),

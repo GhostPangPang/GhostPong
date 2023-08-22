@@ -8,7 +8,6 @@ import { MailerConfigService } from './configuration.service';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: ['.env.development', '.env'],
       load: [configuration],
       validationSchema: Joi.object({
         MAILER_USER: Joi.string(),

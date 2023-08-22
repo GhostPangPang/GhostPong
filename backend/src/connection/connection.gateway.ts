@@ -50,6 +50,8 @@ export class ConnectionGateway implements OnGatewayConnection, OnGatewayDisconne
       socket.disconnect();
       return;
     }
+    console.log('connected socket id is ', socket.id);
+    console.log(`connected socket's user id is `, myId);
     socket.data.userId = myId;
     this.socketIdRepository.insert({ userId: myId, socketId: socket.id });
     this.userStatusRepository.insert({ userId: myId, status: 'online' });
@@ -71,6 +73,9 @@ export class ConnectionGateway implements OnGatewayConnection, OnGatewayDisconne
 
     this.emitUserStatusToFriends(userId, 'offline');
     this.server.socketsLeave(`user-${userId}`); // 'user-${userId}' room 의 모든 socket 을 leave 시킨다
+
+    console.log('WebSocketServer Disconnect');
+    console.log(userId, 'is disconnected');
   }
 
   /**

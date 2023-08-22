@@ -7,7 +7,7 @@ import { setAccessToken } from '@/libs/api/auth';
 import { useEffect } from 'react';
 
 const postVerifyCode = async (code: string) => {
-  return await post<TokenResponse>('/auth/login/2fa', { code });
+  return await post<TokenResponse>('/auth/42login/2fa', { code });
 };
 
 export const TwoFactorLoginPage = () => {

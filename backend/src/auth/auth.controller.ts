@@ -14,6 +14,7 @@ import { COOKIE_OPTIONS } from '../common/constant';
 import { ExtractUserId } from '../common/decorator/extract-user-id.decorator';
 import { ErrorResponseDto } from '../common/dto/error-response.dto';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
+import { AppConfigService } from '../config/app/configuration.service';
 
 import { AuthService } from './auth.service';
 import { ExtractUser } from './decorator/extract-user.decorator';
@@ -22,75 +23,68 @@ import { CodeVerificationRequestDto } from './dto/request/code-verification-requ
 import { TwoFactorAuthRequestDto } from './dto/request/two-factor-auth-request.dto';
 import { TwoFactorAuthResponseDto } from './dto/response/two-factor-auth-response.dto';
 import { FtGuard } from './guard/ft.guard';
-import { GoogleGuard } from './guard/google.guard';
 import { TwoFaGuard } from './guard/two-fa.guard';
+import { UserGuard } from './guard/user.guard';
 import { LoginInfo } from './type/login-info';
-import { SocialResponseOptions } from './type/social-response-options';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService, private readonly appConfigService: AppConfigService) {}
 
   /**
    * @summary 로그인
-   * @description GET /auth/login/ft
+   * @description GET /auth/login
    */
   @ApiOperation({ summary: '42 로그인' })
   @SkipUserGuard()
-  @UseGuards(FtGuard)
-  @Get('login/ft')
+  @UseGuards(FtGuard) // strategy.constructor
+  @Get('42login')
   login(): void {
     return;
   }
 
   /**
    * @summary 로그인 callback
-   * @description GET /auth/callback/ft
+   * @description GET /auth/login/callback
    */
   @ApiOperation({ summary: '42 로그인 callback' })
   @SkipUserGuard()
   @UseGuards(FtGuard) // strategy.validate() -> return 값 기반으로 request 객체 담아줌
-  @Get('callback/ft')
+  @Get('42login/callback')
   async callbackLogin(@ExtractUser() user: LoginInfo, @Res() res: Response): Promise<void> {
-    const responseOptions: SocialResponseOptions = await this.authService.socialAuth(user);
+    // 또는 @ReqUser('email') email: string console.log('42 Login Callback!');
+    const clientUrl = this.appConfigService.clientUrl;
 
-    if (responseOptions.cookieKey !== undefined) {
-      res.cookie(responseOptions.cookieKey, responseOptions.token, COOKIE_OPTIONS);
+    if (user.id === null) {
+      // UNREGSIETERED -> JOIN (sign up)
+      const token = await this.authService.signUp(user);
+      res.cookie('jwt-for-unregistered', token, COOKIE_OPTIONS).redirect(`${clientUrl}/auth/register`);
+    } else {
+      // REGISTERED -> LOGIN (sign in)
+      const { twoFa } = await this.authService.getTwoFactorAuth(user.id);
+      if (twoFa !== null) {
+        const token = await this.authService.sendAuthCode(user.id, twoFa);
+        res.cookie('jwt-for-2fa', token, COOKIE_OPTIONS).redirect(`${clientUrl}/auth/2fa`);
+      } else {
+        const token = await this.authService.signIn(user.id);
+        res.redirect(`${clientUrl}/auth?token=${token}`);
+      }
     }
-    res.redirect(responseOptions.redirectUrl);
-  }
-
-  @ApiOperation({ summary: 'google 로그인' })
-  @SkipUserGuard()
-  @UseGuards(GoogleGuard)
-  @Get('login/google')
-  async googleLogin(): Promise<void> {
-    return;
-  }
-
-  @ApiOperation({ summary: 'google 로그인 callback' })
-  @SkipUserGuard()
-  @UseGuards(GoogleGuard)
-  @Get('callback/google')
-  async googleCallbackLogin(@ExtractUser() user: LoginInfo, @Res() res: Response): Promise<void> {
-    return this.callbackLogin(user, res);
   }
 
   /**
    * @summary 로그인 2단계 인증
-   * @description POST /auth/login/2fa
-   *
-   * 로그인 시 2fa 설정 되어있는 경우 맞는 인증 코드인지 확인한다.
+   * @description POST /auth/42login/2fa
    */
-  @ApiOperation({ summary: '로그인 2단계 인증' })
+  @ApiOperation({ summary: '42 로그인 2단계 인증' })
   @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
   @ApiForbiddenResponse({ type: ErrorResponseDto, description: '유효하지 않은 인증 코드' })
   @ApiBadRequestResponse({ type: ErrorResponseDto, description: '잘못된 인증 코드' })
   @SkipUserGuard()
   @UseGuards(TwoFaGuard)
   @HttpCode(HttpStatus.OK)
-  @Post('login/2fa')
+  @Post('42login/2fa')
   async twoFactorAuthLogin(
     @ExtractUserId() myId: number,
     @Body() { code }: CodeVerificationRequestDto,
@@ -107,6 +101,7 @@ export class AuthController {
   @ApiOperation({ summary: '2단계 인증 이메일 가져오기' })
   @ApiNotFoundResponse({ type: ErrorResponseDto, description: '유저 없음' })
   @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
+  @UseGuards(UserGuard)
   @Get('2fa')
   getTwoFactorAuth(@ExtractUserId() myId: number): Promise<TwoFactorAuthResponseDto> {
     return this.authService.getTwoFactorAuth(myId);
@@ -121,6 +116,7 @@ export class AuthController {
   @ApiConflictResponse({ type: ErrorResponseDto, description: '중복된 이메일 혹은 이미 인증 완료한 유저' })
   @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
   @HttpCode(HttpStatus.OK)
+  @UseGuards(UserGuard)
   @Post('2fa')
   async twoFactorAuth(
     @ExtractUserId() myId: number,
@@ -142,6 +138,7 @@ export class AuthController {
   @ApiBadRequestResponse({ type: ErrorResponseDto, description: '잘못된 2단계 인증 코드' })
   @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
   @HttpCode(HttpStatus.OK)
+  @UseGuards(UserGuard)
   @Post('2fa/verify')
   async updateTwoFactorAuth(
     @ExtractUserId() myId: number,
@@ -159,6 +156,7 @@ export class AuthController {
   @ApiOperation({ summary: '2단계 인증 삭제하기' })
   @ApiConflictResponse({ type: ErrorResponseDto, description: '2단계 인증하지 않은 유저' })
   @ApiHeaders([{ name: 'x-my-id', description: '내 아이디 (임시값)' }])
+  @UseGuards(UserGuard)
   @Delete('2fa')
   deleteTwoFactorAuth(@ExtractUserId() myId: number): Promise<SuccessResponseDto> {
     return this.authService.deleteTwoFactorAuth(myId);

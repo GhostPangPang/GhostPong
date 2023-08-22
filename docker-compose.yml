@@ -19,8 +19,6 @@ services:
     build:
       context: .
       dockerfile: ./backend/Dockerfile
-    volumes:
-      - server_static_files:/app/backend/public
     ports:
       - 3000:3000
     networks:
@@ -45,4 +43,3 @@ networks:
 
 volumes:
   db_data:
-  server_static_files:

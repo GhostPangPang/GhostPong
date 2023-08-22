@@ -8,7 +8,6 @@ import { JwtConfigService } from './configuration.service';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: ['.env.development', '.env'],
       load: [configuration],
       validationSchema: Joi.object({
         USER_JWT_SECRETKEY: Joi.string(),

@@ -1,13 +1,20 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
+import { InjectRepository } from '@nestjs/typeorm';
 import { Strategy } from 'passport-42';
+import { Repository } from 'typeorm';
 
 import { FtAuthConfigService } from '../../config/auth/ft/configuration.service';
+import { Auth, AuthStatus } from '../../entity/auth.entity';
 import { LoginInfo } from '../type/login-info';
 
 @Injectable()
 export class FtStrategy extends PassportStrategy(Strategy, 'ft') {
-  constructor(private readonly ftAuthConfigService: FtAuthConfigService) {
+  constructor(
+    private readonly ftAuthConfigService: FtAuthConfigService,
+    @InjectRepository(Auth)
+    private readonly authRepository: Repository<Auth>,
+  ) {
     super({
       clientID: ftAuthConfigService.id,
       clientSecret: ftAuthConfigService.secret,
@@ -27,10 +34,16 @@ export class FtStrategy extends PassportStrategy(Strategy, 'ft') {
    * @param cb  validate()에서 return한 값이 request 객체에 담김
    * @returns  validate()에서 return한 값
    */
-  async validate(accessToken: string, refreshToken: string, profile: LoginInfo): Promise<LoginInfo> {
-    if (profile.email === undefined || profile.email === null) {
-      throw new UnauthorizedException('42 email is empty');
+  async validate(accessToken: string, refreshToken: string, profile: LoginInfo) {
+    const auth = await this.authRepository.findOneBy({ email: profile.email });
+
+    if (auth === null || auth.status === AuthStatus.UNREGISTERD) {
+      profile.id = null;
+    } else {
+      // auth.status === REGISTERD 이고, user table에 존재하는 경우
+      profile.id = auth.id;
     }
-    return { provider: '42', email: profile.email, id: null };
+
+    return profile;
   }
 }
