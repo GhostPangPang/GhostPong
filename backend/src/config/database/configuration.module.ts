@@ -8,14 +8,13 @@ import { DatabaseConfigService } from './configuration.service';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: ['.env.development', '.env'],
       load: [configuration],
       validationSchema: Joi.object({
-        POSTGRES_HOST: Joi.string(),
-        POSTGRES_PORT: Joi.number(),
-        POSTGRES_DB: Joi.string(),
-        POSTGRES_USER: Joi.string(),
-        POSTGRES_PASSWORD: Joi.string(),
+        DB_HOST: Joi.string(),
+        DB_PORT: Joi.number(),
+        DB_NAME: Joi.string(),
+        DB_USER: Joi.string(),
+        DB_PASSWORD: Joi.string(),
       }),
     }),
   ],
