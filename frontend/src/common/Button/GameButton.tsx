@@ -48,8 +48,7 @@ export const GameButton = styled.button<GameButtonProps>`
         `;
       case 'lg':
         return `
-          max-width: 28rem;
-          width: 100%;
+          width: 32rem;
           height: 4.8rem;
           border-radius: 0.8rem;
           padding: 0.8rem 1.6rem;
