@@ -43,6 +43,10 @@ jobs:
           context: .
           file: ./frontend/Dockerfile
           platforms: linux/amd64,linux/arm64/v8
+          build-args: |
+            VITE_BASE_URL=${{ secrets.VITE_BASE_URL }}
+            VITE_API_URL=${{ secrets.VITE_BASE_URL }}/api/v1
+            VITE_ASSET_URL=${{ secrets.VITE_BASE_URL }}
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/ghostclient:latest
 
