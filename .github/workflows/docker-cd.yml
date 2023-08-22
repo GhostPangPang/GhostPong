@@ -10,7 +10,7 @@ on:
 
 jobs:
   build-and-push:
-    runs-on: ubuntu-latest
+    runs-on: macos-13
 
     steps:
       - name: Checkout code
@@ -27,12 +27,12 @@ jobs:
 
       - name: Build and push backend Docker image
         run: |
-          docker build -f backend/Dockerfile --platform linux/arm64 -t ${{ secrets.DOCKER_USERNAME }}/ghostserver:latest .
+          docker build -f backend/Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/ghostserver:latest .
           docker push ${{ secrets.DOCKER_USERNAME }}/ghostserver:latest
 
       - name: Build and push frontend Docker image
         run: |
-          docker build -f frontend/Dockerfile --platform linux/arm64 -t ${{ secrets.DOCKER_USERNAME }}/ghostclient:latest .
+          docker build -f frontend/Dockerfile --platform -t ${{ secrets.DOCKER_USERNAME }}/ghostclient:latest .
           docker push ${{ secrets.DOCKER_USERNAME }}/ghostclient:latest
 
 
