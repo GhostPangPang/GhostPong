@@ -2,7 +2,7 @@
 
 import { faker } from '@faker-js/faker';
 
-import { AuthStatus } from '../../src/entity/auth.entity';
+import { AuthStatus } from '../../../src/entity/auth.entity';
 
 export default () => ({
   //auth.id is auto generated

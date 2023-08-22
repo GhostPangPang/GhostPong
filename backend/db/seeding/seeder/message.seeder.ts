@@ -1,12 +1,12 @@
 import { faker } from '@faker-js/faker';
 import { DataSource, Repository } from 'typeorm';
 
-import { Auth, AuthStatus } from '../../src/entity/auth.entity';
-import { Friendship } from '../../src/entity/friendship.entity';
-import { GameHistory } from '../../src/entity/game-history.entity';
-import { Message } from '../../src/entity/message.entity';
-import { UserRecord } from '../../src/entity/user-record.entity';
-import { User } from '../../src/entity/user.entity';
+import { Auth, AuthStatus } from '../../../src/entity/auth.entity';
+import { Friendship } from '../../../src/entity/friendship.entity';
+import { GameHistory } from '../../../src/entity/game-history.entity';
+import { Message } from '../../../src/entity/message.entity';
+import { UserRecord } from '../../../src/entity/user-record.entity';
+import { User } from '../../../src/entity/user.entity';
 import authFactory from '../factory/auth.factory';
 import frieindshipFactory from '../factory/frieindship.factory';
 import gameHistoryFactory from '../factory/game-history.factory';
