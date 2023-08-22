@@ -4,7 +4,7 @@ export class Migration1692710671031 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     // create column at auth table
     await queryRunner.query(`ALTER TABLE "auth" ADD COLUMN password varchar(64)`);
-    await queryRunner.query(`ALTER TABLE "auth" ADD COLUMN account_id varchar(32)`);
+    await queryRunner.query(`ALTER TABLE "auth" ADD COLUMN account_id varchar(32) UNIQUE`);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
