@@ -12,7 +12,3 @@
 ./frontend/.storybook
 ./frontend/.vscode
 ./frontend/analyse.html
-
-**/node_modules
-**/dist
-**/.env*
