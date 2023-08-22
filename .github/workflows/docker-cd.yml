@@ -1,6 +1,9 @@
 name: Continuous Deployment
 
 on:
+  pull_request:
+    branches:
+      - develop
   push:
     branches:
       - main
@@ -24,14 +27,12 @@ jobs:
 
       - name: Build and push backend Docker image
         run: |
-          cd backend
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/ghostserver:latest .
+          docker build -f backend/Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/ghostserver:latest .
           docker push ${{ secrets.DOCKER_USERNAME }}/ghostserver:latest
 
       - name: Build and push frontend Docker image
         run: |
-          cd frontend
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/ghostclient:latest .
+          docker build -f frontend/Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/ghostclient:latest .
           docker push ${{ secrets.DOCKER_USERNAME }}/ghostclient:latest
   deploy-to-ec2:
     runs-on: ubuntu-latest
