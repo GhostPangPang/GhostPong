@@ -26,16 +26,20 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and push backend Docker image
-        run: |
-          docker build -f backend/Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/ghostserver:latest .
-          docker push ${{ secrets.DOCKER_USERNAME }}/ghostserver:latest
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./backend/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/ghostserver:latest
 
       - name: Build and push frontend Docker image
-        run: |
-          docker build -f frontend/Dockerfile --platform -t ${{ secrets.DOCKER_USERNAME }}/ghostclient:latest .
-          docker push ${{ secrets.DOCKER_USERNAME }}/ghostclient:latest
-
-
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./frontend/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/ghostclient:latest
 
   deploy-to-ec2:
     runs-on: ubuntu-latest
