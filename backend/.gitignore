@@ -1,7 +1,5 @@
 # env files
-.env*
-!.env.example
-
+.env
 
 # seeding result
 /seeding/results

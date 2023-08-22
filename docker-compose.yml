@@ -15,9 +15,7 @@ services:
     container_name: ghostserver
     depends_on:
       - db
-    image: skdusdl8804/ghostserver
-    env_file:
-      - ./backend/.env
+    image: server
     build:
       context: .
       dockerfile: ./backend/Dockerfile
@@ -31,7 +29,7 @@ services:
     container_name: ghostclient
     depends_on:
       - server
-    image: skdusdl8804/ghostclient
+    image: client
     build:
       context: .
       dockerfile: ./frontend/Dockerfile
