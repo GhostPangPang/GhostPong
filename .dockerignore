@@ -4,7 +4,7 @@
 **/.env*
 **/.husky
 
-./backend/seeding
+./backend/db/seeding
 ./backend/yarn-error.log
 ./backend/test
 ./backend/.env.development
