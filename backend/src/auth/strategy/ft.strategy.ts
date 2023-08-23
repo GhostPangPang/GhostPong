@@ -14,6 +14,7 @@ export class FtStrategy extends PassportStrategy(Strategy, 'ft') {
       callbackURL: ftAuthConfigService.url,
       profileFields: {
         // validate()에서 사용할 정보 (profile에 들어있음)
+        id: 'id',
         email: 'email',
       },
     });
