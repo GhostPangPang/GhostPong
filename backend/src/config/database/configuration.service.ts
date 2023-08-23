@@ -16,8 +16,7 @@ export class DatabaseConfigService implements TypeOrmOptionsFactory {
       password: this.configService.get<string>('database.password'),
       database: this.configService.get<string>('database.name'),
       autoLoadEntities: true,
-      synchronize: true,
-      logging: true,
+      logging: ['error', 'warn'],
       namingStrategy: new SnakeNamingStrategy(),
     };
   }

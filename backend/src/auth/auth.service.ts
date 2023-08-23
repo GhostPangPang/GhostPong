@@ -10,7 +10,7 @@ import { AUTH_JWT_EXPIRES_IN, TWO_FA_EXPIRES_IN, TWO_FA_JWT_EXPIRES_IN, USER_JWT
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
 import { AppConfigService } from '../config/app/configuration.service';
 import { JwtConfigService } from '../config/auth/jwt/configuration.service';
-import { Auth } from '../entity/auth.entity';
+import { Auth, AuthStatus } from '../entity/auth.entity';
 
 import { TwoFactorAuthResponseDto } from './dto/response/two-factor-auth-response.dto';
 import { LoginInfo } from './type/login-info';
@@ -59,7 +59,7 @@ export class AuthService {
     let token = '';
     const clientUrl = this.appConfigService.clientUrl;
 
-    if (auth === null) {
+    if (auth === null || auth?.status === AuthStatus.UNREGISTERD) {
       // unregistered user
       token = await this.signUp(user);
       return { cookieKey: 'jwt-for-unregistered', token, redirectUrl: `${clientUrl}/auth/register` };

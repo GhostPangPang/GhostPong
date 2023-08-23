@@ -2,7 +2,7 @@
 
 import { faker } from '@faker-js/faker';
 
-import { Auth } from '../../src/entity/auth.entity';
+import { Auth } from '../../../src/entity/auth.entity';
 
 export default (auth: Auth) => {
   return {
