@@ -1,5 +1,5 @@
-import { CanActivate, ExecutionContext, Injectable, NotFoundException } from '@nestjs/common';
-import { AuthGuard, IAuthGuard } from '@nestjs/passport';
+import { CanActivate, ExecutionContext, Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 import { Observable } from 'rxjs';
 
@@ -10,22 +10,28 @@ class GoogleGuard extends AuthGuard('google') {}
 class GithubGuard extends AuthGuard('github') {}
 
 @Injectable()
-export class SocialGuard implements CanActivate {
+export class SocialGuard implements CanActivate, OnModuleInit {
+  private ftGuard: FtGuard;
+  private googleGuard: GoogleGuard;
+  private githubGuard: GithubGuard;
+
+  onModuleInit() {
+    this.ftGuard = new FtGuard();
+    this.googleGuard = new GoogleGuard();
+    this.githubGuard = new GithubGuard();
+  }
+
   canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
     const request: Request = context.switchToHttp().getRequest();
     const provider: string = request.params.provider;
-    let guard: IAuthGuard;
-
-    // using different guards depending on the provider
     if (provider === 'ft') {
-      guard = new FtGuard();
+      return this.ftGuard.canActivate(context);
     } else if (provider === 'google') {
-      guard = new GoogleGuard();
+      return this.googleGuard.canActivate(context);
     } else if (provider === 'github') {
-      guard = new GithubGuard();
+      return this.githubGuard.canActivate(context);
     } else {
-      throw new NotFoundException('존재하지 않는 경로입니다.');
+      throw new NotFoundException('존재하지 않는 provider입니다.');
     }
-    return guard.canActivate(context);
   }
 }
