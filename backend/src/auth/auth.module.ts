@@ -7,6 +7,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { TWO_FA_EXPIRES_IN, TWO_FA_MAX } from '../common/constant';
 import { AppConfigModule } from '../config/app/configuration.module';
 import { FtAuthConfigModule } from '../config/auth/ft/configuration.module';
+import { GithubAuthConfigModule } from '../config/auth/github/configuration.module';
 import { GoogleAuthConfigModule } from '../config/auth/google/configuration.module';
 import { JwtConfigModule } from '../config/auth/jwt/configuration.module';
 import { MailerConfigModule } from '../config/auth/mailer/configuration.module';
@@ -17,6 +18,7 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { UserGuard } from './guard/user.guard';
 import { FtStrategy } from './strategy/ft.strategy';
+import { GithubStrategy } from './strategy/github.strategy';
 import { GoogleStrategy } from './strategy/google.strategy';
 import { UserStrategy } from './strategy/user.strategy';
 
@@ -26,6 +28,7 @@ import { UserStrategy } from './strategy/user.strategy';
     JwtModule.register({}),
     FtAuthConfigModule,
     GoogleAuthConfigModule,
+    GithubAuthConfigModule,
     JwtConfigModule,
     MailerConfigModule,
     AppConfigModule,
@@ -40,7 +43,7 @@ import { UserStrategy } from './strategy/user.strategy';
       inject: [MailerConfigService],
     }),
   ],
-  providers: [AuthService, FtStrategy, UserStrategy, GoogleStrategy, UserGuard],
+  providers: [AuthService, FtStrategy, UserStrategy, GoogleStrategy, GithubStrategy, UserGuard],
   controllers: [AuthController],
   exports: [AuthService],
 })

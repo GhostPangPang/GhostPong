@@ -22,6 +22,7 @@ import { CodeVerificationRequestDto } from './dto/request/code-verification-requ
 import { TwoFactorAuthRequestDto } from './dto/request/two-factor-auth-request.dto';
 import { TwoFactorAuthResponseDto } from './dto/response/two-factor-auth-response.dto';
 import { FtGuard } from './guard/ft.guard';
+import { GithubGuard } from './guard/github.guard';
 import { GoogleGuard } from './guard/google.guard';
 import { TwoFaGuard } from './guard/two-fa.guard';
 import { LoginInfo } from './type/login-info';
@@ -74,6 +75,22 @@ export class AuthController {
   @UseGuards(GoogleGuard)
   @Get('callback/google')
   async googleCallbackLogin(@ExtractUser() user: LoginInfo, @Res() res: Response): Promise<void> {
+    return this.callbackLogin(user, res);
+  }
+
+  @ApiOperation({ summary: 'github 로그인' })
+  @SkipUserGuard()
+  @UseGuards(GithubGuard)
+  @Get('login/github')
+  async githubLogin(): Promise<void> {
+    return;
+  }
+
+  @ApiOperation({ summary: 'github 로그인 callback' })
+  @SkipUserGuard()
+  @UseGuards(GithubGuard)
+  @Get('callback/github')
+  async githubCallbackLogin(@ExtractUser() user: LoginInfo, @Res() res: Response): Promise<void> {
     return this.callbackLogin(user, res);
   }
 
