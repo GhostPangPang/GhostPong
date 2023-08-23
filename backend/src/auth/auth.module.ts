@@ -16,9 +16,6 @@ import { Auth } from '../entity/auth.entity';
 
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { FtGuard } from './guard/ft.guard';
-import { GithubGuard } from './guard/github.guard';
-import { GoogleGuard } from './guard/google.guard';
 import { UserGuard } from './guard/user.guard';
 import { FtStrategy } from './strategy/ft.strategy';
 import { GithubStrategy } from './strategy/github.strategy';
@@ -46,17 +43,7 @@ import { UserStrategy } from './strategy/user.strategy';
       inject: [MailerConfigService],
     }),
   ],
-  providers: [
-    AuthService,
-    FtStrategy,
-    UserStrategy,
-    GoogleStrategy,
-    GithubStrategy,
-    FtGuard,
-    GoogleGuard,
-    GithubGuard,
-    UserGuard,
-  ],
+  providers: [AuthService, FtStrategy, UserStrategy, GoogleStrategy, GithubStrategy, UserGuard],
   controllers: [AuthController],
   exports: [AuthService],
 })
