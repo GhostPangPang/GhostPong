@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-42';
 
@@ -28,9 +28,6 @@ export class FtStrategy extends PassportStrategy(Strategy, 'ft') {
    * @returns  validate()에서 return한 값
    */
   async validate(accessToken: string, refreshToken: string, profile: LoginInfo): Promise<LoginInfo> {
-    if (profile.email === undefined || profile.email === null) {
-      throw new UnauthorizedException('42 email is empty');
-    }
-    return { provider: '42', email: profile.email, id: null };
+    return { provider: 'ft', email: profile.email ?? null, id: `ft-${profile.id}` };
   }
 }

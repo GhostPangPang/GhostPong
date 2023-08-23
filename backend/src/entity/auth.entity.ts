@@ -10,13 +10,13 @@ export class Auth {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ length: 320, unique: true })
-  email: string;
+  @Column({ type: 'varchar', length: 320, nullable: true })
+  email: string | null;
 
   @Column({ type: 'varchar', length: 64, nullable: true })
   password: string | null;
 
-  @Column({ type: 'varchar', length: 32, nullable: true, unique: true })
+  @Column({ type: 'varchar', length: 32, unique: true })
   accountId: string | null;
 
   @Column({ type: 'varchar', length: 320, nullable: true })
