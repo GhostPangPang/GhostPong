@@ -29,15 +29,15 @@ export class AuthService {
     private readonly mailerService: MailerService,
   ) {}
 
-  async signUp(user: LoginInfo): Promise<string> {
-    const auth = await this.authRepository.findOneBy({ email: user.email });
-
+  async signUp(auth: Auth | null, loginInfo: LoginInfo): Promise<string> {
+    let authId: number;
     if (auth === null) {
-      user.id = (await this.authRepository.insert({ email: user.email })).identifiers[0].id;
+      authId = (await this.authRepository.insert({ email: loginInfo.email, accountId: loginInfo.id })).identifiers[0]
+        .id;
     } else {
-      user.id = auth.id;
+      authId = auth.id;
     }
-    const payload = { userId: user.id };
+    const payload = { userId: authId };
     const signOptions = {
       secret: this.jwtConfigService.authSecretKey,
       expiresIn: AUTH_JWT_EXPIRES_IN,
@@ -54,14 +54,14 @@ export class AuthService {
     return this.jwtService.sign(payload, signOptions);
   }
 
-  async socialAuth(user: LoginInfo): Promise<SocialResponseOptions> {
-    const auth = await this.authRepository.findOneBy({ email: user.email });
+  async socialAuth(loginInfo: LoginInfo): Promise<SocialResponseOptions> {
     let token = '';
     const clientUrl = this.appConfigService.clientUrl;
 
-    if (auth === null || auth?.status === AuthStatus.UNREGISTERD) {
-      // unregistered user
-      token = await this.signUp(user);
+    const auth = await this.authRepository.findOneBy({ accountId: loginInfo.id });
+    if (auth === null || auth.status === AuthStatus.UNREGISTERD) {
+      // unregistered users
+      token = await this.signUp(auth, loginInfo);
       return { cookieKey: 'jwt-for-unregistered', token, redirectUrl: `${clientUrl}/auth/register` };
     } else {
       const userId = auth.id;
@@ -132,7 +132,7 @@ export class AuthService {
     if (value === undefined) {
       throw new ForbiddenException('유효하지 않은 인증 코드입니다.');
     }
-    if ((await this.authRepository.findOneBy({ email: value.email })) !== null) {
+    if ((await this.authRepository.findOneBy({ twoFa: value.email })) !== null) {
       throw new ConflictException('이미 사용중인 이메일입니다.');
     }
     await this.verifyTwoFactorAuth(myId, code, value.code);

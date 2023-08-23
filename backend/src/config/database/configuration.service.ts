@@ -18,6 +18,7 @@ export class DatabaseConfigService implements TypeOrmOptionsFactory {
       autoLoadEntities: true,
       logging: ['error', 'warn'],
       namingStrategy: new SnakeNamingStrategy(),
+      synchronize: true,
     };
   }
 }
