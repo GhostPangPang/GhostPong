@@ -56,7 +56,10 @@ export class AuthController {
   @Get('callback/:provider')
   async callbackSocialLogin(@ExtractUser() user: LoginInfo, @Res() res: Response): Promise<void> {
     const responseOptions: LoginResponseOptions = await this.authService.socialAuth(user);
-    this.login(responseOptions, res);
+    if (responseOptions.cookieKey !== undefined) {
+      res.cookie(responseOptions.cookieKey, responseOptions.token, COOKIE_OPTIONS);
+    }
+    res.redirect(responseOptions.redirectUrl);
   }
 
   /**
@@ -64,12 +67,15 @@ export class AuthController {
    * @description POST /auth/login/local
    */
   @ApiOperation({ summary: 'local 로그인' })
+  @ApiNotFoundResponse({ type: ErrorResponseDto, description: '이메일 없음' })
+  @ApiBadRequestResponse({ type: ErrorResponseDto, description: '잘못된 비밀번호' })
   @SkipUserGuard()
   @UseGuards(AuthGuard('local'))
+  @HttpCode(HttpStatus.OK)
   @Post('login/local')
   async localLogin(@ExtractUser() user: LocalLoginRequestDto, @Res() res: Response): Promise<void> {
-    const responseOptions: LoginResponseOptions = await this.authService.localLogin(user);
-    this.login(responseOptions, res);
+    const token = await this.authService.localLogin(user);
+    res.send({ token });
   }
 
   /**
@@ -171,13 +177,5 @@ export class AuthController {
   @Delete('2fa')
   deleteTwoFactorAuth(@ExtractUserId() myId: number): Promise<SuccessResponseDto> {
     return this.authService.deleteTwoFactorAuth(myId);
-  }
-
-  // SECTION private
-  private login(responseOptions: LoginResponseOptions, res: Response): void {
-    if (responseOptions.cookieKey !== undefined) {
-      res.cookie(responseOptions.cookieKey, responseOptions.token, COOKIE_OPTIONS);
-    }
-    res.redirect(responseOptions.redirectUrl);
   }
 }

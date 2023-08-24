@@ -1,5 +1,12 @@
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { BadRequestException, ConflictException, ForbiddenException, Inject, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  ForbiddenException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MailerService } from '@nestjs-modules/mailer';
@@ -74,15 +81,15 @@ export class AuthService {
     return await this.checkTwoFactorAuth(auth.id);
   }
 
-  async localLogin(loginInfo: LocalLoginRequestDto): Promise<LoginResponseOptions> {
+  async localLogin(loginInfo: LocalLoginRequestDto): Promise<string> {
     const auth = await this.authRepository.findOneBy({ email: loginInfo.email });
     if (auth === null || auth.password === null) {
-      throw new BadRequestException('이메일 또는 비밀번호가 일치하지 않습니다.');
+      throw new NotFoundException('이메일 또는 비밀번호를 확인해주세요.');
     }
-    if (await compare(auth.password, loginInfo.password)) {
-      throw new BadRequestException('이메일 또는 비밀번호가 일치하지 않습니다.');
+    if ((await compare(loginInfo.password, auth.password)) === false) {
+      throw new BadRequestException('비밀번호를 확인해주세요 .');
     }
-    return await this.checkTwoFactorAuth(auth.id);
+    return (await this.checkTwoFactorAuth(auth.id)).token;
   }
 
   async localSignUp(signUpInfo: LocalSignUpRequestDto): Promise<void> {
