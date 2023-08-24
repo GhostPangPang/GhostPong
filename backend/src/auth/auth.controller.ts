@@ -21,8 +21,7 @@ import { SkipUserGuard } from './decorator/skip-user-guard.decorator';
 import { CodeVerificationRequestDto } from './dto/request/code-verification-request.dto';
 import { TwoFactorAuthRequestDto } from './dto/request/two-factor-auth-request.dto';
 import { TwoFactorAuthResponseDto } from './dto/response/two-factor-auth-response.dto';
-import { FtGuard } from './guard/ft.guard';
-import { GoogleGuard } from './guard/google.guard';
+import { SocialGuard } from './guard/social.guard';
 import { TwoFaGuard } from './guard/two-fa.guard';
 import { LoginInfo } from './type/login-info';
 import { SocialResponseOptions } from './type/social-response-options';
@@ -34,24 +33,24 @@ export class AuthController {
 
   /**
    * @summary 로그인
-   * @description GET /auth/login/ft
+   * @description GET /auth/login/ft, GET /auth/login/google, GET /auth/login/github
    */
-  @ApiOperation({ summary: '42 로그인' })
+  @ApiOperation({ summary: 'oauth 로그인' })
   @SkipUserGuard()
-  @UseGuards(FtGuard)
-  @Get('login/ft')
+  @UseGuards(SocialGuard)
+  @Get('login/:provider')
   login(): void {
     return;
   }
 
   /**
    * @summary 로그인 callback
-   * @description GET /auth/callback/ft
+   * @description GET /auth/callback/ft, GET /auth/callback/google, GET /auth/callback/github
    */
-  @ApiOperation({ summary: '42 로그인 callback' })
+  @ApiOperation({ summary: 'oauth 로그인 callback' })
   @SkipUserGuard()
-  @UseGuards(FtGuard) // strategy.validate() -> return 값 기반으로 request 객체 담아줌
-  @Get('callback/ft')
+  @UseGuards(SocialGuard) // strategy.validate() -> return 값 기반으로 request 객체 담아줌
+  @Get('callback/:provider')
   async callbackLogin(@ExtractUser() user: LoginInfo, @Res() res: Response): Promise<void> {
     const responseOptions: SocialResponseOptions = await this.authService.socialAuth(user);
 
@@ -59,22 +58,6 @@ export class AuthController {
       res.cookie(responseOptions.cookieKey, responseOptions.token, COOKIE_OPTIONS);
     }
     res.redirect(responseOptions.redirectUrl);
-  }
-
-  @ApiOperation({ summary: 'google 로그인' })
-  @SkipUserGuard()
-  @UseGuards(GoogleGuard)
-  @Get('login/google')
-  async googleLogin(): Promise<void> {
-    return;
-  }
-
-  @ApiOperation({ summary: 'google 로그인 callback' })
-  @SkipUserGuard()
-  @UseGuards(GoogleGuard)
-  @Get('callback/google')
-  async googleCallbackLogin(@ExtractUser() user: LoginInfo, @Res() res: Response): Promise<void> {
-    return this.callbackLogin(user, res);
   }
 
   /**

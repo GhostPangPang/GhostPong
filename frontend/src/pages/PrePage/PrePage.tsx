@@ -13,6 +13,10 @@ export const PrePage = () => {
     location.href = `${import.meta.env.VITE_API_URL}/auth/login/google`;
   };
 
+  const handleGithubLogin = () => {
+    location.href = `${import.meta.env.VITE_API_URL}/auth/login/github`;
+  };
+
   return (
     <Grid
       container="flex"
@@ -53,7 +57,7 @@ export const PrePage = () => {
           <IconButton onClick={handleGoogleLogin}>
             <GoogleIcon />
           </IconButton>
-          <IconButton>
+          <IconButton onClick={handleGithubLogin}>
             <GithubIcon />
           </IconButton>
           <IconButton onClick={handle42Login}>
