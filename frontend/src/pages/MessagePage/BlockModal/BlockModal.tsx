@@ -43,7 +43,7 @@ export const BlockModal = ({ isOpen, onClose }: Omit<ModalProps, 'children'>) =>
           <GameInput
             value={nickname}
             onChange={handleNicknameChange}
-            sizes="sm"
+            sizes="lg"
             color="secondary"
             placeholder="플레이어 닉네임"
             style={{ flexGrow: 1, width: '24rem' }}
