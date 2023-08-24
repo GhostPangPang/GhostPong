@@ -2,7 +2,7 @@
 
 import { faker } from '@faker-js/faker';
 
-import { Friendship } from '../../src/entity/friendship.entity';
+import { Friendship } from '../../../src/entity/friendship.entity';
 
 export default (friendship: Friendship, prevDate?: Date) => {
   prevDate?.setDate(prevDate?.getDate() + faker.datatype.number({ min: 1, max: 10 }));

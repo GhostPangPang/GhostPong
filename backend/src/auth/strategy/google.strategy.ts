@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Profile, Strategy } from 'passport-google-oauth20';
 
@@ -17,10 +17,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   }
 
   async validate(accessToken: string, refreshToken: string, profile: Profile): Promise<LoginInfo> {
-    const email = profile.emails?.[0].value;
-    if (email === undefined) {
-      throw new UnauthorizedException('Google email is empty');
-    }
-    return { provider: 'google', email, id: null };
+    const email = profile.emails?.[0].value ?? null;
+    return { provider: 'google', email, id: `google-${profile.id}` };
   }
 }

@@ -46,7 +46,7 @@ export const BlockModal = ({ isOpen, onClose }: Omit<ModalProps, 'children'>) =>
             sizes="lg"
             color="secondary"
             placeholder="플레이어 닉네임"
-            style={{ flexGrow: 1 }}
+            style={{ flexGrow: 1, width: '24rem' }}
           />
           <GameButton size="sm" style={{ flexGrow: 0 }} onClick={() => updateBlocked(nickname)}>
             차단하기

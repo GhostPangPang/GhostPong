@@ -1,9 +1,9 @@
+/**
+ * type for oauth login profile information
+ */
+
 export type LoginInfo = {
-  provider: '42' | 'google';
-  email: string;
-  id: number | null;
-  /**
-   * id === null -> unregistered
-   * id !== null -> registered
-   */
+  provider: 'ft' | 'google' | 'github';
+  email: string | null;
+  id: string;
 };

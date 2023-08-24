@@ -8,3 +8,5 @@ export * from './MessagePage';
 export * from './PrePage';
 export * from './ProfilePage';
 export * from './RegisterPage';
+export * from './SignInPage';
+export * from './SignUpPage';

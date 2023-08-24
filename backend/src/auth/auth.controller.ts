@@ -1,4 +1,5 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Post, Res, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import {
   ApiBadRequestResponse,
   ApiConflictResponse,
@@ -19,13 +20,14 @@ import { AuthService } from './auth.service';
 import { ExtractUser } from './decorator/extract-user.decorator';
 import { SkipUserGuard } from './decorator/skip-user-guard.decorator';
 import { CodeVerificationRequestDto } from './dto/request/code-verification-request.dto';
+import { LocalLoginRequestDto } from './dto/request/local-login-request.dto';
+import { LocalSignUpRequestDto } from './dto/request/local-signup-request.dto';
 import { TwoFactorAuthRequestDto } from './dto/request/two-factor-auth-request.dto';
 import { TwoFactorAuthResponseDto } from './dto/response/two-factor-auth-response.dto';
-import { FtGuard } from './guard/ft.guard';
-import { GoogleGuard } from './guard/google.guard';
+import { SocialGuard } from './guard/social.guard';
 import { TwoFaGuard } from './guard/two-fa.guard';
 import { LoginInfo } from './type/login-info';
-import { SocialResponseOptions } from './type/social-response-options';
+import { LoginResponseOptions } from './type/login-response-options';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -34,47 +36,60 @@ export class AuthController {
 
   /**
    * @summary 로그인
-   * @description GET /auth/login/ft
+   * @description GET /auth/login/ft, GET /auth/login/google, GET /auth/login/github
    */
-  @ApiOperation({ summary: '42 로그인' })
+  @ApiOperation({ summary: 'oauth 로그인' })
   @SkipUserGuard()
-  @UseGuards(FtGuard)
-  @Get('login/ft')
-  login(): void {
+  @UseGuards(SocialGuard)
+  @Get('login/:provider')
+  socialLogin(): void {
     return;
   }
 
   /**
    * @summary 로그인 callback
-   * @description GET /auth/callback/ft
+   * @description GET /auth/callback/ft, GET /auth/callback/google, GET /auth/callback/github
    */
-  @ApiOperation({ summary: '42 로그인 callback' })
+  @ApiOperation({ summary: 'oauth 로그인 callback' })
   @SkipUserGuard()
-  @UseGuards(FtGuard) // strategy.validate() -> return 값 기반으로 request 객체 담아줌
-  @Get('callback/ft')
-  async callbackLogin(@ExtractUser() user: LoginInfo, @Res() res: Response): Promise<void> {
-    const responseOptions: SocialResponseOptions = await this.authService.socialAuth(user);
-
+  @UseGuards(SocialGuard) // strategy.validate() -> return 값 기반으로 request 객체 담아줌
+  @Get('callback/:provider')
+  async callbackSocialLogin(@ExtractUser() user: LoginInfo, @Res() res: Response): Promise<void> {
+    const responseOptions: LoginResponseOptions = await this.authService.socialAuth(user);
     if (responseOptions.cookieKey !== undefined) {
       res.cookie(responseOptions.cookieKey, responseOptions.token, COOKIE_OPTIONS);
     }
     res.redirect(responseOptions.redirectUrl);
   }
 
-  @ApiOperation({ summary: 'google 로그인' })
+  /**
+   * @summary Local 로그인
+   * @description POST /auth/login/local
+   */
+  @ApiOperation({ summary: 'local 로그인' })
+  @ApiNotFoundResponse({ type: ErrorResponseDto, description: '이메일 없음' })
+  @ApiBadRequestResponse({ type: ErrorResponseDto, description: '잘못된 비밀번호' })
   @SkipUserGuard()
-  @UseGuards(GoogleGuard)
-  @Get('login/google')
-  async googleLogin(): Promise<void> {
-    return;
+  @UseGuards(AuthGuard('local'))
+  @HttpCode(HttpStatus.OK)
+  @Post('login/local')
+  async localLogin(@ExtractUser() user: LocalLoginRequestDto, @Res() res: Response): Promise<void> {
+    const token = await this.authService.localLogin(user);
+    res.send({ token });
   }
 
-  @ApiOperation({ summary: 'google 로그인 callback' })
+  /**
+   * @summary Local 회원가입
+   * @description POST /auth/signup/local
+   */
+  @ApiOperation({ summary: 'local 회원가입' })
   @SkipUserGuard()
-  @UseGuards(GoogleGuard)
-  @Get('callback/google')
-  async googleCallbackLogin(@ExtractUser() user: LoginInfo, @Res() res: Response): Promise<void> {
-    return this.callbackLogin(user, res);
+  @Post('signup/local')
+  async localSignUp(@Body() signUpInfo: LocalSignUpRequestDto): Promise<SuccessResponseDto> {
+    await this.authService.localSignUp(signUpInfo);
+    return {
+      message: '회원가입이 완료되었습니다.',
+    };
   }
 
   /**

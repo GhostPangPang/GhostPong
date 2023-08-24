@@ -23,6 +23,8 @@ import { TwoFactorLoginPage } from './pages/TwoFactorLoginPage';
 import { ProtectedRoute } from './ProtectedRoute';
 import { DebugObserver } from './DebugObserver';
 import { RouteErrorPage } from './pages/RouteErrorPage';
+import SignInPage from './pages/SignInPage';
+import SignUpPage from './pages/SignUpPage';
 
 function App() {
   return (
@@ -52,6 +54,8 @@ function App() {
 
                 <Route path="/pre" element={<PrePage />} />
                 <Route path="/auth?/" element={<AuthHandler />} />
+                <Route path="/auth/signin" element={<SignInPage />} />
+                <Route path="/auth/signup" element={<SignUpPage />} />
                 <Route path="/auth/register" element={<RegisterPage />} />
                 <Route path="/auth/2fa" element={<TwoFactorLoginPage />} />
                 <Route path="/error" element={<RouteErrorPage code={404} />} />
