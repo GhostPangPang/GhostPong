@@ -21,6 +21,7 @@ import { ExtractUser } from './decorator/extract-user.decorator';
 import { SkipUserGuard } from './decorator/skip-user-guard.decorator';
 import { CodeVerificationRequestDto } from './dto/request/code-verification-request.dto';
 import { LocalLoginRequestDto } from './dto/request/local-login-request.dto';
+import { LocalSignUpRequestDto } from './dto/request/local-signup-request.dto';
 import { TwoFactorAuthRequestDto } from './dto/request/two-factor-auth-request.dto';
 import { TwoFactorAuthResponseDto } from './dto/response/two-factor-auth-response.dto';
 import { SocialGuard } from './guard/social.guard';
@@ -69,6 +70,20 @@ export class AuthController {
   async localLogin(@ExtractUser() user: LocalLoginRequestDto, @Res() res: Response): Promise<void> {
     const responseOptions: LoginResponseOptions = await this.authService.localLogin(user);
     this.login(responseOptions, res);
+  }
+
+  /**
+   * @summary Local 회원가입
+   * @description POST /auth/signup/local
+   */
+  @ApiOperation({ summary: 'local 회원가입' })
+  @SkipUserGuard()
+  @Post('signup/local')
+  async localSignUp(@Body() signUpInfo: LocalSignUpRequestDto): Promise<SuccessResponseDto> {
+    await this.authService.localSignUp(signUpInfo);
+    return {
+      message: '회원가입이 완료되었습니다.',
+    };
   }
 
   /**

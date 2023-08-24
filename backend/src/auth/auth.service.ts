@@ -3,17 +3,21 @@ import { BadRequestException, ConflictException, ForbiddenException, Inject, Inj
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MailerService } from '@nestjs-modules/mailer';
-import { compare } from 'bcrypt';
+import { compare, hash } from 'bcrypt';
 import { Cache } from 'cache-manager';
-import { Repository } from 'typeorm';
+import { nanoid } from 'nanoid';
+import { EntityManager, Repository } from 'typeorm';
 
 import { AUTH_JWT_EXPIRES_IN, TWO_FA_EXPIRES_IN, TWO_FA_JWT_EXPIRES_IN, USER_JWT_EXPIRES_IN } from '../common/constant';
 import { SuccessResponseDto } from '../common/dto/success-response.dto';
 import { AppConfigService } from '../config/app/configuration.service';
 import { JwtConfigService } from '../config/auth/jwt/configuration.service';
 import { Auth, AuthStatus } from '../entity/auth.entity';
+import { UserRecord } from '../entity/user-record.entity';
+import { User } from '../entity/user.entity';
 
 import { LocalLoginRequestDto } from './dto/request/local-login-request.dto';
+import { LocalSignUpRequestDto } from './dto/request/local-signup-request.dto';
 import { TwoFactorAuthResponseDto } from './dto/response/two-factor-auth-response.dto';
 import { LoginInfo } from './type/login-info';
 import { LoginResponseOptions } from './type/login-response-options';
@@ -24,6 +28,8 @@ export class AuthService {
   constructor(
     @InjectRepository(Auth)
     private readonly authRepository: Repository<Auth>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
     private readonly jwtService: JwtService,
     private readonly jwtConfigService: JwtConfigService,
     private readonly appConfigService: AppConfigService,
@@ -34,8 +40,7 @@ export class AuthService {
   async signUp(auth: Auth | null, loginInfo: LoginInfo): Promise<string> {
     let authId: number;
     if (auth === null) {
-      authId = (await this.authRepository.insert({ email: loginInfo.email, accountId: loginInfo.id })).identifiers[0]
-        .id;
+      authId = await this.createAuth(loginInfo.email, null, loginInfo.id);
     } else {
       authId = auth.id;
     }
@@ -78,6 +83,29 @@ export class AuthService {
       throw new BadRequestException('이메일 또는 비밀번호가 일치하지 않습니다.');
     }
     return await this.checkTwoFactorAuth(auth.id);
+  }
+
+  async localSignUp(signUpInfo: LocalSignUpRequestDto): Promise<void> {
+    const email = signUpInfo.email;
+    const nickname = signUpInfo.nickname;
+    const password = await hash(signUpInfo.password, 5);
+    const accountId = 'local-' + nanoid();
+
+    if (await this.authRepository.findOneBy({ email })) {
+      throw new ConflictException('이미 존재하는 이메일입니다.');
+    }
+    if (await this.userRepository.findOneBy({ nickname })) {
+      throw new ConflictException('중복된 닉네임입니다.');
+    }
+    // create auth
+    const authId = await this.createAuth(email, password, accountId);
+
+    // create user
+    await this.userRepository.manager.transaction(async (manager: EntityManager) => {
+      await manager.insert(User, { id: authId, nickname: nickname });
+      await manager.insert(UserRecord, { id: authId });
+      await manager.update(Auth, { id: authId }, { status: AuthStatus.REGISTERD });
+    });
   }
 
   async twoFactorAuthSignIn(myId: number, code: string): Promise<string> {
@@ -153,6 +181,17 @@ export class AuthService {
   }
 
   // SECTION private
+  private async createAuth(email: string | null, password: string | null, accountId: string): Promise<number> {
+    const authId = (
+      await this.authRepository.insert({
+        email,
+        password,
+        accountId,
+      })
+    ).identifiers[0].id;
+    return authId;
+  }
+
   private async verifyTwoFactorAuth(myId: number, code: string, successCode: string) {
     if (code !== successCode) {
       throw new BadRequestException('잘못된 인증 코드입니다.');
