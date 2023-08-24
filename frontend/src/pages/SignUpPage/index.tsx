@@ -36,8 +36,8 @@ export default function SignUpPage() {
   });
 
   useEffect(() => {
-    alert('회원가입이 완료되었습니다.');
     if (isSuccess) {
+      alert('회원가입이 완료되었습니다.');
       navigation('/pre');
     }
   }, [isSuccess]);
