@@ -3,8 +3,11 @@ import { ReactComponent as Logo } from '@/svgs/logo-lg.svg';
 import { ReactComponent as GoogleIcon } from '@/svgs/google.svg';
 import { ReactComponent as GithubIcon } from '@/svgs/github.svg';
 import { ReactComponent as FourtyTwoIcon } from '@/svgs/42.svg';
+import { useNavigate } from 'react-router-dom';
 
 export const PrePage = () => {
+  const navigation = useNavigate();
+
   const handle42Login = () => {
     location.href = `${import.meta.env.VITE_API_URL}/auth/login/ft`;
   };
@@ -36,10 +39,12 @@ export const PrePage = () => {
         rowGap={1.5}
         size={{ paddingTB: 1 }}
       >
-        <GameButton size="lg" color="secondary">
+        <GameButton size="lg" color="secondary" onClick={() => navigation('/auth/signin')}>
           LOGIN
         </GameButton>
-        <GameButton size="lg">SIGN UP</GameButton>
+        <GameButton size="lg" onClick={() => navigation('/auth/signup')}>
+          SIGN UP
+        </GameButton>
       </Grid>
       <Grid
         as="section"
