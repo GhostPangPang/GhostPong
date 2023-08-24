@@ -1,4 +1,5 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Post, Res, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import {
   ApiBadRequestResponse,
   ApiConflictResponse,
@@ -19,12 +20,13 @@ import { AuthService } from './auth.service';
 import { ExtractUser } from './decorator/extract-user.decorator';
 import { SkipUserGuard } from './decorator/skip-user-guard.decorator';
 import { CodeVerificationRequestDto } from './dto/request/code-verification-request.dto';
+import { LocalLoginRequestDto } from './dto/request/local-login-request.dto';
 import { TwoFactorAuthRequestDto } from './dto/request/two-factor-auth-request.dto';
 import { TwoFactorAuthResponseDto } from './dto/response/two-factor-auth-response.dto';
 import { SocialGuard } from './guard/social.guard';
 import { TwoFaGuard } from './guard/two-fa.guard';
 import { LoginInfo } from './type/login-info';
-import { SocialResponseOptions } from './type/social-response-options';
+import { LoginResponseOptions } from './type/login-response-options';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -39,7 +41,7 @@ export class AuthController {
   @SkipUserGuard()
   @UseGuards(SocialGuard)
   @Get('login/:provider')
-  login(): void {
+  socialLogin(): void {
     return;
   }
 
@@ -51,13 +53,33 @@ export class AuthController {
   @SkipUserGuard()
   @UseGuards(SocialGuard) // strategy.validate() -> return 값 기반으로 request 객체 담아줌
   @Get('callback/:provider')
-  async callbackLogin(@ExtractUser() user: LoginInfo, @Res() res: Response): Promise<void> {
-    const responseOptions: SocialResponseOptions = await this.authService.socialAuth(user);
+  async callbackSocialLogin(@ExtractUser() user: LoginInfo, @Res() res: Response): Promise<void> {
+    await this.callbackLogin(user, res);
+  }
 
-    if (responseOptions.cookieKey !== undefined) {
-      res.cookie(responseOptions.cookieKey, responseOptions.token, COOKIE_OPTIONS);
-    }
-    res.redirect(responseOptions.redirectUrl);
+  @ApiOperation({ summary: 'google 로그인' })
+  @SkipUserGuard()
+  @UseGuards(GoogleGuard)
+  @Get('login/google')
+  async googleLogin(): Promise<void> {
+    return;
+  }
+
+  @ApiOperation({ summary: 'google 로그인 callback' })
+  @SkipUserGuard()
+  @UseGuards(GoogleGuard)
+  @Get('callback/google')
+  async googleCallbackLogin(@ExtractUser() user: LoginInfo, @Res() res: Response): Promise<void> {
+    return this.callbackLogin(user, res);
+  }
+
+  @ApiOperation({ summary: 'local 로그인' })
+  @SkipUserGuard()
+  @UseGuards(AuthGuard('local'))
+  @Post('login/local')
+  async localLogin(@ExtractUser() user: LocalLoginRequestDto, @Res() res: Response): Promise<void> {
+    const responseOptions: LoginResponseOptions = await this.authService.localLogin(user);
+    this.login(responseOptions, res);
   }
 
   /**
@@ -145,5 +167,18 @@ export class AuthController {
   @Delete('2fa')
   deleteTwoFactorAuth(@ExtractUserId() myId: number): Promise<SuccessResponseDto> {
     return this.authService.deleteTwoFactorAuth(myId);
+  }
+
+  // SECTION private
+  private login(responseOptions: LoginResponseOptions, res: Response): void {
+    if (responseOptions.cookieKey !== undefined) {
+      res.cookie(responseOptions.cookieKey, responseOptions.token, COOKIE_OPTIONS);
+    }
+    res.redirect(responseOptions.redirectUrl);
+  }
+
+  private async callbackLogin(user: LoginInfo, res: Response): Promise<void> {
+    const responseOptions: LoginResponseOptions = await this.authService.socialAuth(user);
+    this.login(responseOptions, res);
   }
 }

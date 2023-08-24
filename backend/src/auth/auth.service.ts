@@ -3,6 +3,7 @@ import { BadRequestException, ConflictException, ForbiddenException, Inject, Inj
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MailerService } from '@nestjs-modules/mailer';
+import { compare } from 'bcrypt';
 import { Cache } from 'cache-manager';
 import { Repository } from 'typeorm';
 
@@ -12,9 +13,10 @@ import { AppConfigService } from '../config/app/configuration.service';
 import { JwtConfigService } from '../config/auth/jwt/configuration.service';
 import { Auth, AuthStatus } from '../entity/auth.entity';
 
+import { LocalLoginRequestDto } from './dto/request/local-login-request.dto';
 import { TwoFactorAuthResponseDto } from './dto/response/two-factor-auth-response.dto';
 import { LoginInfo } from './type/login-info';
-import { SocialResponseOptions } from './type/social-response-options';
+import { LoginResponseOptions } from './type/login-response-options';
 import { TwoFactorAuth } from './type/two-factor-auth';
 
 @Injectable()
@@ -54,7 +56,7 @@ export class AuthService {
     return this.jwtService.sign(payload, signOptions);
   }
 
-  async socialAuth(loginInfo: LoginInfo): Promise<SocialResponseOptions> {
+  async socialAuth(loginInfo: LoginInfo): Promise<LoginResponseOptions> {
     let token = '';
     const clientUrl = this.appConfigService.clientUrl;
 
@@ -63,17 +65,19 @@ export class AuthService {
       // unregistered users
       token = await this.signUp(auth, loginInfo);
       return { cookieKey: 'jwt-for-unregistered', token, redirectUrl: `${clientUrl}/auth/register` };
-    } else {
-      const userId = auth.id;
-      const { twoFa } = await this.getTwoFactorAuth(userId);
-      if (twoFa === null) {
-        token = this.signIn(userId);
-        return { token, redirectUrl: `${clientUrl}/auth?token=${token}` };
-      } else {
-        token = await this.sendAuthCode(userId, twoFa);
-      }
-      return { cookieKey: 'jwt-for-2fa', token, redirectUrl: `${clientUrl}/auth/2fa` };
     }
+    return await this.checkTwoFactorAuth(auth.id);
+  }
+
+  async localLogin(loginInfo: LocalLoginRequestDto): Promise<LoginResponseOptions> {
+    const auth = await this.authRepository.findOneBy({ email: loginInfo.email });
+    if (auth === null || auth.password === null) {
+      throw new BadRequestException('이메일 또는 비밀번호가 일치하지 않습니다.');
+    }
+    if (await compare(auth.password, loginInfo.password)) {
+      throw new BadRequestException('이메일 또는 비밀번호가 일치하지 않습니다.');
+    }
+    return await this.checkTwoFactorAuth(auth.id);
   }
 
   async twoFactorAuthSignIn(myId: number, code: string): Promise<string> {
@@ -154,6 +158,21 @@ export class AuthService {
       throw new BadRequestException('잘못된 인증 코드입니다.');
     }
     await this.cacheManager.del(`${myId}`);
+  }
+
+  // 2fa 인증 유저인지 확인 후 로그인
+  private async checkTwoFactorAuth(userId: number): Promise<LoginResponseOptions> {
+    const clientUrl = this.appConfigService.clientUrl;
+    let token = '';
+
+    const { twoFa } = await this.getTwoFactorAuth(userId);
+    if (twoFa === null) {
+      token = this.signIn(userId);
+      return { token, redirectUrl: `${clientUrl}/auth?token=${token}` };
+    } else {
+      token = await this.sendAuthCode(userId, twoFa);
+    }
+    return { cookieKey: 'jwt-for-2fa', token, redirectUrl: `${clientUrl}/auth/2fa` };
   }
 
   private getEmailTemplate(code: string): string {
