@@ -54,25 +54,14 @@ export class AuthController {
   @UseGuards(SocialGuard) // strategy.validate() -> return 값 기반으로 request 객체 담아줌
   @Get('callback/:provider')
   async callbackSocialLogin(@ExtractUser() user: LoginInfo, @Res() res: Response): Promise<void> {
-    await this.callbackLogin(user, res);
+    const responseOptions: LoginResponseOptions = await this.authService.socialAuth(user);
+    this.login(responseOptions, res);
   }
 
-  @ApiOperation({ summary: 'google 로그인' })
-  @SkipUserGuard()
-  @UseGuards(GoogleGuard)
-  @Get('login/google')
-  async googleLogin(): Promise<void> {
-    return;
-  }
-
-  @ApiOperation({ summary: 'google 로그인 callback' })
-  @SkipUserGuard()
-  @UseGuards(GoogleGuard)
-  @Get('callback/google')
-  async googleCallbackLogin(@ExtractUser() user: LoginInfo, @Res() res: Response): Promise<void> {
-    return this.callbackLogin(user, res);
-  }
-
+  /**
+   * @summary Local 로그인
+   * @description POST /auth/login/local
+   */
   @ApiOperation({ summary: 'local 로그인' })
   @SkipUserGuard()
   @UseGuards(AuthGuard('local'))
@@ -175,10 +164,5 @@ export class AuthController {
       res.cookie(responseOptions.cookieKey, responseOptions.token, COOKIE_OPTIONS);
     }
     res.redirect(responseOptions.redirectUrl);
-  }
-
-  private async callbackLogin(user: LoginInfo, res: Response): Promise<void> {
-    const responseOptions: LoginResponseOptions = await this.authService.socialAuth(user);
-    this.login(responseOptions, res);
   }
 }
