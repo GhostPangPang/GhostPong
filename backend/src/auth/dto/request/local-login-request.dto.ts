@@ -1,4 +1,4 @@
-import { IsEmail, IsStrongPassword } from 'class-validator';
+import { IsEmail, IsString } from 'class-validator';
 
 import { LocalLoginRequest } from '@/types/auth/request';
 
@@ -14,6 +14,6 @@ export class LocalLoginRequestDto implements LocalLoginRequest {
    * 비밀번호
    * @example 'sample1234'
    */
-  @IsStrongPassword()
+  @IsString()
   password: string;
 }
