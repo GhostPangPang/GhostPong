@@ -1,7 +1,8 @@
 import { GameButton, GameInput, Grid, Text } from '@/common';
 import { ApiError, ApiResponse, post } from '@/libs/api';
 import { useMutation } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 type SignUpInfo = {
   email: string;
@@ -18,13 +19,14 @@ const postSignUp = async ({ email, nickname, password }: SignUpInfo) => {
 };
 
 export default function SignUpPage() {
+  const navigation = useNavigate();
   const [info, setInfo] = useState({
     email: '',
     nickname: '',
     password: '',
     passwordcheck: '',
   });
-  const { mutate: signUp } = useMutation(postSignUp, {
+  const { mutate: signUp, isSuccess } = useMutation(postSignUp, {
     onSuccess: (message: ApiResponse) => {
       console.log('signup', message);
     },
@@ -32,6 +34,13 @@ export default function SignUpPage() {
       alert(error.message);
     },
   });
+
+  useEffect(() => {
+    alert('회원가입이 완료되었습니다.');
+    if (isSuccess) {
+      navigation('/pre');
+    }
+  }, [isSuccess]);
 
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInfo({

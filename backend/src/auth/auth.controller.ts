@@ -1,4 +1,5 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Post, Res, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import {
   ApiBadRequestResponse,
   ApiConflictResponse,
@@ -19,12 +20,14 @@ import { AuthService } from './auth.service';
 import { ExtractUser } from './decorator/extract-user.decorator';
 import { SkipUserGuard } from './decorator/skip-user-guard.decorator';
 import { CodeVerificationRequestDto } from './dto/request/code-verification-request.dto';
+import { LocalLoginRequestDto } from './dto/request/local-login-request.dto';
+import { LocalSignUpRequestDto } from './dto/request/local-signup-request.dto';
 import { TwoFactorAuthRequestDto } from './dto/request/two-factor-auth-request.dto';
 import { TwoFactorAuthResponseDto } from './dto/response/two-factor-auth-response.dto';
 import { SocialGuard } from './guard/social.guard';
 import { TwoFaGuard } from './guard/two-fa.guard';
 import { LoginInfo } from './type/login-info';
-import { SocialResponseOptions } from './type/social-response-options';
+import { LoginResponseOptions } from './type/login-response-options';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -39,7 +42,7 @@ export class AuthController {
   @SkipUserGuard()
   @UseGuards(SocialGuard)
   @Get('login/:provider')
-  login(): void {
+  socialLogin(): void {
     return;
   }
 
@@ -51,13 +54,42 @@ export class AuthController {
   @SkipUserGuard()
   @UseGuards(SocialGuard) // strategy.validate() -> return 값 기반으로 request 객체 담아줌
   @Get('callback/:provider')
-  async callbackLogin(@ExtractUser() user: LoginInfo, @Res() res: Response): Promise<void> {
-    const responseOptions: SocialResponseOptions = await this.authService.socialAuth(user);
-
+  async callbackSocialLogin(@ExtractUser() user: LoginInfo, @Res() res: Response): Promise<void> {
+    const responseOptions: LoginResponseOptions = await this.authService.socialAuth(user);
     if (responseOptions.cookieKey !== undefined) {
       res.cookie(responseOptions.cookieKey, responseOptions.token, COOKIE_OPTIONS);
     }
     res.redirect(responseOptions.redirectUrl);
+  }
+
+  /**
+   * @summary Local 로그인
+   * @description POST /auth/login/local
+   */
+  @ApiOperation({ summary: 'local 로그인' })
+  @ApiNotFoundResponse({ type: ErrorResponseDto, description: '이메일 없음' })
+  @ApiBadRequestResponse({ type: ErrorResponseDto, description: '잘못된 비밀번호' })
+  @SkipUserGuard()
+  @UseGuards(AuthGuard('local'))
+  @HttpCode(HttpStatus.OK)
+  @Post('login/local')
+  async localLogin(@ExtractUser() user: LocalLoginRequestDto, @Res() res: Response): Promise<void> {
+    const token = await this.authService.localLogin(user);
+    res.send({ token });
+  }
+
+  /**
+   * @summary Local 회원가입
+   * @description POST /auth/signup/local
+   */
+  @ApiOperation({ summary: 'local 회원가입' })
+  @SkipUserGuard()
+  @Post('signup/local')
+  async localSignUp(@Body() signUpInfo: LocalSignUpRequestDto): Promise<SuccessResponseDto> {
+    await this.authService.localSignUp(signUpInfo);
+    return {
+      message: '회원가입이 완료되었습니다.',
+    };
   }
 
   /**

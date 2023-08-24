@@ -1,4 +1,4 @@
-export type SocialResponseOptions = {
+export type LoginResponseOptions = {
   cookieKey?: string;
   token: string;
   redirectUrl: string;

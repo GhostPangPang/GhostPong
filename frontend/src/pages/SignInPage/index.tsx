@@ -1,15 +1,20 @@
 import { GameButton, GameInput, Grid, Text } from '@/common';
 import { ApiError, ApiResponse, post } from '@/libs/api';
+import { setAccessToken } from '@/libs/api/auth';
 import { useMutation } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 type SignInInfo = {
   email: string;
   password: string;
 };
 
+type TokenResponse = {
+  token: string;
+};
+
 const postSignIn = async (info: SignInInfo) => {
-  return await post('auth/login/local', info);
+  return await post<TokenResponse>('auth/login/local', info);
 };
 
 export default function SignInPage() {
@@ -17,14 +22,22 @@ export default function SignInPage() {
     email: '',
     password: '',
   });
-  const { mutate: signIn } = useMutation(postSignIn, {
-    onSuccess: (message: ApiResponse) => {
-      console.log('login', message);
+  const { mutate: signIn, isSuccess } = useMutation(postSignIn, {
+    onSuccess: (data: TokenResponse) => {
+      console.log('login');
+      const { token } = data;
+      if (token) {
+        setAccessToken(token);
+      }
     },
     onError: (error: ApiError) => {
       alert(error.message);
     },
   });
+
+  useEffect(() => {
+    if (isSuccess) window.location.replace('/');
+  }, [isSuccess]);
 
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInfo({
@@ -64,6 +77,7 @@ export default function SignInPage() {
       />
       <GameInput
         name="password"
+        type="password"
         sizes="lg"
         color="secondary"
         placeholder="password"
