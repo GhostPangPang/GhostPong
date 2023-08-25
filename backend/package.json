@@ -30,7 +30,6 @@
     "migration:revert": "npx typeorm-ts-node-commonjs migration:revert -d ./db/migrations/orm-config.ts"
   },
   "dependencies": {
-    "@hapi/joi": "^17.1.1",
     "@nestjs-modules/mailer": "^1.8.1",
     "@nestjs/cache-manager": "^1.0.0",
     "@nestjs/common": "^9.0.0",
@@ -50,6 +49,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
     "cookie-parser": "^1.4.6",
+    "joi": "^17.9.2",
     "nanoid": "3.3.4",
     "nodemailer": "^6.9.1",
     "passport": "^0.6.0",
