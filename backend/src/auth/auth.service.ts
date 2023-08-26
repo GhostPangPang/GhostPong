@@ -9,7 +9,6 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
-import { MailerService } from '@nestjs-modules/mailer';
 import { compare, hash } from 'bcrypt';
 import { Cache } from 'cache-manager';
 import { nanoid } from 'nanoid';
@@ -22,6 +21,7 @@ import { JwtConfigService } from '../config/auth/jwt/configuration.service';
 import { Auth, AuthStatus } from '../entity/auth.entity';
 import { UserRecord } from '../entity/user-record.entity';
 import { User } from '../entity/user.entity';
+import { MailerService } from '../mailer/mailer.service';
 
 import { LocalLoginRequestDto } from './dto/request/local-login-request.dto';
 import { LocalSignUpRequestDto } from './dto/request/local-signup-request.dto';

@@ -30,7 +30,6 @@
     "migration:revert": "npx typeorm-ts-node-commonjs migration:revert -d ./db/migrations/orm-config.ts"
   },
   "dependencies": {
-    "@nestjs-modules/mailer": "^1.8.1",
     "@nestjs/cache-manager": "^1.0.0",
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^2.3.1",
@@ -74,11 +73,10 @@
     "@types/bcrypt": "^5.0.0",
     "@types/cookie-parser": "^1.4.3",
     "@types/express": "^4.17.13",
-    "@types/faker": "^6.6.9",
-    "@types/hapi__joi": "^17.1.9",
     "@types/jest": "29.2.4",
     "@types/multer": "^1.4.7",
     "@types/node": "18.11.18",
+    "@types/nodemailer": "^6.4.9",
     "@types/passport": "^1.0.12",
     "@types/passport-github2": "^1.2.5",
     "@types/passport-google-oauth20": "^2.0.11",
@@ -128,5 +126,6 @@
     "*.{js,ts}": [
       "eslint --fix"
     ]
-  }
+  },
+  "packageManager": "yarn@3.6.3"
 }
