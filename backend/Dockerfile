@@ -8,7 +8,7 @@ COPY ./game /app/game
 
 COPY ./types /app/types
 
-RUN yarn --immutable --immutable-cache
+RUN yarn --immutable
 
 RUN yarn build
 
