@@ -16,7 +16,9 @@ COPY ./game /app/game
 
 COPY ./types /app/types
 
-RUN yarn && yarn build
+RUN yarn --immutable
+
+RUN yarn build
 
 FROM nginx:1.25.0-alpine
 
