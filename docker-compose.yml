@@ -20,9 +20,6 @@ services:
       - ./backend/.env
     environment:
       - NODE_ENV=production
-    build:
-      context: .
-      dockerfile: ./backend/Dockerfile
     volumes:
       - server_static_files:/app/backend/public
     ports:
@@ -35,9 +32,6 @@ services:
     depends_on:
       - server
     image: skdusdl8804/ghostclient
-    build:
-      context: .
-      dockerfile: ./frontend/Dockerfile
     ports:
       - 80:80
     networks:
