@@ -8,7 +8,9 @@
 ./backend/yarn-error.log
 ./backend/test
 ./backend/.env.development
+./backend/**/*spec.ts
 
 ./frontend/.storybook
 ./frontend/.vscode
 ./frontend/analyse.html
+./frontend/test
