@@ -1,6 +1,6 @@
-import * as Joi from '@hapi/joi';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import * as Joi from 'joi';
 
 import configuration from './configuration';
 import { FtAuthConfigService } from './configuration.service';

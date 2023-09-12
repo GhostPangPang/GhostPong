@@ -18,23 +18,20 @@ services:
     image: skdusdl8804/ghostserver
     env_file:
       - ./backend/.env
-    build:
-      context: .
-      dockerfile: ./backend/Dockerfile
+    environment:
+      - NODE_ENV=production
     volumes:
       - server_static_files:/app/backend/public
     ports:
       - 3000:3000
     networks:
       - ghostnetwork
+    init: true
   client:
     container_name: ghostclient
     depends_on:
       - server
     image: skdusdl8804/ghostclient
-    build:
-      context: .
-      dockerfile: ./frontend/Dockerfile
     ports:
       - 80:80
     networks:

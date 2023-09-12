@@ -17,6 +17,7 @@ import { DatabaseConfigService } from './config/database/configuration.service';
 import { ConnectionModule } from './connection/connection.module';
 import { FriendModule } from './friend/friend.module';
 import { GameModule } from './game/game.module';
+import { MailerModule } from './mailer/mailer.module';
 import { MessageModule } from './message/message.module';
 import { UserModule } from './user/user.module';
 
@@ -42,6 +43,7 @@ import { UserModule } from './user/user.module';
     ConnectionModule,
     GameModule,
     AchievementModule,
+    MailerModule,
   ],
   providers: [AppService, { provide: APP_GUARD, useClass: UserGuard }],
 })
