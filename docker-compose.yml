@@ -1,27 +1,11 @@
 services:
-  db:
-    container_name: ghostgres
-    image: postgres:15.3-alpine
-    restart: always
-    env_file:
-      - ./backend/.env
-    volumes:
-      - db_data:/var/lib/postgresql/data
-    expose:
-      - 5432
-    networks:
-      - ghostnetwork
   server:
     container_name: ghostserver
-    depends_on:
-      - db
-    image: skdusdl8804/ghostserver
+    image: hannkim/ghostserver
     env_file:
       - ./backend/.env
     environment:
       - NODE_ENV=production
-    volumes:
-      - server_static_files:/app/backend/public
     ports:
       - 3000:3000
     networks:
@@ -31,7 +15,7 @@ services:
     container_name: ghostclient
     depends_on:
       - server
-    image: skdusdl8804/ghostclient
+    image: hannkim/ghostclient
     ports:
       - 80:80
     networks:
@@ -41,7 +25,3 @@ networks:
   ghostnetwork:
     name: ghostnetwork
     driver: bridge
-
-volumes:
-  db_data:
-  server_static_files:
