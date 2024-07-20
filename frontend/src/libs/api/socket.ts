@@ -2,22 +2,13 @@ import { io } from 'socket.io-client';
 import { getAccessToken } from './auth';
 
 const createSocketInstance = () => {
-  const isDev = import.meta.env.MODE === 'development';
   const token = getAccessToken();
 
-  if (isDev) {
-    return io(import.meta.env.VITE_BASE_URL, {
-      autoConnect: false,
-      extraHeaders: { 'x-my-id': token ?? '1' },
-      withCredentials: true,
-    });
-  } else {
-    return io(import.meta.env.VITE_BASE_URL, {
-      autoConnect: false,
-      auth: { token: `${token ?? ''}` },
-      withCredentials: true,
-    });
-  }
+  return io(import.meta.env.VITE_BASE_URL, {
+    autoConnect: false,
+    auth: { token: `${token ?? ''}` },
+    withCredentials: true,
+  });
 };
 
 export const socket = createSocketInstance();
