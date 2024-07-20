@@ -2,9 +2,8 @@ import axios, { AxiosError, AxiosResponse } from 'axios';
 import { getAccessToken } from './auth';
 
 const createAxiosInstance = () => {
-  const isDev = import.meta.env.MODE === 'development';
   const token = getAccessToken();
-  const headers = isDev ? { 'x-my-id': token ?? '1' } : { Authorization: `Bearer ${token}` };
+  const headers = { Authorization: `Bearer ${token}` };
 
   return axios.create({ baseURL: import.meta.env.VITE_API_URL, headers, timeout: 100000, withCredentials: true });
 };
