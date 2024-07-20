@@ -4,7 +4,7 @@ services:
     image: postgres:15.3-alpine
     restart: always
     env_file:
-      - ./backend/.env
+      - ./backend/.env.local
     volumes:
       - db_data_local:/var/lib/postgresql/data
     expose:
