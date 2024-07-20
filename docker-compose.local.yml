@@ -17,7 +17,7 @@ services:
       - db
     image: server
     env_file:
-      - ./backend/.env
+      - ./backend/.env.local
     build:
       context: .
       dockerfile: ./backend/Dockerfile
@@ -35,13 +35,13 @@ services:
     image: client
     build:
       context: .
-      dockerfile: ./frontend/Dockerfile
+      dockerfile: ./frontend/local.Dockerfile
       args:
         - VITE_BASE_URL=http://localhost:3000
         - VITE_API_URL=http://localhost:3000/api/v1
         - VITE_ASSET_URL=http://localhost:3000
     ports:
-      - 80:80
+      - 5173:5173
     networks:
       - ghostnetwork_local
 networks:
