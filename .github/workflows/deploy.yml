@@ -1,0 +1,25 @@
+
+name: Deploy
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy-to-ec2:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to Server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          envs: GITHUB_SHA
+          script: |
+            sudo docker ps
+            sudo docker compose -f ~/docker-compose.yml down && \
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/ghostserver:latest && \
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/ghostclient:latest && \
+            sudo docker compose -f ~/docker-compose.yml up -d
+            sudo docker image prune -f
