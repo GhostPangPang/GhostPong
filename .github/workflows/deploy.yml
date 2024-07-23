@@ -17,9 +17,8 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           envs: GITHUB_SHA
           script: |
-            sudo docker ps
-            sudo docker compose -f ~/docker-compose.yml down && \
+            sudo docker-compose -f ~/docker-compose.yml down && \
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/ghostserver:latest && \
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/ghostclient:latest && \
-            sudo docker compose -f ~/docker-compose.yml up -d
+            sudo docker-compose -f ~/docker-compose.yml up -d --build
             sudo docker image prune -f
